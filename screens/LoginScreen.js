@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import Button from "../components/Button";
+import TextInput from "../components/TextInput";
 
 const LoginScreen = ({navigation}) => {
 
@@ -43,8 +44,8 @@ const LoginScreen = ({navigation}) => {
                 <View style={styles.middleViewStyle}>
 
                     <View>
-                        <TextInput value={emailAddress} onChangeText={text => setEmailAddress(text)} placeholder="email address" style={styles.textInputStyle} keyboardType="email-address" autoCapitalize="none" />
-                        <TextInput value={password} onChangeText={text => setPassword(text)} placeholder="password" style={styles.textInputStyle} autoCapitalize="none" secureTextEntry={true} />
+                        <TextInput value={emailAddress} onChange={text=> setEmailAddress(text)} placeholder={"email address"} type={"email-address"} />
+                        <TextInput value={password} onChange={text => setPassword(text)} placeholder={"password"} secure={true}/>
                         <Text style={[styles.message, { color: 'red' }]}>{message ? getMessage() : null}</Text>
                     </View>
                     <View>
