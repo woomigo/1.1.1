@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import firebaseConfig from '../firebaseConfig';
 import Button from '../components/Button';
+import TextLink from '../components/TextLink';
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -41,7 +42,7 @@ const RegisterScreen = ({ navigation }) => {
                     username: "",
                     dob: "",
                     profilePicURL: ""
-                  });
+                });
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -66,11 +67,9 @@ const RegisterScreen = ({ navigation }) => {
                 </View>
             </View>
             <View style={styles.bottomViewStyle}>
-                <Button buttonText={'register'} onSubmit={registerUser}/>
+                <Button buttonText={'register'} onSubmit={registerUser} />
                 <View style={styles.registerTextView}>
-                    <Text style={styles.signInTextStyle} onPress={() =>
-                        navigation.navigate('Login')
-                    }>sign in</Text>
+                    <TextLink text={"login"} textColor={'#f37320'} link={() => navigation.navigate('Login')} />
                 </View>
             </View>
         </View >
