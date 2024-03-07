@@ -4,8 +4,9 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
+import TextLink from "../components/TextLink";
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
 
     const [emailAddress, setEmailAddress] = useState('');
     const [password, setPassword] = useState('');
@@ -15,17 +16,17 @@ const LoginScreen = ({navigation}) => {
 
 
     const onSubmitHandler = () => {
-    signInWithEmailAndPassword(auth, emailAddress, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        setMessage(`welcome!`)
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setIsError(true)
-        setMessage(errorMessage)
-      });
+        signInWithEmailAndPassword(auth, emailAddress, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                setMessage(`welcome!`)
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                setIsError(true)
+                setMessage(errorMessage)
+            });
     }
 
     const getMessage = () => {
@@ -44,8 +45,8 @@ const LoginScreen = ({navigation}) => {
                 <View style={styles.middleViewStyle}>
 
                     <View>
-                        <TextInput value={emailAddress} onChange={text=> setEmailAddress(text)} placeholder={"email address"} type={"email-address"} />
-                        <TextInput value={password} onChange={text => setPassword(text)} placeholder={"password"} secure={true}/>
+                        <TextInput value={emailAddress} onChange={text => setEmailAddress(text)} placeholder={"email address"} type={"email-address"} />
+                        <TextInput value={password} onChange={text => setPassword(text)} placeholder={"password"} secure={true} />
                         <Text style={[styles.message, { color: 'red' }]}>{message ? getMessage() : null}</Text>
                     </View>
                     <View>
@@ -55,12 +56,10 @@ const LoginScreen = ({navigation}) => {
                 <View style={styles.bottomViewStyle}>
                     <View>
                         <Button buttonText={"log in"} onSubmit={onSubmitHandler} />
-                     
+
                     </View>
                     <View style={styles.registerTextView}>
-                        <Text style={styles.registerTextStyle} onPress={() =>
-                            navigation.navigate('Register')
-                        }>register</Text>
+                        <TextLink text={"register"} link={() => navigation.navigate('Register')} textColor={"#f37320"} />
                     </View>
                 </View>
             </View>
