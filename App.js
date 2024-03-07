@@ -1,17 +1,51 @@
+import React, {useState} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from './components/HomeScreen';
-import ProfileScreen from './components/ProfileScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from './firebaseConfig';
+
+import RegisterScreen from './screens/RegisterScreen';
+import LoginScreen from './screens/LoginScreen';
+import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+const App = () => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [uid,setUID] = useState(null);
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setIsSignedIn(true);
+      setUID(user.uid);
+      // ...
+    } else {
+      // User is signed out
+      setIsSignedIn(false)
+
+    }
+  });
+
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Home" component={HomeScreen}  />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Navigator options={{ headerShown: false }}>
+        {isSignedIn ? (
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+
+
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false, gestureEnabled: false }} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+export default App;
