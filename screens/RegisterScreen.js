@@ -4,6 +4,7 @@ import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "fir
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import firebaseConfig from '../firebaseConfig';
+import Button from '../components/Button';
 
 const RegisterScreen = ({ navigation }) => {
 
@@ -18,7 +19,8 @@ const RegisterScreen = ({ navigation }) => {
 
     // const dobMaximumDate = new Date(year - 13, month, day) // Today's date minus 13 YEARS
 
- 
+    const [emailAddress, setEmailAddress] = useState('');
+    const [password, setPassword] = useState('');
     const [reEnterPassword, setReEnterPassword] = useState('');
     // const [isError, setIsError] = useState(false);
     // const [dob, setDob] = useState(dobMaximumDate);
@@ -64,9 +66,7 @@ const RegisterScreen = ({ navigation }) => {
                 </View>
             </View>
             <View style={styles.bottomViewStyle}>
-                <View>
-                    <TouchableOpacity style={styles.registerBtnStyle} onPress={() => registerUser()} ><Text style={styles.registerBtnTextStyle}>register</Text></TouchableOpacity>
-                </View>
+                <Button buttonText={'register'} onSubmit={registerUser}/>
                 <View style={styles.registerTextView}>
                     <Text style={styles.signInTextStyle} onPress={() =>
                         navigation.navigate('Login')

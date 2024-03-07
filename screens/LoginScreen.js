@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import Button from "../components/Button";
 
 const LoginScreen = ({navigation}) => {
 
@@ -52,9 +53,8 @@ const LoginScreen = ({navigation}) => {
                 </View>
                 <View style={styles.bottomViewStyle}>
                     <View>
-                        <TouchableOpacity style={styles.loginBtnStyle} onPress={() => onSubmitHandler()}>
-                            <Text style={styles.loginBtnTextStyle}>log in</Text>
-                        </TouchableOpacity>
+                        <Button buttonText={"log in"} onSubmit={onSubmitHandler} />
+                     
                     </View>
                     <View style={styles.registerTextView}>
                         <Text style={styles.registerTextStyle} onPress={() =>
