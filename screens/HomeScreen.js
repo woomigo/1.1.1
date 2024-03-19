@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { Header, Icon, Badge, Avatar, ButtonGroup } from "@rneui/themed";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import {auth,db} from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
+
 
 
 const HomeScreen = () => {
     const [uid, setUID] = useState(null);
+    const [notificationCount, setNotificationCount] = useState('1');
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     const logout = () => {
         signOut(auth).then(() => {
             console.log(`SIGNED OUT SUCCESSFULLY`)
             // Sign-out successful.
-          }).catch((error) => {
+        }).catch((error) => {
             // An error happened.
             console.log(`ERROR: ${error}`)
-          });
+        });
     }
 
     onAuthStateChanged(auth, (user) => {
-        if (user) { 
+        if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/auth.user
             const uid = user.uid;
@@ -33,8 +37,96 @@ const HomeScreen = () => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={()=>logout()}><Text>Home Screen</Text></TouchableOpacity>
-            
+            {/* <TouchableOpacity onPress={()=>logout()}><Text>Home Screen</Text></TouchableOpacity>  */}
+            <Header
+                style={styles.header}
+                backgroundColor={'#fff'}
+                leftComponent={
+                    <Icon
+                        name="camera"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={25}
+                        onPress={() =>
+                            navigate('CameraComponent')
+                        }
+                    />}
+                centerComponent={
+                    <View>
+                        <Avatar
+                            rounded
+                            size="large"
+                            onPress={() =>
+                                navigate('ProfileComponent')
+                            }
+                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                        />{notificationCount > 0 ?
+                            <Badge
+                                status="error"
+                                value={notificationCount}
+                                containerStyle={{ position: 'absolute', top: 0, right: 0 }}
+                                onPress={() =>
+                                    navigate('NotificationsComponent')
+                                }
+                            />
+                            : null}
+                    </View>
+                }
+                rightComponent={
+                    <TouchableOpacity onPress={() =>
+                        navigate('WoosComponent')
+                    } >
+
+                        <Icon
+                            name="bars"
+                            type='font-awesome-5'
+                            color="#f37320"
+                            solid
+                            size={25}
+                            onPress={() =>
+                                navigate('CameraComponent')
+                            }
+                        />
+                    </TouchableOpacity>
+                }
+                rightContainerStyle={styles.rightComponent}
+                leftContainerStyle={styles.leftComponent}
+                centerContainerStyle={styles.centerComponent}
+            />
+
+            <View style={styles.subHeader}>
+                <Icon
+                    name="user-friends"
+                    type='font-awesome-5'
+                    color="#f37320"
+                    solid
+                    size={25}
+                    onPress={() =>
+                        navigate('CameraComponent')
+                    }
+                />
+                <Icon
+                    name="search"
+                    type='font-awesome-5'
+                    color="#f37320"
+                    solid
+                    size={25}
+                    onPress={() =>
+                        navigate('CameraComponent')
+                    }
+                />
+                <Icon
+                    name="envelope"
+                    type='font-awesome-5'
+                    color="#f37320"
+                    solid
+                    size={25}
+                    onPress={() =>
+                        navigate('CameraComponent')
+                    }
+                />
+            </View>
+
         </View>
     )
 }
@@ -42,8 +134,41 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
+        backgroundColor: "#fff"
+    },
+    profileImage: {
+        width: 60,
+        height: 60,
+        borderColor: "#f37320",
+        borderWidth: .5,
+        borderRadius: 20,
+        shadowOffset: { width: 0, height: 4 },
+        shadowRadius: 4,
+        shadowOpacity: 0.1,
+    },
+    header: {
+        shadowColor: '#000',
+        shadowOffset: { width: 1, height: 3 },
+        shadowOpacity: 0.2,
+        elevation: 4,
+    },
+    leftComponent: {
         justifyContent: 'center',
+        alignItems: 'center',
+    },
+    centerComponent: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    rightComponent: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    subHeader: {
+        marginTop: 10,
+        padding: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     }
 })
 

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, TouchableOpacity } from 'react-native';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import Button from "../components/Button";
-import TextInput from "../components/TextInput";
+// import TextInput from "../components/TextInput";
 import TextLink from "../components/TextLink";
 
 const LoginScreen = ({ navigation }) => {
@@ -12,8 +12,6 @@ const LoginScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [isError, setIsError] = useState(false);
     const [message, setMessage] = useState('');
-
-
 
     const onSubmitHandler = () => {
         signInWithEmailAndPassword(auth, emailAddress, password)
@@ -45,8 +43,8 @@ const LoginScreen = ({ navigation }) => {
                 <View style={styles.middleViewStyle}>
 
                     <View>
-                        <TextInput value={emailAddress} onChange={text => setEmailAddress(text)} placeholder={"email address"} type={"email-address"} />
-                        <TextInput value={password} onChange={text => setPassword(text)} placeholder={"password"} secure={true} />
+                        <TextInput value={emailAddress} onChangeText={text => setEmailAddress(text)} placeholder="email address" style={styles.textInputStyle} keyboardType="email-address" autoCapitalize="none" />
+                        <TextInput value={password} onChangeText={text => setPassword(text)} placeholder="password" style={styles.textInputStyle} autoCapitalize="none" secureTextEntry={true} />
                         <Text style={[styles.message, { color: 'red' }]}>{message ? getMessage() : null}</Text>
                     </View>
                     <View>
@@ -55,11 +53,14 @@ const LoginScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.bottomViewStyle}>
                     <View>
-                        <Button buttonText={"log in"} onSubmit={onSubmitHandler} />
-
+                        <TouchableOpacity style={styles.loginBtnStyle} onPress={onSubmitHandler}>
+                            <Text style={styles.loginBtnTextStyle}>log in</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.registerTextView}>
-                        <TextLink text={"register"} link={() => navigation.navigate('Register')} textColor={"#f37320"} />
+                        <Text style={styles.registerTextStyle} onPress={() =>
+                            navigation.navigate('Register')
+                        }>register</Text>
                     </View>
                 </View>
             </View>

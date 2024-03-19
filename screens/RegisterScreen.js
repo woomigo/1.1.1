@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
@@ -67,9 +67,13 @@ const RegisterScreen = ({ navigation }) => {
                 </View>
             </View>
             <View style={styles.bottomViewStyle}>
-                <Button buttonText={'register'} onSubmit={registerUser} />
+                <View>
+                    <TouchableOpacity style={styles.registerBtnStyle} onPress={registerUser}><Text style={styles.registerBtnTextStyle}>register</Text></TouchableOpacity>
+                </View>
                 <View style={styles.registerTextView}>
-                    <TextLink text={"login"} textColor={'#f37320'} link={() => navigation.navigate('Login')} />
+                    <Text style={styles.signInTextStyle} onPress={() =>
+                        navigation.navigate('Login')
+                    }>sign in</Text>
                 </View>
             </View>
         </View >

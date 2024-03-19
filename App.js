@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from "firebase/auth";
@@ -28,6 +29,9 @@ const App = () => {
   });
 
   return (
+    // <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+    //   <Text>WORKING?</Text>
+    // </View>
     <NavigationContainer>
       <Stack.Navigator options={{ headerShown: false }}>
         {isSignedIn ? (
