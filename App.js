@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from "firebase/auth";
@@ -10,6 +9,10 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import CameraScreen from './screens/CameraScreen';
+import MigosScreen from './screens/MigosScreen';
+import MenuScreen from './screens/MenuScreen'
+import SearchScreen from './screens/SearchScreen'
+import MessagesScreen from './screens/MessagesScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +43,10 @@ const App = () => {
             <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="Migos" component={MigosScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="Messages" component={MessagesScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
 
 
           </>

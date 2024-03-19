@@ -84,7 +84,7 @@ const HomeScreen = ({navigation}) => {
                             solid
                             size={25}
                             onPress={() =>
-                                navigation.navigate('CameraComponent')
+                                navigation.navigate('Menu')
                             }
                         />
                     </TouchableOpacity>
@@ -102,7 +102,7 @@ const HomeScreen = ({navigation}) => {
                     solid
                     size={25}
                     onPress={() =>
-                        navigation.navigate('CameraComponent')
+                        navigation.navigate('Migos')
                     }
                 />
                 <Icon
@@ -112,7 +112,7 @@ const HomeScreen = ({navigation}) => {
                     solid
                     size={25}
                     onPress={() =>
-                        navigation.navigate('CameraComponent')
+                        navigation.navigate('Search')
                     }
                 />
                 <Icon
@@ -122,7 +122,7 @@ const HomeScreen = ({navigation}) => {
                     solid
                     size={25}
                     onPress={() =>
-                        navigation.navigate('CameraComponent')
+                        navigation.navigate('Messages')
                     }
                 />
             </View>
