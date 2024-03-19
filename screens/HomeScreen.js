@@ -6,7 +6,7 @@ import { auth, db } from '../firebaseConfig';
 
 
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
     const [uid, setUID] = useState(null);
     const [notificationCount, setNotificationCount] = useState('1');
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -48,7 +48,7 @@ const HomeScreen = () => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigate('CameraComponent')
+                            navigation.navigate('Camera')
                         }
                     />}
                 centerComponent={
@@ -57,7 +57,7 @@ const HomeScreen = () => {
                             rounded
                             size="large"
                             onPress={() =>
-                                navigate('ProfileComponent')
+                                navigation.navigate('Profile')
                             }
                             source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
                         />{notificationCount > 0 ?
@@ -66,7 +66,7 @@ const HomeScreen = () => {
                                 value={notificationCount}
                                 containerStyle={{ position: 'absolute', top: 0, right: 0 }}
                                 onPress={() =>
-                                    navigate('NotificationsComponent')
+                                    navigation.navigate('Notifications')
                                 }
                             />
                             : null}
@@ -74,7 +74,7 @@ const HomeScreen = () => {
                 }
                 rightComponent={
                     <TouchableOpacity onPress={() =>
-                        navigate('WoosComponent')
+                        navigation.navigate('Menu')
                     } >
 
                         <Icon
@@ -84,7 +84,7 @@ const HomeScreen = () => {
                             solid
                             size={25}
                             onPress={() =>
-                                navigate('CameraComponent')
+                                navigation.navigate('CameraComponent')
                             }
                         />
                     </TouchableOpacity>
@@ -102,7 +102,7 @@ const HomeScreen = () => {
                     solid
                     size={25}
                     onPress={() =>
-                        navigate('CameraComponent')
+                        navigation.navigate('CameraComponent')
                     }
                 />
                 <Icon
@@ -112,7 +112,7 @@ const HomeScreen = () => {
                     solid
                     size={25}
                     onPress={() =>
-                        navigate('CameraComponent')
+                        navigation.navigate('CameraComponent')
                     }
                 />
                 <Icon
@@ -122,7 +122,7 @@ const HomeScreen = () => {
                     solid
                     size={25}
                     onPress={() =>
-                        navigate('CameraComponent')
+                        navigation.navigate('CameraComponent')
                     }
                 />
             </View>
@@ -135,16 +135,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff"
-    },
-    profileImage: {
-        width: 60,
-        height: 60,
-        borderColor: "#f37320",
-        borderWidth: .5,
-        borderRadius: 20,
-        shadowOffset: { width: 0, height: 4 },
-        shadowRadius: 4,
-        shadowOpacity: 0.1,
     },
     header: {
         shadowColor: '#000',

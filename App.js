@@ -9,6 +9,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import CameraScreen from './screens/CameraScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,7 @@ const App = () => {
           <>
             <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
 
 
           </>

@@ -1,9 +1,11 @@
 import { View, Text, StyleSheet } from "react-native";
 
 const CameraScreen = () => {
-    <View style={styles.container}>
-        <Text>Camera Screen</Text>
-    </View>
+    return (
+        <View style={styles.container}>
+            <Text>Camera Screen</Text>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({

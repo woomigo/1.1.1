@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, TouchableOpacity } from 'react-native';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import Button from "../components/Button";
-// import TextInput from "../components/TextInput";
-import TextLink from "../components/TextLink";
 
 const LoginScreen = ({ navigation }) => {
 

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import firebaseConfig from '../firebaseConfig';
-import Button from '../components/Button';
-import TextLink from '../components/TextLink';
+
 
 const RegisterScreen = ({ navigation }) => {
 
