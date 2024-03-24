@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon } from "@rneui/themed";
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 const WooTimeScreen = ({ navigation }) => {
+
+    const [time, setTime] = useState(new Date())
+
+    let currentDate = new Date();
+    currentDate.setDate(currentDate.getDate());
+    const today = currentDate;
 
     return (
         <View style={styles.container}>
@@ -25,21 +32,29 @@ const WooTimeScreen = ({ navigation }) => {
                     </View>
                 }
                 rightComponent={
-                  <Icon
-                  name="chevron-right"
-                  type='font-awesome-5'
-                  color="#f37320"
-                  size={25}
-                  onPress={() =>
-                      navigation.navigate('WooLocation')
-                  }
-              />
+                    <Icon
+                        name="chevron-right"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={25}
+                        onPress={() =>
+                            navigation.navigate('WooLocation')
+                        }
+                    />
                 }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
+
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+
+                <Text style={{ marginTop: 10, fontSize: 24, fontWeight: 'bold' }}>{time.toLocaleTimeString('en-us', { timeStyle: 'short' })}</Text>
+                <RNDateTimePicker style={{ marginTop: 50 }} display="spinner" mode="time" value={time} onChange={(event, time) => setTime(time)} minimumDate={today} />
+
+            </View>
         </View>
+
     )
 
 }

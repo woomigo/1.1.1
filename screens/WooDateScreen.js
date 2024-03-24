@@ -2,24 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon } from "@rneui/themed";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+
 const WooDateScreen = ({ navigation }) => {
 
-    const [date, setStateDate] = useState(new Date())
+    const [date, setDate] = useState(new Date())
 
     let currentDate = new Date();
     currentDate.setDate(currentDate.getDate());
     const today = currentDate;
-
-    const setDate = (event, date) => {
-        const {
-            type,
-            nativeEvent: { timestamp, utcOffset },
-        } = event;
-
-        setStateDate(date)
-    };
-
-    <RNDateTimePicker onChange={this.setDate} />;
 
     return (
         <View style={styles.container}>
@@ -57,7 +47,12 @@ const WooDateScreen = ({ navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <View style={{ alignItems: 'center', justifyContent: 'center' }}><RNDateTimePicker mode="date" value={date} minimumDate={today} /></View>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+
+                <Text style={{ marginTop: 10, fontSize: 24, fontWeight: 'bold' }}>{date.toLocaleDateString('en-us')}</Text>
+                <RNDateTimePicker style={{ marginTop: 50 }} display='inline' mode="date" value={date} onChange={(event, date) => setDate(date)} minimumDate={today} />
+
+            </View>
 
         </View>
     )
