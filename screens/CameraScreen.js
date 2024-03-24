@@ -1,51 +1,127 @@
-import { CameraView, useCameraPermissions } from 'expo-camera/next';
-import { useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+// import { CameraView, useCameraPermissions } from 'expo-camera/next';
+// import { useState } from 'react';
+// import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const CameraScreen = ({navigation}) => {
+// const CameraScreen = ({navigation}) => {
 
-    const [facing, setFacing] = useState('back');
-    const [permission, requestPermission] = useCameraPermissions();
+//     const [facing, setFacing] = useState('back');
+//     const [permission, requestPermission] = useCameraPermissions();
 
-    function toggleCameraFacing() {
-        setFacing(current => (current === 'back' ? 'front' : 'back'));
-      }
+//     function toggleCameraFacing() {
+//         setFacing(current => (current === 'back' ? 'front' : 'back'));
+//       }
     
-      return (
+//       return (
+//         <View style={styles.container}>
+//           <CameraView style={styles.camera} facing={facing}>
+//             <View style={styles.buttonContainer}>
+//             <TouchableOpacity style={styles.button} onPress={() =>
+//                             navigation.navigate('Home')}>
+//                 <Text style={styles.text}>BACK</Text>
+//               </TouchableOpacity>
+//               <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+//                 <Text style={styles.text}>Flip Camera</Text>
+//               </TouchableOpacity>
+//             </View>
+//           </CameraView>
+//         </View>
+//       );
+// }
+
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//         backgroundColor: 'red',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//     },
+//     camera: {
+//         flex: 1,
+//         width: '100%'
+//     },
+//     buttonContainer: {
+//         margin:100,
+//         marginBottom: 100
+//     },
+//     button: {
+//         backgroundColor: 'red'
+//     }
+// })
+
+// export default CameraScreen;
+
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from "react-native";
+import { Header, Icon } from "@rneui/themed";
+
+const CameraScreen = ({ navigation }) => {
+
+    return (
         <View style={styles.container}>
-          <CameraView style={styles.camera} facing={facing}>
-            <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={() =>
-                            navigation.navigate('Home')}>
-                <Text style={styles.text}>BACK</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-                <Text style={styles.text}>Flip Camera</Text>
-              </TouchableOpacity>
-            </View>
-          </CameraView>
+            <Header
+                style={styles.header}
+                backgroundColor={'#fff'}
+                leftComponent={
+                    <Icon
+                        name="chevron-left"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={25}
+                        onPress={() =>
+                            navigation.navigate('Home')
+                        }
+                    />}
+                centerComponent={
+                    <View >
+                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>camera</Text>
+                    </View>
+                }
+                rightComponent={
+                  <Icon
+                  name="chevron-right"
+                  type='font-awesome-5'
+                  color="#f37320"
+                  size={25}
+                  onPress={() =>
+                      navigation.navigate('WooDate')
+                  }
+              />
+                }
+                rightContainerStyle={styles.rightComponent}
+                leftContainerStyle={styles.leftComponent}
+                centerContainerStyle={styles.centerComponent}
+            />
         </View>
-      );
+    )
+
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'red',
-        alignItems: 'center',
+        backgroundColor: "#fff"
+    },
+    profileInfo: {
+        textAlign: 'center'
+    },
+    header: {
+        shadowColor: '#000',
+        shadowOffset: { width: 1, height: 3 },
+        shadowOpacity: 0.2,
+        elevation: 4,
+    },
+    leftComponent: {
         justifyContent: 'center',
+        alignItems: 'center',
     },
-    camera: {
-        flex: 1,
-        width: '100%'
+    centerComponent: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    buttonContainer: {
-        margin:100,
-        marginBottom: 100
+    rightComponent: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    button: {
-        backgroundColor: 'red'
-    }
 })
 
-export default CameraScreen;
+export default CameraScreen
