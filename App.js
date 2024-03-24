@@ -13,6 +13,7 @@ import MigosScreen from './screens/MigosScreen';
 import MenuScreen from './screens/MenuScreen'
 import SearchScreen from './screens/SearchScreen'
 import MessagesScreen from './screens/MessagesScreen'
+import NotificationsScreen from './screens/NotificationsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,7 @@ const App = () => {
             <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Migos" component={MigosScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Messages" component={MessagesScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
 
 

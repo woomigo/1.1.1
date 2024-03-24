@@ -6,9 +6,11 @@ import { auth, db } from '../firebaseConfig';
 
 
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
     const [uid, setUID] = useState(null);
-    const [notificationCount, setNotificationCount] = useState('1');
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [migosNotificationCount, setMigosNotificationCount] = useState(0);
+    const [messagesNotificationCount, setMessagesNotificationCount] = useState(0);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     const logout = () => {
@@ -60,7 +62,8 @@ const HomeScreen = ({navigation}) => {
                                 navigation.navigate('Profile')
                             }
                             source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                        />{notificationCount > 0 ?
+                        />
+                        {/* {notificationCount > 0 ?
                             <Badge
                                 status="error"
                                 value={notificationCount}
@@ -69,7 +72,7 @@ const HomeScreen = ({navigation}) => {
                                     navigation.navigate('Notifications')
                                 }
                             />
-                            : null}
+                            : null} */}
                     </View>
                 }
                 rightComponent={
@@ -95,16 +98,27 @@ const HomeScreen = ({navigation}) => {
             />
 
             <View style={styles.subHeader}>
-                <Icon
-                    name="user-friends"
-                    type='font-awesome-5'
-                    color="#f37320"
-                    solid
-                    size={25}
-                    onPress={() =>
-                        navigation.navigate('Migos')
-                    }
-                />
+                <View>
+                    <Icon
+                        name="user-friends"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        solid
+                        size={25}
+                        onPress={() =>
+                            navigation.navigate('Migos')
+                        }
+                    />{migosNotificationCount > 0 ?
+                        <Badge
+                            status="error"
+                            value={migosNotificationCount}
+                            containerStyle={{ position: 'absolute', top: 20, left: 20 }}
+                            onPress={() =>
+                                navigation.navigate('Migos')
+                            }
+                        />
+                        : null}
+                </View>
                 <Icon
                     name="search"
                     type='font-awesome-5'
@@ -115,16 +129,76 @@ const HomeScreen = ({navigation}) => {
                         navigation.navigate('Search')
                     }
                 />
-                <Icon
-                    name="envelope"
-                    type='font-awesome-5'
-                    color="#f37320"
-                    solid
-                    size={25}
-                    onPress={() =>
-                        navigation.navigate('Messages')
-                    }
-                />
+                {
+                    messagesNotificationCount <= 0 ?
+                        <Icon
+                            name="envelope-open"
+                            type='font-awesome-5'
+                            color="#f37320"
+                            solid
+                            size={25}
+                            onPress={() =>
+                                navigation.navigate('Messages')
+                            } />
+                        :
+                        <View>
+                            <Icon
+                                name="envelope"
+                                type='font-awesome-5'
+                                color="#f37320"
+                                solid
+                                size={25}
+                                onPress={() =>
+                                    navigation.navigate('Messages')
+                                }
+                            />{messagesNotificationCount > 0 ?
+                                <Badge
+                                    status="error"
+                                    value={messagesNotificationCount}
+                                    containerStyle={{ position: 'absolute', top: 20, left: 20 }}
+                                    onPress={() =>
+                                        navigation.navigate('Messages')
+                                    }
+                                />
+                                : null}
+                        </View>
+                }
+
+                {
+                    notificationCount <= 0 ?
+                        <Icon
+                            name="bell-slash"
+                            type='font-awesome-5'
+                            color="#f37320"
+                            solid
+                            size={25}
+                            onPress={() =>
+                                navigation.navigate('Notifications')
+                            } />
+                        :
+                        <View>
+                            <Icon
+                                name="bell"
+                                type='font-awesome-5'
+                                color="#f37320"
+                                solid
+                                size={25}
+                                onPress={() =>
+                                    navigation.navigate('Notifications')
+                                }
+                            />{notificationCount > 0 ?
+                                <Badge
+                                    status="error"
+                                    value={notificationCount}
+                                    containerStyle={{ position: 'absolute', top: 20, left: 20 }}
+                                    onPress={() =>
+                                        navigation.navigate('Notifications')
+                                    }
+                                />
+                                : null}
+                        </View>
+                }
+
             </View>
 
         </View>

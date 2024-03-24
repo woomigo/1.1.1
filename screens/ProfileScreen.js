@@ -1,37 +1,42 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
-import { Header, Icon, Avatar, Tab, TabView } from "@rneui/themed";
+import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
 
 const ProfileScreen = ({ navigation }) => {
 
     const [index, setIndex] = useState(0);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [isProfileOwnedByUser, setIsProfileOwnedByUser] = useState(true);
+
     return (
         <View style={styles.container}>
             <Header
                 style={styles.header}
                 backgroundColor={'#fff'}
                 leftComponent={
-                    <Icon
-                        name="chevron-left"
-                        type='font-awesome-5'
-                        color="#f37320"
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Home')
-                        }
-                    />}
+                    <View>
+                        <Icon
+                            name="chevron-left"
+                            type='font-awesome-5'
+                            color="#f37320"
+                            size={25}
+                            onPress={() =>
+                                navigation.navigate('Home')
+                            }
+                        />
+                    </View>
+                }
                 centerComponent={
                     <View >
                         <Text style={{ marginBottom: 3, textAlign: 'center', fontWeight: 'bold' }}>Deserae Harrison</Text>
                         <Text style={{ marginBottom: 3, textAlign: 'center' }}>@dezzie_wezzie</Text>
-                        <Text style={{ marginBottom: 3, textAlign: 'center' }}>34 woos</Text>
-                        <Text style={{ marginBottom: 3, textAlign: 'center' }}>1,2345 miogs</Text>
+                        <Text style={{ marginBottom: 3, textAlign: 'center' }}>1,2345 migos</Text>
                     </View>
                 }
                 rightComponent={
                     <Avatar
                         rounded
-                        size="medium"
+                        size="large"
                         onPress={() =>
                             navigation.navigate('Profile')
                         }
@@ -43,31 +48,69 @@ const ProfileScreen = ({ navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
+            {
+                !isProfileOwnedByUser ?
+
+                    <View style={styles.subHeader}>
+                        <View>
+                            <Button radius={"lg"} size="sm" color="gray" type="solid">
+                                message
+                                <Icon style={{ marginStart: 5 }} name="envelope" solid type='font-awesome-5' size="sm" color="white" />
+                            </Button>
+                        </View>
+                        <View>
+                            {isFollowing ?
+                                <Button radius={"lg"} size="sm" color="gray" type="solid">
+                                    unfollow
+                                    <Icon style={{ marginStart: 5 }} name="user-minus" type='font-awesome-5' size="sm" color="white" />
+                                </Button>
+                                :
+                                <Button radius={"lg"} size="sm" color="gray" type="solid">
+                                    follow
+                                    <Icon style={{ marginStart: 5 }} name="user-plus" type='font-awesome-5' size="sm" color="white" />
+                                </Button>}
+                        </View>
+                    </View> : null
+            }
+
+            {
+                isProfileOwnedByUser ?  
+                <View style={styles.subHeader}>
+                <View>
+                    <Button radius={"lg"} size="sm" color="gray" type="solid">
+                        edit profile
+                        <Icon style={{ marginStart: 5 }} name="user-cog" solid type='font-awesome-5' size="sm" color="white" />
+                    </Button>
+                </View>
+            </View> : null
+            }
+
             <Tab
                 value={index}
                 onChange={(e) => setIndex(e)}
                 indicatorStyle={{
-                    backgroundColor: 'white',
+                    backgroundColor: '#f37320',
                     height: 3,
                 }}
                 containerStyle={{
-                    backgroundColor: "#f37320"
+                    marginTop: 20,
+                    backgroundColor: "white"
                 }}
             >
                 <Tab.Item
                     title="published"
-                    titleStyle={{ fontSize: 12, color: 'white' }}
-                    icon={{ name: 'sign-out-alt', type: 'font-awesome-5', color: 'white' }}
+                    titleStyle={{ fontSize: 12, color: "#f37320" }}
+                    icon={{ name: 'sign-out-alt', type: 'font-awesome-5', color: "#f37320" }}
                 />
                 <Tab.Item
                     title="subscribed"
-                    titleStyle={{ fontSize: 12, color: 'white' }}
-                    icon={{ name: 'sign-in-alt', type: 'font-awesome-5', color: 'white' }}
+                    titleStyle={{ fontSize: 12, color: "#f37320" }}
+                    icon={{ name: 'sign-in-alt', type: 'font-awesome-5', color: "#f37320" }}
                 />
                 <Tab.Item
                     title="gallery"
-                    titleStyle={{ fontSize: 12, color: 'white' }}
-                    icon={{ name: 'photo-video', type: 'font-awesome-5', color: 'white' }}
+                    titleStyle={{ fontSize: 12, color: "#f37320" }}
+                    icon={{ name: 'photo-video', type: 'font-awesome-5', color: "#f37320" }}
                 />
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
@@ -89,6 +132,7 @@ const ProfileScreen = ({ navigation }) => {
             </TabView>
         </View>
     )
+
 
 }
 
@@ -117,6 +161,12 @@ const styles = StyleSheet.create({
     rightComponent: {
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    subHeader: {
+        marginTop: 10,
+        padding: 0,
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
     tabHeader: {
         marginTop: 10,

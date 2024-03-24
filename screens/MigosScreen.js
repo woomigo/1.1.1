@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
-import { Header, Icon } from "@rneui/themed";
+import { Header, Icon, Tab, TabView } from "@rneui/themed";
 
 const MigosScreen = ({ navigation }) => {
+
+    const [index, setIndex] = useState(0);
 
     return (
         <View style={styles.container}>
@@ -25,13 +27,60 @@ const MigosScreen = ({ navigation }) => {
                     </View>
                 }
                 // rightComponent={
-             
+
                 // }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
+
+            <Tab
+                value={index}
+                onChange={(e) => setIndex(e)}
+                indicatorStyle={{
+                    backgroundColor: '#f37320',
+                    height: 3,
+                }}
+                containerStyle={{
+                    backgroundColor: "white"
+                }}
+            >
+                <Tab.Item
+                    title="follow"
+                    titleStyle={{ fontSize: 12, color: "#f37320" }}
+                    icon={{ name: 'user-friends', type: 'font-awesome-5', color: "#f37320" }}
+                />
+                <Tab.Item
+                    title="followers"
+                    titleStyle={{ fontSize: 12, color: "#f37320" }}
+                    icon={{ name: 'users', type: 'font-awesome-5', color: "#f37320" }}
+                />
+                <Tab.Item
+                    title="requests"
+                    titleStyle={{ fontSize: 12, color: "#f37320" }}
+                    icon={{ name: 'user-check', type: 'font-awesome-5', color: "#f37320" }}
+                />
+            </Tab>
+            <TabView value={index} onChange={setIndex} animationType="spring">
+                <TabView.Item style={{ width: '100%' }}>
+                    <View style={styles.tabHeader}>
+                        <Text style={styles.tabText}>follow</Text>
+                    </View>
+                </TabView.Item>
+                <TabView.Item style={{ width: '100%' }}>
+                    <View style={styles.tabHeader}>
+                        <Text style={styles.tabText}>followers</Text>
+                    </View>
+                </TabView.Item>
+                <TabView.Item style={{ width: '100%' }}>
+                    <View style={styles.tabHeader}>
+                        <Text style={styles.tabText}>requests</Text>
+                    </View>
+                </TabView.Item>
+            </TabView>
         </View>
+
+
     )
 
 }
@@ -62,6 +111,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    tabHeader: {
+        marginTop: 10,
+        padding: 5,
+        alignItems: 'center'
+    },
+    tabText: {
+        fontSize: 18,
+        color: "#f37320",
+        fontWeight: 'bold'
+    }
 })
 
 export default MigosScreen
