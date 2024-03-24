@@ -55,19 +55,19 @@ const ProfileScreen = ({ navigation }) => {
                         <View>
                             <Button radius={"lg"} size="sm" color="gray" type="solid">
                                 message
-                                <Icon style={{ marginStart: 5 }} name="envelope" solid type='font-awesome-5' size="sm" color="white" />
+                                <Icon style={{ marginStart: 5 }} name="envelope" solid type='font-awesome-5' size={14} color="white" />
                             </Button>
                         </View>
                         <View>
                             {isFollowing ?
                                 <Button radius={"lg"} size="sm" color="gray" type="solid">
                                     unfollow
-                                    <Icon style={{ marginStart: 5 }} name="user-minus" type='font-awesome-5' size="sm" color="white" />
+                                    <Icon style={{ marginStart: 5 }} name="user-minus" type='font-awesome-5' size={14} color="white" />
                                 </Button>
                                 :
                                 <Button radius={"lg"} size="sm" color="gray" type="solid">
                                     follow
-                                    <Icon style={{ marginStart: 5 }} name="user-plus" type='font-awesome-5' size="sm" color="white" />
+                                    <Icon style={{ marginStart: 5 }} name="user-plus" type='font-awesome-5' size={14} color="white" />
                                 </Button>}
                         </View>
                     </View> : null
@@ -79,7 +79,7 @@ const ProfileScreen = ({ navigation }) => {
                 <View>
                     <Button radius={"lg"} size="sm" color="gray" type="solid">
                         edit profile
-                        <Icon style={{ marginStart: 5 }} name="user-cog" solid type='font-awesome-5' size="sm" color="white" />
+                        <Icon style={{ marginStart: 5 }} name="user-cog" solid type='font-awesome-5' size={14} color="white" />
                     </Button>
                 </View>
             </View> : null
