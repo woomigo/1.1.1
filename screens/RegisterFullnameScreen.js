@@ -63,7 +63,7 @@ const RegisterFullnameScreen = ({ navigation }) => {
             }
 
         } else {
-            // navigation.navigate('RegisterUsername')
+            navigation.navigate('RegisterDOB')
             console.log(`${firstName} ${lastName}`)
         }
     }
@@ -110,11 +110,14 @@ const RegisterFullnameScreen = ({ navigation }) => {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={{ flex: .8, alignItems: 'center', justifyContent: 'center' }}>
                     <Input
+                        label='Full Name'
+                        labelStyle={{color: 'black', marginBottom: 10}}
                         style={{}}
                         ref={firstNameRef}
                         value={firstName}
                         onChangeText={(text) => handleFirstnameOnChange(text)}
                         placeholder='first name'
+                        autoCapitalize="none"
                         errorStyle={{ color: 'red' }}
                         errorMessage={isFirstNameError && 'please add your first name'}
                         onFocus={() => handleFirstNameOnFocus()}
@@ -127,6 +130,7 @@ const RegisterFullnameScreen = ({ navigation }) => {
                         value={lastName}
                         onChangeText={(text) => handleLastnameOnChange(text)}
                         placeholder='last name'
+                        autoCapitalize="none"
                         errorStyle={{ color: 'red' }}
                         errorMessage={isLastNameError && 'please add your last name'}
                         onFocus={() => handleLastNameOnFocus()}
