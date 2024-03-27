@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { LinearProgress, Input, Header, Icon, Avatar } from '@rneui/themed';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
@@ -12,23 +13,86 @@ const RegisterScreen = ({ navigation }) => {
     const auth = getAuth();
     const db = getFirestore(app);
 
-    // const date = new Date();
-    // const year = date.getFullYear();
-    // const month = date.getMonth();
-    // const day = date.getDate();
+    const [emailAddress, setEmailAddress] = useState('')
+    const [password, setPassword] = useState('')
+    const [reEnterPassword, setReEnterPassword] = useState('')
+    const [isEmailAddressError, setIsEmailAddressError] = useState(false)
+    const [isPasswordError, setIsPasswordError] = useState(false)
+    const [isReEnterPasswordError, setIsReEnterPasswordError] = useState(false)
+    const [isEmailAddressIconHidden, setEmailAddressIconHidden] = useState(true)
+    const [isPasswordIconHidden, setPasswordIconHidden] = useState(true)
+    const [isReEnterPasswordIconHidden, setReEnterPasswordIconHidden] = useState(true)
+    const [emailAddressErrorMessage, setEmailAddressErrorMessage] = useState('')
 
-    // const dobMaximumDate = new Date(year - 13, month, day) // Today's date minus 13 YEARS
+    const emailAddressRef = useRef()
+    const passwordRef = useRef()
+    const reEnterPasswordRef = useRef()
 
-    const [emailAddress, setEmailAddress] = useState('');
-    const [password, setPassword] = useState('');
-    const [reEnterPassword, setReEnterPassword] = useState('');
-    // const [isError, setIsError] = useState(false);
-    // const [dob, setDob] = useState(dobMaximumDate);
-    const [showWarningMessage, setShowWarningMessage] = useState(false);
+    const clearEmailAddressInput = () => {
+        setEmailAddress('')
+        emailAddressRef.current.clear()
+        emailAddressRef.current.blur()
+    }
 
-    // useEffect(() => {
-    //     console.log(`REGISTER UID === ${uid}`)
-    // }, [uid]);
+    const clearPasswordInput = () => {
+        setPassword('')
+        passwordRef.current.clear()
+        passwordRef.current.blur()
+    }
+
+    const clearReEnterPasswordInput = () => {
+        setPassword('')
+        reEnterPasswordRef.current.clear()
+        reEnterPasswordRef.current.blur()
+    }
+
+    const handleEmailAddressOnChange = (email) => {
+        setIsEmailAddressError(false)
+        setEmailAddress(email)
+    }
+
+    const handlePasswordOnChange = (password) => {
+        setIsPasswordError(false)
+        setPassword(password)
+    }
+
+    const handleReEnterPasswordOnChange = (password) => {
+        setIsReEnterPasswordError(false)
+        setReEnterPassword(password)
+    }
+
+    const handleEmailAddressOnFocus = () => {
+        setEmailAddressIconHidden(false)
+    }
+
+    const handlePasswordOnFocus = () => {
+        setPasswordIconHidden(false)
+    }
+
+    const handleReEnterPasswordOnFocus = () => {
+        setReEnterPasswordIconHidden(false)
+    }
+
+    const handleEmailAddressEndEditing = () => {
+        setEmailAddressIconHidden(true)
+    }
+
+    const handlePasswordEndEditing = () => {
+        setPasswordIconHidden(true)
+    }
+
+    const handleReEnterPasswordEndEditing = () => {
+        setReEnterPasswordIconHidden(true)
+    }
+
+    const handleNextOnClick = () => {
+        console.log('NEXT CLICKED')
+        if (password != reEnterPassword) {
+            setIsReEnterPasswordError(true)
+        } else {
+            registerUser()
+        }
+    }
 
     const registerUser = () => {
         createUserWithEmailAndPassword(auth, emailAddress, password)
@@ -47,34 +111,129 @@ const RegisterScreen = ({ navigation }) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(`ERROR ${errorCode} ---- ${errorMessage}`)
-                // ..
+                if (errorCode == 'auth/email-already-exists') {
+                    isEmailAddressError(true)
+                    setEmailAddressErrorMessage('email address already exists')
+                }
+                if (errorCode == 'auth/invalid-email') {
+                    isEmailAddressError(true)
+                    setEmailAddressErrorMessage('invalid email. please check your email address')
+                }
+                if (errorCode == 'auth/invalid-password') {
+                    setIsPasswordError(true)
+                }
             });
     }
 
     return (
         <View style={styles.container}>
-            <View style={styles.topViewStyle}>
-                <Text style={styles.registerHeaderTextStyle}>register</Text>
-            </View>
-            <View style={styles.middleViewStyle}>
-                <View>
-                    <TextInput value={emailAddress} onChangeText={text => setEmailAddress(text)} placeholder="email address" style={styles.textInputStyle} keyboardType="email-address" autoCapitalize="none" />
-                    <TextInput value={password} onChangeText={text => setPassword(text)} placeholder="password" style={styles.textInputStyle} utoCapitalize="none" secureTextEntry={true} />
-                    {showWarningMessage ? <Text style={styles.pwErrorMatchText}>passwords must match</Text> : null}
-                    <TextInput value={reEnterPassword} onChangeText={text => setReEnterPassword(text)} placeholder="re-enter password" style={styles.textInputStyle} utoCapitalize="none" secureTextEntry={true} />
-                    {showWarningMessage ? <Text style={styles.pwErrorMatchText}>passwords must match</Text> : null}
+            <Header
+                style={styles.header}
+                backgroundColor={'#fff'}
+                leftComponent={
+                    <Icon
+                        name="chevron-left"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={25}
+                        onPress={() =>
+                            navigation.navigate('RegisterProfilePicture')
+                        }
+                    />}
+                centerComponent={
+                    <View >
+                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>register</Text>
+                    </View>
+                }
+                rightComponent={
+                    <Icon
+                        name="chevron-right"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={25}
+                        onPress={() => handleNextOnClick()}
+                    />
+                }
+                rightContainerStyle={styles.rightComponent}
+                leftContainerStyle={styles.leftComponent}
+                centerContainerStyle={styles.centerComponent}
+            />
+
+            <LinearProgress
+                style={{}}
+                value={1}
+                color="#f37320"
+                variant="determinate"
+            />
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <View style={{ flex: 1 }}>
+                    <View style={{ flex: .5, marginTop:20 }}>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`fullname: `}</Text>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`date of birth:`}</Text>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`username:`}</Text>
+                    </View>
+                    <View style={{ flex: .5, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ marginBottom: 5, fontSize: 16, fontWeight: 'bold' }}>{`profile picture:`}</Text>
+                        <Avatar rounded size="large"
+                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                        // source={{ uri: image }} 
+                        />
+                    </View>
+
+                    <View style={{ flex: 3.5, alignItems: 'center', justifyContent: 'center' }}>
+
+
+                        <Input
+                            label='email and password'
+                            labelStyle={{ color: 'black', marginBottom: 10 }}
+                            style={{}}
+                            ref={emailAddressRef}
+                            value={emailAddress}
+                            onChangeText={(text) => handleEmailAddressOnChange(text)}
+                            placeholder='email address'
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            errorStyle={{ color: 'red' }}
+                            errorMessage={isEmailAddressError && emailAddressErrorMessage}
+                            onFocus={() => handleEmailAddressOnFocus()}
+                            onEndEditing={() => handleEmailAddressEndEditing()}
+                            rightIcon={!isEmailAddressIconHidden && <Icon Icon name="close" size={18} onPress={() => clearEmailAddressInput()} />}
+                        />
+
+                        <Input
+                            style={{ marginTop: 10 }}
+                            ref={passwordRef}
+                            value={password}
+                            onChangeText={(text) => handlePasswordOnChange(text)}
+                            placeholder='password'
+                            autoCapitalize="none"
+                            secureTextEntry
+                            errorStyle={{ color: 'red' }}
+                            errorMessage={isPasswordError && 'please add your last name'}
+                            onFocus={() => handlePasswordOnFocus()}
+                            onEndEditing={() => handlePasswordEndEditing()}
+                            rightIcon={!isPasswordIconHidden && <Icon Icon name="close" size={18} onPress={() => clearPasswordInput()} />}
+                        />
+
+                        <Input
+                            style={{ marginTop: 10 }}
+                            ref={reEnterPasswordRef}
+                            value={reEnterPassword}
+                            onChangeText={(text) => handleReEnterPasswordOnChange(text)}
+                            placeholder='re-enter password'
+                            autoCapitalize="none"
+                            secureTextEntry
+                            errorStyle={{ color: 'red' }}
+                            errorMessage={isReEnterPasswordError && "passwords don't match"}
+                            onFocus={() => handleReEnterPasswordOnFocus}
+                            onEndEditing={() => handleReEnterPasswordEndEditing()}
+                            rightIcon={!isReEnterPasswordIconHidden && <Icon Icon name="close" size={18} onPress={() => clearReEnterPasswordInput()} />}
+                        />
+
+                    </View>
                 </View>
-            </View>
-            <View style={styles.bottomViewStyle}>
-                <View>
-                    <TouchableOpacity style={styles.registerBtnStyle} onPress={registerUser}><Text style={styles.registerBtnTextStyle}>register</Text></TouchableOpacity>
-                </View>
-                <View style={styles.registerTextView}>
-                    <Text style={styles.signInTextStyle} onPress={() =>
-                        navigation.navigate('Login')
-                    }>sign in</Text>
-                </View>
-            </View>
+
+            </TouchableWithoutFeedback>
         </View >
     )
 }

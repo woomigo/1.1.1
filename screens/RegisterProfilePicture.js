@@ -1,42 +1,32 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Button } from "react-native";
+import { Header, Icon, LinearProgress, Avatar } from "@rneui/themed";
+import * as ImagePicker from 'expo-image-picker';
 
 const RegisterProfilePictureScreen = ({ navigation }) => {
 
-    const [username, setUsername] = useState('')
-    const [isUsernameError, setIsUsernameError] = useState(false)
-    const [isUsernameIconHidden, setUsernameIconHidden] = useState(true)
+    const [image, setImage] = useState(null);
 
-    const usernameRef = useRef()
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        console.log(result);
 
-    const clearUsernameInput = () => {
-        setUsername('')
-        usernameRef.current.clear()
-        usernameRef.current.blur()
-    }
-
-    const handleUsernameOnChange = (username) => {
-        setIsUsernameError(false)
-        setUsername(username)
-    }
-
-    const handleUsernameOnFocus = () => {
-        setUsernameIconHidden(false)
-    }
-
-    const handleUsernameEndEditing = () => {
-        setUsernameIconHidden(true)
-    }
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
 
     const handleNextOnClick = () => {
         console.log('NEXT CLICKED')
-        if (username.length <= 0) {
-            setIsUsernameError(true)
-        } else {
-            navigation.navigate('RegisterProfilePicture')
-            console.log(`${username}`)
-        }
+        navigation.navigate('Register')
+        console.log(`IMAGE IS ${image}`)
+
     }
 
     return (
@@ -51,7 +41,7 @@ const RegisterProfilePictureScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('RegisterDOB')
+                            navigation.navigate('RegisterUsername')
                         }
                     />}
                 centerComponent={
@@ -78,25 +68,11 @@ const RegisterProfilePictureScreen = ({ navigation }) => {
                 color="#f37320"
                 variant="determinate"
             />
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View style={{ flex: .8, alignItems: 'center', justifyContent: 'center' }}>
-                    <Input
-                        label='username'
-                        labelStyle={{ color: 'black', marginBottom: 10 }}
-                        style={{}}
-                        ref={usernameRef}
-                        value={username}
-                        onChangeText={(text) => handleUsernameOnChange(text)}
-                        placeholder='@username'
-                        autoCapitalize="none"
-                        errorStyle={{ color: 'red' }}
-                        errorMessage={isUsernameError && 'username already exists'}
-                        onFocus={() => handleUsernameOnFocus()}
-                        onEndEditing={() => handleUsernameEndEditing()}
-                        rightIcon={!isUsernameIconHidden && <Icon Icon name="close" size={18} onPress={() => clearUsernameInput()} />}
-                    />
-                </View>
-            </TouchableWithoutFeedback>
+
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'red' }}>
+                <Button title="Pick an image from camera roll" onPress={pickImage} />
+                {image && <Avatar rounded size="xlarge" source={{ uri: image }} />}
+            </View>
         </View>
     )
 
