@@ -131,7 +131,7 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                     <View style={styles.registerTextView}>
                         <Text style={styles.registerTextStyle} onPress={() =>
-                            navigation.navigate('Register')
+                            navigation.navigate('RegisterFullname')
                         }>register</Text>
                     </View>
                 </View>
