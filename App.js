@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from './firebaseConfig';
 
 import RegisterScreen from './screens/RegisterScreen';
+import RegisterFullnameScreen from './screens/RegisterFullnameScreen';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -20,6 +21,7 @@ import WooLocationScreen from './screens/WooLocationScreen';
 import WooMigosScreen from './screens/WooMigosScreen';
 import WooListScreen from './screens/WooListScreen';
 import WooPreviewEditScreen from './screens/WooPreviewEditScreen';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -69,6 +71,7 @@ const App = () => {
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="RegisterFullname" component={RegisterFullnameScreen} options={{ headerShown: false, gestureEnabled: false }} />
             <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false, gestureEnabled: false }} />
           </>
         )}

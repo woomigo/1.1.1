@@ -16,7 +16,7 @@ const ProfileScreen = ({ navigation }) => {
                 leftComponent={
                     <View>
                         <Icon
-                            name="chevron-left"
+                            name="home"
                             type='font-awesome-5'
                             color="#f37320"
                             size={25}

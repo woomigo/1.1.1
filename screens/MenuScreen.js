@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Header, Icon } from "@rneui/themed";
+import { signOut } from "firebase/auth";
+import { auth } from '../firebaseConfig';
 
 const MenuScreen = ({ navigation }) => {
+
+    const logout = () => {
+        signOut(auth).then(() => {
+            console.log(`SIGNED OUT SUCCESSFULLY`)
+            // Sign-out successful.
+        }).catch((error) => {
+            // An error happened.
+            console.log(`ERROR: ${error}`)
+        });
+    }
 
     return (
         <View style={styles.container}>
@@ -25,12 +37,14 @@ const MenuScreen = ({ navigation }) => {
                     </View>
                 }
                 // rightComponent={
-             
+
                 // }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
+
+            <TouchableOpacity onPress={() => logout()}><Text>logout</Text></TouchableOpacity>
         </View>
     )
 

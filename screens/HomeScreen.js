@@ -13,15 +13,7 @@ const HomeScreen = ({ navigation }) => {
     const [messagesNotificationCount, setMessagesNotificationCount] = useState(0);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-    const logout = () => {
-        signOut(auth).then(() => {
-            console.log(`SIGNED OUT SUCCESSFULLY`)
-            // Sign-out successful.
-        }).catch((error) => {
-            // An error happened.
-            console.log(`ERROR: ${error}`)
-        });
-    }
+
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -39,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            {/* <TouchableOpacity onPress={()=>logout()}><Text>Home Screen</Text></TouchableOpacity>  */}
+            
             <Header
                 style={styles.header}
                 backgroundColor={'#fff'}

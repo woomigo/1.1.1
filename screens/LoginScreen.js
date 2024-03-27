@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { View, Text, Image, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, TouchableOpacity } from 'react-native';
+import { Icon, Input } from "@rneui/themed";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 
@@ -7,26 +8,72 @@ const LoginScreen = ({ navigation }) => {
 
     const [emailAddress, setEmailAddress] = useState('');
     const [password, setPassword] = useState('');
-    const [isError, setIsError] = useState(false);
-    const [message, setMessage] = useState('');
+    const [isEmailError, setIsEmailError] = useState(false);
+    const [isPasswordError, setIsPasswordError] = useState(false);
+    const [isTooManyRequestsError, setIsTooManyRequestsError] = useState(false);
+    const [isEmailIconHidden, setEmailIconHidden] = useState(true)
+    const [isPasswordIconHidden, setPasswordIconHidden] = useState(true)
+
+    const emailRef = useRef()
+    const passwordRef = useRef()
+
+    const clearEmailInput = () => {
+        setEmailAddress('')
+        emailRef.current.clear()
+        emailRef.current.blur()
+    }
+
+    const clearPasswordInput = () => {
+        setPassword('')
+        passwordRef.current.clear()
+        passwordRef.current.blur()
+    }
+
+    const handleEmailOnChange = (name) => {
+        setIsEmailError(false)
+        setEmailAddress(name)
+    }
+
+    const handlePasswordOnChange = (name) => {
+        setIsPasswordError(false)
+        setPassword(name)
+    }
+
+    const handleEmailOnFocus = () => {
+        setEmailIconHidden(false)
+    }
+
+    const handlePasswordOnFocus = () => {
+        setPasswordIconHidden(false)
+    }
+
+    const handleEmailEndEditing = () => {
+        setEmailIconHidden(true)
+    }
+
+    const handlePasswordEndEditing = () => {
+        setPasswordIconHidden(true)
+    }
 
     const onSubmitHandler = () => {
         signInWithEmailAndPassword(auth, emailAddress, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                setMessage(`welcome!`)
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                setIsError(true)
-                setMessage(errorMessage)
+                console.error(`ERROR CODE === ${errorCode} AND ERROR MESSAGE === ${errorMessage}`)
+                if (errorCode == 'auth/user-not-found') {
+                    setIsEmailError(true)
+                }
+                if (errorCode == 'auth/wrong-password') {
+                    setIsPasswordError(true)
+                }
+                if (errorCode == 'auth/too-many-requests') {
+                    setIsTooManyRequestsError(true)
+                }
             });
-    }
-
-    const getMessage = () => {
-        const status = isError ? `error: ` : `success: `;
-        return status + message;
     }
 
     return (
@@ -40,13 +87,41 @@ const LoginScreen = ({ navigation }) => {
                 <View style={styles.middleViewStyle}>
 
                     <View>
-                        <TextInput value={emailAddress} onChangeText={text => setEmailAddress(text)} placeholder="email address" style={styles.textInputStyle} keyboardType="email-address" autoCapitalize="none" />
-                        <TextInput value={password} onChangeText={text => setPassword(text)} placeholder="password" style={styles.textInputStyle} autoCapitalize="none" secureTextEntry={true} />
-                        <Text style={[styles.message, { color: 'red' }]}>{message ? getMessage() : null}</Text>
+                        <Input
+                            value={emailAddress}
+                            ref={emailRef}
+                            onChangeText={text => handleEmailOnChange(text)}
+                            keyboardType="email-address"
+                            placeholder='email address'
+                            leftIcon={<Icon type='font-awesome-5' name='user' size={18} />}
+                            errorStyle={{ color: 'red' }}
+                            errorMessage={isEmailError && "sorry we couldn't find that email"}
+                            autoCapitalize="none"
+                            onFocus={() => handleEmailOnFocus()}
+                            onEndEditing={() => handleEmailEndEditing()}
+                            rightIcon={!isEmailIconHidden && <Icon Icon name="close" size={18} onPress={() => clearEmailInput()} />}
+                        />
+                        <Input
+                            value={password}
+                            ref={passwordRef}
+                            onChangeText={text => handlePasswordOnChange(text)}
+                            placeholder='password'
+                            secureTextEntry
+                            leftIcon={<Icon type='font-awesome-5' name='lock' size={18} />}
+                            errorStyle={{ color: 'red' }}
+                            errorMessage={isPasswordError && "incorrect password please try again"}
+                            autoCapitalize="none"
+                            onFocus={() => handlePasswordOnFocus()}
+                            onEndEditing={() => handlePasswordEndEditing()}
+                            rightIcon={!isPasswordIconHidden && <Icon Icon name="close" size={18} onPress={() => clearPasswordInput()} />}
+                        />
+                        {/* <TextInput value={emailAddress} onChangeText={text => setEmailAddress(text)} placeholder="email address" style={styles.textInputStyle} keyboardType="email-address" autoCapitalize="none" />
+                        <TextInput value={password} onChangeText={text => setPassword(text)} placeholder="password" style={styles.textInputStyle} autoCapitalize="none" secureTextEntry={true} /> */}
                     </View>
                     <View>
                         <Text style={styles.forgotPasswordTextStyle}>forgot password?</Text>
                     </View>
+                    <Text style={[styles.message, { color: 'red' }]}>{isTooManyRequestsError ? 'Access to this account has been temporarily disabled due to many failed login attempts. Reset your password or try again later.' : null}</Text>
                 </View>
                 <View style={styles.bottomViewStyle}>
                     <View>
@@ -56,7 +131,7 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                     <View style={styles.registerTextView}>
                         <Text style={styles.registerTextStyle} onPress={() =>
-                            navigation.navigate('Register')
+                            navigation.navigate('RegisterFullname')
                         }>register</Text>
                     </View>
                 </View>
@@ -92,6 +167,7 @@ const styles = StyleSheet.create({
         width: 400
     },
     forgotPasswordTextStyle: {
+        marginTop: 3,
         color: "#f37320"
     },
     loginBtnStyle: {
