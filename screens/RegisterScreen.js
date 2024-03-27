@@ -166,23 +166,22 @@ const RegisterScreen = ({ navigation }) => {
                 variant="determinate"
             />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View style={{ flex: 1 }}>
-                    <View style={{ flex: .5, marginTop:20 }}>
-                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`fullname: `}</Text>
-                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`date of birth:`}</Text>
-                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`username:`}</Text>
-                    </View>
-                    <View style={{ flex: .5, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ marginBottom: 5, fontSize: 16, fontWeight: 'bold' }}>{`profile picture:`}</Text>
+                <View style={{ flex: 1 }}>                    
+                <View style={{ flex: .2, alignItems: 'center', marginTop: 15 }}>
+                        <Text style={{ marginBottom: 5, fontSize: 16, fontWeight: 'bold' }}>{`profile picture:`}</Text>
                         <Avatar rounded size="large"
                             source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
                         // source={{ uri: image }} 
                         />
                     </View>
+                    <View style={{ flex: .2,  justifyContent: 'flex-start', }}>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`fullname: `}</Text>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`date of birth:`}</Text>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`username:`}</Text>
+                    </View>
 
-                    <View style={{ flex: 3.5, alignItems: 'center', justifyContent: 'center' }}>
 
-
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', }}>
                         <Input
                             label='email and password'
                             labelStyle={{ color: 'black', marginBottom: 10 }}
