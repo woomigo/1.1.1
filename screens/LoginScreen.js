@@ -93,13 +93,13 @@ const LoginScreen = ({ navigation }) => {
                             onChangeText={text => handleEmailOnChange(text)}
                             keyboardType="email-address"
                             placeholder='email address'
-                            leftIcon={<Icon type='font-awesome-5' name='user' size={18} />}
+                            leftIcon={<Icon style={{paddingEnd:5}} type='font-awesome-5' name='user' size={18} />}
                             errorStyle={{ color: 'red' }}
                             errorMessage={isEmailError && "sorry we couldn't find that email"}
                             autoCapitalize="none"
                             onFocus={() => handleEmailOnFocus()}
                             onEndEditing={() => handleEmailEndEditing()}
-                            rightIcon={!isEmailIconHidden && <Icon Icon name="close" size={18} onPress={() => clearEmailInput()} />}
+                            rightIcon={!isEmailIconHidden && <Icon name="close" size={18} onPress={() => clearEmailInput()} />}
                         />
                         <Input
                             value={password}
@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
                             onChangeText={text => handlePasswordOnChange(text)}
                             placeholder='password'
                             secureTextEntry
-                            leftIcon={<Icon type='font-awesome-5' name='lock' size={18} />}
+                            leftIcon={<Icon style={{paddingEnd:5}} type='font-awesome-5' name='lock' size={18} />}
                             errorStyle={{ color: 'red' }}
                             errorMessage={isPasswordError && "incorrect password please try again"}
                             autoCapitalize="none"
