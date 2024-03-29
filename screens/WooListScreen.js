@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
-import { Header, Icon } from "@rneui/themed";
+import { Header, Icon, LinearProgress } from "@rneui/themed";
 
 const WooListScreen = ({ navigation }) => {
+
+    const { wooMedia, wooDate, wooTime, wooLocation, wooMigos } = route.params;
+
+    const [list, setList] = useState()
 
     return (
         <View style={styles.container}>
@@ -25,20 +29,27 @@ const WooListScreen = ({ navigation }) => {
                     </View>
                 }
                 rightComponent={
-                  <Icon
-                  name="chevron-right"
-                  type='font-awesome-5'
-                  color="#f37320"
-                  size={25}
-                  onPress={() =>
-                      navigation.navigate('WooPreviewEdit')
-                  }
-              />
+                    <Icon
+                        name="chevron-right"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={25}
+                        onPress={() =>
+                            navigation.navigate('WooPreviewEdit', {wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooMigos: wooMigos, wooList: list})
+                        }
+                    />
                 }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
+            <LinearProgress
+                style={{}}
+                value={.83}
+                color="#f37320"
+                variant="determinate"
+            />
+
         </View>
     )
 

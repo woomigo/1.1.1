@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import { Header, Icon, SearchBar } from "@rneui/themed";
+import { Header, Icon, SearchBar,LinearProgress } from "@rneui/themed";
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
 const WooLocationScreen = ({ navigation }) => {
+
+    const { wooMedia, wooDate, wooTime } = route.params;
 
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
@@ -73,7 +75,7 @@ const WooLocationScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooMigos')
+                            navigation.navigate('WooMigos', {wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: location})
                         }
                     />
                 }
@@ -81,6 +83,13 @@ const WooLocationScreen = ({ navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
+            <LinearProgress
+                style={{}}
+                value={.50}
+                color="#f37320"
+                variant="determinate"
+            />
+
             <SearchBar
                 placeholder="add woo address"
                 onChangeText={updateSearch}

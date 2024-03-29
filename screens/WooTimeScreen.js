@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
-import { Header, Icon } from "@rneui/themed";
+import { Header, Icon, LinearProgress } from "@rneui/themed";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 const WooTimeScreen = ({ navigation }) => {
+
+    const { wooMedia, wooDate } = route.params;
 
     const [time, setTime] = useState(new Date())
 
@@ -38,7 +40,7 @@ const WooTimeScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooLocation')
+                            navigation.navigate('WooLocation', {wooMedia: wooMedia, wooDate: wooDate, wooTime: time})
                         }
                     />
                 }
@@ -46,6 +48,14 @@ const WooTimeScreen = ({ navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
+
+            <LinearProgress
+                style={{}}
+                value={.33}
+                color="#f37320"
+                variant="determinate"
+            />
+
 
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 

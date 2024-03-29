@@ -10,7 +10,7 @@
 //     function toggleCameraFacing() {
 //         setFacing(current => (current === 'back' ? 'front' : 'back'));
 //       }
-    
+
 //       return (
 //         <View style={styles.container}>
 //           <CameraView style={styles.camera} facing={facing}>
@@ -77,15 +77,15 @@ const CameraScreen = ({ navigation }) => {
                     </View>
                 }
                 rightComponent={
-                  <Icon
-                  name="chevron-right"
-                  type='font-awesome-5'
-                  color="#f37320"
-                  size={25}
-                  onPress={() =>
-                      navigation.navigate('WooDate')
-                  }
-              />
+                    <Icon
+                        name="chevron-right"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={25}
+                        onPress={() =>
+                            navigation.navigate('WooDate', { wooMedia: "https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" })
+                        }
+                    />
                 }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
