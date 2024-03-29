@@ -7,7 +7,9 @@ import { initializeApp } from "firebase/app";
 import firebaseConfig from '../firebaseConfig';
 
 
-const RegisterScreen = ({ navigation }) => {
+const RegisterScreen = ({ route, navigation }) => {
+
+    const { firstName, lastName, dob, username, profilePic } = route.params;
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
@@ -102,9 +104,11 @@ const RegisterScreen = ({ navigation }) => {
                 console.log('Successfully Registered')
                 setDoc(doc(db, "users", user.uid), {
                     uid: user.uid,
-                    username: "",
-                    dob: "",
-                    profilePicURL: ""
+                    firstName: firstName,
+                    lastName: lastName,
+                    username: username,
+                    dob: dob,
+                    profilePicURL: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80"
                 });
             })
             .catch((error) => {
@@ -137,7 +141,7 @@ const RegisterScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('RegisterProfilePicture')
+                            navigation.navigate('RegisterProfilePicture', {firstName: firstName, lastName: lastName, dob: dob, username: username})
                         }
                     />}
                 centerComponent={
@@ -166,18 +170,18 @@ const RegisterScreen = ({ navigation }) => {
                 variant="determinate"
             />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View style={{ flex: 1 }}>                    
-                <View style={{ flex: .2, alignItems: 'center', marginTop: 15 }}>
+                <View style={{ flex: 1 }}>
+                    <View style={{ flex: .2, alignItems: 'center', marginTop: 15 }}>
                         <Text style={{ marginBottom: 5, fontSize: 16, fontWeight: 'bold' }}>{`profile picture:`}</Text>
                         <Avatar rounded size="large"
-                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                            source={{ uri: profilePic }}
                         // source={{ uri: image }} 
                         />
                     </View>
-                    <View style={{ flex: .2,  justifyContent: 'flex-start', }}>
-                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`fullname: `}</Text>
-                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`date of birth:`}</Text>
-                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`username:`}</Text>
+                    <View style={{ flex: .2, justifyContent: 'flex-start', }}>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`fullname: ${firstName} ${lastName}`}</Text>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`date of birth: ${dob}`}</Text>
+                        <Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>{`username: ${username}`}</Text>
                     </View>
 
 

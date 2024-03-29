@@ -2,7 +2,9 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
 
-const RegisterUsernameScreen = ({ navigation }) => {
+const RegisterUsernameScreen = ({ route, navigation }) => {
+
+    const { firstName, lastName, dob } = route.params;
 
     const [username, setUsername] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
@@ -36,7 +38,7 @@ const RegisterUsernameScreen = ({ navigation }) => {
             setIsUsernameError(true)
             setErrorMessage('username required')
         } else {
-            navigation.navigate('RegisterProfilePicture')
+            navigation.navigate('RegisterProfilePicture', { firstName: firstName, lastName: lastName, dob: dob, username: username })
             console.log(`${username}`)
         }
     }
@@ -53,7 +55,7 @@ const RegisterUsernameScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('RegisterDOB')
+                            navigation.navigate('RegisterDOB', { firstName: firstName, lastName: lastName })
                         }
                     />}
                 centerComponent={

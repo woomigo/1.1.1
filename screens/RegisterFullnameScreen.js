@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RegisterFullnameScreen = ({ navigation }) => {
 
@@ -10,6 +11,17 @@ const RegisterFullnameScreen = ({ navigation }) => {
     const [isLastNameError, setIsLastNameError] = useState(false)
     const [isFirstNameIconHidden, setFirstNameIconHidden] = useState(true)
     const [isLastNameIconHidden, setLastNameIconHidden] = useState(true)
+
+    // const getMyObject = async () => {
+    //     try {
+    //       const jsonValue = await AsyncStorage.getItem('fullname')
+    //       return jsonValue != null ? JSON.parse(jsonValue) : null
+    //     } catch(e) {
+    //       // read error
+    //     }
+
+    //     console.log('Done.')
+    //   }
 
     const firstNameRef = useRef()
     const lastNameRef = useRef()
@@ -52,6 +64,16 @@ const RegisterFullnameScreen = ({ navigation }) => {
         setLastNameIconHidden(true)
     }
 
+    // const storeData = async (value) => {
+    //     try {
+    //         const jsonValue = JSON.stringify(value);
+    //         await AsyncStorage.setItem('fullname', jsonValue);
+    //         console.log(`${jsonValue} STORED`)
+    //     } catch (e) {
+    //         console.error(e)
+    //     }
+    // };
+
     const handleNextOnClick = () => {
         console.log('NEXT CLICKED')
         if (firstName.length <= 0 || lastName.length <= 0) {
@@ -63,7 +85,8 @@ const RegisterFullnameScreen = ({ navigation }) => {
             }
 
         } else {
-            navigation.navigate('RegisterDOB')
+  
+            navigation.navigate('RegisterDOB', { firstName: firstName, lastName: lastName })
             console.log(`${firstName} ${lastName}`)
         }
     }
@@ -111,7 +134,7 @@ const RegisterFullnameScreen = ({ navigation }) => {
                 <View style={{ flex: .8, alignItems: 'center', justifyContent: 'center' }}>
                     <Input
                         label='Full Name'
-                        labelStyle={{color: 'black', marginBottom: 10}}
+                        labelStyle={{ color: 'black', marginBottom: 10 }}
                         style={{}}
                         ref={firstNameRef}
                         value={firstName}

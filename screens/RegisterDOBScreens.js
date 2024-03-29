@@ -3,7 +3,9 @@ import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-const RegisterDOBScreen = ({ navigation }) => {
+const RegisterDOBScreen = ({ navigation, route }) => {
+
+    const { firstName, lastName } = route.params;
 
     const [dateOfBirth, setDateOfBirth] = useState(new Date())
 
@@ -44,7 +46,7 @@ const RegisterDOBScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('RegisterUsername')
+                            navigation.navigate('RegisterUsername',{ firstName: firstName, lastName: lastName, dob: dateOfBirth.toLocaleDateString('en-us') })
                         }
                     />
                 }

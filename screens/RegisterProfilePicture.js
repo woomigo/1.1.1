@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Header, Icon, LinearProgress, Avatar } from "@rneui/themed";
 import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { storage } from '../firebaseConfig';
 
-const RegisterProfilePictureScreen = ({ navigation }) => {
+const storageRef = ref(storage, 'some-child');
+
+const RegisterProfilePictureScreen = ({ route, navigation }) => {
+
+    const { firstName, lastName, dob, username } = route.params;
 
     const [image, setImage] = useState(null);
 
@@ -15,16 +21,21 @@ const RegisterProfilePictureScreen = ({ navigation }) => {
             aspect: [4, 3],
             quality: 1,
         });
-        console.log(result);
+        console.log(`result -------> ${JSON.stringify(result)}`);
 
         if (!result.canceled) {
             setImage(result.assets[0].uri);
+            // 'file' comes from the Blob or File API
+            uploadBytes(storageRef, result.assets[0].uri).then((snapshot) => {
+              console.log(`Uploaded a blob or file! --------> ${snapshot}`);
+            });
+
         }
     };
 
     const handleNextOnClick = () => {
         console.log('NEXT CLICKED')
-        navigation.navigate('Register')
+        navigation.navigate('Register', { firstName: firstName, lastName: lastName, dob: dob, username: username, profilePic: image })
         console.log(`IMAGE IS ${image}`)
 
     }
@@ -41,7 +52,7 @@ const RegisterProfilePictureScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('RegisterUsername')
+                            navigation.navigate('RegisterUsername', { firstName: firstName, lastName: lastName, dob: dob })
                         }
                     />}
                 centerComponent={
@@ -69,7 +80,7 @@ const RegisterProfilePictureScreen = ({ navigation }) => {
                 variant="determinate"
             />
 
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'red' }}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Button title="Pick an image from camera roll" onPress={pickImage} />
                 {image && <Avatar rounded size="xlarge" source={{ uri: image }} />}
             </View>
