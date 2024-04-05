@@ -4,7 +4,7 @@ import { Header, Icon, SearchBar,LinearProgress } from "@rneui/themed";
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
-const WooLocationScreen = ({ navigation }) => {
+const WooLocationScreen = ({ route, navigation }) => {
 
     const { wooMedia, wooDate, wooTime } = route.params;
 

@@ -40,7 +40,7 @@ const WooDateScreen = ({ route, navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooTime', {wooMedia: wooMedia, wooDate: date})
+                            navigation.navigate('WooTime', {wooMedia: wooMedia, wooDate: date.toLocaleDateString('en-us')})
                         }
                     />
                 }

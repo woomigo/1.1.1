@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-const WooTimeScreen = ({ navigation }) => {
+const WooTimeScreen = ({ route, navigation }) => {
 
     const { wooMedia, wooDate } = route.params;
 
@@ -40,7 +40,7 @@ const WooTimeScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooLocation', {wooMedia: wooMedia, wooDate: wooDate, wooTime: time})
+                            navigation.navigate('WooLocation', {wooMedia: wooMedia, wooDate: wooDate, wooTime: time.toLocaleTimeString('en-us', { timeStyle: 'short' })})
                         }
                     />
                 }

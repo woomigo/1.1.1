@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 
-const WooMigosScreen = ({ navigation }) => {
+const WooMigosScreen = ({ route, navigation }) => {
 
     const { wooMedia, wooDate, wooTime, wooLocation } = route.params;
 
