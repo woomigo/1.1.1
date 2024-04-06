@@ -4,26 +4,26 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from './firebaseConfig';
 
-import RegisterScreen from './screens/RegisterScreen';
-import RegisterFullnameScreen from './screens/RegisterFullnameScreen';
-import RegisterDOBScreen from './screens/RegisterDOBScreens';
-import RegisterUsernameScreen from './screens/RegisterUsername';
-import RegisterProfilePictureScreen from './screens/RegisterProfilePicture';
-import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import CameraScreen from './screens/CameraScreen';
-import MigosScreen from './screens/MigosScreen';
-import MenuScreen from './screens/MenuScreen'
-import SearchScreen from './screens/SearchScreen'
-import MessagesScreen from './screens/MessagesScreen'
-import NotificationsScreen from './screens/NotificationsScreen';
-import WooDateScreen from './screens/WooDateScreen';
-import WooTimeScreen from './screens/WooTimeScreen';
-import WooLocationScreen from './screens/WooLocationScreen';
-import WooMigosScreen from './screens/WooMigosScreen';
-import WooListScreen from './screens/WooListScreen';
-import WooPreviewEditScreen from './screens/WooPreviewEditScreen';
+import RegisterScreen from './components/RegisterScreen';
+import RegisterFullnameScreen from './components/RegisterFullnameScreen';
+import RegisterDOBScreen from './components/RegisterDOBScreens';
+import RegisterUsernameScreen from './components/RegisterUsername';
+import RegisterProfilePictureScreen from './components/RegisterProfilePicture';
+import LoginScreen from './components/LoginScreen';
+import HomeScreen from './components/HomeScreen';
+import ProfileScreen from './components/ProfileScreen';
+import CameraScreen from './components/CameraScreen';
+import MigosScreen from './components/MigosScreen';
+import MenuScreen from './components/MenuScreen'
+import SearchScreen from './components/SearchScreen'
+import MessagesScreen from './components/MessagesScreen'
+import NotificationsScreen from './components/NotificationsScreen';
+import WooDateScreen from './components/WooDateScreen';
+import WooTimeScreen from './components/WooTimeScreen';
+import WooLocationScreen from './components/WooLocationScreen';
+import WooMigosScreen from './components/WooMigosScreen';
+import WooListScreen from './components/WooListScreen';
+import WooPreviewEditScreen from './components/WooPreviewEditScreen';
 
 const Stack = createNativeStackNavigator();
 

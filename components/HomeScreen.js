@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";"@rneui/themed"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Header, Icon, Badge, Avatar, ButtonGroup } from "@rneui/themed";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from '../firebaseConfig';
-
-
+import ListViewGallery from './ListViewGallery';
+import ListViewWoos from "./ListViewWoos";
+import { Gallery, UserWoos } from './shared';
 
 const HomeScreen = ({ navigation }) => {
     const [uid, setUID] = useState(null);
@@ -31,7 +32,7 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            
+
             <Header
                 style={styles.header}
                 backgroundColor={'#fff'}
@@ -193,6 +194,10 @@ const HomeScreen = ({ navigation }) => {
 
             </View>
 
+            <ListViewGallery gallery={Gallery} view={"horizontal"} size="lrg" />
+
+            <ListViewWoos woos={UserWoos} />
+
         </View>
     )
 }
@@ -221,7 +226,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     subHeader: {
-        marginTop: 10,
+        marginVertical: 10,
         padding: 5,
         flexDirection: 'row',
         justifyContent: 'space-around'

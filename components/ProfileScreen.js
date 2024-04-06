@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
 
+
 const ProfileScreen = ({ navigation }) => {
 
     const [index, setIndex] = useState(0);
@@ -74,15 +75,15 @@ const ProfileScreen = ({ navigation }) => {
             }
 
             {
-                isProfileOwnedByUser ?  
-                <View style={styles.subHeader}>
-                <View>
-                    <Button radius={"lg"} size="sm" color="gray" type="solid">
-                        edit profile
-                        <Icon style={{ marginStart: 5 }} name="user-cog" solid type='font-awesome-5' size={14} color="white" />
-                    </Button>
-                </View>
-            </View> : null
+                isProfileOwnedByUser ?
+                    <View style={styles.subHeader}>
+                        <View>
+                            <Button radius={"lg"} size="sm" color="gray" type="solid">
+                                edit profile
+                                <Icon style={{ marginStart: 5 }} name="user-cog" solid type='font-awesome-5' size={14} color="white" />
+                            </Button>
+                        </View>
+                    </View> : null
             }
 
             <Tab
@@ -127,6 +128,7 @@ const ProfileScreen = ({ navigation }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Gallery</Text>
+                        
                     </View>
                 </TabView.Item>
             </TabView>
