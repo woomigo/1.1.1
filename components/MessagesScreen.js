@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon } from "@rneui/themed";
+import { Messages } from './shared';
+import ListViewMessages from './ListViewMessages';
+
 
 const MessagesScreen = ({ navigation }) => {
 
@@ -24,13 +27,27 @@ const MessagesScreen = ({ navigation }) => {
                         <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>messages</Text>
                     </View>
                 }
-                // rightComponent={
-             
-                // }
+                rightComponent={
+
+                    <Icon
+                        name="comment-medical"
+                        type='font-awesome-5'
+                        color="#f37320"
+                        size={20}
+                        onPress={() =>
+                            navigation.navigate('ComposeMessage')
+                        }
+
+                    />
+
+                }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
+
+            <ListViewMessages messages={Messages} kind="preview" />
+
         </View>
     )
 

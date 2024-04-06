@@ -14,9 +14,11 @@ import HomeScreen from './components/HomeScreen';
 import ProfileScreen from './components/ProfileScreen';
 import CameraScreen from './components/CameraScreen';
 import MigosScreen from './components/MigosScreen';
+import MigoRequestScreen from './components/MigoRequestsScreen';
 import MenuScreen from './components/MenuScreen'
 import SearchScreen from './components/SearchScreen'
 import MessagesScreen from './components/MessagesScreen'
+import ComposeMessageScreen from './components/ComposeMessageScreen';
 import NotificationsScreen from './components/NotificationsScreen';
 import WooDateScreen from './components/WooDateScreen';
 import WooTimeScreen from './components/WooTimeScreen';
@@ -24,6 +26,8 @@ import WooLocationScreen from './components/WooLocationScreen';
 import WooMigosScreen from './components/WooMigosScreen';
 import WooListScreen from './components/WooListScreen';
 import WooPreviewEditScreen from './components/WooPreviewEditScreen';
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -56,8 +60,10 @@ const App = () => {
             <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Migos" component={MigosScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="MigoRequests" component={MigoRequestScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Messages" component={MessagesScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
+            <Stack.Screen name="ComposeMessage" component={ComposeMessageScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="WooDate" component={WooDateScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
             <Stack.Screen name="WooTime" component={WooTimeScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />

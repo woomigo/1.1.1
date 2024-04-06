@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
+import { Migos } from './shared';
+import ListViewUsers from './ListViewUsers';
 
 const MigosScreen = ({ navigation }) => {
 
@@ -26,9 +28,17 @@ const MigosScreen = ({ navigation }) => {
                         <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>migos</Text>
                     </View>
                 }
-                // rightComponent={
-
-                // }
+                rightComponent={
+                    <Icon
+                    name="user-plus"
+                    type='font-awesome-5'
+                    color="#f37320"
+                    size={25}
+                    onPress={() =>
+                        navigation.navigate('MigoRequests')
+                    }
+                />
+                }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
@@ -56,25 +66,28 @@ const MigosScreen = ({ navigation }) => {
                     icon={{ name: 'users', type: 'font-awesome-5', color: "#f37320" }}
                 />
                 <Tab.Item
-                    title="requests"
+                    title="migos"
                     titleStyle={{ fontSize: 12, color: "#f37320" }}
-                    icon={{ name: 'user-check', type: 'font-awesome-5', color: "#f37320" }}
+                    icon={{ name: 'people-arrows', type: 'font-awesome-5', color: "#f37320" }}
                 />
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>follow</Text>
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>followers</Text>
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>requests</Text>
+                        <Text style={styles.tabText}>migos</Text>
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
                     </View>
                 </TabView.Item>
             </TabView>
@@ -114,12 +127,13 @@ const styles = StyleSheet.create({
     tabHeader: {
         marginTop: 10,
         padding: 5,
-        alignItems: 'center'
+        // alignItems: 'center'
     },
     tabText: {
         fontSize: 18,
         color: "#f37320",
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center'
     }
 })
 

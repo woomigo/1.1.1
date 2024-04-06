@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
 
 
@@ -15,17 +15,14 @@ const ProfileScreen = ({ navigation }) => {
                 style={styles.header}
                 backgroundColor={'#fff'}
                 leftComponent={
-                    <View>
-                        <Icon
-                            name="home"
-                            type='font-awesome-5'
-                            color="#f37320"
-                            size={25}
-                            onPress={() =>
-                                navigation.navigate('Home')
-                            }
-                        />
-                    </View>
+                    <Avatar
+                        rounded
+                        size="large"
+                        onPress={() =>
+                            navigation.navigate('Profile')
+                        }
+                        source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                    />
                 }
                 centerComponent={
                     <View >
@@ -35,14 +32,21 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
                 }
                 rightComponent={
-                    <Avatar
-                        rounded
-                        size="large"
-                        onPress={() =>
-                            navigation.navigate('Profile')
-                        }
-                        source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                    />
+                    <TouchableOpacity onPress={() =>
+                        navigation.navigate('Menu')
+                    } >
+
+                        <Icon
+                            name="bars"
+                            type='font-awesome-5'
+                            color="#f37320"
+                            solid
+                            size={25}
+                            onPress={() =>
+                                navigation.navigate('Menu')
+                            }
+                        />
+                    </TouchableOpacity>
                 }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
@@ -128,7 +132,7 @@ const ProfileScreen = ({ navigation }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Gallery</Text>
-                        
+
                     </View>
                 </TabView.Item>
             </TabView>

@@ -1,0 +1,127 @@
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Avatar, CheckBox } from "@rneui/themed";
+
+const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color }) => {
+    const [isSelected, setSelected] = useState(false);
+
+    const renderBoxButton = () => {
+console.log(`user ======88888====== ${JSON.stringify(user)}`)
+
+        switch (kind) {
+            case "checkbox":
+                return <View style={styles.checkboxContainer}>
+                    <CheckBox
+                        checked={isSelected}
+                        onPress={() => handleClick()}
+                        style={styles.checkbox}
+                        checkedColor={"#f37320"}
+                    />
+                </View>;
+            case "single":
+                return <View style={styles.requestButtonsContainer}>
+                    <TouchableOpacity
+                        style={[styles.addButton,{ backgroundColor: singleBtnColor }]}
+                    ><Text style={styles.buttonText}>{singleBtnText}</Text>
+                    </TouchableOpacity>
+                </View>;
+            case "double":
+                return <View style={styles.requestsButtonsContainer}>
+                    <TouchableOpacity
+                        style={[styles.acceptButton,{ backgroundColor: doubleBtn1Color }]} 
+                    ><Text style={styles.buttonText}>{doubleBtn1Text}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                         style={[styles.denyButton,{ backgroundColor: doubleBtn2Color }]} 
+                    ><Text style={styles.buttonText}>{doubleBtn2Text}</Text>
+                    </TouchableOpacity>
+                </View>;
+            default:
+                return null;
+
+        }
+    }
+
+    const handleClick = () => {
+        setSelected(!isSelected)
+        onCheckBoxSelected(user.item.id)
+    }
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.imageContainer}>
+                <Avatar
+                    rounded
+                    size="medium"
+                    source={{ uri: `${user.item.profile}` }}
+                />
+            </View>
+            <View style={styles.textContainer}>
+                <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.fullname}</Text>
+                <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
+            </View>
+
+            {renderBoxButton()}
+
+        </View>
+    )
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: 'center',
+        flexDirection: 'row',
+        padding: 20,
+    },
+    imageContainer: {
+        flex: 1
+    },
+    textContainer: {
+        flex: 2
+    },
+    checkboxContainer: {
+        flex: 1,
+
+    },
+    checkbox: {
+        height: 15,
+        width: 15,
+        alignSelf: "center",
+    },
+    requestsButtonsContainer: {
+        flex: 2,
+        flexDirection: 'row'
+    },
+    acceptButton: {
+        backgroundColor: 'green',
+        padding: 5,
+        borderRadius: 10,
+        marginEnd: 15,
+        width: 60
+    },
+    denyButton: {
+        backgroundColor: 'red',
+        padding: 5,
+        borderRadius: 10,
+        width: 60
+    },
+    addButton: {
+        backgroundColor: '#f37320',
+        padding: 5,
+        borderRadius: 10,
+        width: 80
+    },
+    buttonText: {
+        color: "#fff",
+        textAlign: 'center'
+    },
+    requestButtonContainer: {
+        flex: 2,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    }
+})
+
+export default LayoutUserItem;
