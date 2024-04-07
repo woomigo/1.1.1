@@ -86,7 +86,7 @@ import { Header, Icon, Avatar } from "@rneui/themed"
 import { MenuItems } from './shared/';
 import LayoutMenuItem from './LayoutMenuItem';
 
-const MenuScreen = ({ navigation: { navigate } }) => {
+const MenuScreen = ({ navigation }) => {
 
     const renderMenuItems = (menuItem) => (
         <LayoutMenuItem menuItem={menuItem} />
@@ -126,7 +126,7 @@ const MenuScreen = ({ navigation: { navigate } }) => {
                     rounded
                     size="large"
                     onPress={() =>
-                        navigate('ProfileComponent')
+                        navigation.navigate('Profile')
                     }
                     source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
                 />

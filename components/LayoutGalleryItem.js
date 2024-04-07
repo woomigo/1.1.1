@@ -13,7 +13,7 @@ const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadiu
             case 'lrg':
                 return 60;
             case 'xlrg':
-                return 80;
+                return 80;  
             case 'small':
             default:
                 return 25;

@@ -38,14 +38,15 @@ const HomeScreen = ({ navigation }) => {
                 backgroundColor={'#fff'}
                 leftComponent={
                     <Icon
-                        name="camera"
-                        type='font-awesome-5'
-                        color="#f37320"
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Camera')
-                        }
-                    />}
+                    name="bell"
+                    type='font-awesome-5'
+                    color="#f37320"
+                    solid
+                    size={25}
+                    onPress={() =>
+                        navigation.navigate('Notifications')
+                    }
+                />}
                 centerComponent={
                     <View>
                         <Avatar
@@ -90,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <View style={styles.subHeader}>
+            {/* <View style={styles.subHeader}>
                 <View>
                     <Icon
                         name="user-friends"
@@ -192,7 +193,7 @@ const HomeScreen = ({ navigation }) => {
                         </View>
                 }
 
-            </View>
+            </View> */}
 
             <ListViewGallery gallery={Gallery} view={"horizontal"} size="lrg" />
 

@@ -12,16 +12,9 @@ const MessagesScreen = ({ navigation }) => {
             <Header
                 style={styles.header}
                 backgroundColor={'#fff'}
-                leftComponent={
-                    <Icon
-                        name="chevron-left"
-                        type='font-awesome-5'
-                        color="#f37320"
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Home')
-                        }
-                    />}
+                // leftComponent={
+
+                //    }
                 centerComponent={
                     <View >
                         <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>messages</Text>

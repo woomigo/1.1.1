@@ -20,7 +20,7 @@ const MigosScreen = ({ navigation }) => {
                         color="#f37320"
                         size={25}
                         onPress={() =>
-                            navigation.navigate('Home')
+                            navigation.navigate('Profile')
                         }
                     />}
                 centerComponent={

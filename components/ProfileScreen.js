@@ -15,14 +15,21 @@ const ProfileScreen = ({ navigation }) => {
                 style={styles.header}
                 backgroundColor={'#fff'}
                 leftComponent={
-                    <Avatar
-                        rounded
-                        size="large"
-                        onPress={() =>
-                            navigation.navigate('Profile')
-                        }
-                        source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                    />
+                    <TouchableOpacity onPress={() =>
+                        navigation.navigate('Migos')
+                    } >
+
+                        <Icon
+                            name={isProfileOwnedByUser ? "users" : "ellipsis-v"}
+                            type='font-awesome-5'
+                            color="#f37320"
+                            solid
+                            size={25}
+                            onPress={isProfileOwnedByUser ? () =>
+                                navigation.navigate('Migos') : "open drawer"
+                            }
+                        />
+                    </TouchableOpacity>
                 }
                 centerComponent={
                     <View >
@@ -32,28 +39,22 @@ const ProfileScreen = ({ navigation }) => {
                     </View>
                 }
                 rightComponent={
-                    <TouchableOpacity onPress={() =>
-                        navigation.navigate('Menu')
-                    } >
+                    <Avatar
+                        rounded
+                        size="large"
+                        onPress={() =>
+                            navigation.navigate('Profile')
+                        }
+                        source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                    />
 
-                        <Icon
-                            name="bars"
-                            type='font-awesome-5'
-                            color="#f37320"
-                            solid
-                            size={25}
-                            onPress={() =>
-                                navigation.navigate('Menu')
-                            }
-                        />
-                    </TouchableOpacity>
                 }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
 
-            {
+            {/* {
                 !isProfileOwnedByUser ?
 
                     <View style={styles.subHeader}>
@@ -88,7 +89,7 @@ const ProfileScreen = ({ navigation }) => {
                             </Button>
                         </View>
                     </View> : null
-            }
+            } */}
 
             <Tab
                 value={index}
