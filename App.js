@@ -28,6 +28,7 @@ import WooLocationScreen from './components/WooLocationScreen';
 import WooMigosScreen from './components/WooMigosScreen';
 import WooListScreen from './components/WooListScreen';
 import WooPreviewEditScreen from './components/WooPreviewEditScreen';
+import { woo_orange, woo_gray } from './assets/colors';
 
 
 
@@ -40,8 +41,16 @@ const HomeStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+      
+    </Stack.Navigator>
+  )
+}
+
+const NotificationsStack = () => {
+  return (
+    <Stack.Navigator options={{ headerShown: false }} >
       <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }
@@ -52,6 +61,7 @@ const ProfileStack = () => {
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Migos" component={MigosScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MigoRequests" component={MigoRequestScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }
@@ -91,6 +101,8 @@ const MessagesStack = () => {
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [uid, setUID] = useState(null);
+  const [messagesNotificationCount, setMessagesNotificationCount] = useState()
+  const [notificationCount, setNotificationCount] = useState(0)
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -106,28 +118,44 @@ const App = () => {
 
   return (
     <NavigationContainer >
-      <Tab.Navigator screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
+      <Tab.Navigator screenOptions={{ tabBarShowLabel: false, tabBarActiveTintColor: woo_orange, tabBarInactiveTintColor: woo_gray, headerShown: false }}>
         <Tab.Screen
           name="HomeTab"
           component={HomeStack}
           options={{
-            tabBarIcon: () => (
+            title: "home",
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="home"
                 type='font-awesome-5'
-                color="#f37320"
+                color={color}
                 size={25}
               />)
           }} />
+
+        {/* <Tab.Screen
+          name="MenuTab"
+          component={MenuStack}
+          options={{
+            title: "menu",
+            tabBarIcon: ({ color }) => (
+              <Icon
+                name="bars"
+                type='font-awesome-5'
+                color={color}
+                size={25}
+              />)
+          }} /> */}
         <Tab.Screen
           name="ProfileTab"
           component={ProfileStack}
           options={{
-            tabBarIcon: () => (<Icon
+            title: "profile",
+            tabBarIcon: ({ color }) => (<Icon
               name="user"
               solid
               type='font-awesome-5'
-              color="#f37320"
+              color={color}
               size={25}
             />),
           }} />
@@ -135,10 +163,11 @@ const App = () => {
           name="CameraTab"
           component={CameraStack}
           options={{
-            tabBarIcon: () => (<Icon
+            title: "camera",
+            tabBarIcon: ({ color }) => (<Icon
               name="camera"
               type='font-awesome-5'
-              color="#f37320"
+              color={color}
               size={25}
             />)
           }} />
@@ -146,11 +175,12 @@ const App = () => {
           name="SearchTab"
           component={SearchStack}
           options={{
-            tabBarIcon: () => (
+            title: "search",
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="search"
                 type='font-awesome-5'
-                color="#f37320"
+                color={color}
                 size={25}
               />)
           }} />
@@ -158,12 +188,29 @@ const App = () => {
           name="MessagesTab"
           component={MessagesStack}
           options={{
-            tabBarIcon: () => (
+            title: "messages",
+            tabBarBadge: messagesNotificationCount > 0 ? messagesNotificationCount : undefined,
+            tabBarIcon: ({ color }) => (
               <Icon
                 name="envelope"
                 solid
                 type='font-awesome-5'
-                color="#f37320"
+                color={color}
+                size={25}
+              />),
+          }} />
+        <Tab.Screen
+          name="NotificationsTab"
+          component={NotificationsStack}
+          options={{
+            title: "notifications",
+            tabBarBadge: notificationCount > 0 ? notificationCount : undefined,
+            tabBarIcon: ({ color }) => (
+              <Icon
+                name="bell"
+                solid
+                type='font-awesome-5'
+                color={color}
                 size={25}
               />)
           }} />

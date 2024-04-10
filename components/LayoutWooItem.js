@@ -21,7 +21,7 @@ const LayoutWooItem = ({ woo, isGridView, currentVisibleIndex, currentIndex }) =
                     {woo.item.image != null ? <LayoutWooImage wooID={woo.item.id} image={woo.item.image} /> : <LayoutWooVideo video={woo.item.video} currentVisibleIndex={currentVisibleIndex} currentIndex={currentIndex} />}
                     <LayoutWooLocation wooLocation={woo.item.woo_location} />
                     <LayoutWooLike wooMigos={woo.item.woo_migos} wooType={woo.item.woo_type} />
-                    {/* <LayoutWooWriteComment /> */}
+                    {/* <LayoutWooWriteComment />  */}
                     <LayoutWooShowComment wooID={woo.item.id} />
                     <LayoutWooGallery wooMigos={woo.item.woo_migos} />
                 </View>
@@ -37,7 +37,7 @@ const LayoutWooItem = ({ woo, isGridView, currentVisibleIndex, currentIndex }) =
 const styles = StyleSheet.create({
     container: {
         flex: 14,
-        backgroundColor: "#fff",
+        backgroundColor: "#ffffff",
         padding: 5,
         marginBottom: 10
     },

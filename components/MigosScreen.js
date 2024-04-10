@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
 import { Migos } from './shared';
 import ListViewUsers from './ListViewUsers';
+import { woo_black } from '../assets/colors';
 
 const MigosScreen = ({ navigation }) => {
 
@@ -17,7 +18,7 @@ const MigosScreen = ({ navigation }) => {
                     <Icon
                         name="chevron-left"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('Profile')
@@ -25,14 +26,14 @@ const MigosScreen = ({ navigation }) => {
                     />}
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>migos</Text>
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>migos</Text>
                     </View>
                 }
                 rightComponent={
                     <Icon
                     name="user-plus"
                     type='font-awesome-5'
-                    color="#f37320"
+                    color={woo_black}
                     size={25}
                     onPress={() =>
                         navigation.navigate('MigoRequests')
@@ -57,18 +58,18 @@ const MigosScreen = ({ navigation }) => {
             >
                 <Tab.Item
                     title="follow"
-                    titleStyle={{ fontSize: 12, color: "#f37320" }}
-                    icon={{ name: 'user-friends', type: 'font-awesome-5', color: "#f37320" }}
+                    titleStyle={{ fontSize: 12, color: woo_black }}
+                    icon={{ name: 'user-friends', type: 'font-awesome-5', color: woo_black }}
                 />
                 <Tab.Item
                     title="followers"
-                    titleStyle={{ fontSize: 12, color: "#f37320" }}
-                    icon={{ name: 'users', type: 'font-awesome-5', color: "#f37320" }}
+                    titleStyle={{ fontSize: 12, color: woo_black }}
+                    icon={{ name: 'users', type: 'font-awesome-5', color: woo_black }}
                 />
                 <Tab.Item
                     title="migos"
-                    titleStyle={{ fontSize: 12, color: "#f37320" }}
-                    icon={{ name: 'people-arrows', type: 'font-awesome-5', color: "#f37320" }}
+                    titleStyle={{ fontSize: 12, color: woo_black }}
+                    icon={{ name: 'people-arrows', type: 'font-awesome-5', color: woo_black }}
                 />
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontSize: 18,
-        color: "#f37320",
+        color: woo_black,
         fontWeight: 'bold',
         textAlign: 'center'
     }

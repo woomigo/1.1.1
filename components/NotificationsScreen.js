@@ -3,6 +3,7 @@ import { Text, StyleSheet, View, Platform, Alert } from 'react-native'
 import { Header, Icon, Dialog } from "@rneui/themed";
 import { Notifications } from './shared';
 import ListViewNotifications from './ListViewNotifications';
+import { woo_black } from '../assets/colors';
 
 const NotificationsScreen = ({navigation}) => {
     const [isNewNotification, setIsNewNotification] = useState(true)
@@ -38,19 +39,12 @@ const NotificationsScreen = ({navigation}) => {
                 style={styles.header}
                 backgroundColor={'#fff'}
 
-                leftComponent={
-                    <Icon
-                        name="chevron-left"
-                        type='font-awesome-5'
-                        color="#f37320"
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Home')
-                        }
-                    />}
+                // leftComponent={
+                    
+                // }
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>notifications</Text>
+                        <Text style={{ fontSize: 25, color: {woo_black}, textAlign: 'center', fontWeight: 'bold' }}>notifications</Text>
                     </View>
                 }
                 rightComponent={
@@ -59,7 +53,7 @@ const NotificationsScreen = ({navigation}) => {
                         name="bell"
                         type='font-awesome-5'
                         solid={isNewNotification}
-                        color="#f37320"
+                        color={woo_black}
                         size={25 }
                         onPress={confirmClearNotifications}
                     />

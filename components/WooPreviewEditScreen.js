@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
+import { woo_black, woo_orange } from '../assets/colors';
 
 const WooPreviewEditScreen = ({ route, navigation }) => {
 
     const { wooMedia, wooDate, wooTime, wooLocation, wooMigos, wooList } = route.params;
+
+    const navigateToProfileAndClearStack = () => {
+        navigation.popToTop();
+        navigation.navigate('Profile')
+    }
 
     return (
         <View style={styles.container}>
@@ -15,7 +21,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                     <Icon
                         name="chevron-left"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('WooList')
@@ -23,17 +29,17 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                     />}
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>woo preview & edit</Text>
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo preview & edit</Text>
                     </View>
                 }
                 rightComponent={
                     <Icon
                         name="chevron-right"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('Profile')
+                            navigateToProfileAndClearStack()
                         }
                     />
                 }
@@ -44,7 +50,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
             <LinearProgress
                 style={{}}
                 value={1}
-                color="#f37320"
+                color={woo_orange}
                 variant="determinate"
             />
 

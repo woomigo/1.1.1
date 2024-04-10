@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
+import { woo_black, woo_gray, woo_orange, woo_white } from '../assets/colors';
 
 
 const ProfileScreen = ({ navigation }) => {
@@ -13,39 +14,49 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Header
                 style={styles.header}
-                backgroundColor={'#fff'}
+                backgroundColor={woo_white}
                 leftComponent={
-                    <TouchableOpacity onPress={() =>
-                        navigation.navigate('Migos')
-                    } >
 
-                        <Icon
-                            name={isProfileOwnedByUser ? "users" : "ellipsis-v"}
-                            type='font-awesome-5'
-                            color="#f37320"
-                            solid
-                            size={25}
-                            onPress={isProfileOwnedByUser ? () =>
-                                navigation.navigate('Migos') : "open drawer"
-                            }
-                        />
-                    </TouchableOpacity>
+                    <Icon
+                        name={isProfileOwnedByUser ? "users" : "ellipsis-v"}
+                        type='font-awesome-5'
+                        color={woo_black}
+                        solid
+                        size={25}
+                        onPress={isProfileOwnedByUser ? () =>
+                            navigation.navigate('Migos') : "open drawer"
+                        }
+                    />
+
                 }
                 centerComponent={
-                    <View >
-                        <Text style={{ marginBottom: 3, textAlign: 'center', fontWeight: 'bold' }}>Deserae Harrison</Text>
-                        <Text style={{ marginBottom: 3, textAlign: 'center' }}>@dezzie_wezzie</Text>
-                        <Text style={{ marginBottom: 3, textAlign: 'center' }}>1,2345 migos</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <Avatar
+                            rounded
+                            size="medium"
+                            onPress={() =>
+                                navigation.navigate('Profile')
+                            }
+                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                        />
+                        <View>
+                            {/* <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center',  }}>Deserae Harrison</Text> */}
+                            <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center', fontWeight: 'bold' }}>@dezzie_wezzie</Text>
+                            <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center' }}>1,2345 migos</Text>
+                        </View>
+
                     </View>
                 }
                 rightComponent={
-                    <Avatar
-                        rounded
-                        size="large"
-                        onPress={() =>
-                            navigation.navigate('Profile')
+                    <Icon
+                        name={"ellipsis-v"}
+                        type='font-awesome-5'
+                        color={woo_black}
+                        solid
+                        size={25}
+                        onPress={isProfileOwnedByUser ? () =>
+                            navigation.navigate('Menu') : "open drawer"
                         }
-                        source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
                     />
 
                 }
@@ -95,7 +106,7 @@ const ProfileScreen = ({ navigation }) => {
                 value={index}
                 onChange={(e) => setIndex(e)}
                 indicatorStyle={{
-                    backgroundColor: '#f37320',
+                    backgroundColor: woo_orange,
                     height: 3,
                 }}
                 containerStyle={{
@@ -105,18 +116,18 @@ const ProfileScreen = ({ navigation }) => {
             >
                 <Tab.Item
                     title="published"
-                    titleStyle={{ fontSize: 12, color: "#f37320" }}
-                    icon={{ name: 'sign-out-alt', type: 'font-awesome-5', color: "#f37320" }}
+                    titleStyle={{ fontSize: 12, color: woo_black }}
+                    icon={{ name: 'sign-out-alt', type: 'font-awesome-5', color: woo_black }}
                 />
                 <Tab.Item
                     title="subscribed"
-                    titleStyle={{ fontSize: 12, color: "#f37320" }}
-                    icon={{ name: 'sign-in-alt', type: 'font-awesome-5', color: "#f37320" }}
+                    titleStyle={{ fontSize: 12, color: woo_black }}
+                    icon={{ name: 'sign-in-alt', type: 'font-awesome-5', color: woo_black }}
                 />
                 <Tab.Item
                     title="gallery"
-                    titleStyle={{ fontSize: 12, color: "#f37320" }}
-                    icon={{ name: 'photo-video', type: 'font-awesome-5', color: "#f37320" }}
+                    titleStyle={{ fontSize: 12, color: woo_black }}
+                    icon={{ name: 'photo-video', type: 'font-awesome-5', color: woo_black }}
                 />
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
@@ -182,7 +193,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontSize: 18,
-        color: "#f37320",
+        color: woo_black,
         fontWeight: 'bold'
     }
 })

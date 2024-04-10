@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Header, Icon, SearchBar,LinearProgress } from "@rneui/themed";
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { woo_black, woo_orange } from '../assets/colors';
 
 const WooLocationScreen = ({ route, navigation }) => {
 
@@ -57,7 +58,7 @@ const WooLocationScreen = ({ route, navigation }) => {
                     <Icon
                         name="chevron-left"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('WooTime')
@@ -65,14 +66,14 @@ const WooLocationScreen = ({ route, navigation }) => {
                     />}
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>woo location</Text>
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo location</Text>
                     </View>
                 }
                 rightComponent={
                     <Icon
                         name="chevron-right"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('WooMigos', {wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: location})
@@ -86,7 +87,7 @@ const WooLocationScreen = ({ route, navigation }) => {
             <LinearProgress
                 style={{}}
                 value={.50}
-                color="#f37320"
+                color={woo_orange}
                 variant="determinate"
             />
 

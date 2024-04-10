@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";"@rneui/themed"
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from "react"; "@rneui/themed"
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView } from "react-native";
 import { Header, Icon, Badge, Avatar, ButtonGroup } from "@rneui/themed";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from '../firebaseConfig';
 import ListViewGallery from './ListViewGallery';
 import ListViewWoos from "./ListViewWoos";
 import { Gallery, UserWoos } from './shared';
+import { woo_black, woo_gray, woo_orange } from "../assets/colors";
 
 const HomeScreen = ({ navigation }) => {
     const [uid, setUID] = useState(null);
@@ -32,173 +33,11 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <SafeAreaView>
+                <ListViewGallery gallery={Gallery} view={"horizontal"} size="lrg" />
 
-            <Header
-                style={styles.header}
-                backgroundColor={'#fff'}
-                leftComponent={
-                    <Icon
-                    name="bell"
-                    type='font-awesome-5'
-                    color="#f37320"
-                    solid
-                    size={25}
-                    onPress={() =>
-                        navigation.navigate('Notifications')
-                    }
-                />}
-                centerComponent={
-                    <View>
-                        <Avatar
-                            rounded
-                            size="large"
-                            onPress={() =>
-                                navigation.navigate('Profile')
-                            }
-                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                        />
-                        {/* {notificationCount > 0 ?
-                            <Badge
-                                status="error"
-                                value={notificationCount}
-                                containerStyle={{ position: 'absolute', top: 0, right: 0 }}
-                                onPress={() =>
-                                    navigation.navigate('Notifications')
-                                }
-                            />
-                            : null} */}
-                    </View>
-                }
-                rightComponent={
-                    <TouchableOpacity onPress={() =>
-                        navigation.navigate('Menu')
-                    } >
-
-                        <Icon
-                            name="bars"
-                            type='font-awesome-5'
-                            color="#f37320"
-                            solid
-                            size={25}
-                            onPress={() =>
-                                navigation.navigate('Menu')
-                            }
-                        />
-                    </TouchableOpacity>
-                }
-                rightContainerStyle={styles.rightComponent}
-                leftContainerStyle={styles.leftComponent}
-                centerContainerStyle={styles.centerComponent}
-            />
-
-            {/* <View style={styles.subHeader}>
-                <View>
-                    <Icon
-                        name="user-friends"
-                        type='font-awesome-5'
-                        color="#f37320"
-                        solid
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Migos')
-                        }
-                    />{migosNotificationCount > 0 ?
-                        <Badge
-                            status="error"
-                            value={migosNotificationCount}
-                            containerStyle={{ position: 'absolute', top: 20, left: 20 }}
-                            onPress={() =>
-                                navigation.navigate('Migos')
-                            }
-                        />
-                        : null}
-                </View>
-                <Icon
-                    name="search"
-                    type='font-awesome-5'
-                    color="#f37320"
-                    solid
-                    size={25}
-                    onPress={() =>
-                        navigation.navigate('Search')
-                    }
-                />
-                {
-                    messagesNotificationCount <= 0 ?
-                        <Icon
-                            name="envelope-open"
-                            type='font-awesome-5'
-                            color="#f37320"
-                            solid
-                            size={25}
-                            onPress={() =>
-                                navigation.navigate('Messages')
-                            } />
-                        :
-                        <View>
-                            <Icon
-                                name="envelope"
-                                type='font-awesome-5'
-                                color="#f37320"
-                                solid
-                                size={25}
-                                onPress={() =>
-                                    navigation.navigate('Messages')
-                                }
-                            />{messagesNotificationCount > 0 ?
-                                <Badge
-                                    status="error"
-                                    value={messagesNotificationCount}
-                                    containerStyle={{ position: 'absolute', top: 20, left: 20 }}
-                                    onPress={() =>
-                                        navigation.navigate('Messages')
-                                    }
-                                />
-                                : null}
-                        </View>
-                }
-
-                {
-                    notificationCount <= 0 ?
-                        <Icon
-                            name="bell-slash"
-                            type='font-awesome-5'
-                            color="#f37320"
-                            solid
-                            size={25}
-                            onPress={() =>
-                                navigation.navigate('Notifications')
-                            } />
-                        :
-                        <View>
-                            <Icon
-                                name="bell"
-                                type='font-awesome-5'
-                                color="#f37320"
-                                solid
-                                size={25}
-                                onPress={() =>
-                                    navigation.navigate('Notifications')
-                                }
-                            />{notificationCount > 0 ?
-                                <Badge
-                                    status="error"
-                                    value={notificationCount}
-                                    containerStyle={{ position: 'absolute', top: 20, left: 20 }}
-                                    onPress={() =>
-                                        navigation.navigate('Notifications')
-                                    }
-                                />
-                                : null}
-                        </View>
-                }
-
-            </View> */}
-
-            <ListViewGallery gallery={Gallery} view={"horizontal"} size="lrg" />
-
-            <ListViewWoos woos={UserWoos} />
-
+                <ListViewWoos woos={UserWoos} />
+            </SafeAreaView>
         </View>
     )
 }
@@ -206,7 +45,7 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff"
+        backgroundColor: '#FAF9F6'
     },
     header: {
         shadowColor: '#000',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon } from "@rneui/themed";
+import { woo_black } from '../assets/colors';
 
 const SearchScreen = ({ navigation }) => {
 
@@ -14,7 +15,7 @@ const SearchScreen = ({ navigation }) => {
                 //   }
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>search</Text>
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>search</Text>
                     </View>
                 }
                 // rightComponent={

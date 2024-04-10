@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
+import { woo_black, woo_orange } from '../assets/colors';
 
 const WooMigosScreen = ({ route, navigation }) => {
 
@@ -17,7 +18,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                     <Icon
                         name="chevron-left"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('WooLocation')
@@ -25,14 +26,14 @@ const WooMigosScreen = ({ route, navigation }) => {
                     />}
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>woo migos</Text>
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo migos</Text>
                     </View>
                 }
                 rightComponent={
                     <Icon
                         name="chevron-right"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('WooList', {wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooMigos: migos})
@@ -46,7 +47,7 @@ const WooMigosScreen = ({ route, navigation }) => {
             <LinearProgress
                 style={{}}
                 value={.67}
-                color="#f37320"
+                color={woo_orange}
                 variant="determinate"
             />
 

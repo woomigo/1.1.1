@@ -85,6 +85,7 @@ import { Text, StyleSheet, View, SafeAreaView, FlatList } from 'react-native'
 import { Header, Icon, Avatar } from "@rneui/themed"
 import { MenuItems } from './shared/';
 import LayoutMenuItem from './LayoutMenuItem';
+import { woo_black } from '../assets/colors';
 
 const MenuScreen = ({ navigation }) => {
 
@@ -102,15 +103,15 @@ const MenuScreen = ({ navigation }) => {
                     <Icon
                         name="chevron-left"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('Home')
+                            navigation.navigate('Profile')
                         }
                     />}
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>menu</Text>
+                        <Text style={{ fontSize: 25, color: {woo_black}, textAlign: 'center', fontWeight: 'bold' }}>menu</Text>
                     </View>
                 }
                 // rightComponent={

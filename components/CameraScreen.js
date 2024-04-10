@@ -53,6 +53,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon } from "@rneui/themed";
+import { woo_black } from '../assets/colors';
 
 const CameraScreen = ({ navigation }) => {
 
@@ -66,14 +67,14 @@ const CameraScreen = ({ navigation }) => {
                 // }
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>camera</Text>
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>camera</Text>
                     </View>
                 }
                 rightComponent={
                     <Icon
                         name="chevron-right"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('WooDate', { wooMedia: "https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" })

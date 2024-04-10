@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { woo_black, woo_orange } from '../assets/colors';
 
 const WooDateScreen = ({ route, navigation }) => {
 
@@ -22,7 +23,7 @@ const WooDateScreen = ({ route, navigation }) => {
                     <Icon
                         name="chevron-left"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('Camera')
@@ -30,14 +31,14 @@ const WooDateScreen = ({ route, navigation }) => {
                     />}
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>woo date</Text>
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo date</Text>
                     </View>
                 }
                 rightComponent={
                     <Icon
                         name="chevron-right"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('WooTime', {wooMedia: wooMedia, wooDate: date.toLocaleDateString('en-us')})
@@ -52,7 +53,7 @@ const WooDateScreen = ({ route, navigation }) => {
             <LinearProgress
                 style={{}}
                 value={.17}
-                color="#f37320"
+                color={woo_orange}
                 variant="determinate"
             />
 
