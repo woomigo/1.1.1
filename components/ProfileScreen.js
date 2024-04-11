@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
+import ListViewGallery from './ListViewGallery';
+import ListViewWoos from './ListViewWoos';
+import { Gallery, UserWoos } from './shared';
 import { woo_black, woo_gray, woo_orange, woo_white } from '../assets/colors';
 
 
@@ -134,17 +137,19 @@ const ProfileScreen = ({ navigation }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Published Woos</Text>
+                        <ListViewWoos woos={UserWoos} isGridView />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Subscribed Woos</Text>
+                        <ListViewWoos woos={UserWoos} showGridToggle isGridView />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Gallery</Text>
-
+                        <ListViewGallery gallery={Gallery} view={"grid"} size="lrg" />
                     </View>
                 </TabView.Item>
             </TabView>

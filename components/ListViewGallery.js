@@ -35,6 +35,7 @@ const ListViewGallery = ({ gallery, view, size, isTrunc, truncText, nav, navPara
             case 'horizontal':
                 return <FlatList
                     horizontal
+                    key={woo => woo.id}
                     showsHorizontalScrollIndicator={false}
                     style={styles.wooGalleryPreviewList}
                     backgroundColor={"#fff"}

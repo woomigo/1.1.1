@@ -29,21 +29,7 @@ const ListViewWoos = ({ woos, isGridView, showGridToggle }) => {
 
     return (
         <View style={styles.container}>
-            {showGridToggle ?
-                <View style={styles.profileViewSwitchContainer}>
-                    <Icon
-                        name={stateGridView ? "th" : "th-list"}
-                        type='font-awesome-5'
-                        color='#b3b1b1'
-                    />
-                    <Switch
-                        value={stateGridView}
-                        onChange={() => setStateGridView(!stateGridView)}
-                        style={styles.profileViewSwitch} />
-                </View> : ""}
 
-            {
-                showGridToggle ? !stateGridView ?
                     <FlatList
                         style={stateGridView ? styles.gridViewFlatList : ""}
                         showsVerticalScrollIndicator={false}
@@ -61,23 +47,20 @@ const ListViewWoos = ({ woos, isGridView, showGridToggle }) => {
                         }
                         initialNumToRender={3}
                         onViewableItemsChanged={onViewRef.current}
-                        renderItem={woo => <LayoutWooItem isGridView={showGridToggle ? stateGridView : isGridView} woo={woo} />}
+                        renderItem={woo => <LayoutWooItem isGridView={isGridView} woo={woo} />}
                     />
-                    :
+                 
 
                     <FlatList
                         showsVerticalScrollIndicator={false}
-                        key={isGridView}
-                        style={styles.gridViewFlatList}
+                        key={woo => woo.id}                        style={styles.gridViewFlatList}
                         backgroundColor={"#fff"}
                         keyExtractor={woo => woo.id}
                         data={woos}
-                        renderItem={woo => <LayoutWooItem isGridView={showGridToggle ? stateGridView : isGridView} woo={woo} />}
+                        renderItem={woo => <LayoutWooItem isGridView={isGridView} woo={woo} />}
                         numColumns={2} />
 
-                    :
 
-                    !isGridView ? 
                     <FlatList
                         showsVerticalScrollIndicator={false}
                         key={woo => woo.id}
@@ -94,20 +77,20 @@ const ListViewWoos = ({ woos, isGridView, showGridToggle }) => {
                         }
                         initialNumToRender={3}
                         onViewableItemsChanged={onViewRef.current}
-                        renderItem={woo => <LayoutWooItem isGridView={showGridToggle ? stateGridView : isGridView} woo={woo} />}
+                        renderItem={woo => <LayoutWooItem isGridView={isGridView} woo={woo} />}
                     />
-                        :
+                        
 
                         <FlatList
                             showsVerticalScrollIndicator={false}
-                            key={isGridView}
+                            key={woo => woo.id}
                             style={styles.gridViewFlatList}
                             backgroundColor={"#fff"}
                             keyExtractor={woo => woo.id}
                             data={woos}
-                            renderItem={woo => <LayoutWooItem isGridView={showGridToggle ? stateGridView : isGridView} woo={woo} />}
+                            renderItem={woo => <LayoutWooItem isGridView={isGridView} woo={woo} />}
                             numColumns={2} />
-            }
+
         </View>
     )
 }

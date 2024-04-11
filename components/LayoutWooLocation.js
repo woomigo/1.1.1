@@ -17,7 +17,7 @@ const LayoutWooLocation = ({ wooLocation }) => {
                         name="map-marker-alt"
                         type='font-awesome-5'
                         color="#f37320"
-                        size={12}
+                        size={16}
                     />
                     <Text style={styles.locationText}>{wooLocation}</Text>
                 </TouchableOpacity>
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     },
     locationText: {
         // backgroundColor: 'blue'
-        fontSize: 12,
+        // fontSize: 12,
         marginStart: 3
     },
     wooMenuContainer: {

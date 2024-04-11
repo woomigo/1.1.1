@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableWithoutFeedback, TouchableOpacity, Linking } from 'react-native';
-import { Icon } from "@rneui/themed";
+import { Icon, Avatar } from "@rneui/themed";
 
 const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profilePic, sharedProfilePic }) => {
     // console.log(`type: ${type}`)
@@ -15,18 +15,22 @@ const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profile
 
     return (
         <View style={styles.container}>
+            <View style={{flexDirection: 'row'}}>     
             <TouchableWithoutFeedback style={styles.wooOwnerImageContainer}>
-                <Image
-                    style={styles.wooUsernameProfileImage}
+                <Avatar
+                    rounded
+                    size="medium"
                     source={{ uri: profilePic }}
                 />
             </TouchableWithoutFeedback>
+            <View style={{ justifyContent: 'flex-end'}}>
+                <TouchableWithoutFeedback >
+                <Text style={styles.wooOwnerUsernameText}>@{username}</Text>
+            </TouchableWithoutFeedback> 
+            </View>
+           
+            </View>
             <View style={styles.textContainer}>
-
-                <TouchableWithoutFeedback>
-                    <Text style={styles.wooOwnerUsernameText}>{username}</Text>
-                </TouchableWithoutFeedback>
-
                 <TouchableOpacity onPress={openCal} style={styles.timeDateContainer}>
                     <Icon
                         name="clock"
@@ -39,33 +43,6 @@ const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profile
                 </TouchableOpacity>
 
             </View>
-            <View style={styles.sharedByContainer}>
-                <TouchableWithoutFeedback>
-                    <Image
-                        style={styles.sharedByImage}
-                        source={{ uri: sharedProfilePic }}
-                    />
-                </TouchableWithoutFeedback>
-
-                {wooType !== undefined ?
-                    < Icon
-                        name={wooType === "publish" ? "globe" : wooType === "public" ? "unlock" : "lock"}
-                        type='font-awesome-5'
-                        color="#b3b1b1"
-                        size={25}
-                        onPress={() =>
-                            navigate('Camera')
-                        } /> : < Icon
-                        name="question"
-                        type='font-awesome-5'
-                        color="#b3b1b1"
-                        size={25}
-                        onPress={() =>
-                            navigate('Camera')
-                        } />}
-
-
-            </View>
         </View>
     )
 }
@@ -74,22 +51,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent: 'space-between',
         paddingTop: 5,
         paddingBottom: 5,
         // backgroundColor: 'yellow'
     },
-    wooOwnerImageContainer: {
-        flex: 1,
-        marginStart: 5,
-        alignItems: 'center'
-        // backgroundColor: 'orange',
-    },
+
     wooOwnerUsernameText: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     wooDateTimeText: {
-        fontSize: 12,
+        // fontSize: 12,
         marginStart: 3
     },
     wooUsernameProfileImage: {
@@ -98,24 +70,9 @@ const styles = StyleSheet.create({
         borderRadius: 25,
     },
     textContainer: {
-        flex: 8,
         marginStart: 5,
+        justifyContent: 'flex-end',
         // backgroundColor: 'green'
-    },
-    sharedByContainer: {
-        flex: 2,
-        marginEnd: 5,
-        // backgroundColor: 'pink',
-        alignItems: 'flex-end',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    sharedByImage: {
-        width: 30,
-        height: 30,
-        borderRadius: 25,
-
     },
     timeDateContainer: {
         flexDirection: 'row'

@@ -23,7 +23,7 @@ const LayoutWooItem = ({ woo, isGridView, currentVisibleIndex, currentIndex }) =
                     <LayoutWooLike wooMigos={woo.item.woo_migos} wooType={woo.item.woo_type} />
                     {/* <LayoutWooWriteComment />  */}
                     <LayoutWooShowComment wooID={woo.item.id} />
-                    <LayoutWooGallery wooMigos={woo.item.woo_migos} />
+                    {/* <LayoutWooGallery wooMigos={woo.item.woo_migos} /> */}
                 </View>
                 :
                 <View style={styles.gridViewContainer}>
