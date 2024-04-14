@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import LayoutWooLocation from './LayoutWooLocation';
 
 
 const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadius }) => {
@@ -13,14 +14,12 @@ const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadiu
             case 'lrg':
                 return 60;
             case 'xlrg':
-                return 80;  
+                return 80;
             case 'small':
             default:
                 return 25;
         }
     }
-
-    // const setHorizontal
 
     return (
         <View style={view === 'grid' ? styles.gridContainer : styles.container}>
@@ -29,11 +28,10 @@ const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadiu
                     navigation.navigate(`${nav}`, `${navParams}`)
                 }}>
                 <Image
-                    style={view === "horizontal" ? [styles.horizontalImage, { width: setHorizontalSize(), height: setHorizontalSize() , borderRadius: horizBorderRadius}] : view === "grid" ? styles.gridImage : styles.listImage}
-                source={{ uri: image }}
+                    style={view === "horizontal" ? [styles.horizontalImage, { width: setHorizontalSize(), height: setHorizontalSize(), borderRadius: horizBorderRadius }] : view === "grid" ? styles.gridImage : styles.listImage}
+                    source={{ uri: image }}
                 />
             </TouchableWithoutFeedback>
-
         </View>
     )
 

@@ -36,7 +36,7 @@ const HomeScreen = ({ navigation }) => {
             <SafeAreaView>
                 <ListViewGallery gallery={Gallery} view={"horizontal"} size="lrg" />
 
-                <ListViewWoos woos={UserWoos} />
+                <ListViewWoos view={'list'} woos={UserWoos}/>
             </SafeAreaView>
         </View>
     )

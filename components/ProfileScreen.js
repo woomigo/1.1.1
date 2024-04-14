@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
 import ListViewGallery from './ListViewGallery';
-import ListViewWoos from './ListViewWoos';
+import ListViewGalleryWoo from './ListViewGalleryWoo';
 import { Gallery, UserWoos } from './shared';
 import { woo_black, woo_gray, woo_orange, woo_white } from '../assets/colors';
 
@@ -117,39 +117,41 @@ const ProfileScreen = ({ navigation }) => {
                     backgroundColor: "white"
                 }}
             >
-                <Tab.Item
-                    title="published"
-                    titleStyle={{ fontSize: 12, color: woo_black }}
-                    icon={{ name: 'sign-out-alt', type: 'font-awesome-5', color: woo_black }}
-                />
-                <Tab.Item
+                {/* <Tab.Item
                     title="subscribed"
                     titleStyle={{ fontSize: 12, color: woo_black }}
                     icon={{ name: 'sign-in-alt', type: 'font-awesome-5', color: woo_black }}
+                /> */}
+                <Tab.Item
+                    title="woos"
+                    titleStyle={{ fontSize: 12, color: woo_black }}
+                    iconContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
+                    icon={<Image style={{ width: 30, height: 24 }} source={require('../assets/woomigo_icon.png')} />}
                 />
+
                 <Tab.Item
                     title="gallery"
                     titleStyle={{ fontSize: 12, color: woo_black }}
-                    icon={{ name: 'photo-video', type: 'font-awesome-5', color: woo_black }}
+                    icon={{ name: 'photo-video', type: 'font-awesome-5', color: woo_orange }}
                 />
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
-                <TabView.Item style={{ width: '100%' }}>
+                {/* <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Published Woos</Text>
                         <ListViewWoos woos={UserWoos} isGridView />
                     </View>
-                </TabView.Item>
+                </TabView.Item> */}
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>Subscribed Woos</Text>
-                        <ListViewWoos woos={UserWoos} showGridToggle isGridView />
+                        <Text style={styles.tabText}>Woos</Text>
+                        <ListViewGalleryWoo woos={UserWoos} view={'grid'} gridNumOfColumns={2} />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Gallery</Text>
-                        <ListViewGallery gallery={Gallery} view={"grid"} size="lrg" />
+                        <ListViewGallery gallery={Gallery} view={"grid"}/>
                     </View>
                 </TabView.Item>
             </TabView>
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
     tabHeader: {
         marginTop: 10,
         padding: 5,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     tabText: {
         fontSize: 18,

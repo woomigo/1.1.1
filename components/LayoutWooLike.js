@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Image, FlatList, Alert } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
+import { woo_black, woo_gray } from '../assets/colors';
 // import LayoutMigosItem from './LayoutMigosItem';
 
 const LayoutWooLike = ({ wooMigos, wooType }) => {
@@ -55,7 +56,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                             <Icon
                                 name="share"
                                 type='font-awesome-5'
-                                color='#b3b1b1'
+                                color={woo_gray}
                             />
                         </TouchableOpacity>
                         : <TouchableOpacity></TouchableOpacity>
@@ -65,7 +66,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                         <Icon
                             name="plus-square"
                             type='font-awesome-5'
-                            color='#b3b1b1'
+                            color={woo_gray}
                         />
                     </TouchableOpacity> : <TouchableOpacity></TouchableOpacity>}
 

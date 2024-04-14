@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Icon } from "@rneui/themed";
+import { woo_gray, woo_black } from '../assets/colors';
+
 // import {openMap, createOpenLink} from 'react-native-open-maps';
 //import { createOpenLink } from 'react-native-open-maps';
 
@@ -25,7 +27,7 @@ const LayoutWooLocation = ({ wooLocation }) => {
                     <Icon
                         name="ellipsis-h"
                         type='font-awesome'
-                        color='#b3b1b1'
+                        color={woo_black}
                     />
                 </TouchableOpacity>
             </View>

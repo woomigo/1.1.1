@@ -3,7 +3,7 @@ import { View, FlatList, StyleSheet, Text } from "react-native";
 import LayoutGalleryItem from "./LayoutGalleryItem";
 
 
-const ListViewGallery = ({ gallery, view, size, isTrunc, truncText, nav, navParams, horizBorderRadius=25 }) => {
+const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, navParams, horizBorderRadius = 25, gridNumOfColumns = 3 }) => {
 
 
 
@@ -31,7 +31,7 @@ const ListViewGallery = ({ gallery, view, size, isTrunc, truncText, nav, navPara
                     keyExtractor={woo => woo.id}
                     data={gallery}
                     renderItem={renderGalleryPreview}
-                    numColumns={2} />;;
+                    numColumns={gridNumOfColumns} />;
             case 'horizontal':
                 return <FlatList
                     horizontal

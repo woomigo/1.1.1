@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
 import { Migos } from './shared';
 import ListViewUsers from './ListViewUsers';
-import { woo_black } from '../assets/colors';
+import { woo_black, woo_orange } from '../assets/colors';
 
 const MigosScreen = ({ navigation }) => {
 
@@ -59,17 +59,17 @@ const MigosScreen = ({ navigation }) => {
                 <Tab.Item
                     title="follow"
                     titleStyle={{ fontSize: 12, color: woo_black }}
-                    icon={{ name: 'user-friends', type: 'font-awesome-5', color: woo_black }}
+                    icon={{ name: 'user-friends', type: 'font-awesome-5', color: woo_orange }}
                 />
                 <Tab.Item
                     title="followers"
                     titleStyle={{ fontSize: 12, color: woo_black }}
-                    icon={{ name: 'users', type: 'font-awesome-5', color: woo_black }}
+                    icon={{ name: 'users', type: 'font-awesome-5', color: woo_orange }}
                 />
                 <Tab.Item
                     title="migos"
                     titleStyle={{ fontSize: 12, color: woo_black }}
-                    icon={{ name: 'people-arrows', type: 'font-awesome-5', color: woo_black }}
+                    icon={{ name: 'people-arrows', type: 'font-awesome-5', color: woo_orange }}
                 />
             </Tab>
             <TabView value={index} onChange={setIndex} animationType="spring">
