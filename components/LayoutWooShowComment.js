@@ -50,7 +50,7 @@ const LayoutWooShowComment = ({wooID}) => {
             </View> */}
             <View style={styles.seeMoreCommentsContainer}>
                 <TouchableOpacity  onPress={() =>
-                navigation.navigate('Comments',{wooID: wooID})
+                navigation.navigate('WooCommentsView',{wooID: wooID})
             } >
                     <Text style={styles.seeMoreCommentsText}>{"see 323 more comments..."}</Text>
                 </TouchableOpacity>

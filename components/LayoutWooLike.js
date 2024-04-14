@@ -75,7 +75,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                     <View>
                         <TouchableOpacity
                             onPress={() =>
-                                navigation.navigate('WooMigos')
+                                navigation.navigate('WooMigosView')
                             }>
                             <Text style={styles.wooMigoCountText}>{Object.keys(wooMigos).filter((key) => key >= 0).length}</Text>
                         </TouchableOpacity>

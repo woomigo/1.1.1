@@ -29,6 +29,8 @@ import WooMigosScreen from './components/WooMigosScreen';
 import WooListScreen from './components/WooListScreen';
 import WooPreviewEditScreen from './components/WooPreviewEditScreen';
 import { woo_orange, woo_gray } from './assets/colors';
+import WooMigosView from './components/WooMigosView';
+import WooCommentsView from './components/WooCommentsView';
 
 
 
@@ -42,7 +44,8 @@ const HomeStack = () => {
     <Stack.Navigator options={{ headerShown: false }} >
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} />
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
-      
+      <Stack.Screen name="WooMigosView" component={WooMigosView} options={{ headerShown: false }} />
+      <Stack.Screen name="WooCommentsView" component={WooCommentsView} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }
