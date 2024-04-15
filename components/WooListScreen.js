@@ -1,13 +1,41 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from "react-native";
-import { Header, Icon, LinearProgress } from "@rneui/themed";
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
+import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
 import { woo_black, woo_orange } from '../assets/colors';
+import ListViewChips from "./ListViewChips"
 
 const WooListScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooDate, wooTime, wooLocation, wooMigos } = route.params;
+    // const { wooMedia, wooDate, wooTime, wooLocation, wooMigos } = route.params;
 
-    const [list, setList] = useState()
+    const [list, setList] = useState([])
+    const [listItem, setListItem] = useState()
+    const [isListError, setIsListError] = useState()
+    const [isListIconHidden, setListIconHidden] = useState(true)
+
+    const listRef = useRef()
+
+    const addListInput = () => {
+        setList([...list, listItem])
+        listRef.current.clear()
+        listRef.current.blur()
+        console.log(list)
+    }
+
+    const handleListOnChange = (input) => {
+        if (input.length > 0) {
+            setListIconHidden(false)
+        } else {
+            setListIconHidden(true)
+        }
+        setIsListError(false)
+        setListItem(input)
+        console.log(listItem)
+    }
+
+    const handleListEndEditing = () => {
+        setListIconHidden(true)
+    }
 
     return (
         <View style={styles.container}>
@@ -36,7 +64,7 @@ const WooListScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooPreviewEdit', {wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooMigos: wooMigos, wooList: list})
+                            navigation.navigate('WooPreviewEdit', { wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooMigos: wooMigos, wooList: list })
                         }
                     />
                 }
@@ -50,6 +78,23 @@ const WooListScreen = ({ route, navigation }) => {
                 color={woo_orange}
                 variant="determinate"
             />
+
+            <KeyboardAvoidingView behavior='position'>
+                <Input
+                    value={listItem}
+                    ref={listRef}
+                    onChangeText={text => handleListOnChange(text)}
+                    placeholder='add an item'
+                    leftIcon={<Icon style={{paddingEnd:5}} type='font-awesome-5' name='clipboard-list' size={18}/>}
+                    // errorStyle={{ color: 'red' }}
+                    // errorMessage={isListError && "sorry we couldn't find that List"}
+                    autoCapitalize="none"
+                    // onFocus={() => handleListOnFocus()}
+                    onEndEditing={() => handleListEndEditing()}
+                    rightIcon={!isListIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => addListInput()} />}
+                />
+            </KeyboardAvoidingView>
+            <ListViewChips chips={list}/>
 
         </View>
     )

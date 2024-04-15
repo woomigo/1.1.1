@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LayoutWooLocation from './LayoutWooLocation';
 
 
 const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadius }) => {
+
+    useEffect(() => {
+        console.log(`NAV is ${JSON.stringify(nav)}`)
+    })
     const navigation = useNavigation();
 
     const setHorizontalSize = () => {
@@ -15,6 +19,8 @@ const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadiu
                 return 60;
             case 'xlrg':
                 return 80;
+            case 'carousel':
+                return '100%';
             case 'small':
             default:
                 return 25;
@@ -25,7 +31,9 @@ const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadiu
         <View style={view === 'grid' ? styles.gridContainer : styles.container}>
             <TouchableWithoutFeedback
                 onPress={() => {
-                    navigation.navigate(`${nav}`, `${navParams}`)
+                    navigation.navigate(`${nav}`
+                        // , `${navParams}`
+                    )
                 }}>
                 <Image
                     style={view === "horizontal" ? [styles.horizontalImage, { width: setHorizontalSize(), height: setHorizontalSize(), borderRadius: horizBorderRadius }] : view === "grid" ? styles.gridImage : styles.listImage}

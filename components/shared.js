@@ -1,4 +1,6 @@
 export const Gallery = [
+
+    
     { image: "https://images.unsplash.com/photo-1667833270216-534aab3d2da7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=900&q=60" },
     { image: "https://images.unsplash.com/photo-1664575600397-88e370cb46b8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=900&q=60" },
     { image: "https://images.unsplash.com/photo-1667896827616-f0354b0351d2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=900&q=60" },
@@ -11,7 +13,7 @@ export const Gallery = [
     { image: "https://images.unsplash.com/photo-1667874430586-0e8faed3b686?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0OXx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=60" },
     { image: "https://images.unsplash.com/photo-1667860840813-a31819cbda0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1OXx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=60" },
     { image: "https://images.unsplash.com/photo-1667874430223-462e988fe6b8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMDB8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=900&q=60" },
-    { image: "https://images.unsplash.com/photo-1667881487502-74dd90b7149b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMDN8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=900&q=60" }];
+    { image: "https://images.unsplash.com/photo-1667881487502-74dd90b7149b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMDN8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=900&q=60" },];
 
 export const UserWoos = [
     {
@@ -273,7 +275,7 @@ export const MenuItems = [
         navigation: "Settings"
     },
     {
-        id:5,
+        id: 5,
         text: "logout",
         icon: "sign-out-alt",
         navigation: "HomeComponent"
@@ -387,4 +389,8 @@ export const Comments = [
         username: "jackofall",
         timeAgo: 10
     },
+];
+
+export const Chips = [
+    'table', 'chairs', 'cups', 'paper plates', 'coke', 'chips',
 ];

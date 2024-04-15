@@ -8,6 +8,8 @@ import LayoutWooLike from './LayoutWooLike';
 import LayoutWooLocation from './LayoutWooLocation';
 import LayoutWooShowComment from './LayoutWooShowComment';
 import { woo_white } from '../assets/colors';
+import LayoutWooList from './LayoutWooList';
+import { Chips } from './shared';
 // import LayoutWooVideo from './LayoutWooVideo';
 
 const LayoutWooItem = ({ woo, isGalleryView, currentVisibleIndex, currentIndex }) => {
@@ -25,7 +27,8 @@ const LayoutWooItem = ({ woo, isGalleryView, currentVisibleIndex, currentIndex }
                 <LayoutWooLike wooMigos={woo.item.woo_migos} wooType={woo.item.woo_type} />
                 {/* <LayoutWooWriteComment />  */}
                 <LayoutWooShowComment wooID={woo.item.id} />
-                {/* <LayoutWooGallery wooMigos={woo.item.woo_migos} /> */}
+                <LayoutWooGallery  nav={'WooGalleryView'} />
+                <LayoutWooList chips={Chips}/>
             </View>
             :
             <View style={styles.container}>

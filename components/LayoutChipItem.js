@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { Chip, withTheme, lightColors } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
+import { woo_orange } from '../assets/colors';
 
 
 const LayoutChipItem = ({ chip, view, size, nav, navParams }) => {
+
+    useEffect(()=> {
+        console.log(chip)
+    })
     const navigation = useNavigation();
 
     const setHorizontalSize = () => {
@@ -24,14 +29,13 @@ const LayoutChipItem = ({ chip, view, size, nav, navParams }) => {
     // const setHorizontal
 
     return (
-        <View style={view === 'grid' ? styles.gridContainer : styles.container}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
             <TouchableWithoutFeedback
                 onPress={() => {
                     navigation.navigate(`${nav}`, `${navParams}`)
                 }}>
-             <Chip></Chip>
+             <Chip title={chip} color={woo_orange} containerStyle={{marginStart: 10, marginVertical: 10 }} />
             </TouchableWithoutFeedback>
-
         </View>
     )
 

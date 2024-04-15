@@ -3,31 +3,46 @@ import { View, FlatList, StyleSheet, Text } from "react-native";
 import LayoutChipItem from "./LayoutChipItem";
 
 
-const ListViewChips = ({ chips, view, size, isTrunc, truncText, nav, navParams, horizBorderRadius=25 }) => {
+const ListViewChips = ({ chips, view, size, nav, navParams }) => {
 
 
 
-    const renderChipPreview = (image) => (
-        <LayoutChipItem size={size} view={view} image={chip.item.chip} nav={nav} navParams={navParams} horizBorderRadius={horizBorderRadius} />
+    const renderChipPreview = (chip) => (
+        <LayoutChipItem size={size} view={view} chip={chip.item} nav={nav} navParams={navParams} />
     )
 
-    return (
-        <View style={styles.container}>
-            <FlatList
-                    showsVerticalScrollIndicator={false}
-                    key={woo => woo.id}
-                    style={styles.gridViewFlatList}
+    const renderView = (view) => {
+        switch (view) {
+            case 'horizontal':
+                return <FlatList
+                    horizontal
+                    // key={woo => woo.id}
+                    showsHorizontalScrollIndicator={false}
+                    // style={styles.wooGalleryPreviewList}
                     backgroundColor={"#fff"}
-                    keyExtractor={woo => woo.id}
                     data={chips}
-                    renderItem={renderChipPreview} />
-        </View>
+                    renderItem={renderChipPreview} />;
+            default:
+                return <View style={styles.container}>
+                    <FlatList
+                        showsVerticalScrollIndicator={false}
+                        // key={}
+                        backgroundColor={"#fff"}
+                        // keyExtractor={woo => woo.id}
+                        data={chips}
+                        renderItem={renderChipPreview} />
+                </View>;
+        }
+    }
+
+    return (
+        renderView(view)
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "row"
+        // flexDirection: "row"
     },
     truncTextContainer: {
         justifyContent: "flex-end"

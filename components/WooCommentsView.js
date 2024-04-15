@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { View, StyleSheet, TouchableWithoutFeedback, Keyboard,    Text, SafeAreaView, FlatList } from 'react-native'
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Text, SafeAreaView, FlatList, KeyboardAvoidingView } from 'react-native'
 import { Icon, Header, Input, Avatar } from '@rneui/themed'
 import { Comments } from './shared'
 // import LayoutCommentItem from './LayoutCommentItem'
@@ -12,23 +12,24 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
 
     const [comment, setComment] = useState()
     const [isCommentError, setIsCommentError] = useState()
-    const [isCommentIconHidden, setCommentIconHidden] = useState()
+    const [isCommentIconHidden, setCommentIconHidden] = useState(true)
 
     const commentRef = useRef()
 
-    const clearCommentInput = () => {
-        setCommentAddress('')
+    const addCommentInput = () => {
+        setComment('')
         commentRef.current.clear()
         commentRef.current.blur()
     }
 
     const handleCommentOnChange = (input) => {
+        if (input.length > 0) {
+            setCommentIconHidden(false)
+        } else {
+            setCommentIconHidden(true)
+        }
         setIsCommentError(false)
         setComment(input)
-    }
-
-    const handleCommentOnFocus = () => {
-        setCommentIconHidden(false)
     }
 
     const handleCommentEndEditing = () => {
@@ -57,7 +58,9 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
     // }
 
     return (
+
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
             <View style={styles.container}>
                 <Header
                     style={styles.header}
@@ -69,33 +72,36 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
                             color={woo_black}
                             size={20}
                             onPress={() =>
-                                navigate('HomeComponent')
+                                navigate('Home')
                             }
                         />
                     }
                     leftContainerStyle={styles.leftComponent}
                 />
                 <ListViewComments comments={Comments} />
-                <Input
-                    value={comment}
-                    ref={commentRef}
-                    onChangeText={text => handleCommentOnChange(text)}
-                    placeholder='comment'
-                    leftIcon={<Avatar
-                        rounded
-                        size="small"
-                        source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                    />}
-                    // errorStyle={{ color: 'red' }}
-                    // errorMessage={isCommentError && "sorry we couldn't find that comment"}
-                    autoCapitalize="none"
-                    onFocus={() => handleCommentOnFocus()}
-                    onEndEditing={() => handleCommentEndEditing()}
-                    rightIcon={!isCommentIconHidden && <Icon name="close" size={18} onPress={() => clearCommentInput()} />}
-                />
-
+                <KeyboardAvoidingView behavior='position'>
+                    <Input
+                        value={comment}
+                        ref={commentRef}
+                        onChangeText={text => handleCommentOnChange(text)}
+                        placeholder='comment'
+                        leftIcon={<Avatar
+                            rounded
+                            size="small"
+                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                        />}
+                        // errorStyle={{ color: 'red' }}
+                        // errorMessage={isCommentError && "sorry we couldn't find that comment"}
+                        autoCapitalize="none"
+                        // onFocus={() => handleCommentOnFocus()}
+                        onEndEditing={() => handleCommentEndEditing()}
+                        rightIcon={!isCommentIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => addCommentInput()} />}
+                    />
+                </KeyboardAvoidingView>
             </View>
         </TouchableWithoutFeedback>
+
+
     )
 }
 

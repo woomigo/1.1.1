@@ -1,11 +1,11 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
 import LayoutGalleryItem from "./LayoutGalleryItem";
 
 
 const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, navParams, horizBorderRadius = 25, gridNumOfColumns = 3 }) => {
 
-
+ 
 
     const renderGalleryPreview = (image) => (
         <LayoutGalleryItem size={size} view={view} image={image.item.image} nav={nav} navParams={navParams} horizBorderRadius={horizBorderRadius} />

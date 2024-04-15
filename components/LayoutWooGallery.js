@@ -3,11 +3,11 @@ import { View, StyleSheet } from 'react-native';
 import { Gallery } from './shared';
 import ListViewGallery from './ListViewGallery';
 
-const LayoutWooGallery = () => {
+const LayoutWooGallery = ({gallery, nav}) => {
 
     return (
         < View style={styles.container}>
-            <ListViewGallery gallery={Gallery} view="horizontal" size="med" horizBorderRadius={5}/>
+            <ListViewGallery nav={nav} gallery={Gallery} view="horizontal" size="med" horizBorderRadius={5}/>
         </View >
     )
 }
