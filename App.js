@@ -32,6 +32,7 @@ import { woo_orange, woo_gray } from './assets/colors';
 import WooMigosView from './components/WooMigosView';
 import WooCommentsView from './components/WooCommentsView';
 import WooGalleryView from './components/WooGalleryView';
+import EditMediaScreen from './components/EditMediaScreen';
 
 
 
@@ -75,6 +76,7 @@ const CameraStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
       <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="EditMedia" component={EditMediaScreen} options={{ headerShown: false }} />
       <Stack.Screen name="WooDate" component={WooDateScreen} options={{ headerShown: false }} />
       <Stack.Screen name="WooTime" component={WooTimeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="WooLocation" component={WooLocationScreen} options={{ headerShown: false }} />

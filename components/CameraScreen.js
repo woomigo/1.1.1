@@ -1,121 +1,126 @@
-// import { CameraView, useCameraPermissions } from 'expo-camera/next';
-// import { useState } from 'react';
-// import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
+import { useState, useRef } from 'react';
+import { Button, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Icon } from "@rneui/themed";
 
-// const CameraScreen = ({navigation}) => {
+const CameraScreen = ({navigation}) => {
+    const [facing, setFacing] = useState('back');
+    const [image, setImage] = useState()
+    const [permission, requestPermission] = useCameraPermissions();
+    
 
-//     const [facing, setFacing] = useState('back');
-//     const [permission, requestPermission] = useCameraPermissions();
+    const camRef = useRef(null);
 
-//     function toggleCameraFacing() {
-//         setFacing(current => (current === 'back' ? 'front' : 'back'));
-//       }
+    const captureImage = async () => {
+        if (camRef) {
+            try {
+                const imgData = await camRef.current.takePictureAsync({
+                    base64: false,
+                    // imageType: Camera.ImageType.png,
+                });
+                setImage(imgData);
+                navigation.navigate('EditMedia', { wooMedia: imgData, isImage: true })
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        console.log(image)
+    }
 
-//       return (
-//         <View style={styles.container}>
-//           <CameraView style={styles.camera} facing={facing}>
-//             <View style={styles.buttonContainer}>
-//             <TouchableOpacity style={styles.button} onPress={() =>
-//                             navigation.navigate('Home')}>
-//                 <Text style={styles.text}>BACK</Text>
-//               </TouchableOpacity>
-//               <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-//                 <Text style={styles.text}>Flip Camera</Text>
-//               </TouchableOpacity>
-//             </View>
-//           </CameraView>
-//         </View>
-//       );
-// }
+    if (!permission) {
+        // Camera permissions are still loading.
+        return <View />;
+    }
 
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: 'red',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-//     camera: {
-//         flex: 1,
-//         width: '100%'
-//     },
-//     buttonContainer: {
-//         margin:100,
-//         marginBottom: 100
-//     },
-//     button: {
-//         backgroundColor: 'red'
-//     }
-// })
+    if (!permission.granted) {
+        // Camera permissions are not granted yet.
+        return (
+            <View style={styles.container}>
+                <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
+                <Button onPress={requestPermission} title="grant permission" />
+            </View>
+        );
+    }
 
-// export default CameraScreen;
-
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from "react-native";
-import { Header, Icon } from "@rneui/themed";
-import { woo_black } from '../assets/colors';
-
-const CameraScreen = ({ navigation }) => {
+    function toggleCameraFacing() {
+        setFacing(current => (current === 'back' ? 'front' : 'back'));
+    }
 
     return (
         <View style={styles.container}>
-            <Header
-                style={styles.header}
-                backgroundColor={'#fff'}
-                // leftComponent={
-
-                // }
-                centerComponent={
-                    <View >
-                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>camera</Text>
+            <CameraView style={styles.camera} ref={camRef} facing={facing}>
+                <View style={styles.buttonContainer}>
+                    {/* <View style={styles.topButtonContainer}>
+                        <TouchableOpacity style={styles.flipCameraButton} onPress={toggleCameraFacing}>
+                            <Icon
+                                name="repeat"
+                                type='font-awesome-6'
+                                color={'white'}
+                                size={30}
+                            />
+                        </TouchableOpacity>
+                    </View> */}
+                    <View style={styles.bottomButtonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+                            <Icon
+                                name="repeat"
+                                type='font-awesome-6'
+                                color={'white'}
+                                size={40}
+                            />
+                        </TouchableOpacity>
+                        <Pressable style={styles.button} onPress={captureImage}>
+                            <Icon
+                                name="circle"
+                                type='font-awesome-6'
+                                color={'white'}
+                                size={50}
+                            />
+                        </Pressable>
+                        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+                            <Icon
+                                name="upload"
+                                type='font-awesome-6'
+                                color={'white'}
+                                size={40}
+                            />
+                        </TouchableOpacity>
                     </View>
-                }
-                rightComponent={
-                    <Icon
-                        name="chevron-right"
-                        type='font-awesome-5'
-                        color={woo_black}
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('WooDate', { wooMedia: "https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" })
-                        }
-                    />
-                }
-                rightContainerStyle={styles.rightComponent}
-                leftContainerStyle={styles.leftComponent}
-                centerContainerStyle={styles.centerComponent}
-            />
+                </View>
+            </CameraView>
         </View>
-    )
-
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff"
-    },
-    profileInfo: {
-        textAlign: 'center'
-    },
-    header: {
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 3 },
-        shadowOpacity: 0.2,
-        elevation: 4,
-    },
-    leftComponent: {
         justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: 'transparent',
+        // marginTop: 40
     },
-    centerComponent: {
-        justifyContent: 'center',
-        alignItems: 'center',
+    camera: {
+        flex: 1,
     },
-    rightComponent: {
-        justifyContent: 'center',
-        alignItems: 'center',
+    buttonContainer: {
+        flex: 1,
+        backgroundColor: 'transparent',
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
     },
-})
+ 
+    bottomButtonContainer: {
+        marginBottom: 50,
+        marginHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    text: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+});
 
 export default CameraScreen

@@ -3,8 +3,7 @@ import { View, StyleSheet, Image, TouchableOpacity, Text, TouchableWithoutFeedba
 import { Icon } from '@rneui/themed'
 
 const LayoutCommentItem = ({comment}) => {
-    // const navigation = useNavigation();
-    console.log(`comments =====> ${JSON.stringify(comment)}`)
+ 
     return (
         <View style={styles.container}>
             <View style={styles.commentHeaderContainer}>

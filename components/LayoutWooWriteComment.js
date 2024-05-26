@@ -23,7 +23,6 @@ const LayoutWooWriteComment = () => {
                     returnKeyType={"send"}
                     onChangeText={(text) => setComment(text)}
                     onSubmitEditing={() => {
-                        console.log(comment)
                         setComment("")
                     }}
                 // enablesReturnKeyAutomatically={true}

@@ -8,7 +8,7 @@ import { woo_orange } from '../assets/colors';
 const LayoutChipItem = ({ chip, view, size, nav, navParams }) => {
 
     useEffect(()=> {
-        console.log(chip)
+     
     })
     const navigation = useNavigation();
 

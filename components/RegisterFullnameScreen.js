@@ -87,7 +87,6 @@ const RegisterFullnameScreen = ({ navigation }) => {
         } else {
   
             navigation.navigate('RegisterDOB', { firstName: firstName, lastName: lastName })
-            console.log(`${firstName} ${lastName}`)
         }
     }
 

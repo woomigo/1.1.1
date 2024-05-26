@@ -5,7 +5,7 @@ import { Header, Icon, SearchBar, Avatar } from "@rneui/themed";
 const LayoutComposeMessageItem = ({ uid, receiversUID, message, profilePic, username, time, messageId }) => {
 
     useEffect(() => {
-        console.log(`4444444 messsage is ${message}`)
+        
     })
 
     return (

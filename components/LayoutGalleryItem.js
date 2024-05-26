@@ -7,7 +7,7 @@ import LayoutWooLocation from './LayoutWooLocation';
 const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadius }) => {
 
     useEffect(() => {
-        console.log(`NAV is ${JSON.stringify(nav)}`)
+       
     })
     const navigation = useNavigation();
 

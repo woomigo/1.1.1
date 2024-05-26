@@ -14,8 +14,6 @@ const ListViewMessages = ({ messages, kind="preview" }) => {
 
     const renderComposeMessages = (message) => {
         <LayoutComposeMessageItem uid={message.item.uid} messageUID={message.item.uid} message={message.item.message} profilePic={message.item.profilePic} username={message.item.username} time={message.item.time} messageId={message.item.id} />
-
-        console.log(`messages from render message ComposeMessage are -----${message.item.message}`)
     }
 
     return (

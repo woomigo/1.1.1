@@ -23,7 +23,6 @@ const HomeScreen = ({ navigation }) => {
             // https://firebase.google.com/docs/reference/js/auth.user
             const uid = user.uid;
             setUID(user.uid)
-            console.log(`HOME OASC UID === ${uid}`)
             // ...
         } else {
             // User is signed out

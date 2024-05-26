@@ -26,7 +26,7 @@ const WooDateScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('Camera')
+                            navigation.navigate('EditMedia', {wooMedia: wooMedia})
                         }
                     />}
                 centerComponent={

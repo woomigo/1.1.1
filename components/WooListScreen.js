@@ -19,7 +19,6 @@ const WooListScreen = ({ route, navigation }) => {
         setList([...list, listItem])
         listRef.current.clear()
         listRef.current.blur()
-        console.log(list)
     }
 
     const handleListOnChange = (input) => {
@@ -30,7 +29,6 @@ const WooListScreen = ({ route, navigation }) => {
         }
         setIsListError(false)
         setListItem(input)
-        console.log(listItem)
     }
 
     const handleListEndEditing = () => {

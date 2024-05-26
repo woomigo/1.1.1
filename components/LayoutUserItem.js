@@ -6,8 +6,6 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
     const [isSelected, setSelected] = useState(false);
 
     const renderBoxButton = () => {
-console.log(`user ======88888====== ${JSON.stringify(user)}`)
-
         switch (kind) {
             case "checkbox":
                 return <View style={styles.checkboxContainer}>

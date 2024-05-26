@@ -3,8 +3,6 @@ import { View, StyleSheet, Text, Image, TouchableWithoutFeedback, TouchableOpaci
 import { Icon, Avatar } from "@rneui/themed";
 
 const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profilePic, sharedProfilePic }) => {
-    // console.log(`type: ${type}`)
-
     const openCal = () => {
         if (Platform.OS === 'ios') {
             Linking.openURL('calshow:');
@@ -15,20 +13,20 @@ const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profile
 
     return (
         <View style={styles.container}>
-            <View style={{flexDirection: 'row'}}>     
-            <TouchableWithoutFeedback style={styles.wooOwnerImageContainer}>
-                <Avatar
-                    rounded
-                    size="medium"
-                    source={{ uri: profilePic }}
-                />
-            </TouchableWithoutFeedback>
-            <View style={{ justifyContent: 'flex-end'}}>
-                <TouchableWithoutFeedback >
-                <Text style={styles.wooOwnerUsernameText}>@{username}</Text>
-            </TouchableWithoutFeedback> 
-            </View>
-           
+            <View style={{ flexDirection: 'row' }}>
+                <TouchableWithoutFeedback style={styles.wooOwnerImageContainer}>
+                    <Avatar
+                        rounded
+                        size="medium"
+                        source={{ uri: profilePic }}
+                    />
+                </TouchableWithoutFeedback>
+                <View style={{ justifyContent: 'flex-end' }}>
+                    <TouchableWithoutFeedback >
+                        <Text style={styles.wooOwnerUsernameText}>@{username}</Text>
+                    </TouchableWithoutFeedback>
+                </View>
+
             </View>
             <View style={styles.textContainer}>
                 <TouchableOpacity onPress={openCal} style={styles.timeDateContainer}>

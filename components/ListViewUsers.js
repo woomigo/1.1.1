@@ -13,9 +13,7 @@ const ListViewUsers = ({ users, kind, searchBoxPlaceholder = "placeholder", hide
     )
 
     const onCheckBoxSelected = (userId) => {
-        console.log(`user id is ${userId}`)
         setUsersSelected(selectedusers => [...selectedusers, userId])
-        console.log(`users selected =====s ${usersSelected}`)
     }
 
     const returnUsersSelected = () => {
