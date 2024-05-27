@@ -40,7 +40,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
         <View style={styles.container}>
             <View style={styles.likesWooMigosContainer}>
                 <View style={styles.likesContainer}>
-                    <TouchableWithoutFeedback onPress={toggleIsLiked}>
+                    <TouchableWithoutFeedback style={{marginEnd: 20}} onPress={toggleIsLiked}>
                         <Icon
                             name="heart"
                             type='font-awesome-5'
@@ -48,7 +48,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                             solid={isLiked}
                         />
                     </TouchableWithoutFeedback >
-                    {wooType !== 'private' ?
+                    {/* {wooType !== 'private' ?
                         <TouchableOpacity
                             onPress={() =>
                                 navigation.navigate('Share')
@@ -60,9 +60,9 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                             />
                         </TouchableOpacity>
                         : <TouchableOpacity></TouchableOpacity>
-                    }
+                    } */}
 
-                    {wooType === 'publish' ? <TouchableOpacity onPress={confirmAddToWoo}>
+                    {wooType === 'post' ? <TouchableOpacity style={{marginStart: 50}} onPress={confirmAddToWoo}>
                         <Icon
                             name="plus-square"
                             type='font-awesome-5'
@@ -115,7 +115,10 @@ const styles = StyleSheet.create({
         flex: .7,
         paddingTop: 5,
         paddingBottom: 5,
-        marginTop: 5
+        marginTop: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: 'red'
 
     },
     likesWooMigosContainer: {
@@ -125,7 +128,8 @@ const styles = StyleSheet.create({
     },
     likesContainer: {
         flex: 1,
-        justifyContent: 'space-around',
+        marginHorizontal: 15,
+        // justifyContent: 'space-around',
         // backgroundColor: 'yellow',
         flexDirection: 'row',
 
@@ -151,24 +155,6 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         marginEnd: 5
     },
-    button: {
-        margin: 10,
-        // backgroundColor: 'blue',
-        // color: '#f37320'
-    },
-    textPrimary: {
-        marginVertical: 20,
-        textAlign: 'center',
-        fontSize: 20,
-    },
-    textSecondary: {
-        marginBottom: 10,
-        textAlign: 'center',
-        fontSize: 17,
-    },
-    // overlay: {
-    //     width: '80%'
-    // }
 })
 
 export default LayoutWooLike;

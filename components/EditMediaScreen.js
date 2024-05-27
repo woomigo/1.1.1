@@ -1,8 +1,15 @@
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Pressable, ImageBackground } from "react-native";
-import { Icon } from "@rneui/themed";
+import { Icon, Overlay, Button } from "@rneui/themed";
+import { woo_black, woo_orange, woo_white } from '../assets/colors';
 
 const EditMediaScreen = ({ navigation, route }) => {
     const { wooMedia, isImage } = route.params;
+    const [visible, setVisible] = useState(false);
+
+    const toggleOverlay = () => {
+        setVisible(!visible);
+    };
 
     return (
         <View style={styles.container}>
@@ -40,20 +47,70 @@ const EditMediaScreen = ({ navigation, route }) => {
                                 size={30}
                             />
                         </Pressable>
-                        <TouchableOpacity style={styles.button} onPress={() =>
-                            navigation.navigate('WooDate', { wooMedia: wooMedia })
-                        }>
+                        <TouchableOpacity style={styles.button}
+                            // onPress={() =>
+                            //     navigation.navigate('WooDate', { wooMedia: wooMedia })
+                            // }
+                            onPress={toggleOverlay}
+                        >
                             <Icon
                                 name="chevron-right"
                                 type='font-awesome-5'
-                                color={'white'}
+                                color={woo_white}
                                 size={35}
                             />
                         </TouchableOpacity>
                     </View>
                 </View>
             </ImageBackground>
-
+            <Overlay overlayStyle={styles.overlay} isVisible={visible} onBackdropPress={toggleOverlay}>
+                <Text style={styles.textPrimary}>woo type?</Text>
+                {/* <Text style={styles.textSecondary}>
+                    private woo can only be seen by 
+                </Text> */}
+                <Button
+                    icon={
+                        <Icon
+                            name="lock"
+                            type="font-awesome"
+                            color={woo_white}
+                            size={25}
+                            iconStyle={{ marginRight: 10 }}
+                        />
+                    }
+                    title="send a private woo"
+                    onPress={toggleOverlay}
+                    buttonStyle={{margin: 10, backgroundColor:woo_orange}}
+                />
+                <Button
+                    icon={
+                        <Icon
+                            name="globe"
+                            type="font-awesome"
+                            color={woo_white}
+                            size={25}
+                            iconStyle={{ marginRight: 10 }}
+                        />
+                    }
+                    title="post a public woo"
+                    onPress={toggleOverlay}
+                    buttonStyle={{margin: 10, backgroundColor:woo_orange}}
+                />
+                <Button
+                    icon={
+                        <Icon
+                            name="times"
+                            type="font-awesome"
+                            color={woo_white}
+                            size={25}
+                            iconStyle={{ marginRight: 10 }}
+                        />
+                    }
+                    title="back to edit woo"
+                    onPress={toggleOverlay}
+                    buttonStyle={{margin: 10, backgroundColor:'red'}}
+                />
+            </Overlay>
         </View>
     )
 
@@ -81,6 +138,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
+    },
+    overlay: {
+        padding: 40,
+        // backgroundColor: 'red'
+    },
+    button: {
+        margin: 10
+    },
+    textPrimary: {
+        marginVertical: 20,
+        textAlign: 'center',
+        fontSize: 20,
+    },
+    textSecondary: {
+        marginBottom: 10,
+        textAlign: 'center',
+        fontSize: 17,
     },
 })
 

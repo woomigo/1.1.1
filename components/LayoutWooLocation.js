@@ -44,11 +44,14 @@ const styles = StyleSheet.create({
         marginStart: 5,
         paddingTop: 5,
         paddingBottom: 5,
+        // backgroundColor: 'purple',
+        justifyContent: 'center'
     },
     locationWooMenuContainer: {
         justifyContent: 'space-between',
         // backgroundColor: 'red',
         flexDirection: 'row',
+        alignItems: 'center'
     },
     locationContainer: {
         // backgroundColor: 'yellow',

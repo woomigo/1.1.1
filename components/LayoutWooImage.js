@@ -2,15 +2,16 @@ import React from 'react';
 import { View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const LayoutWooImage = ({ wooID, image }) => {
+const LayoutWooImage = ({ wooID, image, isPreview }) => {
     const navigation = useNavigation();
 
     return (
         <TouchableWithoutFeedback
-            onPress={() =>
-                navigation.navigate('Woo', { wooID: wooID })
-            } style={styles.container}>
-            <Image style={styles.image} source={{ uri: image }} />
+            // onPress={() => !isPreview ?
+            //     navigation.navigate('Woo', { wooID: wooID }) : console.log('PREVIEW')
+            // } 
+            style={styles.container}>
+            <Image style={styles.image} source={!isPreview ? { uri: image } : image} />
         </TouchableWithoutFeedback>
     )
 }

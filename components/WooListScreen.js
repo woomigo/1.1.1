@@ -6,7 +6,7 @@ import ListViewChips from "./ListViewChips"
 
 const WooListScreen = ({ route, navigation }) => {
 
-    // const { wooMedia, wooDate, wooTime, wooLocation, wooMigos } = route.params;
+    const { wooMedia, wooDate, wooTime, wooLocation, wooMigos } = route.params;
 
     const [list, setList] = useState([])
     const [listItem, setListItem] = useState()

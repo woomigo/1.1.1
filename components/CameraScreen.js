@@ -2,10 +2,13 @@ import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
 import { useState, useRef } from 'react';
 import { Button, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from "@rneui/themed";
+import { VideoCodec } from 'expo-camera/build/legacy/Camera.types';
 
 const CameraScreen = ({navigation}) => {
     const [facing, setFacing] = useState('back');
     const [image, setImage] = useState()
+    const [video, setVideo] = useState()
+    const [isRecording, setIsRecording] = useState(false)
     const [permission, requestPermission] = useCameraPermissions();
     
 
@@ -25,6 +28,36 @@ const CameraScreen = ({navigation}) => {
             }
         }
         console.log(image)
+    }
+
+    const captureVideo = async () => {
+        setIsRecording(true)
+        if (camRef) {
+            try {
+                const videoData = await camRef.current.recordAsync({quality: "4:3"});
+                setVideo(videoData.uri);
+                navigation.navigate('EditMedia', { wooMedia: videoData.uri, isImage: false })
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        console.log(video)
+    }
+
+    const stopVideo = async () => {
+        setIsRecording(false)
+        if (camRef) {
+            try {
+                const videoData = await camRef.current.stopRecording({
+
+                });
+                setVideo(videoData);
+                navigation.navigate('EditMedia', { wooMedia: videoData.uri, isImage: false })
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        console.log(video)
     }
 
     if (!permission) {
@@ -69,11 +102,11 @@ const CameraScreen = ({navigation}) => {
                                 size={40}
                             />
                         </TouchableOpacity>
-                        <Pressable style={styles.button} onPress={captureImage}>
+                        <Pressable style={styles.button} onPress={captureImage} onLongPress={captureVideo} onPressOut={stopVideo}>
                             <Icon
                                 name="circle"
                                 type='font-awesome-6'
-                                color={'white'}
+                                color={isRecording ? 'red':'white'}
                                 size={50}
                             />
                         </Pressable>

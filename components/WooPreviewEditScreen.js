@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
-import { woo_black, woo_orange } from '../assets/colors';
+import { woo_black, woo_orange, woo_white } from '../assets/colors';
+import LayoutWooGallery from './LayoutWooGallery';
+import LayoutWooImage from './LayoutWooImage';
+import LayoutWooInfo from './LayoutWooInfo';
+import LayoutWooLike from './LayoutWooLike';
+import LayoutWooLocation from './LayoutWooLocation';
+import LayoutWooList from './LayoutWooList';
 
 const WooPreviewEditScreen = ({ route, navigation }) => {
 
@@ -11,6 +17,10 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
         navigation.popToTop();
         navigation.navigate('Profile')
     }
+
+    useEffect( () => {
+        console.log(wooLocation)
+    })
 
     return (
         <View style={styles.container}>
@@ -54,6 +64,18 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                 variant="determinate"
             />
 
+            <ScrollView style={styles.wooContainer}>
+                <LayoutWooInfo wooType={"post"}  profilePic={"https://images.unsplash.com/photo-1507153030234-657ffc3cf24a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3400&q=80"} username={"itsMaurice"} wooDate={wooDate} startTime={wooTime} 
+                // endTime={woo.item.woo_end_time} 
+                />
+                {/* {woo.item.image != null ?  */}
+                <LayoutWooImage wooID={0} image={wooMedia} isPreview />
+                    {/* : <LayoutWooVideo video={woo.item.video} currentVisibleIndex={currentVisibleIndex} currentIndex={currentIndex} />} */}
+                <LayoutWooLocation wooLocation={"1050 Howell Mill RD Atlanta, GA 30308"} />
+                <LayoutWooLike wooMigos={wooMigos} wooType={"post"} />
+                <LayoutWooList chips={wooList} />
+            </ScrollView>
+
         </View>
     )
 
@@ -63,6 +85,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff"
+    },
+    wooContainer : { 
+        flex: 14,
+        backgroundColor: woo_white,
+        padding: 5,
+        marginBottom: 10
     },
     profileInfo: {
         textAlign: 'center'

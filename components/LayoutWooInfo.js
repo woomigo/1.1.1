@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableWithoutFeedback, TouchableOpacity, Linking } from 'react-native';
 import { Icon, Avatar } from "@rneui/themed";
+import { woo_gray } from '../assets/colors';
 
 const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profilePic, sharedProfilePic }) => {
     const openCal = () => {
@@ -13,7 +14,7 @@ const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profile
 
     return (
         <View style={styles.container}>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                 <TouchableWithoutFeedback style={styles.wooOwnerImageContainer}>
                     <Avatar
                         rounded
@@ -37,6 +38,14 @@ const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profile
                         size={16}
                     />
                     <Text style={styles.wooDateTimeText}>{`${wooDate} @ ${startTime} ${endTime === undefined ? "" : `-`} ${endTime === undefined ? "" : endTime}`}</Text>
+                    {wooType !== undefined ?
+                    < Icon
+                        name={wooType === "private" ?  "lock" : null}
+                        type='font-awesome-5'
+                        color={woo_gray}
+                        size={20}
+                        style={{marginStart: 5}}
+                         /> : null}
 
                 </TouchableOpacity>
 

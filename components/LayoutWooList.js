@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
         flex: .7,
         paddingTop: 5,
         paddingBottom: 5,
-        marginTop: 5
+        marginTop: 5,
+        // backgroundColor: "yellow"
     },
     wooListContainer: {
         justifyContent: 'space-between',
