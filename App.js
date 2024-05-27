@@ -33,6 +33,7 @@ import WooMigosView from './components/WooMigosView';
 import WooCommentsView from './components/WooCommentsView';
 import WooGalleryView from './components/WooGalleryView';
 import EditMediaScreen from './components/EditMediaScreen';
+import UserScreen from './components/UserScreen';
 
 
 
@@ -68,6 +69,7 @@ const ProfileStack = () => {
       <Stack.Screen name="Migos" component={MigosScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MigoRequests" component={MigoRequestScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} />
+      <Stack.Screen name='User' component={UserScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }

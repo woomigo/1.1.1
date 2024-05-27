@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, TouchableWithoutFeedback } from 'react-native';
-import { Icon } from '@rneui/themed'
+import { Avatar } from '@rneui/themed'
 
 const LayoutCommentItem = ({comment}) => {
  
@@ -9,10 +9,16 @@ const LayoutCommentItem = ({comment}) => {
             <View style={styles.commentHeaderContainer}>
                 <View style={styles.commentHeaderUserContainer}>
                     <TouchableWithoutFeedback>
-                        <Image
-                            style={styles.commentUserImage}
+
+                    <Avatar
+                            rounded
+                            size="small"
                             source={{ uri: comment.item.profile }}
                         />
+                        {/* <Image
+                            style={styles.commentUserImage}
+                            source={{ uri: comment.item.profile }}
+                        /> */}
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback>
                         <Text style={styles.commentUsername}>{comment.item.username}</Text>
@@ -77,7 +83,7 @@ const styles = StyleSheet.create({
     commentUsername: {
         marginStart: 5,
         fontWeight: 'bold',
-        fontSize: 12
+        // fontSize: 12
     },
     commentTimeContainer: {
         marginEnd: 5
@@ -85,12 +91,12 @@ const styles = StyleSheet.create({
     commentTimeAgo: {
         justifyContent: 'flex-end',
         marginEnd: 5,
-        fontSize: 8
+        fontSize: 10
     },
     comment: {
         marginTop: 5,
         marginStart: 40,
-        fontSize: 12
+        // fontSize: 12
     },
     likeReplyContainer: {
         flexDirection: 'row',

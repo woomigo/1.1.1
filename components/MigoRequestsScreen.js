@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
 import { Migos } from './shared';
 import ListViewUsers from './ListViewUsers';
-import { woo_black, woo_orange } from '../assets/colors';
+import { woo_black, woo_orange, woo_red } from '../assets/colors';
 
 const MigoRequestScreen = ({ navigation }) => {
 
@@ -63,7 +63,7 @@ const MigoRequestScreen = ({ navigation }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>sent</Text>
-                        <ListViewUsers users={Migos} kind="single" hideSearchBar singleBtnText='delete' singleBtnColor='red'/>
+                        <ListViewUsers users={Migos} kind="single" hideSearchBar singleBtnText='delete' singleBtnColor={woo_red}/>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>

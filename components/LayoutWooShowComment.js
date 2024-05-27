@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import { Icon } from '@rneui/themed' ;
+import { Avatar } from '@rneui/themed' ;
 import { useNavigation } from '@react-navigation/native';
 
 const LayoutWooShowComment = ({wooID}) => {
@@ -10,9 +10,10 @@ const LayoutWooShowComment = ({wooID}) => {
             <View style={styles.commentHeaderContainer}>
                 <View style={styles.commentHeaderUserContainer}>
                     <TouchableWithoutFeedback>
-                        <Image
-                            style={styles.commentUserImage}
-                            size={20}
+
+                    <Avatar
+                            rounded
+                            size="small"
                             source={{ uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80" }}
                         />
                     </TouchableWithoutFeedback>
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     commentUsername: {
         marginStart: 5,
         fontWeight: 'bold',
-        fontSize: 12
+        // fontSize: 12
     },
     commentTimeContainer: {
         marginEnd: 5
@@ -97,12 +98,12 @@ const styles = StyleSheet.create({
     commentTimeAgo: {
         justifyContent: 'flex-end',
         marginEnd: 5,
-        fontSize: 8
+        fontSize: 10
     },
     comment: {
         marginTop: 5,
         marginStart: 50,
-        fontSize: 12
+        // fontSize: 12
     },
     likeReplyContainer: {
         flexDirection: 'row',
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     },
     seeMoreCommentsText: {
         textDecorationLine: 'underline',
-        fontSize: 12
+        // fontSize: 12
     },
     replyText: {
         marginStart: 3,

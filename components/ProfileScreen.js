@@ -21,7 +21,7 @@ const ProfileScreen = ({ navigation }) => {
                 leftComponent={
 
                     <Icon
-                        name={isProfileOwnedByUser ? "users" : "ellipsis-v"}
+                        name={isProfileOwnedByUser ? "users" : "bars"}
                         type='font-awesome-5'
                         color={woo_black}
                         solid
@@ -52,7 +52,7 @@ const ProfileScreen = ({ navigation }) => {
                 }
                 rightComponent={
                     <Icon
-                        name={"ellipsis-v"}
+                        name={'bars'}
                         type='font-awesome-5'
                         color={woo_black}
                         solid

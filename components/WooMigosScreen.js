@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 import { woo_black, woo_orange } from '../assets/colors';
@@ -10,6 +10,13 @@ const WooMigosScreen = ({ route, navigation }) => {
     const { wooMedia, wooType } = route.params;
 
     const [migos, setMigos] = useState([])
+
+    const returnMigosSelected = (migoList) => {
+        setMigos(migoList)
+    }
+    useEffect(() => {
+        console.log(`migos ==== ${migos}`)
+    })
 
     return (
         <View style={styles.container}>
@@ -53,7 +60,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                 variant="determinate"
             />
 
-            <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
+            <ListViewUsers users={Migos} returnUsers={returnMigosSelected} searchBoxPlaceholder="search migos" kind="checkbox" />
 
         </View>
     )

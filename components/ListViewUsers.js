@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { View, StyleSheet, FlatList } from 'react-native'
 import { SearchBar } from "@rneui/themed";
 import LayoutUserItem from "./LayoutUserItem";
+import { woo_green, woo_red } from "../assets/colors";
+import { list } from "firebase/storage";
 
 
-const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "placeholder", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = "#f37320", doubleBtn1Color = "#00c04b", doubleBtn2Color = "#df2c14",  }) => {
+const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "placeholder", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = "#f37320", doubleBtn1Color = woo_green, doubleBtn2Color = woo_red, }) => {
     const [usersSelected, setUsersSelected] = useState([]);
     const [text, setText] = useState('');
 
@@ -13,12 +15,16 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "place
     )
 
     const onCheckBoxSelected = (userId) => {
-        setUsersSelected(selectedusers => [...selectedusers, userId])
-        console.log(usersSelected)
-    }
+        let listOfSelectedUsers;
 
-    const returnUsersSelected = () => {
-        return usersSelected;
+        if (listOfSelectedUsers !== undefined || listOfSelectedUsers > 0) {
+            if (listOfSelectedUsers.contains(userId)) {
+                listOfSelectedUsers.splice(listOfSelectedUsers.indexOf(userId), 1)
+            }
+        }
+        listOfSelectedUsers = [...listOfSelectedUsers, userId]
+        setUsersSelected(listOfSelectedUsers)
+        returnUsers(listOfSelectedUsers)
     }
 
     return (

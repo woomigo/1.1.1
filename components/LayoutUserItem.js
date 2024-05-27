@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar, CheckBox } from "@rneui/themed";
+import { useNavigation } from '@react-navigation/native';
 
 const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color }) => {
-    const [isSelected, setSelected] = useState(false);
+    const [selected, setSelected] = useState(false);
+
+    const navigation = useNavigation();
 
     const renderBoxButton = () => {
         switch (kind) {
             case "checkbox":
                 return <View style={styles.checkboxContainer}>
                     <CheckBox
-                        checked={isSelected}
+                        checked={selected}
                         onPress={() => handleClick()}
                         style={styles.checkbox}
                         checkedColor={"#f37320"}
@@ -42,14 +45,29 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
     }
 
     const handleClick = () => {
-        setSelected(!isSelected)
+        setSelected(!selected)
         onCheckBoxSelected(user.item.id)
     }
+
+    // const handleCheck = (event) => {
+    //     var selected_array = [...selected];
+    //     if (event.target.checked) {
+    //         selected_array = [...selected, event.target.value];
+    //     } else {
+    //         selected_array.splice(selected.indexOf(event.target.value), 1);
+    //     }
+    //     setSelected(selected_array);
+
+    // };
 
     return (
         <View>
             {kind === 'selectable' ?
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.navigate('User')
+                    }}
+                >
                     <View style={styles.container}>
                         <View style={styles.imageContainer}>
                             <Avatar
