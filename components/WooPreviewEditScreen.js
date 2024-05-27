@@ -11,7 +11,7 @@ import LayoutWooList from './LayoutWooList';
 
 const WooPreviewEditScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooDate, wooTime, wooLocation, wooMigos, wooList } = route.params;
+    const { wooMedia, wooType, wooMigos, wooDate, wooTime, wooLocation, wooList } = route.params;
 
     const navigateToProfileAndClearStack = () => {
         navigation.popToTop();
@@ -65,7 +65,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
             />
 
             <ScrollView style={styles.wooContainer}>
-                <LayoutWooInfo wooType={"post"}  profilePic={"https://images.unsplash.com/photo-1507153030234-657ffc3cf24a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3400&q=80"} username={"itsMaurice"} wooDate={wooDate} startTime={wooTime} 
+                <LayoutWooInfo wooType={wooType}  profilePic={"https://images.unsplash.com/photo-1507153030234-657ffc3cf24a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3400&q=80"} username={"itsMaurice"} wooDate={wooDate} startTime={wooTime} 
                 // endTime={woo.item.woo_end_time} 
                 />
                 {/* {woo.item.image != null ?  */}

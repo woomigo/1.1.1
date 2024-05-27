@@ -7,7 +7,7 @@ import { woo_black, woo_orange } from '../assets/colors';
 
 const WooLocationScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooDate, wooTime } = route.params;
+    const { wooMedia, wooType, wooMigos, wooDate, wooTime } = route.params;
 
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
@@ -61,7 +61,7 @@ const WooLocationScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooTime')
+                            navigation.navigate('WooTime', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate })
                         }
                     />}
                 centerComponent={
@@ -76,7 +76,7 @@ const WooLocationScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooMigos', {wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: location})
+                            navigation.navigate('WooList', {wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: wooTime, wooLocation: location})
                         }
                     />
                 }
@@ -86,7 +86,7 @@ const WooLocationScreen = ({ route, navigation }) => {
             />
             <LinearProgress
                 style={{}}
-                value={.50}
+                value={.67}
                 color={woo_orange}
                 variant="determinate"
             />

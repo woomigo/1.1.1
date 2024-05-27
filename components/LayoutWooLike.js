@@ -40,7 +40,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
         <View style={styles.container}>
             <View style={styles.likesWooMigosContainer}>
                 <View style={styles.likesContainer}>
-                    <TouchableWithoutFeedback style={{marginEnd: 20}} onPress={toggleIsLiked}>
+                    <TouchableWithoutFeedback style={{ marginEnd: 20 }} onPress={toggleIsLiked}>
                         <Icon
                             name="heart"
                             type='font-awesome-5'
@@ -62,7 +62,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                         : <TouchableOpacity></TouchableOpacity>
                     } */}
 
-                    {wooType === 'post' ? <TouchableOpacity style={{marginStart: 50}} onPress={confirmAddToWoo}>
+                    {wooType === 'public' ? <TouchableOpacity style={{ marginStart: 50 }} onPress={confirmAddToWoo}>
                         <Icon
                             name="plus-square"
                             type='font-awesome-5'
@@ -71,39 +71,42 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                     </TouchableOpacity> : <TouchableOpacity></TouchableOpacity>}
 
                 </View>
-                <View style={styles.wooMigosContainer}>
-                    <View>
-                        <TouchableOpacity
-                            onPress={() =>
-                                navigation.navigate('WooMigosView')
-                            }>
-                            <Text style={styles.wooMigoCountText}>{Object.keys(wooMigos).filter((key) => key >= 0).length}</Text>
-                        </TouchableOpacity>
+                {wooMigos &&
+                    <View style={styles.wooMigosContainer}>
+                        <View>
+                            <TouchableOpacity
+                                onPress={() =>
+                                    navigation.navigate('WooMigosView')
+                                }>
+                                <Text style={styles.wooMigoCountText}>{Object.keys(wooMigos).filter((key) => key >= 0).length}</Text>
+                            </TouchableOpacity>
 
-                    </View>
+                        </View>
 
-                    <View style={styles.wooMigosImagesContainer}>
-                        <Image
-                            style={styles.wooMigoImage}
-                            source={{ uri: wooMigos[0] }}
-                        />
+                        <View style={styles.wooMigosImagesContainer}>
+                            <Image
+                                style={styles.wooMigoImage}
+                                source={{ uri: wooMigos[0] }}
+                            />
 
-                        <Image
-                            style={styles.wooMigoImage}
-                            source={{ uri: wooMigos[1] }}
-                        />
+                            <Image
+                                style={styles.wooMigoImage}
+                                source={{ uri: wooMigos[1] }}
+                            />
 
-                        <Image
-                            style={styles.wooMigoImage}
-                            source={{ uri: wooMigos[2] }}
-                        />
+                            <Image
+                                style={styles.wooMigoImage}
+                                source={{ uri: wooMigos[2] }}
+                            />
 
-                        <Image
-                            style={styles.wooMigoImage}
-                            source={{ uri: wooMigos[3] }}
-                        />
-                    </View>
-                </View>
+                            <Image
+                                style={styles.wooMigoImage}
+                                source={{ uri: wooMigos[3] }}
+                            />
+                        </View>
+                    </View> 
+                }
+
             </View>
 
         </View>

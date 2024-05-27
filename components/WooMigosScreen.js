@@ -5,7 +5,7 @@ import { woo_black, woo_orange } from '../assets/colors';
 
 const WooMigosScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooDate, wooTime, wooLocation } = route.params;
+    const { wooMedia, wooType } = route.params;
 
     const [migos, setMigos] = useState([])
 
@@ -21,7 +21,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooLocation')
+                            navigation.navigate('EditMedia', { wooMedia: wooMedia })
                         }
                     />}
                 centerComponent={
@@ -36,7 +36,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooList', {wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooMigos: migos})
+                            navigation.navigate('WooDate', {wooMedia: wooMedia, wooType: wooType, wooMigos: migos})
                         }
                     />
                 }
@@ -46,7 +46,7 @@ const WooMigosScreen = ({ route, navigation }) => {
             />
             <LinearProgress
                 style={{}}
-                value={.67}
+                value={.17}
                 color={woo_orange}
                 variant="determinate"
             />

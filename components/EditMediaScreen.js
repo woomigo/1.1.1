@@ -79,8 +79,12 @@ const EditMediaScreen = ({ navigation, route }) => {
                         />
                     }
                     title="send a private woo"
-                    onPress={toggleOverlay}
-                    buttonStyle={{margin: 10, backgroundColor:woo_orange}}
+                    onPress={() => {
+                        toggleOverlay()
+                        navigation.navigate('WooMigos', { wooMedia: wooMedia, wooType: "private" })
+
+                    }}
+                    buttonStyle={{ margin: 10, backgroundColor: woo_orange }}
                 />
                 <Button
                     icon={
@@ -93,8 +97,11 @@ const EditMediaScreen = ({ navigation, route }) => {
                         />
                     }
                     title="post a public woo"
-                    onPress={toggleOverlay}
-                    buttonStyle={{margin: 10, backgroundColor:woo_orange}}
+                    onPress={() => {
+                        toggleOverlay()
+                        navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: "public" })
+                    }}
+                    buttonStyle={{ margin: 10, backgroundColor: woo_orange }}
                 />
                 <Button
                     icon={
@@ -108,7 +115,7 @@ const EditMediaScreen = ({ navigation, route }) => {
                     }
                     title="back to edit woo"
                     onPress={toggleOverlay}
-                    buttonStyle={{margin: 10, backgroundColor:'red'}}
+                    buttonStyle={{ margin: 10, backgroundColor: 'red' }}
                 />
             </Overlay>
         </View>

@@ -6,7 +6,7 @@ import { woo_black, woo_orange } from '../assets/colors';
 
 const WooTimeScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooDate } = route.params;
+    const { wooMedia, wooType, wooMigos, wooDate } = route.params;
 
     const [time, setTime] = useState(new Date())
 
@@ -26,7 +26,7 @@ const WooTimeScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooDate')
+                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos })
                         }
                     />}
                 centerComponent={
@@ -41,7 +41,7 @@ const WooTimeScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooLocation', {wooMedia: wooMedia, wooDate: wooDate, wooTime: time.toLocaleTimeString('en-us', { timeStyle: 'short' })})
+                            navigation.navigate('WooLocation', {wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: time.toLocaleTimeString('en-us', { timeStyle: 'short' })})
                         }
                     />
                 }
@@ -52,7 +52,7 @@ const WooTimeScreen = ({ route, navigation }) => {
 
             <LinearProgress
                 style={{}}
-                value={.33}
+                value={.50}
                 color={woo_orange}
                 variant="determinate"
             />

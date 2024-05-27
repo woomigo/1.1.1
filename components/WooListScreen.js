@@ -6,7 +6,7 @@ import ListViewChips from "./ListViewChips"
 
 const WooListScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooDate, wooTime, wooLocation, wooMigos } = route.params;
+    const { wooMedia, wooType, wooMigos, wooDate, wooTime, wooLocation } = route.params;
 
     const [list, setList] = useState([])
     const [listItem, setListItem] = useState()
@@ -47,7 +47,7 @@ const WooListScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooMigos')
+                            navigation.navigate('WooLocation', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: wooTime })
                         }
                     />}
                 centerComponent={
@@ -62,7 +62,7 @@ const WooListScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooPreviewEdit', { wooMedia: wooMedia, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooMigos: wooMigos, wooList: list })
+                            navigation.navigate('WooPreviewEdit', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooList: list })
                         }
                     />
                 }

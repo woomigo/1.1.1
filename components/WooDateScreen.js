@@ -6,7 +6,7 @@ import { woo_black, woo_orange } from '../assets/colors';
 
 const WooDateScreen = ({ route, navigation }) => {
 
-    const { wooMedia } = route.params;
+    const { wooMedia, wooType, wooMigos } = route.params;
 
     const [date, setDate] = useState(new Date())
 
@@ -25,9 +25,12 @@ const WooDateScreen = ({ route, navigation }) => {
                         type='font-awesome-5'
                         color={woo_black}
                         size={25}
-                        onPress={() =>
-                            navigation.navigate('EditMedia', {wooMedia: wooMedia})
-                        }
+                        onPress={() => {
+                            wooType === 'private' ?
+                                navigation.navigate('WooMigos', { wooMedia: wooMedia, wooType: wooType })
+                                :
+                                navigation.navigate('EditMedia', { wooMedia: wooMedia })
+                        }}
                     />}
                 centerComponent={
                     <View >
@@ -41,7 +44,7 @@ const WooDateScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooTime', {wooMedia: wooMedia, wooDate: date.toLocaleDateString('en-us')})
+                            navigation.navigate('WooTime', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: date.toLocaleDateString('en-us') })
                         }
                     />
                 }
@@ -52,7 +55,7 @@ const WooDateScreen = ({ route, navigation }) => {
 
             <LinearProgress
                 style={{}}
-                value={.17}
+                value={.33}
                 color={woo_orange}
                 variant="determinate"
             />
