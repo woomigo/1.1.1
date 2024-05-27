@@ -76,19 +76,19 @@ const MigosScreen = ({ navigation }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>follow</Text>
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="selectable" />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>followers</Text>
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="selectable" />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>migos</Text>
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="selectable" />
                     </View>
                 </TabView.Item>
             </TabView>

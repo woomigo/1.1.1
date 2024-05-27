@@ -4,7 +4,7 @@ import { SearchBar } from "@rneui/themed";
 import LayoutUserItem from "./LayoutUserItem";
 
 
-const ListViewUsers = ({ users, kind, searchBoxPlaceholder = "placeholder", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = "#f37320", doubleBtn1Color = "#00c04b", doubleBtn2Color = "#df2c14",  }) => {
+const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "placeholder", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = "#f37320", doubleBtn1Color = "#00c04b", doubleBtn2Color = "#df2c14",  }) => {
     const [usersSelected, setUsersSelected] = useState([]);
     const [text, setText] = useState('');
 
@@ -14,6 +14,7 @@ const ListViewUsers = ({ users, kind, searchBoxPlaceholder = "placeholder", hide
 
     const onCheckBoxSelected = (userId) => {
         setUsersSelected(selectedusers => [...selectedusers, userId])
+        console.log(usersSelected)
     }
 
     const returnUsersSelected = () => {

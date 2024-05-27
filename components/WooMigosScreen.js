@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 import { woo_black, woo_orange } from '../assets/colors';
+import { Migos } from './shared';
+import ListViewUsers from './ListViewUsers';
 
 const WooMigosScreen = ({ route, navigation }) => {
 
@@ -36,7 +38,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooDate', {wooMedia: wooMedia, wooType: wooType, wooMigos: migos})
+                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: migos })
                         }
                     />
                 }
@@ -50,6 +52,8 @@ const WooMigosScreen = ({ route, navigation }) => {
                 color={woo_orange}
                 variant="determinate"
             />
+
+            <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="checkbox" />
 
         </View>
     )

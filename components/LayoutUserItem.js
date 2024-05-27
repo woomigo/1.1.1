@@ -19,21 +19,22 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
             case "single":
                 return <View style={styles.requestButtonsContainer}>
                     <TouchableOpacity
-                        style={[styles.addButton,{ backgroundColor: singleBtnColor }]}
+                        style={[styles.addButton, { backgroundColor: singleBtnColor }]}
                     ><Text style={styles.buttonText}>{singleBtnText}</Text>
                     </TouchableOpacity>
                 </View>;
             case "double":
                 return <View style={styles.requestsButtonsContainer}>
                     <TouchableOpacity
-                        style={[styles.acceptButton,{ backgroundColor: doubleBtn1Color }]} 
+                        style={[styles.acceptButton, { backgroundColor: doubleBtn1Color }]}
                     ><Text style={styles.buttonText}>{doubleBtn1Text}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                         style={[styles.denyButton,{ backgroundColor: doubleBtn2Color }]} 
+                        style={[styles.denyButton, { backgroundColor: doubleBtn2Color }]}
                     ><Text style={styles.buttonText}>{doubleBtn2Text}</Text>
                     </TouchableOpacity>
                 </View>;
+            case "selectable":
             default:
                 return null;
 
@@ -46,22 +47,43 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.imageContainer}>
-                <Avatar
-                    rounded
-                    size="medium"
-                    source={{ uri: `${user.item.profile}` }}
-                />
-            </View>
-            <View style={styles.textContainer}>
-                <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.fullname}</Text>
-                <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
-            </View>
+        <View>
+            {kind === 'selectable' ?
+                <TouchableOpacity>
+                    <View style={styles.container}>
+                        <View style={styles.imageContainer}>
+                            <Avatar
+                                rounded
+                                size="medium"
+                                source={{ uri: `${user.item.profile}` }}
+                            />
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.fullname}</Text>
+                            <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
 
-            {renderBoxButton()}
+                : <View style={styles.container}>
+                    <View style={styles.imageContainer}>
+                        <Avatar
+                            rounded
+                            size="medium"
+                            source={{ uri: `${user.item.profile}` }}
+                        />
+                    </View>
+                    <View style={styles.textContainer}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.fullname}</Text>
+                        <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
+                    </View>
 
+                    {renderBoxButton()}
+
+                </View>
+            }
         </View>
+
     )
 }
 
