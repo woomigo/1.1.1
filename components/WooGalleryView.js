@@ -1,17 +1,17 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { Icon, Header, Input, Avatar } from '@rneui/themed'
 import { woo_white, woo_black } from '../assets/colors';
 import ListViewGallery from './ListViewGallery';
 import { Gallery } from './shared';
 
 
-const WooGalleryView = ({navigation, WooGallery}) => {
+const WooGalleryView = ({ navigation, wooGallery }) => {
 
   return (
-    <View>
+    <View style={styles.container}>
       <Header
-        style={styles.header}
+        containerStyle={styles.header}
         backgroundColor={woo_white}
         leftComponent={
           <Icon
@@ -20,19 +20,41 @@ const WooGalleryView = ({navigation, WooGallery}) => {
             color={woo_black}
             size={20}
             onPress={() =>
-              navigation.navigate('Home')
+              navigation.goBack()
             }
           />
         }
+        centerComponent={
+          <View >
+            <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo gallery</Text>
+          </View>
+        }
         leftContainerStyle={styles.leftComponent}
+        centerContainerStyle={styles.centerComponent}
       />
-      <ListViewGallery gallery={Gallery} view="horizontal" size="carousel" horizBorderRadius={5}/>
+      <ListViewGallery gallery={Gallery} view={"grid"} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: woo_white
+},
+  header: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 4,
+    marginBottom: 5,
+},
   leftComponent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerComponent: {
     justifyContent: 'center',
     alignItems: 'center',
   },

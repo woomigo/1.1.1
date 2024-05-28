@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import { Avatar } from '@rneui/themed' ;
+import { Avatar, Card } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 
-const LayoutWooShowComment = ({wooID}) => {
+const LayoutWooShowComment = ({ wooID }) => {
     const navigation = useNavigation();
     return (
-        <View style={styles.container}>
+        <Card containerStyle={styles.container}>
             <View style={styles.commentHeaderContainer}>
                 <View style={styles.commentHeaderUserContainer}>
                     <TouchableWithoutFeedback>
 
-                    <Avatar
+                        <Avatar
                             rounded
                             size="small"
                             source={{ uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80" }}
@@ -31,41 +31,25 @@ const LayoutWooShowComment = ({wooID}) => {
             <View style={styles.commentContainer}>
                 <Text style={styles.comment}>{"I'll defintely be there!"}</Text>
             </View>
-            {/* <View style={styles.likeReplyContainer}>
-                <TouchableOpacity style={styles.likeContainer}>
-                    <Icon
-                        name="star"
-                        type='font-awesome-5'
-                        color='#b3b1b1'
-                        size={12}
-                    ></Icon><Text style={styles.likeText}>{"like"}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.replyContainer}>
-                    <Icon
-                        name="reply"
-                        type='font-awesome-5'
-                        color='#b3b1b1'
-                        size={12}
-                    ></Icon><Text style={styles.replyText}>{"reply"}</Text>
-                </TouchableOpacity>
-            </View> */}
             <View style={styles.seeMoreCommentsContainer}>
-                <TouchableOpacity  onPress={() =>
-                navigation.navigate('WooCommentsView',{wooID: wooID})
-            } >
+                <TouchableOpacity onPress={() =>
+                    navigation.navigate('WooCommentsView', { wooID: wooID })
+                } >
                     <Text style={styles.seeMoreCommentsText}>{"see 323 more comments..."}</Text>
                 </TouchableOpacity>
 
             </View>
-        </View>
+        </Card>
+        
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 2,
-        paddingTop: 5,
-        paddingBottom: 5,
+        width: '100%',
+        borderRadius: 5,
+        margin: 0,
+        padding: 10
 
     },
     commentHeaderContainer: {
@@ -74,7 +58,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginStart: 5,
         marginEnd: 5,
-                // backgroundColor: 'blue'
+        // backgroundColor: 'blue'
     },
     commentHeaderUserContainer: {
         flexDirection: 'row',

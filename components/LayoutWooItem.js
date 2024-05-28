@@ -20,15 +20,15 @@ const LayoutWooItem = ({ woo, isGalleryView, currentVisibleIndex, currentIndex }
 
         !isGalleryView ?
             <View style={styles.container}>
-                <LayoutWooInfo wooType={woo.item.woo_type} sharedProfilePic={woo.item.shared_by_profile_pic} profilePic={woo.item.woo_owner_profile_pic} username={woo.item.woo_owner_username} wooDate={woo.item.woo_date} startTime={woo.item.woo_start_time} endTime={woo.item.woo_end_time} />
+                <LayoutWooInfo wooType={woo.item.woo_type} sharedProfilePic={woo.item.shared_by_profile_pic} profilePic={woo.item.woo_owner_profile_pic} username={woo.item.woo_owner_username} />
                 {woo.item.image != null ? <LayoutWooImage wooID={woo.item.id} image={woo.item.image} isPreview={false} />
                     : <LayoutWooVideo video={woo.item.video} currentVisibleIndex={currentVisibleIndex} currentIndex={currentIndex} />}
-                <LayoutWooLocation wooLocation={woo.item.woo_location} />
+                <LayoutWooLocation  wooDate={woo.item.woo_date} startTime={woo.item.woo_start_time} endTime={woo.item.woo_end_time} wooLocation={woo.item.woo_location} />
                 <LayoutWooLike wooMigos={woo.item.woo_migos} wooType={woo.item.woo_type} />
                 {/* <LayoutWooWriteComment />  */}
                 <LayoutWooShowComment wooID={woo.item.id} />
                 <LayoutWooGallery  nav={'WooGalleryView'} />
-                <LayoutWooList chips={Chips}/>
+                <LayoutWooList nav={'WooListView'} chips={Chips}/>
             </View>
             :
             <View style={styles.container}>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         flex: 14,
         backgroundColor: woo_white,
         padding: 5,
-        marginBottom: 10
+        marginBottom: 5
     },
     gridContainer: {
         flex: 1,

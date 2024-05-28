@@ -6,7 +6,6 @@ import { woo_orange } from '../assets/colors';
 
 
 const LayoutChipItem = ({ chip, view, size, nav, navParams }) => {
-
     useEffect(()=> {
      
     })
@@ -32,9 +31,17 @@ const LayoutChipItem = ({ chip, view, size, nav, navParams }) => {
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
             <TouchableWithoutFeedback
                 onPress={() => {
-                    navigation.navigate(`${nav}`, `${navParams}`)
+                    console.log('chip pressed')
+                    navigation.navigate(`${nav}`,
+                    // `${navParams}`
+                )
                 }}>
-             <Chip title={chip} color={woo_orange} containerStyle={{marginStart: 10, marginVertical: 10 }} />
+             <Chip  onPress={() => {
+                    console.log('chip pressed')
+                    navigation.navigate(`${nav}`,
+                    // `${navParams}`
+                )
+                }} title={chip} color={woo_orange} containerStyle={{marginStart: 10, marginVertical: 10 }} />
             </TouchableWithoutFeedback>
         </View>
     )

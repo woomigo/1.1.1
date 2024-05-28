@@ -97,7 +97,7 @@ const MenuScreen = ({ navigation }) => {
 
         <View style={styles.container}>
             <Header
-                style={styles.header}
+                containerStyle={styles.header}
                 backgroundColor={'#fff'}
                 leftComponent={
                     <Icon

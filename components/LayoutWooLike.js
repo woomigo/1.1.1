@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Image, FlatList, Alert } from 'react-native';
-import { Icon } from '@rneui/themed';
+import { Icon, Card } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { woo_black, woo_gray } from '../assets/colors';
 // import LayoutMigosItem from './LayoutMigosItem';
@@ -37,7 +37,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
 
 
     return (
-        <View style={styles.container}>
+        <Card containerStyle={styles.container}>
             <View style={styles.likesWooMigosContainer}>
                 <View style={styles.likesContainer}>
                     <TouchableWithoutFeedback style={{ marginEnd: 20 }} onPress={toggleIsLiked}>
@@ -109,18 +109,22 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
 
             </View>
 
-        </View>
+        </Card>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: .7,
-        paddingTop: 5,
-        paddingBottom: 5,
-        marginTop: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
+        width: '100%',
+        borderRadius: 5,
+        margin: 0,
+        padding: 10
+        // flex: .7,
+        // paddingTop: 5,
+        // paddingBottom: 5,
+        // marginTop: 5,
+        // justifyContent: 'center',
+        // alignItems: 'center',
         // backgroundColor: 'red'
 
     },

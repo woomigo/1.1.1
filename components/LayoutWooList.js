@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Image, FlatList, Alert } from 'react-native';
-import { Icon } from '@rneui/themed';
+import { Card } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import ListViewChips from './ListViewChips';
 
 
-const LayoutWooList = ({ chips, wooType }) => {
+const LayoutWooList = ({ nav, chips, wooType }) => {
     const navigation = useNavigation();
 
     return (
-        <View style={styles.container}>
+        <Card containerStyle={styles.container}>
             <View style={styles.wooListContainer}>
-            <ListViewChips chips={chips} view={'horizontal'} />
+                <ListViewChips nav={nav} chips={chips} view={'horizontal'} />
             </View>
-        </View>
+        </Card>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: .7,
-        paddingTop: 5,
-        paddingBottom: 5,
-        marginTop: 5,
-        // backgroundColor: "yellow"
+        width: '100%',
+        borderRadius: 5,
+        margin: 0,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
     },
     wooListContainer: {
         justifyContent: 'space-between',

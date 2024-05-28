@@ -16,7 +16,7 @@ const ProfileScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Header
-                style={styles.header}
+                containerStyle={styles.header}
                 backgroundColor={woo_white}
                 leftComponent={
 
@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     header: {
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 3 },
-        shadowOpacity: 0.2,
-        elevation: 4,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 1, height: 3 },
+        // shadowOpacity: 0.2,
+        // elevation: 4,
     },
     leftComponent: {
         justifyContent: 'center',

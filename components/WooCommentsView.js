@@ -63,7 +63,7 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
 
             <View style={styles.container}>
                 <Header
-                    style={styles.header}
+                    containerStyle={styles.header}
                     backgroundColor={woo_white}
                     leftComponent={
                         <Icon
@@ -76,7 +76,13 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
                             }
                         />
                     }
-                    leftContainerStyle={styles.leftComponent}
+                    centerComponent={
+                        <View >
+                          <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo comments</Text>
+                        </View>
+                      }
+                      leftContainerStyle={styles.leftComponent}
+                      centerContainerStyle={styles.centerComponent}
                 />
                 <ListViewComments comments={Comments} />
                 <KeyboardAvoidingView behavior='position'>
@@ -116,7 +122,8 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
-        elevation: 4
+        elevation: 4,
+        marginBottom: 5,
     },
     leftComponent: {
         justifyContent: 'center',
@@ -125,18 +132,6 @@ const styles = StyleSheet.create({
     centerComponent: {
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    rightComponent: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    migosTextContainer: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    migosText: {
-        fontSize: 22,
-        color: "#f37320",
     },
 })
 

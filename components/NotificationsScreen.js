@@ -36,7 +36,7 @@ const NotificationsScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <Header
-                style={styles.header}
+                containerStyle={styles.header}
                 backgroundColor={'#fff'}
 
                 // leftComponent={
@@ -82,12 +82,8 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
-        elevation: 4
-    },
-    migosText: {
-        fontSize: 18,
-        color: "#f37320",
-        fontWeight: 'bold'
+        elevation: 4,
+        marginBottom: 5,
     },
     leftComponent: {
         justifyContent: 'center',

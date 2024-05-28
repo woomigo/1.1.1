@@ -1,20 +1,25 @@
 import React from 'react'
 import { View, StyleSheet } from 'react-native';
 import { Gallery } from './shared';
+import { Card } from '@rneui/themed';
 import ListViewGallery from './ListViewGallery';
 
 const LayoutWooGallery = ({gallery, nav}) => {
 
     return (
-        < View style={styles.container}>
+        < Card containerStyle={styles.container}>
             <ListViewGallery nav={nav} gallery={Gallery} view="horizontal" size="med" horizBorderRadius={5}/>
-        </View >
+        </Card >
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: .7,
+        width: '100%',
+        borderRadius: 5,
+        margin: 0,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
     }
 })
 

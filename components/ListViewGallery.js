@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
 import LayoutGalleryItem from "./LayoutGalleryItem";
+import { woo_white } from "../assets/colors";
 
 
 const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, navParams, horizBorderRadius = 25, gridNumOfColumns = 3 }) => {
@@ -59,7 +60,9 @@ const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, n
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "row"
+        flexDirection: "row",
+        backgroundColor: woo_white
+
     },
     truncTextContainer: {
         justifyContent: "flex-end"

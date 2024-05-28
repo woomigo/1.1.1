@@ -34,6 +34,7 @@ import WooCommentsView from './components/WooCommentsView';
 import WooGalleryView from './components/WooGalleryView';
 import EditMediaScreen from './components/EditMediaScreen';
 import UserScreen from './components/UserScreen';
+import WooListView from './components/WooListView';
 
 
 
@@ -50,6 +51,7 @@ const HomeStack = () => {
       <Stack.Screen name="WooMigosView" component={WooMigosView} options={{ headerShown: false }} />
       <Stack.Screen name="WooCommentsView" component={WooCommentsView} options={{ headerShown: false }} />
       <Stack.Screen name="WooGalleryView" component={WooGalleryView} options={{ headerShown: false }} />
+      <Stack.Screen name="WooListView" component={WooListView} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }

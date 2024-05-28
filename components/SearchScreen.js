@@ -8,7 +8,7 @@ const SearchScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Header
-                style={styles.header}
+                containerStyle={styles.header}
                 backgroundColor={'#fff'}
                 // leftComponent={
 
