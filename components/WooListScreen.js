@@ -62,7 +62,7 @@ const WooListScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooPreviewEdit', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooList: list })
+                            navigation.navigate('WooPreviewEdit', { wooMedia: wooMedia, wooType: wooType, wooMigos: [1,2,3], wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooList: list })
                         }
                     />
                 }

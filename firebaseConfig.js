@@ -17,7 +17,7 @@ export default firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const db = getFirestore(firebaseApp);
-export const storage = getStorage(firebaseApp, "gs://woo-pic-video-bucket");
+export const storage = getStorage(firebaseApp);
 export const auth = initializeAuth(firebaseApp, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 });

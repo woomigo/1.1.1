@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Pressable, ImageBackground } from "react-native";
 import { Icon, Overlay, Button } from "@rneui/themed";
 import { woo_black, woo_orange, woo_white } from '../assets/colors';
@@ -10,6 +10,10 @@ const EditMediaScreen = ({ navigation, route }) => {
     const toggleOverlay = () => {
         setVisible(!visible);
     };
+
+    useEffect(()=> {
+        console.log(`EDITMEDIA === ${JSON.stringify(wooMedia)}`)
+    })
 
     return (
         <View style={styles.container}>

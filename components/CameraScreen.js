@@ -1,28 +1,71 @@
 import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from "@rneui/themed";
-import { VideoCodec } from 'expo-camera/build/legacy/Camera.types';
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
+import { CameraType, ImageType, VideoCodec } from 'expo-camera/build/legacy/Camera.types';
+import { useIsFocused } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
-const CameraScreen = ({navigation}) => {
+const CameraScreen = ({ navigation }) => {
     const [facing, setFacing] = useState('back');
     const [image, setImage] = useState()
     const [video, setVideo] = useState()
     const [isRecording, setIsRecording] = useState(false)
     const [permission, requestPermission] = useCameraPermissions();
-    
+
 
     const camRef = useRef(null);
+
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+
+      console.log(CameraType.front)
+
+       }, []);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [3, 4],
+            quality: 1
+        })
+
+        if (!result.canceled) {
+            console.log(result.assets[0].uri)
+            setImage(result.assets[0].uri)
+            navigation.navigate('EditMedia', { wooMedia: result.assets[0], isImage: true })
+        }
+    }
 
     const captureImage = async () => {
         if (camRef) {
             try {
                 const imgData = await camRef.current.takePictureAsync({
                     base64: false,
-                    // imageType: Camera.ImageType.png,
+                    imageType: ImageType.png,
+                    quality: 1,
+                    isImageMirror: true
                 });
-                setImage(imgData);
+                if (facing === "front") {
+                    let photo = imgData
+                    photo = await manipulateAsync(
+                        photo.localUri || photo.uri,
+                        [
+                            { rotate: 180 },
+                            { flip: FlipType.Vertical },
+                        ],
+                        { compress: 1, format: SaveFormat.PNG }
+                    );
+                    setImage(photo);
+                    navigation.navigate('EditMedia', { wooMedia: photo, isImage: true })
+                } else {
+                    setImage(imgData);
                 navigation.navigate('EditMedia', { wooMedia: imgData, isImage: true })
+                }
+
             } catch (err) {
                 console.log(err);
             }
@@ -30,35 +73,35 @@ const CameraScreen = ({navigation}) => {
         console.log(image)
     }
 
-    const captureVideo = async () => {
-        setIsRecording(true)
-        if (camRef) {
-            try {
-                const videoData = await camRef.current.recordAsync({quality: "4:3"});
-                setVideo(videoData.uri);
-                navigation.navigate('EditMedia', { wooMedia: videoData.uri, isImage: false })
-            } catch (err) {
-                console.log(err);
-            }
-        }
-        console.log(video)
-    }
+    // const captureVideo = async () => {
+    //     setIsRecording(true)
+    //     if (camRef) {
+    //         try {
+    //             const videoData = await camRef.current.recordAsync({quality: "4:3"});
+    //             setVideo(videoData.uri);
+    //             navigation.navigate('EditMedia', { wooMedia: videoData.uri, isImage: false })
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     }
+    //     console.log(video)
+    // }
 
-    const stopVideo = async () => {
-        setIsRecording(false)
-        if (camRef) {
-            try {
-                const videoData = await camRef.current.stopRecording({
+    // const stopVideo = async () => {
+    //     setIsRecording(false)
+    //     if (camRef) {
+    //         try {
+    //             const videoData = await camRef.current.stopRecording({
 
-                });
-                setVideo(videoData);
-                navigation.navigate('EditMedia', { wooMedia: videoData.uri, isImage: false })
-            } catch (err) {
-                console.log(err);
-            }
-        }
-        console.log(video)
-    }
+    //             });
+    //             setVideo(videoData);
+    //             navigation.navigate('EditMedia', { wooMedia: videoData.uri, isImage: false })
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     }
+    //     console.log(video)
+    // }
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -81,9 +124,10 @@ const CameraScreen = ({navigation}) => {
 
     return (
         <View style={styles.container}>
-            <CameraView style={styles.camera} ref={camRef} facing={facing}>
-                <View style={styles.buttonContainer}>
-                    {/* <View style={styles.topButtonContainer}>
+            {isFocused &&
+                <CameraView style={styles.camera} ref={camRef} facing={facing}>
+                    <View style={styles.buttonContainer}>
+                        {/* <View style={styles.topButtonContainer}>
                         <TouchableOpacity style={styles.flipCameraButton} onPress={toggleCameraFacing}>
                             <Icon
                                 name="repeat"
@@ -93,34 +137,38 @@ const CameraScreen = ({navigation}) => {
                             />
                         </TouchableOpacity>
                     </View> */}
-                    <View style={styles.bottomButtonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-                            <Icon
-                                name="repeat"
-                                type='font-awesome-6'
-                                color={'white'}
-                                size={40}
-                            />
-                        </TouchableOpacity>
-                        <Pressable style={styles.button} onPress={captureImage} onLongPress={captureVideo} onPressOut={stopVideo}>
-                            <Icon
-                                name="circle"
-                                type='font-awesome-6'
-                                color={isRecording ? 'red':'white'}
-                                size={50}
-                            />
-                        </Pressable>
-                        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-                            <Icon
-                                name="upload"
-                                type='font-awesome-6'
-                                color={'white'}
-                                size={40}
-                            />
-                        </TouchableOpacity>
+                        <View style={styles.bottomButtonContainer}>
+                            <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+                                <Icon
+                                    name="repeat"
+                                    type='font-awesome-6'
+                                    color={'white'}
+                                    size={40}
+                                />
+                            </TouchableOpacity>
+                            <Pressable style={styles.button} onPress={captureImage}
+                            // onLongPress={captureVideo} 
+                            // onPressOut={stopVideo}
+                            >
+                                <Icon
+                                    name="circle"
+                                    type='font-awesome-6'
+                                    color={isRecording ? 'red' : 'white'}
+                                    size={50}
+                                />
+                            </Pressable>
+                            <TouchableOpacity style={styles.button} onPress={pickImage}>
+                                <Icon
+                                    name="upload"
+                                    type='font-awesome-6'
+                                    color={'white'}
+                                    size={40}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </CameraView>
+                </CameraView>
+            }
         </View>
     );
 }
@@ -141,7 +189,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-end'
     },
- 
+
     bottomButtonContainer: {
         marginBottom: 50,
         marginHorizontal: 20,
