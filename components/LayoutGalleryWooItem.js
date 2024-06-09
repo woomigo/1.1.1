@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 
-const LayoutGalleryWooItem = ({ image, nav, navParams }) => {
+const LayoutGalleryWooItem = ({woo, nav, navParams }) => {
     const navigation = useNavigation();
+
+    useEffect(() => {
+        // console.log(`LVGI WOO === ${JSON.stringify(woo.item[1])}`)
+        // console.log(`LVGI WOO ID === ${JSON.stringify(woo.item[0].id)}`)
+    })
 
     return (
         <View style={styles.gridContainer}>
@@ -14,7 +19,7 @@ const LayoutGalleryWooItem = ({ image, nav, navParams }) => {
                 }}>
                 <Image
                     style={styles.gridImage}
-                    source={{ uri: image }}
+                    source={{ uri: woo.item.woo_media_url }}
                 />
             </TouchableWithoutFeedback>
         </View>

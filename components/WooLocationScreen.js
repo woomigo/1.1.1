@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import { Header, Icon, SearchBar,LinearProgress } from "@rneui/themed";
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, KeyboardAvoidingView } from "react-native";
+import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { woo_black, woo_orange } from '../assets/colors';
@@ -9,7 +9,9 @@ const WooLocationScreen = ({ route, navigation }) => {
 
     const { wooMedia, wooType, wooMigos, wooDate, wooTime } = route.params;
 
-    const [search, setSearch] = useState("");
+    const [searchValue, setSearchValue] = useState([])
+    const [isSearchError, setIsSearchError] = useState()
+    const [isSearchIconHidden, setSearchIconHidden] = useState(true)
     const [loading, setLoading] = useState(true);
     const [location, setLocation] = useState(null);
     const [longitude, setLongitude] = useState(null);
@@ -17,9 +19,27 @@ const WooLocationScreen = ({ route, navigation }) => {
     const [region, setRegion] = useState(null)
     const [errorMsg, setErrorMsg] = useState(null);
 
-    const updateSearch = (search) => {
-        setSearch(search);
-    };
+    const searchRef = useRef()
+
+    const handleSearch = () => {
+
+        searchRef.current.clear()
+        searchRef.current.blur()
+    }
+
+    const handleSearchOnChange = (input) => {
+        if (input.length > 0) {
+            setSearchIconHidden(false)
+        } else {
+            setSearchIconHidden(true)
+        }
+        setIsSearchError(false)
+        setSearchValue(input)
+    }
+
+    const handleSearchEndEditing = () => {
+        setSearchIconHidden(true)
+    }
 
     useEffect(() => {
         (async () => {
@@ -76,7 +96,7 @@ const WooLocationScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooList', {wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: wooTime, wooLocation: "1050 Howell Mill Rd, Atlanta, GA 30308"})
+                            navigation.navigate('WooList', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: wooTime, wooLocation: "1050 Howell Mill Rd, Atlanta, GA 30308" })
                         }
                     />
                 }
@@ -91,11 +111,23 @@ const WooLocationScreen = ({ route, navigation }) => {
                 variant="determinate"
             />
 
-            <SearchBar
-                placeholder="add woo address"
-                onChangeText={updateSearch}
-                value={search}
-            />
+            <KeyboardAvoidingView behavior='position'>
+                <Input
+                    value={searchValue}
+                    ref={searchRef}
+                    onChangeText={text => handleSearchOnChange(text)}
+                    placeholder='add woo address'
+                    fontSize={14}
+                    leftIcon={<Icon style={{ paddingEnd: 5 }} type='font-awesome-5' name='search-location' size={18} />}
+                    // errorStyle={{ color: 'red' }}
+                    // errorMessage={isSearchError && "sorry we couldn't find that Search"}
+                    autoCapitalize="none"
+                    // onFocus={() => handleSearchOnFocus()}
+                    onEndEditing={() => handleSearchEndEditing()}
+                    rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
+                />
+            </KeyboardAvoidingView>
+
             {!loading ?
                 <MapView region={region} showsUserLocation style={styles.map}>
                     {/* <Marker

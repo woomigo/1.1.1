@@ -8,13 +8,12 @@ import ListViewWoos from "./ListViewWoos";
 import { Gallery, UserWoos } from './shared';
 import { woo_black, woo_gray, woo_orange } from "../assets/colors";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
     const [uid, setUID] = useState(null);
     const [notificationCount, setNotificationCount] = useState(0);
     const [migosNotificationCount, setMigosNotificationCount] = useState(0);
     const [messagesNotificationCount, setMessagesNotificationCount] = useState(0);
     const [selectedIndex, setSelectedIndex] = useState(0);
-
 
 
     onAuthStateChanged(auth, (user) => {

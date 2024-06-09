@@ -5,7 +5,6 @@ import { woo_white } from "../assets/colors";
 
 
 const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, navParams, horizBorderRadius = 25, gridNumOfColumns = 3 }) => {
-
  
 
     const renderGalleryPreview = (image) => (

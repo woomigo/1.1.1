@@ -57,7 +57,7 @@ const MigosScreen = ({ navigation }) => {
                 }}
             >
                 <Tab.Item
-                    title="follow"
+                    title="following"
                     titleStyle={{ fontSize: 12, color: woo_black }}
                     icon={{ name: 'user-friends', type: 'font-awesome-5', color: woo_orange }}
                 />
@@ -75,20 +75,20 @@ const MigosScreen = ({ navigation }) => {
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>follow</Text>
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="selectable" />
+                        {/* <Text style={styles.tabText}>following</Text> */}
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search following by @username" kind="selectable" />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>followers</Text>
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="selectable" />
+                        {/* <Text style={styles.tabText}>followers</Text> */}
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search followers by @username" kind="selectable" />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>migos</Text>
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos" kind="selectable" />
+                        {/* <Text style={styles.tabText}>migos</Text> */}
+                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos by @username" kind="selectable" />
                     </View>
                 </TabView.Item>
             </TabView>

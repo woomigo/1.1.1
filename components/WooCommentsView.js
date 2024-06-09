@@ -89,6 +89,7 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
                     <Input
                         value={comment}
                         ref={commentRef}
+                        fontSize={14}
                         onChangeText={text => handleCommentOnChange(text)}
                         placeholder='comment'
                         leftIcon={<Avatar

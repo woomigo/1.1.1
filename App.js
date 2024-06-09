@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React, { useState } from 'react';
 import { Icon } from "@rneui/themed";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -40,18 +41,18 @@ import WooListView from './components/WooListView';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
+let uid;
 
 
 const HomeStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
-      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} />
-      <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="WooMigosView" component={WooMigosView} options={{ headerShown: false }} />
-      <Stack.Screen name="WooCommentsView" component={WooCommentsView} options={{ headerShown: false }} />
-      <Stack.Screen name="WooGalleryView" component={WooGalleryView} options={{ headerShown: false }} />
-      <Stack.Screen name="WooListView" component={WooListView} options={{ headerShown: false }} />
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooMigosView" component={WooMigosView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooCommentsView" component={WooCommentsView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooGalleryView" component={WooGalleryView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooListView" component={WooListView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
     </Stack.Navigator>
   )
 }
@@ -59,7 +60,7 @@ const HomeStack = () => {
 const NotificationsStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
-      <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
     </Stack.Navigator>
   )
 }
@@ -67,11 +68,11 @@ const NotificationsStack = () => {
 const ProfileStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
-      <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Migos" component={MigosScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="MigoRequests" component={MigoRequestScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} />
-      <Stack.Screen name='User' component={UserScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="Migos" component={MigosScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="MigoRequests" component={MigoRequestScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="Menu" component={MenuScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name='User' component={UserScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
     </Stack.Navigator>
   )
 }
@@ -79,14 +80,14 @@ const ProfileStack = () => {
 const CameraStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
-      <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="EditMedia" component={EditMediaScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="WooDate" component={WooDateScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="WooTime" component={WooTimeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="WooLocation" component={WooLocationScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="WooMigos" component={WooMigosScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="WooList" component={WooListScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="WooPreviewEdit" component={WooPreviewEditScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="EditMedia" component={EditMediaScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooDate" component={WooDateScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooTime" component={WooTimeScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooLocation" component={WooLocationScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooMigos" component={WooMigosScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooList" component={WooListScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="WooPreviewEdit" component={WooPreviewEditScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
     </Stack.Navigator>
   )
 }
@@ -94,7 +95,7 @@ const CameraStack = () => {
 const SearchStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
-      <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
     </Stack.Navigator>
   )
 }
@@ -102,8 +103,9 @@ const SearchStack = () => {
 const MessagesStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
-      <Stack.Screen name="Messages" component={MessagesScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="ComposeMessage" component={ComposeMessageScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Messages" component={MessagesScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name="ComposeMessage" component={ComposeMessageScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
+      <Stack.Screen name='User' component={UserScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid  }} />
     </Stack.Navigator>
   )
 }
@@ -111,14 +113,17 @@ const MessagesStack = () => {
 
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [uid, setUID] = useState(null);
+  // const [uid, setUID] = useState(null);
   const [messagesNotificationCount, setMessagesNotificationCount] = useState()
   const [notificationCount, setNotificationCount] = useState(0)
+
+
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setIsSignedIn(true);
-      setUID(user.uid);
+      // setUID(user.uid);
+      uid = user.uid
       // ...
     } else {
       // User is signed out

@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
 import ListViewGallery from './ListViewGallery';
 import ListViewGalleryWoo from './ListViewGalleryWoo';
-import { Gallery, UserWoos } from './shared';
-import { woo_black, woo_gray, woo_orange, woo_white } from '../assets/colors';
+import { Gallery } from './shared';
+import { woo_black, woo_orange, woo_white } from '../assets/colors';
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
+import { Drawer } from 'react-native-drawer-layout';
+import MenuScreen from './MenuScreen';
 
-
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation, route }) => {
 
     const [index, setIndex] = useState(0);
     const [isFollowing, setIsFollowing] = useState(false);
     const [isProfileOwnedByUser, setIsProfileOwnedByUser] = useState(true);
+    const [woos, setWoos] = useState([])
+    const [open, setOpen] = useState(false);
+
+    const { uid } = route.params;
+
+    useEffect(() => {
+        const q = query(collection(db, "woos"), where("owner_uid", "==", uid));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const ownedWoos = [];
+            querySnapshot.forEach((doc) => {
+                console.log(doc.id)
+                ownedWoos.push(doc.data());
+            });
+            console.log("Woos Owned by this USER: ", ownedWoos.join(", "));
+            setWoos(ownedWoos)
+        });
+
+        return () => unsubscribe();
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -57,8 +79,7 @@ const ProfileScreen = ({ navigation }) => {
                         color={woo_black}
                         solid
                         size={25}
-                        onPress={isProfileOwnedByUser ? () =>
-                            navigation.navigate('Menu') : "open drawer"
+                        onPress={() => setOpen((prevOpen) => !prevOpen)
                         }
                     />
 
@@ -104,57 +125,69 @@ const ProfileScreen = ({ navigation }) => {
                         </View>
                     </View> : null
             } */}
-
-            <Tab
-                value={index}
-                onChange={(e) => setIndex(e)}
-                indicatorStyle={{
-                    backgroundColor: woo_orange,
-                    height: 3,
-                }}
-                containerStyle={{
-                    marginTop: 20,
-                    backgroundColor: "white"
+            <Drawer
+                drawerPosition='right'
+                open={open}
+                onOpen={() => setOpen(true)}
+                onClose={() => setOpen(false)}
+                renderDrawerContent={() => {
+                    return <MenuScreen />;
                 }}
             >
-                {/* <Tab.Item
+
+                <Tab
+                    value={index}
+                    onChange={(e) => setIndex(e)}
+                    indicatorStyle={{
+                        backgroundColor: woo_orange,
+                        height: 3,
+                    }}
+                    containerStyle={{
+                        marginTop: 20,
+                        backgroundColor: "white"
+                    }}
+                >
+                    {/* <Tab.Item
                     title="subscribed"
                     titleStyle={{ fontSize: 12, color: woo_black }}
                     icon={{ name: 'sign-in-alt', type: 'font-awesome-5', color: woo_black }}
                 /> */}
-                <Tab.Item
-                    title="woos"
-                    titleStyle={{ fontSize: 12, color: woo_black }}
-                    iconContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
-                    icon={<Image style={{ width: 30, height: 24 }} source={require('../assets/woomigo_icon.png')} />}
-                />
+                    <Tab.Item
+                        title="woos"
+                        titleStyle={{ fontSize: 12, color: woo_black }}
+                        iconContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
+                        icon={<Image style={{ width: 30, height: 24 }} source={require('../assets/woomigo_icon.png')} />}
+                    />
 
-                <Tab.Item
-                    title="gallery"
-                    titleStyle={{ fontSize: 12, color: woo_black }}
-                    icon={{ name: 'photo-video', type: 'font-awesome-5', color: woo_orange }}
-                />
-            </Tab>
-            <TabView value={index} onChange={setIndex} animationType="spring">
-                {/* <TabView.Item style={{ width: '100%' }}>
+                    <Tab.Item
+                        title="gallery"
+                        titleStyle={{ fontSize: 12, color: woo_black }}
+                        icon={{ name: 'photo-video', type: 'font-awesome-5', color: woo_orange }}
+                    />
+                </Tab>
+                <TabView value={index} onChange={setIndex} animationType="spring">
+                    {/* <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>Published Woos</Text>
                         <ListViewWoos woos={UserWoos} isGridView />
                     </View>
                 </TabView.Item> */}
-                <TabView.Item style={{ width: '100%' }}>
-                    <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>Woos</Text>
-                        <ListViewGalleryWoo woos={UserWoos} view={'grid'} gridNumOfColumns={2} />
-                    </View>
-                </TabView.Item>
-                <TabView.Item style={{ width: '100%' }}>
-                    <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>Gallery</Text>
-                        <ListViewGallery gallery={Gallery} view={"grid"}/>
-                    </View>
-                </TabView.Item>
-            </TabView>
+                    <TabView.Item style={{ width: '100%' }}>
+                        <View style={styles.tabHeader}>
+                            <Text style={styles.tabText}>Woos</Text>
+                            {woos &&
+                                <ListViewGalleryWoo woos={woos} view={'grid'} gridNumOfColumns={2} />}
+                        </View>
+                    </TabView.Item>
+                    <TabView.Item style={{ width: '100%' }}>
+                        <View style={styles.tabHeader}>
+                            <Text style={styles.tabText}>Gallery</Text>
+                            <ListViewGallery gallery={Gallery} view={"grid"} />
+                        </View>
+                    </TabView.Item>
+                </TabView>
+
+            </Drawer>
         </View>
     )
 

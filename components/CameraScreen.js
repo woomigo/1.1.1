@@ -22,8 +22,9 @@ const CameraScreen = ({ navigation }) => {
     useEffect(() => {
 
       console.log(CameraType.front)
+      console.log(isFocused)
 
-       }, []);
+       }, [isFocused]);
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -124,8 +125,8 @@ const CameraScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            {isFocused &&
-                <CameraView style={styles.camera} ref={camRef} facing={facing}>
+            {isFocused ?
+                <CameraView  style={styles.camera} ref={camRef} facing={facing} >
                     <View style={styles.buttonContainer}>
                         {/* <View style={styles.topButtonContainer}>
                         <TouchableOpacity style={styles.flipCameraButton} onPress={toggleCameraFacing}>
@@ -167,7 +168,7 @@ const CameraScreen = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </CameraView>
+                </CameraView> : null
             }
         </View>
     );

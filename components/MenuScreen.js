@@ -96,7 +96,7 @@ const MenuScreen = ({ navigation }) => {
     return (
 
         <View style={styles.container}>
-            <Header
+            {/* <Header
                 containerStyle={styles.header}
                 backgroundColor={'#fff'}
                 leftComponent={
@@ -120,9 +120,9 @@ const MenuScreen = ({ navigation }) => {
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
-            />
+            /> */}
 
-            <View style={styles.profilePicContainer}>
+            {/* <View style={styles.profilePicContainer}>
                 <Avatar
                     rounded
                     size="large"
@@ -145,7 +145,7 @@ const MenuScreen = ({ navigation }) => {
                 <Text style={styles.numOfMigosText}>migos: 320</Text>
             </View>
 
-            <View style={styles.headerBottomBorder} />
+            <View style={styles.headerBottomBorder} /> */}
 
             <FlatList
                 scrollEnabled={false}

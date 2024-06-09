@@ -62,13 +62,13 @@ const MigoRequestScreen = ({ navigation }) => {
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>sent</Text>
+                        {/* <Text style={styles.tabText}>sent</Text> */}
                         <ListViewUsers users={Migos} kind="single" hideSearchBar singleBtnText='delete' singleBtnColor={woo_red}/>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>received</Text>
+                        {/* <Text style={styles.tabText}>received</Text> */}
                         <ListViewUsers users={Migos} kind="double" hideSearchBar doubleBtn1Text='accept' doubleBtn2Text='ignore'/>
                     </View>
                 </TabView.Item>

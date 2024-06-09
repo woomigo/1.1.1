@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar, CheckBox } from "@rneui/themed";
 import { useNavigation } from '@react-navigation/native';
 
-const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color }) => {
+const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color, handleSingleBtnOnClick }) => {
     const [selected, setSelected] = useState(false);
+
+    useEffect(() => {
+        console.log(`LUI USER === ${JSON.stringify(user)}`)
+    })
 
     const navigation = useNavigation();
 
@@ -23,6 +27,7 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
                 return <View style={styles.requestButtonsContainer}>
                     <TouchableOpacity
                         style={[styles.addButton, { backgroundColor: singleBtnColor }]}
+                        onPress={handleSingleBtnOnClick}
                     ><Text style={styles.buttonText}>{singleBtnText}</Text>
                     </TouchableOpacity>
                 </View>;
@@ -73,11 +78,11 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
                             <Avatar
                                 rounded
                                 size="medium"
-                                source={{ uri: `${user.item.profile}` }}
+                                source={{ uri: `${user.item.profile_pic_url}` }}
                             />
                         </View>
                         <View style={styles.textContainer}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.fullname}</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.firstName + " " + user.item.lastName}</Text>
                             <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
                         </View>
                     </View>
@@ -88,11 +93,11 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
                         <Avatar
                             rounded
                             size="medium"
-                            source={{ uri: `${user.item.profile}` }}
+                            source={{ uri: `${user.item.profile_pic_url}` }}
                         />
                     </View>
                     <View style={styles.textContainer}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.fullname}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.first_name + " " + user.item.last_name}</Text>
                         <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
                     </View>
 

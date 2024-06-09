@@ -29,7 +29,7 @@ const MessagesScreen = ({ navigation }) => {
                         color={woo_black}
                         size={20}
                         onPress={() =>
-                            navigation.navigate('ComposeMessage')
+                            navigation.navigate('ComposeMessage', {receiversUID : ""})
                         }
 
                     />

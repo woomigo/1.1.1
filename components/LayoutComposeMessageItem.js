@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import { Header, Icon, SearchBar, Avatar } from "@rneui/themed";
 
-const LayoutComposeMessageItem = ({ uid, receiversUID, message, profilePic, username, time, messageId }) => {
+const LayoutComposeMessageItem = ({ uid, receiversUID="9849", message, profilePic, username, time, messageId }) => {
 
     useEffect(() => {
-        
+        console.log(`LCMI ===== `)
     })
 
     return (

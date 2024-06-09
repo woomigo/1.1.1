@@ -1,19 +1,71 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, TextInput, SafeAreaView, Image, FlatList } from "react-native";
-import { Header, Icon, SearchBar, Avatar } from "@rneui/themed";
+import React, { useEffect, useState, useRef } from "react";
+import { View, StyleSheet, Text, TextInput, SafeAreaView, Image, FlatList, KeyboardAvoidingView, Platform } from "react-native";
+import { Header, Icon, SearchBar, Avatar, Input } from "@rneui/themed";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LayoutComposeMessageItem from "./LayoutComposeMessageItem";
 import { ComposeMessage } from "./shared";
 import LayoutInputText from "./LayoutInputText";
+import { woo_black, woo_white } from "../assets/colors";
 
 
 
 const ComposeMessageScreen = ({ route, navigation }) => {
+
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 100 : 0
+
     const insets = useSafeAreaInsets();
-    const [text, setText] = useState('');
+    const [message, setMessage] = useState('');
     const [uid, setUid] = useState(134)
     const [isComposing, setIsComposing] = useState(false);
-    
+    const [searchValue, setSearchValue] = useState([])
+    const [isSearchError, setIsSearchError] = useState()
+    const [isSearchIconHidden, setSearchIconHidden] = useState(true)
+    const [isMessageError, setIsMessageError] = useState()
+    const [isMessageIconHidden, setMessageIconHidden] = useState(true)
+
+    const searchRef = useRef()
+    const messageRef = useRef()
+
+    const handleSearch = () => {
+
+        searchRef.current.clear()
+        searchRef.current.blur()
+    }
+
+    const handleSearchOnChange = (input) => {
+        if (input.length > 0) {
+            setSearchIconHidden(false)
+        } else {
+            setSearchIconHidden(true)
+        }
+        setIsSearchError(false)
+        setSearchValue(input)
+    }
+
+    const handleSearchEndEditing = () => {
+        setSearchIconHidden(true)
+    }
+
+    const handleMessage = () => {
+
+        MessageRef.current.clear()
+        MessageRef.current.blur()
+    }
+
+    const handleMessageOnChange = (input) => {
+        if (input.length > 0) {
+            setMessageIconHidden(false)
+        } else {
+            setMessageIconHidden(true)
+        }
+        setIsMessageError(false)
+        setMessage(input)
+    }
+
+    const handleMessageEndEditing = () => {
+        setMessageIconHidden(true)
+    }
+
     const { receiversUID } = route.params;
 
     useEffect(() => {
@@ -34,54 +86,78 @@ const ComposeMessageScreen = ({ route, navigation }) => {
 
     return (
         <SafeAreaView style={{ flex: 1, marginTop: -insets.top }}>
-                        <Header
+            <Header
                 style={styles.header}
                 backgroundColor={'#fff'}
                 leftComponent={
                     <Icon
                         name="chevron-left"
                         type='font-awesome-5'
-                        color="#f37320"
+                        color={woo_black}
                         size={25}
                         onPress={() =>
                             navigation.navigate('Messages')
                         }
                     />}
                 centerComponent={
-                    <View>
-                    {isComposing ? <Text style={styles.headerCenterText}>compose</Text> :
+                    <View >
                         <Avatar
                             rounded
-                            size="small"
+                            size="medium"
                             onPress={() =>
-                                navigate('ProfileComponent')
+                                navigation.navigate('User')
                             }
-                            source={{ uri: "https://images.unsplash.com/photo-1615813967515-e1838c1c5116?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
                         />
-
-                    }
-                </View>
+                    </View>
                 }
                 // rightComponent={
-
+                //     <Icon
+                //         name="user-plus"
+                //         type='font-awesome-5'
+                //         color={woo_black}
+                //         size={25}
+                //         onPress={() =>
+                //             navigation.navigate('MigoRequests')
+                //         }
+                //     />
                 // }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
-           
+
             {
-                isComposing ? <SearchBar
-                    onChangeText={text => setText(text)}
-                    placeholder="to:"
-                    round='true'
-                    lightTheme='true'
-                    value={text}
-                    containerStyle={styles.searchBarContainer}
-                    inputContainerStyle={styles.searchBarInputContaner}
-                    inputStyle={styles.searchBarInput}
-                    searchIcon={styles.searchBarIcon}
-                    clearIcon={styles.searchBarClearIcon} /> : null
+                isComposing ?
+
+                    // <SearchBar
+                    //     onChangeText={text => setText(text)}
+                    //     placeholder="to:"
+                    //     round='true'
+                    //     lightTheme='true'
+                    //     value={text}
+                    //     containerStyle={styles.searchBarContainer}
+                    //     inputContainerStyle={styles.searchBarInputContaner}
+                    //     inputStyle={styles.searchBarInput}
+                    //     searchIcon={styles.searchBarIcon}
+                    //     clearIcon={styles.searchBarClearIcon} /> 
+                    <KeyboardAvoidingView backgroundColor={woo_white} behavior='position'>
+                        <Input
+                            value={searchValue}
+                            ref={searchRef}
+                            onChangeText={text => handleSearchOnChange(text)}
+                            placeholder='search users by @username'
+                            fontSize={14}
+                            leftIcon={<Icon style={{ paddingEnd: 5 }} type='font-awesome-5' name='search' size={18} />}
+                            // errorStyle={{ color: 'red' }}
+                            // errorMessage={isSearchError && "sorry we couldn't find that Search"}
+                            autoCapitalize="none"
+                            // onFocus={() => handleSearchOnFocus()}
+                            onEndEditing={() => handleSearchEndEditing()}
+                            rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
+                        />
+                    </KeyboardAvoidingView>
+                    : null
             }
 
 
@@ -95,7 +171,27 @@ const ComposeMessageScreen = ({ route, navigation }) => {
                     // initialNumToRender={3}
                     renderItem={(message) => <LayoutComposeMessageItem uid={uid} receiversUID={message.item.uid} message={message.item.message} profilePic={message.item.profilePic} username={message.item.username} time={message.item.time} messageId={message.item.id} />} />
 
-                <LayoutInputText />
+                <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset}>
+                    <Input
+                        value={message}
+                        ref={messageRef}
+                        onChangeText={message => handleMessageOnChange(message)}
+                        placeholder='message'
+                        fontSize={14}
+                        backgroundColor={woo_white}
+                        leftIcon={<Avatar
+                            rounded
+                            size="small"
+                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                        />}
+                        // errorStyle={{ color: 'red' }}
+                        // errorMessage={isSearchError && "sorry we couldn't find that Search"}
+                        autoCapitalize="none"
+                        // onFocus={() => handleSearchOnFocus()}
+                        onEndEditing={() => handleMessageEndEditing()}
+                        rightIcon={!isMessageIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleMessage()} />}
+                    />
+                </KeyboardAvoidingView>
             </View>
         </SafeAreaView>
     )
@@ -103,19 +199,14 @@ const ComposeMessageScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: woo_white
     },
     header: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
+        shadowOffset: { width: 1, height: 3 },
         shadowOpacity: 0.2,
-        shadowRadius: 2,
         elevation: 4,
-    },
-    headerCenterText: {
-        fontSize: 18,
-        color: "#f37320",
-        fontWeight: 'bold'
     },
     searchBarContainer: {
         backgroundColor: "#fff",
@@ -137,7 +228,6 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     centerComponent: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -165,6 +255,11 @@ const styles = StyleSheet.create({
     textInputContainer: {
         flex: 1,
         justifyContent: 'flex-end',
+        backgroundColor: woo_white
+    },
+    leftComponent: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 })
 

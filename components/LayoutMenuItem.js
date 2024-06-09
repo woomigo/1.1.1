@@ -14,7 +14,7 @@ const navigation = useNavigation();
                 name={menuItem.item.icon}
                 type='font-awesome-5'
                 color="#f37320"
-                size={30}
+                size={20}
             />
             <Text style={styles.text}>{menuItem.item.text}</Text>
         </TouchableOpacity>
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     text: {
-        fontSize: 30,
+        fontSize: 20,
         marginStart: 10
     }
 })
