@@ -1,85 +1,3 @@
-// import React, { useState } from 'react';
-// import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-// import { Header, Icon } from "@rneui/themed";
-// import { signOut } from "firebase/auth";
-// import { auth } from '../firebaseConfig';
-
-// const MenuScreen = ({ navigation }) => {
-
-//     const logout = () => {
-//         signOut(auth).then(() => {
-//             console.log(`SIGNED OUT SUCCESSFULLY`)
-//             // Sign-out successful.
-//         }).catch((error) => {
-//             // An error happened.
-//             console.log(`ERROR: ${error}`)
-//         });
-//     }
-
-//     return (
-//         <View style={styles.container}>
-//             <Header
-//                 style={styles.header}
-//                 backgroundColor={'#fff'}
-//                 leftComponent={
-//                     <Icon
-//                         name="chevron-left"
-//                         type='font-awesome-5'
-//                         color="#f37320"
-//                         size={25}
-//                         onPress={() =>
-//                             navigation.navigate('Home')
-//                         }
-//                     />}
-//                 centerComponent={
-//                     <View >
-//                         <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>menu</Text>
-//                     </View>
-//                 }
-//                 // rightComponent={
-
-//                 // }
-//                 rightContainerStyle={styles.rightComponent}
-//                 leftContainerStyle={styles.leftComponent}
-//                 centerContainerStyle={styles.centerComponent}
-//             />
-
-//             <TouchableOpacity onPress={() => logout()}><Text>logout</Text></TouchableOpacity>
-//         </View>
-//     )
-
-// }
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: "#fff"
-//     },
-//     profileInfo: {
-//         textAlign: 'center'
-//     },
-//     header: {
-//         shadowColor: '#000',
-//         shadowOffset: { width: 1, height: 3 },
-//         shadowOpacity: 0.2,
-//         elevation: 4,
-//     },
-//     leftComponent: {
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//     },
-//     centerComponent: {
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//     },
-//     rightComponent: {
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//     },
-// })
-
-// export default MenuScreen
-
 import React from 'react'
 import { Text, StyleSheet, View, SafeAreaView, FlatList } from 'react-native'
 import { Header, Icon, Avatar } from "@rneui/themed"
@@ -96,22 +14,22 @@ const MenuScreen = ({ navigation }) => {
     return (
 
         <View style={styles.container}>
-            {/* <Header
+            <Header
                 containerStyle={styles.header}
                 backgroundColor={'#fff'}
-                leftComponent={
-                    <Icon
-                        name="chevron-left"
-                        type='font-awesome-5'
-                        color={woo_black}
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Profile')
-                        }
-                    />}
+                // leftComponent={
+                //     <Icon
+                //         name="chevron-left"
+                //         type='font-awesome-5'
+                //         color={woo_black}
+                //         size={25}
+                //         onPress={() =>
+                //             navigation.navigate('Profile')
+                //         }
+                //     />}
                 centerComponent={
                     <View >
-                        <Text style={{ fontSize: 25, color: {woo_black}, textAlign: 'center', fontWeight: 'bold' }}>menu</Text>
+                        <Text style={{ fontSize: 25, color: { woo_black }, textAlign: 'center', fontWeight: 'bold' }}>menu</Text>
                     </View>
                 }
                 // rightComponent={
@@ -120,12 +38,11 @@ const MenuScreen = ({ navigation }) => {
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
-            /> */}
-
-            {/* <View style={styles.profilePicContainer}>
+            />
+            <View style={styles.profilePicContainer}>
                 <Avatar
                     rounded
-                    size="large"
+                    size="medium"
                     onPress={() =>
                         navigation.navigate('Profile')
                     }
@@ -135,7 +52,7 @@ const MenuScreen = ({ navigation }) => {
                     name="star"
                     type="font-awesome-5"
                     color="#f37320"
-                    size={30}
+                    size={20}
                     style={styles.starIcon}
                     solid
                 />
@@ -145,7 +62,7 @@ const MenuScreen = ({ navigation }) => {
                 <Text style={styles.numOfMigosText}>migos: 320</Text>
             </View>
 
-            <View style={styles.headerBottomBorder} /> */}
+            <View style={styles.headerBottomBorder} />
 
             <FlatList
                 scrollEnabled={false}
@@ -167,12 +84,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff'
     },
-    header: {
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 3 },
-        shadowOpacity: 0.2,
-        elevation: 4,
-    },
+    // header: {
+    //     shadowColor: '#000',
+    //     shadowOffset: { width: 1, height: 3 },
+    //     shadowOpacity: 0.2,
+    //     elevation: 4,
+    // },
     leftComponent: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -193,15 +110,15 @@ const styles = StyleSheet.create({
     firstLastNameText: {
         fontWeight: 'bold',
         margin: 3,
-        fontSize: 30
+        fontSize: 20
     },
     usernameText: {
         margin: 3,
-        fontSize: 24
+        fontSize: 16
     },
     numOfMigosText: {
         margin: 3,
-        fontSize: 24
+        fontSize: 16
     },
     headerBottomBorder: {
         backgroundColor: '#f37320',

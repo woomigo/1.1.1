@@ -37,95 +37,8 @@ const ProfileScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            <Header
-                containerStyle={styles.header}
-                backgroundColor={woo_white}
-                leftComponent={
-
-                    <Icon
-                        name={isProfileOwnedByUser ? "users" : "bars"}
-                        type='font-awesome-5'
-                        color={woo_black}
-                        solid
-                        size={25}
-                        onPress={isProfileOwnedByUser ? () =>
-                            navigation.navigate('Migos') : "open drawer"
-                        }
-                    />
-
-                }
-                centerComponent={
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Avatar
-                            rounded
-                            size="medium"
-                            onPress={() =>
-                                navigation.navigate('Profile')
-                            }
-                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                        />
-                        <View>
-                            {/* <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center',  }}>Deserae Harrison</Text> */}
-                            <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center', fontWeight: 'bold' }}>@dezzie_wezzie</Text>
-                            <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center' }}>1,2345 migos</Text>
-                        </View>
-
-                    </View>
-                }
-                rightComponent={
-                    <Icon
-                        name={'bars'}
-                        type='font-awesome-5'
-                        color={woo_black}
-                        solid
-                        size={25}
-                        onPress={() => setOpen((prevOpen) => !prevOpen)
-                        }
-                    />
-
-                }
-                rightContainerStyle={styles.rightComponent}
-                leftContainerStyle={styles.leftComponent}
-                centerContainerStyle={styles.centerComponent}
-            />
-
-            {/* {
-                !isProfileOwnedByUser ?
-
-                    <View style={styles.subHeader}>
-                        <View>
-                            <Button radius={"lg"} size="sm" color="gray" type="solid">
-                                message
-                                <Icon style={{ marginStart: 5 }} name="envelope" solid type='font-awesome-5' size={14} color="white" />
-                            </Button>
-                        </View>
-                        <View>
-                            {isFollowing ?
-                                <Button radius={"lg"} size="sm" color="gray" type="solid">
-                                    unfollow
-                                    <Icon style={{ marginStart: 5 }} name="user-minus" type='font-awesome-5' size={14} color="white" />
-                                </Button>
-                                :
-                                <Button radius={"lg"} size="sm" color="gray" type="solid">
-                                    follow
-                                    <Icon style={{ marginStart: 5 }} name="user-plus" type='font-awesome-5' size={14} color="white" />
-                                </Button>}
-                        </View>
-                    </View> : null
-            }
-
-            {
-                isProfileOwnedByUser ?
-                    <View style={styles.subHeader}>
-                        <View>
-                            <Button radius={"lg"} size="sm" color="gray" type="solid">
-                                edit profile
-                                <Icon style={{ marginStart: 5 }} name="user-cog" solid type='font-awesome-5' size={14} color="white" />
-                            </Button>
-                        </View>
-                    </View> : null
-            } */}
             <Drawer
+                // drawerStyle={{ marginTop: 100 }}
                 drawerPosition='right'
                 open={open}
                 onOpen={() => setOpen(true)}
@@ -134,6 +47,59 @@ const ProfileScreen = ({ navigation, route }) => {
                     return <MenuScreen />;
                 }}
             >
+                <Header
+                    containerStyle={styles.header}
+                    backgroundColor={woo_white}
+                    leftComponent={
+
+                        <Icon
+                            name={isProfileOwnedByUser ? "users" : "bars"}
+                            type='font-awesome-5'
+                            color={woo_black}
+                            solid
+                            size={25}
+                            onPress={isProfileOwnedByUser ? () =>
+                                navigation.navigate('Migos') : "open drawer"
+                            }
+                        />
+
+                    }
+                    centerComponent={
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                            <Avatar
+                                rounded
+                                size="medium"
+                                onPress={() =>
+                                    navigation.navigate('Profile')
+                                }
+                                source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                            />
+                            <View>
+                                {/* <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center',  }}>Deserae Harrison</Text> */}
+                                <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center', fontWeight: 'bold' }}>@dezzie_wezzie</Text>
+                                <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center' }}>1,2345 migos</Text>
+                            </View>
+
+                        </View>
+                    }
+                    rightComponent={
+                        <Icon
+                            name={'bars'}
+                            type='font-awesome-5'
+                            color={woo_black}
+                            solid
+                            size={25}
+                            onPress={() => setOpen((prevOpen) => !prevOpen)
+                            }
+                        />
+
+                    }
+                    rightContainerStyle={styles.rightComponent}
+                    leftContainerStyle={styles.leftComponent}
+                    centerContainerStyle={styles.centerComponent}
+                />
+
+
 
                 <Tab
                     value={index}
