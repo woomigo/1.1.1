@@ -7,7 +7,7 @@ import LayoutWooLocation from './LayoutWooLocation';
 const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadius }) => {
 
     useEffect(() => {
-       
+    //    console.log(`LGI === ${JSON.stringify(image)}`)
     })
     const navigation = useNavigation();
 
@@ -32,7 +32,7 @@ const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadiu
             <TouchableWithoutFeedback
                 onPress={() => {
                     navigation.navigate(`${nav}`
-                        // , `${navParams}`
+                        , {mediaUrl: `${image}`}
                     )
                 }}>
                 <Image

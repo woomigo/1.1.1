@@ -282,6 +282,21 @@ export const MenuItems = [
     }
 ];
 
+export const UserMenuItems = [
+    {
+        id: 0,
+        text: "message",
+        icon: "envelope",
+        navigation: "Messages"
+    },
+    {
+        id: 1,
+        text: "settings",
+        icon: "cog",
+        navigation: "Settings"
+    },
+];
+
 export const Messages = [
     {
         id: 0,
@@ -394,3 +409,28 @@ export const Comments = [
 export const Chips = [
     'table', 'chairs', 'cups', 'paper plates', 'coke', 'chips',
 ];
+
+export const SelfIdentity = [
+{header: "Embrace your authenticity",
+message: "Being true to yourself can boost your confidence and help you make decisions that align with your values."},
+{header: "Identify your values",
+message: "Understanding your values can help you make better decisions that align with your beliefs and priorities."},
+{header: "Visualize your ideal self",
+message: "Create a vision board, journal, or life plan to help you make your goals a reality."},
+{header: "Accept yourself",
+message: "Self-acceptance is different from self-esteem and involves accepting yourself for who you are, including your flaws and weaknesses."},
+{header: "Assess your relationships",
+message: "You can learn a lot about yourself through your relationships."},
+{header: "Discover your strengths and weaknesses",
+message: "Self-discovery can help you identify your strengths and weaknesses, which can help you understand what you need to improve and what you can leave alone."},
+{header: "Explore your passions",
+message: "Passions can give your life purpose and meaning."},
+// {header: "Ask for feedback",
+// message: "Asking for feedback from someone you trust can help you gain perspective and realistic insight. You can also try asking yourself questions like:"
+// What makes me happy?
+// What do I do that steals my energy?
+// Who supports me?
+// What are my interests?
+// What would I do if there were no limitations?
+// What am I grateful for?"},
+]

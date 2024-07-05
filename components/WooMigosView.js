@@ -24,9 +24,11 @@ const WooMigosView = ({ navigation }) => {
                             navigation.navigate('Home')
                         }
                     />}
-                // centerComponent={
-                   
-                // }
+                    centerComponent={
+                        <View >
+                            <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo migos</Text>
+                        </View>
+                    }
                 // rightComponent={
                  
                 // }

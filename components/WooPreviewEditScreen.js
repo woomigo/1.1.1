@@ -11,31 +11,31 @@ import LayoutWooList from './LayoutWooList';
 import { onAuthStateChanged } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../firebaseConfig';
-import { addDoc, collection, onSnapshot } from 'firebase/firestore';
-import { } from '@rneui/base';
+import { addDoc, collection, } from 'firebase/firestore';
 
 const WooPreviewEditScreen = ({ route, navigation }) => {
 
-    const [uid, setUID] = useState(null);
     const [imageStorageProgress, setImageStorageProgress] = useState(0)
     const [loading, setLoading] = useState(false);
+
+    const { wooMedia, wooType, wooMigos, wooDate, wooTime, wooLocation, wooList, uid } = route.params;
 
     useEffect(() => {
         console.log(`WOOMEDIA AT PREVIEW WOO ==== ${wooMedia.uri}`)
     }, [wooMedia])
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/auth.user
-            const uid = user.uid;
-            setUID(user.uid)
-            // ...
-        } else {
-            // User is signed out
-            // ...
-        }
-    });
+    // onAuthStateChanged(auth, (user) => {
+    //     if (user) {
+    //         // User is signed in, see docs for a list of available properties
+    //         // https://firebase.google.com/docs/reference/js/auth.user
+    //         const uid = user.uid;
+    //         setUID(user.uid)
+    //         // ...
+    //     } else {
+    //         // User is signed out
+    //         // ...
+    //     }
+    // });
 
 
     const uploadImage = async (uri, fileType) => {
@@ -78,8 +78,6 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
             console.error(error)
         }
     }
-
-    const { wooMedia, wooType, wooMigos, wooDate, wooTime, wooLocation, wooList } = route.params;
 
     const navigateToProfileAndClearStack = async () => {
         setLoading(true)

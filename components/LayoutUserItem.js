@@ -2,13 +2,37 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar, CheckBox } from "@rneui/themed";
 import { useNavigation } from '@react-navigation/native';
+import { db } from '../firebaseConfig';
+import { doc, docSnap, onSnapshot } from "firebase/firestore";
 
-const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color, handleSingleBtnOnClick }) => {
+const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color, handleSingleBtnOnClick }) => {
     const [selected, setSelected] = useState(false);
+    const [user, setUser] = useState()
+
+
 
     useEffect(() => {
-        console.log(`LUI USER === ${JSON.stringify(user)}`)
-    })
+        console.log(`LUI USER === ${JSON.stringify(uid.item)}`)
+        if (uid) {
+            const getProfileInfo = onSnapshot(doc(db, "users", uid.item), (doc) => {
+                console.log("Document data:", doc.data());
+                setUser(doc.data())
+                // setGallery(doc.data().gallery)
+                // setUsername(doc.data().username)
+                // setFirstName(doc.data().first_name)
+                // setLastName(doc.data().last_name)
+                // setProfilePicURL(doc.data().profile_pic_url)
+                // setFollowing(doc.data().following)
+                // setFollowers(doc.data().followers)
+                // setMigos(doc.data.migos)
+            })
+
+            return () => {
+                getProfileInfo()
+                // unsubscribe()
+            };
+        }
+    }, [uid])
 
     const navigation = useNavigation();
 
@@ -51,7 +75,7 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
 
     const handleClick = () => {
         setSelected(!selected)
-        onCheckBoxSelected(user.item.id)
+        onCheckBoxSelected(user.uid)
     }
 
     // const handleCheck = (event) => {
@@ -67,43 +91,25 @@ const LayoutUserItem = ({ user, onCheckBoxSelected, kind, singleBtnText, doubleB
 
     return (
         <View>
-            {kind === 'selectable' ?
-                <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate('User')
-                    }}
-                >
-                    <View style={styles.container}>
-                        <View style={styles.imageContainer}>
-                            <Avatar
-                                rounded
-                                size="medium"
-                                source={{ uri: `${user.item.profile_pic_url}` }}
-                            />
-                        </View>
-                        <View style={styles.textContainer}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.firstName + " " + user.item.lastName}</Text>
-                            <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
-                        </View>
-                    </View>
-                </TouchableOpacity>
-
-                : <View style={styles.container}>
+            {user && <View style={styles.container}>
+                <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('User', { user: user })}>
                     <View style={styles.imageContainer}>
                         <Avatar
                             rounded
                             size="medium"
-                            source={{ uri: `${user.item.profile_pic_url}` }}
+                            source={{ uri: `${user.profile_pic_url}` }}
                         />
                     </View>
                     <View style={styles.textContainer}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.item.first_name + " " + user.item.last_name}</Text>
-                        <Text style={{ fontSize: 12 }}>@{user.item.username}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.first_name + " " + user.last_name}</Text>
+                        <Text style={{ fontSize: 12 }}>@{user.username}</Text>
                     </View>
+                </TouchableOpacity>
 
-                    {renderBoxButton()}
 
-                </View>
+                {renderBoxButton()}
+
+            </View>
             }
         </View>
 

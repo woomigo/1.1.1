@@ -1,17 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Pressable, ImageBackground } from "react-native";
-import { Icon, Overlay, Button } from "@rneui/themed";
-import { woo_black, woo_orange, woo_white } from '../assets/colors';
+import { Icon, Overlay, Button, Dialog } from "@rneui/themed";
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { woo_orange, woo_white } from '../assets/colors';
+import { db, storage } from '../firebaseConfig';
 
 const EditMediaScreen = ({ navigation, route }) => {
-    const { wooMedia, isImage } = route.params;
+    const { uid, wooMedia, isImage } = route.params;
     const [visible, setVisible] = useState(false);
+    const [imageStorageProgress, setImageStorageProgress] = useState(0)
+    const [loading, setLoading] = useState(false);
+
+    const userRef = doc(db, "users", uid);
 
     const toggleOverlay = () => {
         setVisible(!visible);
     };
 
-    useEffect(()=> {
+    const uploadImage = async (uri, fileType) => {
+        setLoading(true)
+        const res = await fetch(uri);
+        if (res.ok) {
+            const blobImage = await res.blob()
+
+            const storageRef = ref(storage, "gallery/" + uid + new Date().getTime())
+
+            const uploadTask = uploadBytesResumable(storageRef, blobImage)
+
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    setImageStorageProgress(progress.toFixed())
+                },
+                (error) => {
+                    console.error(`UPLOAD IMAGE TO STORAGE ERROR === ${error}`)
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+                        console.log(url)
+                        addMediaToProfile(url)
+                    })
+                }
+            )
+        }
+    }
+
+    const addMediaToProfile = async (url) => {
+        await updateDoc(userRef, {
+            gallery: arrayUnion(url)
+        });
+        setLoading(false)
+        navigation.popToTop();
+        navigation.navigate('Profile')
+    }
+
+    useEffect(() => {
         console.log(`EDITMEDIA === ${JSON.stringify(wooMedia)}`)
     })
 
@@ -23,7 +67,13 @@ const EditMediaScreen = ({ navigation, route }) => {
                 // placeholder={{ blurhash }}
                 contentFit="cover"
                 transition={1000}
-            ><View style={styles.buttonContainer}>
+            >
+                <Dialog isVisible={loading}>
+                    <Dialog.Title title="uploading image to profile" titleStyle={{ textAlign: 'center' }} />
+
+                    <Dialog.Loading />
+                </Dialog>
+                <View style={styles.buttonContainer}>
                     <View style={styles.topButtonContainer}>
                         <TouchableOpacity style={styles.flipCameraButton} onPress={() => navigation.navigate('Camera')}>
                             <Icon
@@ -35,7 +85,7 @@ const EditMediaScreen = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bottomButtonContainer}>
-                        <TouchableOpacity style={styles.button} >
+                        <TouchableOpacity style={styles.button} onPress={() => uploadImage(wooMedia.uri)} >
                             <Icon
                                 name="user-plus"
                                 type='font-awesome-5'

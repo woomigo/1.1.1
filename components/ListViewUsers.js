@@ -19,7 +19,7 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "searc
     })
 
     const handleSearch = () => {
-    
+
         searchRef.current.clear()
         searchRef.current.blur()
     }
@@ -39,7 +39,7 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "searc
     }
 
     const renderUsers = (user) => (
-        <LayoutUserItem kind={kind} onCheckBoxSelected={onCheckBoxSelected} user={user} singleBtnText={singleBtnText} doubleBtn1Text={doubleBtn1Text} doubleBtn2Text={doubleBtn2Text} singleBtnColor={singleBtnColor} doubleBtn1Color={doubleBtn1Color} doubleBtn2Color={doubleBtn2Color} handleSingleBtnOnClick={handleSingleBtnOnClick} />
+        <LayoutUserItem kind={kind} onCheckBoxSelected={onCheckBoxSelected} uid={user} singleBtnText={singleBtnText} doubleBtn1Text={doubleBtn1Text} doubleBtn2Text={doubleBtn2Text} singleBtnColor={singleBtnColor} doubleBtn1Color={doubleBtn1Color} doubleBtn2Color={doubleBtn2Color} handleSingleBtnOnClick={handleSingleBtnOnClick} />
     )
 
     const onCheckBoxSelected = (userId) => {
@@ -73,31 +73,34 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "searc
                     //     clearIcon={styles.searchBarClearIcon} />
 
                     <KeyboardAvoidingView behavior='position'>
-                    <Input
-                        value={searchValue}
-                        ref={searchRef}
-                        fontSize={14}
-                        onChangeText={text => handleSearchOnChange(text)}
-                        placeholder={searchBoxPlaceholder}
-                        leftIcon={<Icon style={{ paddingEnd: 5 }} type='font-awesome-5' name='search' size={18} />}
-                        // errorStyle={{ color: 'red' }}
-                        // errorMessage={isSearchError && "sorry we couldn't find that Search"}
-                        autoCapitalize="none"
-                        // onFocus={() => handleSearchOnFocus()}
-                        onEndEditing={() => handleSearchEndEditing()}
-                        rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
-                    />
-                </KeyboardAvoidingView>
+                        <Input
+                            value={searchValue}
+                            ref={searchRef}
+                            fontSize={14}
+                            onChangeText={text => handleSearchOnChange(text)}
+                            placeholder={searchBoxPlaceholder}
+                            leftIcon={<Icon style={{ paddingEnd: 5 }} type='font-awesome-5' name='search' size={18} />}
+                            // errorStyle={{ color: 'red' }}
+                            // errorMessage={isSearchError && "sorry we couldn't find that Search"}
+                            autoCapitalize="none"
+                            // onFocus={() => handleSearchOnFocus()}
+                            onEndEditing={() => handleSearchEndEditing()}
+                            rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
+                        />
+                    </KeyboardAvoidingView>
             }
-            <FlatList
-                showsVerticalScrollIndicator={false}
-                backgroundColor={"#fff"}
-                keyExtractor={user => user.id}
-                data={users}
-                renderItem={renderUsers}
-                initialNumToRender={3}
-                maxToRenderPerBatch={3}
-            />
+            {users &&
+                <FlatList
+                    showsVerticalScrollIndicator={false}
+                    backgroundColor={"#fff"}
+                    keyExtractor={user => user.id}
+                    data={users}
+                    renderItem={renderUsers}
+                    initialNumToRender={3}
+                    maxToRenderPerBatch={3}
+                />
+            }
+
         </View>
     )
 }

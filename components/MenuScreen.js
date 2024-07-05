@@ -5,7 +5,7 @@ import { MenuItems } from './shared/';
 import LayoutMenuItem from './LayoutMenuItem';
 import { woo_black } from '../assets/colors';
 
-const MenuScreen = ({ navigation }) => {
+const MenuScreen = ({ navigation, route, user }) => {
 
     const renderMenuItems = (menuItem) => (
         <LayoutMenuItem menuItem={menuItem} />
@@ -39,28 +39,29 @@ const MenuScreen = ({ navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
-            <View style={styles.profilePicContainer}>
-                <Avatar
-                    rounded
-                    size="medium"
-                    onPress={() =>
-                        navigation.navigate('Profile')
-                    }
-                    source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                />
-                <Icon
-                    name="star"
-                    type="font-awesome-5"
-                    color="#f37320"
-                    size={20}
-                    style={styles.starIcon}
-                    solid
-                />
+            {user &&
+                <View style={styles.profilePicContainer}>
+                    <Avatar
+                        rounded
+                        size="medium"
+                        onPress={() =>
+                            navigation.navigate('Profile')
+                        }
+                        source={{ uri: user.profile_pic_url }}
+                    />
+                    <Icon
+                        name="star"
+                        type="font-awesome-5"
+                        color="#f37320"
+                        size={20}
+                        style={styles.starIcon}
+                        solid
+                    />
 
-                <Text style={styles.firstLastNameText}>jessica washington</Text>
-                <Text style={styles.usernameText}>@jess2u</Text>
-                <Text style={styles.numOfMigosText}>migos: 320</Text>
-            </View>
+                    <Text style={styles.firstLastNameText}>{user.first_name} {user.last_name}</Text>
+                    <Text style={styles.usernameText}>@{user.username}</Text>
+                    <Text style={styles.numOfMigosText}>migos: {user.migos.length}</Text>
+                </View>}
 
             <View style={styles.headerBottomBorder} />
 
@@ -75,6 +76,7 @@ const MenuScreen = ({ navigation }) => {
                 maxToRenderPerBatch={3}
             />
         </View>
+
 
     )
 }

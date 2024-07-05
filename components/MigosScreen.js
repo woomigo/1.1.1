@@ -3,11 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
 import { Migos } from './shared';
 import ListViewUsers from './ListViewUsers';
-import { woo_black, woo_orange } from '../assets/colors';
+import { woo_black, woo_gray, woo_orange, woo_red } from '../assets/colors';
 
-const MigosScreen = ({ navigation }) => {
+const MigosScreen = ({ navigation, route }) => {
 
     const [index, setIndex] = useState(0);
+    const {following, followers, migos} = route.params;
 
     return (
         <View style={styles.container}>
@@ -76,19 +77,19 @@ const MigosScreen = ({ navigation }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         {/* <Text style={styles.tabText}>following</Text> */}
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search following by @username" kind="selectable" />
+                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow'  />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         {/* <Text style={styles.tabText}>followers</Text> */}
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search followers by @username" kind="selectable" />
+                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='follow' />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         {/* <Text style={styles.tabText}>migos</Text> */}
-                        <ListViewUsers users={Migos} searchBoxPlaceholder="search migos by @username" kind="selectable" />
+                        <ListViewUsers users={migos} searchBoxPlaceholder="search migos by @username" kind="selectable" />
                     </View>
                 </TabView.Item>
             </TabView>

@@ -47,9 +47,8 @@ const ComposeMessageScreen = ({ route, navigation }) => {
     }
 
     const handleMessage = () => {
-
-        MessageRef.current.clear()
-        MessageRef.current.blur()
+        messageRef.current.clear()
+        messageRef.current.blur()
     }
 
     const handleMessageOnChange = (input) => {
