@@ -10,13 +10,26 @@ const WooMigosScreen = ({ route, navigation }) => {
     const { wooMedia, wooType } = route.params;
 
     const [migos, setMigos] = useState([])
+    const [selectedMigos, setSelectedMigos] = useState([])
 
     const returnMigosSelected = (migoList) => {
-        setMigos(migoList)
+        setSelectedMigos(migoList)
     }
+
     useEffect(() => {
-        console.log(`migos ==== ${migos}`)
-    })
+        const docRef = doc(db, "users", uid);
+        const getMigos = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setUser(doc.data())
+            setFollowing(doc.data().following)
+            setFollowers(doc.data().followers)
+            setMigos(doc.data().migos)
+        })
+
+        return () => {
+            getMigos()
+        };
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -45,7 +58,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: migos })
+                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: selectedMigos })
                         }
                     />
                 }

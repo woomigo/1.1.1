@@ -1,14 +1,108 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
 import { Migos } from './shared';
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 import ListViewUsers from './ListViewUsers';
 import { woo_black, woo_gray, woo_orange, woo_red } from '../assets/colors';
 
 const MigosScreen = ({ navigation, route }) => {
 
+    const { uid } = route.params;
+
+    const userRef = doc(db, "users", uid);
+
     const [index, setIndex] = useState(0);
-    const {following, followers, migos} = route.params;
+    const [following, setFollowing] = useState()
+    const [followers, setFollowers] = useState()
+    const [migos, setMigos] = useState()
+    const [user, setUser] = useState()
+
+    useEffect(() => {
+        const docRef = doc(db, "users", uid);
+        const getMigos = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setUser(doc.data())
+            setFollowing(doc.data().following)
+            setFollowers(doc.data().followers)
+            setMigos(doc.data().migos)
+        })
+
+        return () => {
+            getMigos()
+        };
+    }, [])
+
+    // const removeUIDToUserFollowing = async () => {
+    //     await updateDoc(doc(db, "users", user.uid), {
+    //         following: arrayRemove(uid)
+    //     })
+    // }
+
+    const addUIDToOwnerFollowers = async (userUID) => {
+        await updateDoc(doc(db, "users", uid), {
+            followers: arrayUnion(userUID)
+        })
+        // setView("success")
+    }
+
+    const removeUIDFromUserFollowers = async (userUID) => {
+        await updateDoc(doc(db, "users", userUID), {
+            followers: arrayRemove(uid)
+        })
+    }
+
+    const removeUIDFromUserFollowing = async (userUID) => {
+        await updateDoc(doc(db, "users", userUID), {
+            following: arrayRemove(uid)
+        });
+    }
+
+    const removeUIDFromOwnerFollowers = async (userUID) => {
+        await updateDoc(userRef, {
+            followers: arrayRemove(userUID)
+        });
+    }
+
+    const removeUIDFromOwnerFollowing = async (userUID) => {
+        await updateDoc(userRef, {
+            following: arrayRemove(userUID)
+        });
+    }
+
+    const removeUIDFromOwnerMigos = async (userUID) => {
+        await updateDoc(userRef, {
+            migos: arrayRemove(userUID)
+        });
+    }
+
+    const removeUIDFromUserMigos = async (userUID) => {
+        await updateDoc(doc(db, 'users', userUID), {
+            migos: arrayRemove(uid)
+        });
+        // setView("migoRequestSuccess")
+    }
+
+    const handleUnfollowMigo = (user) => {
+        // addUIDToOwnerFollowers(user.uid)
+        // removeUIDFromUserFollowers(user.uid)
+        // removeUIDFromUserMigos(user.uid)
+        // removeUIDFromOwnerMigos(user.uid)
+        console.log("unfollow MIGO" + " " + user.uid)
+    }
+
+    const handleRemoveFollower = (user) => {
+        // removeUIDFromOwnerFollowers(user.uid)
+        // removeUIDFromUserFollowing(user.uid)
+        console.log("remove Follower" + " " + user.uid)
+    }
+
+    const handleUnfollowFollowing = (user) => {
+        // removeUIDFromOwnerFollowing(user.uid)
+        // removeUIDFromUserFollowers(user.uid)
+        console.log("unfollow Following" + " " + user.uid)
+    }
 
     return (
         <View style={styles.container}>
@@ -32,14 +126,14 @@ const MigosScreen = ({ navigation, route }) => {
                 }
                 rightComponent={
                     <Icon
-                    name="user-plus"
-                    type='font-awesome-5'
-                    color={woo_black}
-                    size={25}
-                    onPress={() =>
-                        navigation.navigate('MigoRequests')
-                    }
-                />
+                        name="user-plus"
+                        type='font-awesome-5'
+                        color={woo_black}
+                        size={25}
+                        onPress={() =>
+                            navigation.navigate('MigoRequests')
+                        }
+                    />
                 }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
@@ -76,20 +170,20 @@ const MigosScreen = ({ navigation, route }) => {
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        {/* <Text style={styles.tabText}>following</Text> */}
-                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow'  />
+                        <Text style={styles.tabText}>following</Text>
+                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}/>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        {/* <Text style={styles.tabText}>followers</Text> */}
-                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='follow' />
+                        <Text style={styles.tabText}>followers</Text>
+                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_red} singleBtnText='remove' handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)} />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        {/* <Text style={styles.tabText}>migos</Text> */}
-                        <ListViewUsers users={migos} searchBoxPlaceholder="search migos by @username" kind="selectable" />
+                        <Text style={styles.tabText}>migos</Text>
+                        <ListViewUsers users={migos} searchBoxPlaceholder="search migos by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowMigo(user)} />
                     </View>
                 </TabView.Item>
             </TabView>

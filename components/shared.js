@@ -278,7 +278,7 @@ export const MenuItems = [
         id: 5,
         text: "logout",
         icon: "sign-out-alt",
-        navigation: "HomeComponent"
+        navigation: "logout"
     }
 ];
 

@@ -1,13 +1,134 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
-import { Migos } from './shared';
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 import ListViewUsers from './ListViewUsers';
 import { woo_black, woo_orange, woo_red } from '../assets/colors';
 
-const MigoRequestScreen = ({ navigation }) => {
+const MigoRequestScreen = ({ navigation, route }) => {
+
+    const { uid } = route.params;
+    const userRef = doc(db, "users", uid);
 
     const [index, setIndex] = useState(0);
+    const [sentRequests, setSentRequests] = useState()
+    const [receivedRequests, setReceivedRequests] = useState()
+    const [user, setUser] = useState()
+
+    useEffect(() => {
+        const docRef = doc(db, "users", uid);
+        const getMigoRequests = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setUser(doc.data())
+            setSentRequests(doc.data().sent_migo_requests)
+            setReceivedRequests(doc.data().received_migo_requests)
+        })
+
+        return () => {
+            getMigoRequests()
+        };
+    }, [])
+
+    const removeUIDFromOwnerSent = async (userUID) => {
+        await updateDoc(userRef, {
+            sent_migo_requests: arrayRemove(userUID)
+        });
+    }
+
+    const removeUIDFromUserSent = async (userUID) => {
+        await updateDoc(doc(db, 'users', userUID), {
+            sent_migo_requests: arrayRemove(uid)
+        });
+        // setView("migoRequestSuccess")
+    }
+
+    const removeUIDFromOwnerReceived = async (userUID) => {
+        await updateDoc(userRef, {
+            received_migo_requests: arrayRemove(userUID)
+        });
+    }
+
+    const removeUIDFromUserReceived = async (userUID) => {
+        await updateDoc(doc(db, 'users', userUID), {
+            received_migo_requests: arrayRemove(uid)
+        });
+        // setView("migoRequestSuccess")
+    }
+
+    const handleFollowUser = () => {
+        console.log(`FOLLOW!!!! ${user.username}`)
+        setView("loading")
+        addUIDToOwnerFollowing()
+        addUIDToUserFollowers()
+    }
+
+    const handleAddMigo = () => {
+        setView("loading")
+        addUIDToOwnerMigos()
+        addUIDToUserMigos()
+        removeUIDFromUserFollowing()
+    }
+
+    const addUIDToOwnerFollowing = async (userUID) => {
+        await updateDoc(userRef, {
+            following: arrayUnion(userUID)
+        });
+    }
+
+    const addUIDToUserFollowers = async (userUID) => {
+        await updateDoc(doc(db, "users", userUID), {
+            followers: arrayUnion(uid)
+        })
+        setView("success")
+    }
+
+
+    const addUIDToOwnerMigos = async (userUID) => {
+        await updateDoc(userRef, {
+            migos: arrayUnion(userUID)
+        });
+    }
+
+    const addUIDToUserMigos = async (userUID) => {
+        await updateDoc(doc(db, 'users', userUID), {
+            migos: arrayUnion(uid)
+        });
+        setView("migoRequestSuccess")
+    }
+
+
+    const removeUIDFromUserFollowing = async (userUID) => {
+        await updateDoc(doc(db, "users", userUID), {
+            following: arrayRemove(uid)
+        })
+    }
+
+    const handleDelete = (user) => {
+        removeUIDFromOwnerSent(user.uid)
+        removeUIDFromUserReceived(user.uid)
+        console.log("DELETE " + user)
+    }
+
+    const handleAccept = (user) => {
+
+        if (user.following.includes(uid)) {
+            handleAddMigo(user)
+        }
+        else {
+            handleFollowUser(user)
+        }
+
+        removeUIDFromUserSent(user.uid)
+        removeUIDFromOwnerReceived(user.uid)
+        console.log("Accept " + user.uid)
+    }
+
+    const handleIgnore = (user) => {
+        removeUIDFromUserSent(user.uid)
+        removeUIDFromOwnerReceived(user.uid)
+        console.log("IGNORE " + user.uid)
+    }
 
     return (
         <View style={styles.container}>
@@ -62,14 +183,14 @@ const MigoRequestScreen = ({ navigation }) => {
             <TabView value={index} onChange={setIndex} animationType="spring">
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        {/* <Text style={styles.tabText}>sent</Text> */}
-                        <ListViewUsers users={Migos} kind="single" hideSearchBar singleBtnText='delete' singleBtnColor={woo_red}/>
+                        <Text style={styles.tabText}>sent</Text>
+                        <ListViewUsers users={sentRequests} kind="single" hideSearchBar singleBtnText='delete' singleBtnColor={woo_red} handleSingleBtnOnClick={(uid) => handleDelete(uid)} />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
-                        {/* <Text style={styles.tabText}>received</Text> */}
-                        <ListViewUsers users={Migos} kind="double" hideSearchBar doubleBtn1Text='accept' doubleBtn2Text='ignore'/>
+                        <Text style={styles.tabText}>received</Text>
+                        <ListViewUsers users={receivedRequests} kind="double" hideSearchBar doubleBtn1Text='accept' doubleBtn2Text='ignore' handleDoubleBtnOneOnClick={(uid) => handleAccept(uid)} handleDoubleBtnTwoOnClick={(uid) => handleIgnore(uid)} />
                     </View>
                 </TabView.Item>
             </TabView>

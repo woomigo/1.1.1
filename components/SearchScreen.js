@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Header, Icon, Input, Avatar, Skeleton } from "@rneui/themed";
-import { woo_black, woo_gray, woo_green, woo_white } from '../assets/colors';
+import { woo_black, woo_gray, woo_green, woo_white, woo_orange } from '../assets/colors';
 import LayoutUserItem from './LayoutUserItem';
 import { db } from '../firebaseConfig';
-import { collection, query, where, getDocs, updateDoc, arrayUnion, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove } from "firebase/firestore";
 import { FlatList } from 'react-native';
 import ListViewUsers from './ListViewUsers';
 import { SelfIdentity } from './shared';
@@ -16,7 +16,7 @@ const SearchScreen = ({ navigation, route, }) => {
 
     useEffect(() => {
         console.log(' UID === ' + uid)
-    })
+    }, [])
 
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 100 : 0
 
@@ -25,36 +25,78 @@ const SearchScreen = ({ navigation, route, }) => {
     const [isSearchError, setIsSearchError] = useState()
     const [isSearchIconHidden, setSearchIconHidden] = useState(true)
     const [isUserExists, setIsUserExists] = useState()
-    const [view, setView] = useState("following")
+    const [view, setView] = useState()
 
     const searchRef = useRef()
 
     const userRef = doc(db, "users", uid);
     // const searchUserRef = ;
 
-    const addUIDToFollowing = async () => {
+    const addUIDToOwnerFollowing = async () => {
         await updateDoc(userRef, {
             following: arrayUnion(user.uid)
         });
-        // setView("success")
-        // navigation.popToTop();
-        // navigation.navigate('Profile')
     }
-    const addUIDToFollowers = async () => {
+
+    const addUIDToUserFollowers = async () => {
         await updateDoc(doc(db, "users", user.uid), {
             followers: arrayUnion(uid)
         })
         setView("success")
-        // navigation.popToTop();
-        // navigation.navigate('Profile')
     }
+
+    const addUIDToOwnerRequestSent = async () => {
+        await updateDoc(userRef, {
+            sent_migo_requests: arrayUnion(user.uid)
+        });
+    }
+
+    const addUIDToUserRequestReceived = async () => {
+        await updateDoc(doc(db, "users", user.uid), {
+            received_migo_requests: arrayUnion(uid)
+        })
+        setView("successMigoRequest")
+    }
+
+    const addUIDToOwnerMigos = async () => {
+        await updateDoc(userRef, {
+            migos: arrayUnion(user.uid)
+        });
+    }
+
+    const addUIDToUserMigos = async () => {
+        await updateDoc(doc(db, 'users', user.uid), {
+            migos: arrayUnion(uid)
+        });
+        setView("migoRequestSuccess")
+    }
+
+    const removeUIDFromUserFollowing = async () => {
+        await updateDoc(doc(db, "users", user.uid), {
+            following: arrayRemove(uid)
+        })
+    }
+
+
 
     const handleFollowUser = () => {
         console.log(`FOLLOW!!!! ${user.username}`)
         setView("loading")
         if (user.profile_visibility === "public") {
-            addUIDToFollowing()
-            addUIDToFollowers()
+            addUIDToOwnerFollowing()
+            addUIDToUserFollowers()
+        } else if (user.profile_visibility === "private") {
+            addUIDToOwnerRequestSent()
+            addUIDToUserRequestReceived()
+        }
+    }
+
+    const handleAddMigo = () => {
+        setView("loading")
+        if (user.profile_visibility === "public") {
+            addUIDToOwnerMigos()
+            addUIDToUserMigos()
+            removeUIDFromUserFollowing()
         }
     }
 
@@ -63,24 +105,36 @@ const SearchScreen = ({ navigation, route, }) => {
     }
 
     const handleSearchOnFocus = () => {
+        setSearchValue()
         setUser()
-        setView('following')
+        setView()
+        console.log('FOCUS')
     }
 
     const handleSearch = async () => {
         console.log("SEARCH")
+        setView('none')
         const q = query(collection(db, "users"), where("username", "==", searchValue));
-
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
+            setView("follow")
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data().followers);
             setUser(doc.data())
             if (doc.data().followers.includes(uid)) {
-                setView('success')
+                setView('following')
             }
+            else if (doc.data().following.includes(uid)) {
+                setView('migoFollow')
+            }
+            else {
+                setView('follow')
+            }
+            console.log("This")
+
         });
         console.log("view is " + view)
+        console.log(`user === ${user}`)
         searchRef.current.clear()
         searchRef.current.blur()
     }
@@ -108,11 +162,24 @@ const SearchScreen = ({ navigation, route, }) => {
 
     const renderView = (view) => {
         switch (view) {
-            case 'following':
+            case 'follow':
                 return <TouchableOpacity
-                    style={[styles.addButton, { backgroundColor: woo_gray }]}
+                    style={[styles.addButton, { backgroundColor: woo_orange }]}
                     onPress={() => handleFollowUser()}
                 ><Text style={styles.buttonText}>follow</Text>
+                </TouchableOpacity>
+
+            case 'migoFollow':
+                return <TouchableOpacity
+                    style={[styles.addButton, { backgroundColor: woo_orange }]}
+                    onPress={() => handleAddMigo()}
+                ><Text style={styles.buttonText}>follow</Text>
+                </TouchableOpacity>
+            case 'following':
+                return <TouchableOpacity
+                    disabled
+                    style={[styles.addButton, { backgroundColor: woo_gray }]}
+                ><Text style={styles.buttonText}>following</Text>
                 </TouchableOpacity>
             case 'loading':
                 return <Skeleton
@@ -127,6 +194,18 @@ const SearchScreen = ({ navigation, route, }) => {
                     style={[styles.addButton, { backgroundColor: woo_green }]}
                     onPress={() => handleUserFollowed()}
                 ><Text style={styles.buttonText}>following!</Text>
+                </TouchableOpacity>
+            case 'migoSuccess':
+                return <TouchableOpacity
+                    style={[styles.addButton, { backgroundColor: woo_green }]}
+                    onPress={() => handleUserFollowed()}
+                ><Text style={styles.buttonText}>migos!</Text>
+                </TouchableOpacity>
+            case 'migoRequestSuccess':
+                return <TouchableOpacity
+                    style={[styles.addButton, { backgroundColor: woo_green }]}
+                    onPress={() => handleUserFollowed()}
+                ><Text style={styles.buttonText}>request sent!</Text>
                 </TouchableOpacity>
             default:
                 return '';
@@ -169,7 +248,7 @@ const SearchScreen = ({ navigation, route, }) => {
                     onFocus={() => handleSearchOnFocus()}
                     onBlur={() => handleOnBlur()}
                     onEndEditing={() => handleSearchEndEditing()}
-                    rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
+                    rightIcon={!isSearchIconHidden && <TouchableOpacity style={{ width: 18, height: 18 }}><Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} /></TouchableOpacity>}
                 />
 
 
@@ -215,11 +294,12 @@ const SearchScreen = ({ navigation, route, }) => {
                             </View>
                         </View>
                     :
-                    null
+                    view === 'none' ?
+                        <View style={{ alignItems: 'center' }}><Text> no user found </Text></View> : null
                 }
 
             </View>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback >
     )
 
 }
@@ -233,10 +313,10 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     header: {
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 3 },
-        shadowOpacity: 0.2,
-        elevation: 4,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 1, height: 3 },
+        // shadowOpacity: 0.2,
+        // elevation: 4,
     },
     leftComponent: {
         justifyContent: 'center',
@@ -266,7 +346,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'blue'
     },
     addButton: {
-        backgroundColor: '#f37320',
+        // backgroundColor: '#f37320',
         padding: 5,
         borderRadius: 10,
         width: 80

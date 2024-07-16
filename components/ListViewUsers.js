@@ -6,7 +6,7 @@ import { woo_green, woo_red } from "../assets/colors";
 import { list } from "firebase/storage";
 
 
-const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = "#f37320", doubleBtn1Color = woo_green, doubleBtn2Color = woo_red, handleSingleBtnOnClick }) => {
+const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = "#f37320", doubleBtn1Color = woo_green, doubleBtn2Color = woo_red, handleSingleBtnOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
     const [usersSelected, setUsersSelected] = useState([]);
     const [searchValue, setSearchValue] = useState([])
     const [isSearchError, setIsSearchError] = useState()
@@ -39,7 +39,7 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "searc
     }
 
     const renderUsers = (user) => (
-        <LayoutUserItem kind={kind} onCheckBoxSelected={onCheckBoxSelected} uid={user} singleBtnText={singleBtnText} doubleBtn1Text={doubleBtn1Text} doubleBtn2Text={doubleBtn2Text} singleBtnColor={singleBtnColor} doubleBtn1Color={doubleBtn1Color} doubleBtn2Color={doubleBtn2Color} handleSingleBtnOnClick={handleSingleBtnOnClick} />
+        <LayoutUserItem kind={kind} onCheckBoxSelected={onCheckBoxSelected} uid={user} singleBtnText={singleBtnText} doubleBtn1Text={doubleBtn1Text} doubleBtn2Text={doubleBtn2Text} singleBtnColor={singleBtnColor} doubleBtn1Color={doubleBtn1Color} doubleBtn2Color={doubleBtn2Color} handleSingleBtnOnClick={handleSingleBtnOnClick} handleDoubleBtnOneOnClick={handleDoubleBtnOneOnClick} handleDoubleBtnTwoOnClick={handleDoubleBtnTwoOnClick} />
     )
 
     const onCheckBoxSelected = (userId) => {

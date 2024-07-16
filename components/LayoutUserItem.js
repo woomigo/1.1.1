@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { db } from '../firebaseConfig';
 import { doc, docSnap, onSnapshot } from "firebase/firestore";
 
-const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color, handleSingleBtnOnClick }) => {
+const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBtn1Text, doubleBtn2Text, singleBtnColor, doubleBtn1Color, doubleBtn2Color, handleSingleBtnOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
     const [selected, setSelected] = useState(false);
     const [user, setUser] = useState()
 
@@ -14,29 +14,20 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
     useEffect(() => {
         console.log(`LUI USER === ${JSON.stringify(uid.item)}`)
         if (uid) {
-            const getProfileInfo = onSnapshot(doc(db, "users", uid.item), (doc) => {
+            const getUserInfo = onSnapshot(doc(db, "users", uid.item), (doc) => {
                 console.log("Document data:", doc.data());
                 setUser(doc.data())
-                // setGallery(doc.data().gallery)
-                // setUsername(doc.data().username)
-                // setFirstName(doc.data().first_name)
-                // setLastName(doc.data().last_name)
-                // setProfilePicURL(doc.data().profile_pic_url)
-                // setFollowing(doc.data().following)
-                // setFollowers(doc.data().followers)
-                // setMigos(doc.data.migos)
             })
 
             return () => {
-                getProfileInfo()
-                // unsubscribe()
+                getUserInfo()
             };
         }
     }, [uid])
 
     const navigation = useNavigation();
 
-    const renderBoxButton = () => {
+    const renderBoxButton = (user) => {
         switch (kind) {
             case "checkbox":
                 return <View style={styles.checkboxContainer}>
@@ -48,10 +39,10 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
                     />
                 </View>;
             case "single":
-                return <View style={styles.requestButtonsContainer}>
+                return <View style={styles.requestButtonContainer}>
                     <TouchableOpacity
                         style={[styles.addButton, { backgroundColor: singleBtnColor }]}
-                        onPress={handleSingleBtnOnClick}
+                        onPress={() => handleSingleBtnOnClick(user)}
                     ><Text style={styles.buttonText}>{singleBtnText}</Text>
                     </TouchableOpacity>
                 </View>;
@@ -59,10 +50,12 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
                 return <View style={styles.requestsButtonsContainer}>
                     <TouchableOpacity
                         style={[styles.acceptButton, { backgroundColor: doubleBtn1Color }]}
+                        onPress={() => handleDoubleBtnOneOnClick(user)}
                     ><Text style={styles.buttonText}>{doubleBtn1Text}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.denyButton, { backgroundColor: doubleBtn2Color }]}
+                        onPress={() => handleDoubleBtnTwoOnClick(user)}
                     ><Text style={styles.buttonText}>{doubleBtn2Text}</Text>
                     </TouchableOpacity>
                 </View>;
@@ -107,7 +100,7 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
                 </TouchableOpacity>
 
 
-                {renderBoxButton()}
+                {renderBoxButton(user)}
 
             </View>
             }
@@ -118,7 +111,7 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 3,
         backgroundColor: "#fff",
         alignItems: 'center',
         flexDirection: 'row',
@@ -141,7 +134,7 @@ const styles = StyleSheet.create({
     },
     requestsButtonsContainer: {
         flex: 2,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     acceptButton: {
         backgroundColor: 'green',
