@@ -34,14 +34,14 @@ const MigosScreen = ({ navigation, route }) => {
         };
     }, [])
 
-    // const removeUIDToUserFollowing = async () => {
-    //     await updateDoc(doc(db, "users", user.uid), {
-    //         following: arrayRemove(uid)
-    //     })
-    // }
+    const addUIDToUserFollowing = async (userUID) => {
+        await updateDoc(doc(db, "users", userUID), {
+            following: arrayUnion(uid)
+        })
+    }
 
     const addUIDToOwnerFollowers = async (userUID) => {
-        await updateDoc(doc(db, "users", uid), {
+        await updateDoc(userRef, {
             followers: arrayUnion(userUID)
         })
         // setView("success")
@@ -85,22 +85,23 @@ const MigosScreen = ({ navigation, route }) => {
     }
 
     const handleUnfollowMigo = (user) => {
-        // addUIDToOwnerFollowers(user.uid)
+        addUIDToOwnerFollowers(user.uid)
+        addUIDToUserFollowing(user.uid)
         // removeUIDFromUserFollowers(user.uid)
-        // removeUIDFromUserMigos(user.uid)
-        // removeUIDFromOwnerMigos(user.uid)
+        removeUIDFromUserMigos(user.uid)
+        removeUIDFromOwnerMigos(user.uid)
         console.log("unfollow MIGO" + " " + user.uid)
     }
 
     const handleRemoveFollower = (user) => {
-        // removeUIDFromOwnerFollowers(user.uid)
-        // removeUIDFromUserFollowing(user.uid)
+        removeUIDFromOwnerFollowers(user.uid)
+        removeUIDFromUserFollowing(user.uid)
         console.log("remove Follower" + " " + user.uid)
     }
 
     const handleUnfollowFollowing = (user) => {
-        // removeUIDFromOwnerFollowing(user.uid)
-        // removeUIDFromUserFollowers(user.uid)
+        removeUIDFromOwnerFollowing(user.uid)
+        removeUIDFromUserFollowers(user.uid)
         console.log("unfollow Following" + " " + user.uid)
     }
 
@@ -171,13 +172,13 @@ const MigosScreen = ({ navigation, route }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>following</Text>
-                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}/>
+                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)} />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>followers</Text>
-                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_red} singleBtnText='remove' handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)} />
+                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_red} singleBtnText='remove'  handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}/>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>

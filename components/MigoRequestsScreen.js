@@ -56,51 +56,62 @@ const MigoRequestScreen = ({ navigation, route }) => {
         // setView("migoRequestSuccess")
     }
 
-    const handleFollowUser = () => {
+    const handleFollowUser = (user) => {
         console.log(`FOLLOW!!!! ${user.username}`)
-        setView("loading")
-        addUIDToOwnerFollowing()
-        addUIDToUserFollowers()
+        // setView("loading")
+        addUIDToOwnerFollowers(user.uid)
+        addUIDToUserFollowing(user.uid)
     }
 
-    const handleAddMigo = () => {
-        setView("loading")
-        addUIDToOwnerMigos()
-        addUIDToUserMigos()
-        removeUIDFromUserFollowing()
+    const handleAddMigo = (user) => {
+        // setView("loading")
+        addUIDToOwnerMigos(user.uid)
+        addUIDToUserMigos(user.uid)
+        removeUIDFromUserFollowing(user.uid)
+        removeUIDFromOwnerFollowers(user.uid)
     }
 
-    const addUIDToOwnerFollowing = async (userUID) => {
+    const addUIDToOwnerFollowers = async (userUID) => {
         await updateDoc(userRef, {
-            following: arrayUnion(userUID)
+            followers: arrayUnion(userUID)
         });
     }
 
-    const addUIDToUserFollowers = async (userUID) => {
+    const addUIDToUserFollowing = async (userUID) => {
         await updateDoc(doc(db, "users", userUID), {
-            followers: arrayUnion(uid)
+            following: arrayUnion(uid)
         })
-        setView("success")
+        // setView("success")
     }
 
 
     const addUIDToOwnerMigos = async (userUID) => {
+        console.log("ADD UID TO OWNER MIGOS")
         await updateDoc(userRef, {
             migos: arrayUnion(userUID)
         });
     }
 
     const addUIDToUserMigos = async (userUID) => {
+        console.log("ADD UID TO USER MIGOS")
         await updateDoc(doc(db, 'users', userUID), {
             migos: arrayUnion(uid)
         });
-        setView("migoRequestSuccess")
+        // setView("migoRequestSuccess")
     }
 
 
     const removeUIDFromUserFollowing = async (userUID) => {
+        console.log("REMOVE UID FROM USER FOLLOWING")
         await updateDoc(doc(db, "users", userUID), {
             following: arrayRemove(uid)
+        })
+    }
+
+    const removeUIDFromOwnerFollowers = async (userUID) => {
+        console.log("REMOVE UID FROM OWNER FOLLOWERS")
+        await updateDoc(userRef, {
+            followers: arrayRemove(userUID)
         })
     }
 
@@ -114,11 +125,12 @@ const MigoRequestScreen = ({ navigation, route }) => {
 
         if (user.following.includes(uid)) {
             handleAddMigo(user)
+            console.log("MIGOS MIGO REQUESTS")
         }
         else {
             handleFollowUser(user)
+            console.log("ACCEPT CLICKED")
         }
-
         removeUIDFromUserSent(user.uid)
         removeUIDFromOwnerReceived(user.uid)
         console.log("Accept " + user.uid)

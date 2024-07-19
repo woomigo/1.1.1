@@ -25,7 +25,7 @@ const SearchScreen = ({ navigation, route, }) => {
     const [isSearchError, setIsSearchError] = useState()
     const [isSearchIconHidden, setSearchIconHidden] = useState(true)
     const [isUserExists, setIsUserExists] = useState()
-    const [view, setView] = useState()
+    const [view, setView] = useState("migoSuccess")
 
     const searchRef = useRef()
 
@@ -68,7 +68,7 @@ const SearchScreen = ({ navigation, route, }) => {
         await updateDoc(doc(db, 'users', user.uid), {
             migos: arrayUnion(uid)
         });
-        setView("migoRequestSuccess")
+        setView("migoSuccess")
     }
 
     const removeUIDFromUserFollowing = async () => {
@@ -98,6 +98,10 @@ const SearchScreen = ({ navigation, route, }) => {
             addUIDToUserMigos()
             removeUIDFromUserFollowing()
         }
+        else if (user.profile_visibility === "private") {
+            addUIDToOwnerRequestSent()
+            addUIDToUserRequestReceived()
+        }
     }
 
     const handleUserFollowed = () => {
@@ -126,6 +130,12 @@ const SearchScreen = ({ navigation, route, }) => {
             }
             else if (doc.data().following.includes(uid)) {
                 setView('migoFollow')
+            }
+            else if (doc.data().received_migo_requests.includes(uid)) {
+                setView('requestSent')
+            }
+            else if (doc.data().migos.includes(uid)) {
+                setView('migos')
             }
             else {
                 setView('follow')
@@ -181,6 +191,18 @@ const SearchScreen = ({ navigation, route, }) => {
                     style={[styles.addButton, { backgroundColor: woo_gray }]}
                 ><Text style={styles.buttonText}>following</Text>
                 </TouchableOpacity>
+            case 'requestSent':
+                return <TouchableOpacity
+                    disabled
+                    style={[styles.addButton, { backgroundColor: woo_gray }]}
+                ><Text style={styles.buttonText}>request sent</Text>
+                </TouchableOpacity>
+            case 'migos':
+                return <TouchableOpacity
+                    disabled
+                    style={[styles.addButton, { backgroundColor: woo_gray }]}
+                ><Text style={styles.buttonText}>migos</Text>
+                </TouchableOpacity>
             case 'loading':
                 return <Skeleton
                     // LinearGradientComponent={LinearGradient}
@@ -191,18 +213,21 @@ const SearchScreen = ({ navigation, route, }) => {
                 />;
             case 'success':
                 return <TouchableOpacity
+                    disabled
                     style={[styles.addButton, { backgroundColor: woo_green }]}
                     onPress={() => handleUserFollowed()}
                 ><Text style={styles.buttonText}>following!</Text>
                 </TouchableOpacity>
             case 'migoSuccess':
                 return <TouchableOpacity
+                    disabled
                     style={[styles.addButton, { backgroundColor: woo_green }]}
                     onPress={() => handleUserFollowed()}
                 ><Text style={styles.buttonText}>migos!</Text>
                 </TouchableOpacity>
-            case 'migoRequestSuccess':
+            case 'successMigoRequest':
                 return <TouchableOpacity
+                    disabled
                     style={[styles.addButton, { backgroundColor: woo_green }]}
                     onPress={() => handleUserFollowed()}
                 ><Text style={styles.buttonText}>request sent!</Text>
@@ -277,22 +302,24 @@ const SearchScreen = ({ navigation, route, }) => {
                         </View>
                         :
                         // searching for user with no error
-                        <View style={styles.userInfoContainer}>
-                            <View style={styles.imageContainer}>
-                                <Avatar
-                                    rounded
-                                    size="medium"
-                                    source={{ uri: `${user.profile_pic_url}` }}
-                                />
+                        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('User', { user: user })}>
+                            <View style={styles.userInfoContainer}>
+                                <View style={styles.imageContainer}>
+                                    <Avatar
+                                        rounded
+                                        size="medium"
+                                        source={{ uri: `${user.profile_pic_url}` }}
+                                    />
+                                </View>
+                                <View style={styles.textContainer}>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.first_name + " " + user.last_name}</Text>
+                                    <Text style={{ fontSize: 12 }}>@{user.username}</Text>
+                                </View>
+                                <View style={styles.requestButtonContainer}>
+                                    {renderView(view)}
+                                </View>
                             </View>
-                            <View style={styles.textContainer}>
-                                <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.first_name + " " + user.last_name}</Text>
-                                <Text style={{ fontSize: 12 }}>@{user.username}</Text>
-                            </View>
-                            <View style={styles.requestButtonContainer}>
-                                {renderView(view)}
-                            </View>
-                        </View>
+                        </TouchableOpacity>
                     :
                     view === 'none' ?
                         <View style={{ alignItems: 'center' }}><Text> no user found </Text></View> : null
@@ -349,11 +376,15 @@ const styles = StyleSheet.create({
         // backgroundColor: '#f37320',
         padding: 5,
         borderRadius: 10,
-        width: 80
+        width: 100,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     buttonText: {
         color: "#fff",
-        textAlign: 'center'
+        textAlign: 'center',
+
     },
     requestButtonContainer: {
         flex: 1,
