@@ -60,6 +60,8 @@ const ProfileScreen = ({ navigation, route }) => {
             setFollowing(doc.data().following)
             setFollowers(doc.data().followers)
             setMigos(doc.data().migos)
+        }, (error) => {
+
         })
 
         const q = query(collection(db, "woos"), where("owner_uid", "==", uid));
@@ -71,6 +73,8 @@ const ProfileScreen = ({ navigation, route }) => {
             });
             // console.log("Woos Owned by this USER: ", ownedWoos.join(", "));
             setWoos(ownedWoos)
+        }, (error) => {
+
         });
 
         return () => {

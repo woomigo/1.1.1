@@ -1,24 +1,86 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { Avatar } from "@rneui/themed"
+import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 // import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
-const LayoutMessageItem = ({ message }) => {
-const navigation = useNavigation();
+const LayoutMessageItem = ({ messager, uid }) => {
+
+    const [user, setUser] = useState()
+    const [messages, setMessages] = useState()
+    const [time, setTime] = useState()
+
+    // const { uid } = route.params;
+
+    // class Message {
+    //     constructor(message, timestamp) {
+    //         this.message = message;
+    //         this.timestamp = timestamp
+    //     }
+    // }
+
+    useEffect(() => {
+        console.log(messager.item)
+    })
+
+    useEffect(() => {
+        const docRef = doc(db, "users", messager.item);
+        const getProfileInfo = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setUser(doc.data())
+            // setGallery(doc.data().gallery)
+            // setUsername(doc.data().username)
+            // setFirstName(doc.data().first_name)
+            // setLastName(doc.data().last_name)
+            // setProfilePicURL(doc.data().profile_pic_url)
+            // setFollowing(doc.data().following)
+            // setFollowers(doc.data().followers)
+            // setMigos(doc.data().migos)
+        }, (error) => {
+
+        })
+
+        const q = query(collection(db, "users", uid, "messages", messager.item, "messages"), orderBy("created_at", "desc"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const arrayofMessages = [];
+            querySnapshot.forEach((doc) => {
+                console.log(doc.data())
+                arrayofMessages.push(doc.data());
+            });
+            // console.log("Messages Owned by this USER: ", arrayofMessages.join(", "));
+            setMessages(arrayofMessages)
+            let dateTime = new Date(arrayofMessages[0].created_at * 1000)
+            // let hours = dateTime.getHours()
+            // let minutes = dateTime.getMinutes()
+            setTime(dateTime.toLocaleTimeString());
+
+        }, (error) => {
+
+        });
+
+        return () => {
+            getProfileInfo()
+            unsubscribe()
+        };
+    }, [])
+
+
+    const navigation = useNavigation();
     const confirmDeleteAlert = () =>
-    Alert.alert(
-      "Delete Message",
-      "Are you sure you want to delete this message?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => console.log("Delete Pressed"), style: "destructive" }
-      ]
-    );
+        Alert.alert(
+            "Delete Message",
+            "Are you sure you want to delete this message?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "OK", onPress: () => console.log("Delete Pressed"), style: "destructive" }
+            ]
+        );
 
     const renderRightActions = (progress, dragX) => {
         const trans = dragX.interpolate({
@@ -58,28 +120,31 @@ const navigation = useNavigation();
         // <Swipeable style={styles.swipeRow} 
         // renderLeftActions={renderLeftActions} 
         // renderRightActions={renderRightActions} >
-            <View>
+        <View>
+            {user && messages &&
+            
                 <TouchableOpacity
                     onPress={() =>
-                        navigation.navigate('ComposeMessage',{receiversUID: [133,135]})}
+                        navigation.navigate('ComposeMessage', { user: user })}
                     style={styles.container}
                 >
                     <View style={styles.imageContainer}>
                         <Avatar
                             rounded
                             size="small"
-                            source={{ uri: `${message.item.profile}` }}
+                            source={{ uri: `${user.profile_pic_url}` }}
                         />
                     </View>
                     <View style={styles.messageContainer}>
-                        <Text style={styles.username}>@{message.item.username}</Text>
-                        <Text style={styles.message}>{message.item.message}</Text>
+                        <Text style={styles.username}>@{user.username}</Text>
+                        <Text style={styles.message}>{messages[0].message}</Text>
                     </View>
                     <View style={styles.timeContainer}>
-                        <Text style={styles.time}>{message.item.time}</Text>
+                        <Text style={styles.time}>{time}</Text>
                     </View>
                 </TouchableOpacity>
-            </View>
+            }
+        </View>
 
         // </Swipeable>
     )

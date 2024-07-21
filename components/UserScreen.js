@@ -31,6 +31,8 @@ const UserScreen = ({ navigation, route }) => {
             });
             // console.log("Woos Owned by this USER: ", ownedWoos.join(", "));
             setWoos(ownedWoos)
+        }, (error) => {
+
         });
 
         return () => {

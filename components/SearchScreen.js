@@ -142,6 +142,8 @@ const SearchScreen = ({ navigation, route, }) => {
             }
             console.log("This")
 
+        }, (error) => {
+
         });
         console.log("view is " + view)
         console.log(`user === ${user}`)

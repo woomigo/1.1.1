@@ -27,6 +27,8 @@ const RegisterProfilePictureScreen = ({ route, navigation }) => {
             // 'file' comes from the Blob or File API
             uploadBytes(storageRef, result.assets[0].uri).then((snapshot) => {
               console.log(`Uploaded a blob or file! --------> ${snapshot}`);
+            }, (error) => {
+
             });
 
         }

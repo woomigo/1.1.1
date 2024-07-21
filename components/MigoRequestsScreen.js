@@ -23,6 +23,8 @@ const MigoRequestScreen = ({ navigation, route }) => {
             setUser(doc.data())
             setSentRequests(doc.data().sent_migo_requests)
             setReceivedRequests(doc.data().received_migo_requests)
+        }, (error) => {
+
         })
 
         return () => {

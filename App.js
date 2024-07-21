@@ -21,7 +21,7 @@ import MigosScreen from './components/MigosScreen';
 import MigoRequestScreen from './components/MigoRequestsScreen';
 import MenuScreen from './components/MenuScreen'
 import SearchScreen from './components/SearchScreen'
-import MessagesScreen from './components/MessagesScreen'
+import MessagesPreviewScreen from './components/MessagesPreviewScreen'
 import ComposeMessageScreen from './components/ComposeMessageScreen';
 import NotificationsScreen from './components/NotificationsScreen';
 import WooDateScreen from './components/WooDateScreen';
@@ -106,7 +106,7 @@ const SearchStack = () => {
 const MessagesStack = () => {
   return (
     <Stack.Navigator options={{ headerShown: false }} >
-      <Stack.Screen name="Messages" component={MessagesScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
+      <Stack.Screen name="MessagesPreview" component={MessagesPreviewScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="ComposeMessage" component={ComposeMessageScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name='User' component={UserScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
     </Stack.Navigator>

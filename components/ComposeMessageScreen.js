@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, Text, TextInput, SafeAreaView, Image, FlatList, KeyboardAvoidingView, Platform } from "react-native";
+import { View, StyleSheet, Text, TextInput, SafeAreaView, Image, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { Header, Icon, SearchBar, Avatar, Input } from "@rneui/themed";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LayoutComposeMessageItem from "./LayoutComposeMessageItem";
+import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 import { ComposeMessage } from "./shared";
 import LayoutInputText from "./LayoutInputText";
 import { woo_black, woo_white } from "../assets/colors";
@@ -11,40 +13,59 @@ import { woo_black, woo_white } from "../assets/colors";
 
 const ComposeMessageScreen = ({ route, navigation }) => {
 
+    const { user, uid } = route.params;
+
+    useEffect(() => {
+        // const docRef = doc(db, "users", uid);
+        // const getProfileInfo = onSnapshot(docRef, (doc) => {
+        //     // console.log("Document data:", doc.data());
+        //     setOwner(doc.data())
+        //     // setGallery(doc.data().gallery)
+        //     // setUsername(doc.data().username)
+        //     // setFirstName(doc.data().first_name)
+        //     // setLastName(doc.data().last_name)
+        //     // setProfilePicURL(doc.data().profile_pic_url)
+        //     // setFollowing(doc.data().following)
+        //     // setFollowers(doc.data().followers)
+        //     // setMigos(doc.data().migos)
+        // }, (error) => {
+
+        // })
+
+        const q = query(collection(db, "users", uid, "messages", user.uid, "messages"), orderBy("created_at", "asc"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const arrayofMessages = [];
+            querySnapshot.forEach((doc) => {
+                console.log(doc.data())
+                arrayofMessages.push(doc.data());
+            });
+            // console.log("Messages Owned by this USER: ", arrayofMessages.join(", "));
+            setMessages(arrayofMessages)
+            // let dateTime = new Date(arrayofMessages[0].created_at * 1000)
+            // let hours = dateTime.getHours()
+            // let minutes = dateTime.getMinutes()
+            // setTime(dateTime.toLocaleTimeString());
+
+        }, (error) => {
+
+        });
+
+        return () => {
+            // getProfileInfo()
+            unsubscribe()
+        };
+    }, [])
+
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 100 : 0
 
     const insets = useSafeAreaInsets();
+    const [messages, setMessages] = useState()
     const [message, setMessage] = useState('');
-    const [uid, setUid] = useState(134)
-    const [isComposing, setIsComposing] = useState(false);
-    const [searchValue, setSearchValue] = useState([])
-    const [isSearchError, setIsSearchError] = useState()
-    const [isSearchIconHidden, setSearchIconHidden] = useState(true)
-    const [isMessageError, setIsMessageError] = useState()
+    const [owner, setOwner] = useState()
     const [isMessageIconHidden, setMessageIconHidden] = useState(true)
+    const [isMessageError, setIsMessageError] = useState()
 
-    const searchRef = useRef()
     const messageRef = useRef()
-
-    const handleSearch = () => {
-
-        searchRef.current.clear()
-        searchRef.current.blur()
-    }
-
-    const handleSearchOnChange = (input) => {
-        if (input.length > 0) {
-            setSearchIconHidden(false)
-        } else {
-            setSearchIconHidden(true)
-        }
-        setIsSearchError(false)
-        setSearchValue(input)
-    }
-
-    const handleSearchEndEditing = () => {
-        setSearchIconHidden(true)
-    }
 
     const handleMessage = () => {
         messageRef.current.clear()
@@ -65,22 +86,11 @@ const ComposeMessageScreen = ({ route, navigation }) => {
         setMessageIconHidden(true)
     }
 
-    const { receiversUID } = route.params;
 
-    useEffect(() => {
-        if (receiversUID != undefined) {
-            if (receiversUID.length > 0) {
-                setIsComposing(false)
-            } else {
-                setIsComposing(true)
-            }
-        }
 
-    }, [receiversUID])
-
-    const renderMessages = (message) => {
-        <LayoutComposeMessageItem uid={message.item.uid} messageUID={message.item.uid} message={message.item.message} profilePic={message.item.profilePic} username={message.item.username} time={message.item.time} messageId={message.item.id} />
-    }
+    // const renderMessages = (message) => {
+    //     <LayoutComposeMessageItem uid={message.item.uid} messageUID={message.item.uid} message={message.item.message} profilePic={message.item.profilePic} username={message.item.username} time={message.item.time} messageId={message.item.id} />
+    // }
 
 
     return (
@@ -95,7 +105,7 @@ const ComposeMessageScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('Messages')
+                            navigation.navigate('MessagesPreview')
                         }
                     />}
                 centerComponent={
@@ -106,69 +116,23 @@ const ComposeMessageScreen = ({ route, navigation }) => {
                             onPress={() =>
                                 navigation.navigate('User')
                             }
-                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                            source={{ uri: user.profile_pic_url }}
                         />
                     </View>
                 }
-                // rightComponent={
-                //     <Icon
-                //         name="user-plus"
-                //         type='font-awesome-5'
-                //         color={woo_black}
-                //         size={25}
-                //         onPress={() =>
-                //             navigation.navigate('MigoRequests')
-                //         }
-                //     />
-                // }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
 
-            {
-                isComposing ?
-
-                    // <SearchBar
-                    //     onChangeText={text => setText(text)}
-                    //     placeholder="to:"
-                    //     round='true'
-                    //     lightTheme='true'
-                    //     value={text}
-                    //     containerStyle={styles.searchBarContainer}
-                    //     inputContainerStyle={styles.searchBarInputContaner}
-                    //     inputStyle={styles.searchBarInput}
-                    //     searchIcon={styles.searchBarIcon}
-                    //     clearIcon={styles.searchBarClearIcon} /> 
-                    <KeyboardAvoidingView backgroundColor={woo_white} behavior='position'>
-                        <Input
-                            value={searchValue}
-                            ref={searchRef}
-                            onChangeText={text => handleSearchOnChange(text)}
-                            placeholder='search users by @username'
-                            fontSize={14}
-                            leftIcon={<Icon style={{ paddingEnd: 5 }} type='font-awesome-5' name='search' size={18} />}
-                            // errorStyle={{ color: 'red' }}
-                            // errorMessage={isSearchError && "sorry we couldn't find that Search"}
-                            autoCapitalize="none"
-                            // onFocus={() => handleSearchOnFocus()}
-                            onEndEditing={() => handleSearchEndEditing()}
-                            rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
-                        />
-                    </KeyboardAvoidingView>
-                    : null
-            }
-
-
-
             <View style={styles.textInputContainer}>
                 <FlatList
                     showsVerticalScrollIndicator={false}
                     keyExtractor={message => message.id}
-                    data={ComposeMessage}
+                    data={messages}
                     backgroundColor={"#fff"}
                     // initialNumToRender={3}
-                    renderItem={(message) => <LayoutComposeMessageItem uid={uid} receiversUID={message.item.uid} message={message.item.message} profilePic={message.item.profilePic} username={message.item.username} time={message.item.time} messageId={message.item.id} />} />
+                    renderItem={(message) => <LayoutComposeMessageItem uid={uid} receiversUID={message.item.receiver_uid} sendersUID={message.item.senders_uid} message={message.item.message} time={message.item.created_at} messageId={message.item.id} />} />
 
                 <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset}>
                     <Input
@@ -178,17 +142,17 @@ const ComposeMessageScreen = ({ route, navigation }) => {
                         placeholder='message'
                         fontSize={14}
                         backgroundColor={woo_white}
-                        leftIcon={<Avatar
-                            rounded
-                            size="small"
-                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                        />}
+                        // leftIcon={<Avatar
+                        //     rounded
+                        //     size="small"
+                        //     source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                        // />}
                         // errorStyle={{ color: 'red' }}
                         // errorMessage={isSearchError && "sorry we couldn't find that Search"}
                         autoCapitalize="none"
                         // onFocus={() => handleSearchOnFocus()}
                         onEndEditing={() => handleMessageEndEditing()}
-                        rightIcon={!isMessageIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleMessage()} />}
+                        rightIcon={!isMessageIconHidden && <TouchableOpacity style={{ width: 18, height: 18 }}><Icon name="play" type='font-awesome-5' size={18} onPress={() => handleMessage()} /></TouchableOpacity>}
                     />
                 </KeyboardAvoidingView>
             </View>

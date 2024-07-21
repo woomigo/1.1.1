@@ -1,12 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon } from "@rneui/themed";
-import { Messages } from './shared';
-import ListViewMessages from './ListViewMessages';
+import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { db } from '../firebaseConfig';
+import ListViewPreviewMessages from './ListViewPreviewMessages';
 import { woo_black } from '../assets/colors';
 
 
-const MessagesScreen = ({ navigation }) => {
+const MessagesPreviewScreen = ({ navigation, route }) => {
+
+    const { uid } = route.params;
+
+    const [messagers, setMessagers] = useState()
+
+    useEffect(() => {
+        // const messagesRef = collection(db, "users", uid, "messages");
+        // const getProfileInfo = onSnapshot(messagesRef, (doc) => {
+        //     // console.log("Document data:", doc.data());
+        //     setMessages(doc.data())
+        // }, (error) => {
+
+        // })
+
+        const q = query(collection(db, "users", uid, "messages"), orderBy("timestamp", "desc"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const arrayOfMessangers = [];
+            querySnapshot.forEach((doc) => {
+                // console.log(doc.id)
+                arrayOfMessangers.push(doc.id);
+            });
+            // console.log("Messages Owned by this USER: ", arrayOfMessangers.join(", "));
+            setMessagers(arrayOfMessangers)
+        }, (error) => {
+
+        });
+        return () => {
+            unsubscribe()
+            // getProfileInfo()
+        };
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -29,7 +61,7 @@ const MessagesScreen = ({ navigation }) => {
                         color={woo_black}
                         size={20}
                         onPress={() =>
-                            navigation.navigate('ComposeMessage', {receiversUID : ""})
+                            navigation.navigate('ComposeMessage', { isComposing: true })
                         }
 
                     />
@@ -40,7 +72,7 @@ const MessagesScreen = ({ navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <ListViewMessages messages={Messages} kind="preview" />
+            <ListViewPreviewMessages uid={uid} messagers={messagers} />
 
         </View>
     )
@@ -77,4 +109,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default MessagesScreen
+export default MessagesPreviewScreen
