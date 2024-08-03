@@ -38,6 +38,7 @@ import EditMediaScreen from './components/EditMediaScreen';
 import UserScreen from './components/UserScreen';
 import WooListView from './components/WooListView';
 import MediaViewScreen from './components/MediaViewScreen';
+import MessagesScreen from './components/MessagesScreens';
 
 
 
@@ -108,6 +109,7 @@ const MessagesStack = () => {
     <Stack.Navigator options={{ headerShown: false }} >
       <Stack.Screen name="MessagesPreview" component={MessagesPreviewScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="ComposeMessage" component={ComposeMessageScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
+      <Stack.Screen name="Messages" component={MessagesScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name='User' component={UserScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
     </Stack.Navigator>
   )

@@ -3,73 +3,133 @@ import { View, StyleSheet, Text, TextInput, SafeAreaView, Image, FlatList, Keybo
 import { Header, Icon, SearchBar, Avatar, Input } from "@rneui/themed";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LayoutComposeMessageItem from "./LayoutComposeMessageItem";
-import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
 import { db } from '../firebaseConfig';
+import { collection, query, where, getDocs, setDoc, addDoc, arrayUnion, doc, arrayRemove, serverTimestamp } from "firebase/firestore";
 import { ComposeMessage } from "./shared";
 import LayoutInputText from "./LayoutInputText";
-import { woo_black, woo_white } from "../assets/colors";
+import { woo_black, woo_orange, woo_white } from "../assets/colors";
 
 
 
 const ComposeMessageScreen = ({ route, navigation }) => {
 
-    const { user, uid } = route.params;
+    const { receiversUID, uid } = route.params;
 
-    useEffect(() => {
-        // const docRef = doc(db, "users", uid);
-        // const getProfileInfo = onSnapshot(docRef, (doc) => {
-        //     // console.log("Document data:", doc.data());
-        //     setOwner(doc.data())
-        //     // setGallery(doc.data().gallery)
-        //     // setUsername(doc.data().username)
-        //     // setFirstName(doc.data().first_name)
-        //     // setLastName(doc.data().last_name)
-        //     // setProfilePicURL(doc.data().profile_pic_url)
-        //     // setFollowing(doc.data().following)
-        //     // setFollowers(doc.data().followers)
-        //     // setMigos(doc.data().migos)
-        // }, (error) => {
-
-        // })
-
-        const q = query(collection(db, "users", uid, "messages", user.uid, "messages"), orderBy("created_at", "asc"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const arrayofMessages = [];
-            querySnapshot.forEach((doc) => {
-                console.log(doc.data())
-                arrayofMessages.push(doc.data());
-            });
-            // console.log("Messages Owned by this USER: ", arrayofMessages.join(", "));
-            setMessages(arrayofMessages)
-            // let dateTime = new Date(arrayofMessages[0].created_at * 1000)
-            // let hours = dateTime.getHours()
-            // let minutes = dateTime.getMinutes()
-            // setTime(dateTime.toLocaleTimeString());
-
-        }, (error) => {
-
-        });
-
-        return () => {
-            // getProfileInfo()
-            unsubscribe()
-        };
-    }, [])
-
-    const keyboardVerticalOffset = Platform.OS === 'ios' ? 100 : 0
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 190 : 0
 
     const insets = useSafeAreaInsets();
-    const [messages, setMessages] = useState()
+    const [user, setUser] = useState("")
     const [message, setMessage] = useState('');
-    const [owner, setOwner] = useState()
-    const [isMessageIconHidden, setMessageIconHidden] = useState(true)
+    const [searchValue, setSearchValue] = useState([])
+    const [isSearchError, setIsSearchError] = useState()
+    const [isSearchIconHidden, setSearchIconHidden] = useState(true)
     const [isMessageError, setIsMessageError] = useState()
+    const [isMessageIconHidden, setMessageIconHidden] = useState(true)
+    const [view, setView] = useState("migoSuccess")
 
+    const searchRef = useRef()
     const messageRef = useRef()
 
+
+    useEffect(() => {
+
+
+    }, [receiversUID])
+
+    const handleSearch = async () => {
+        setView('none')
+        console.log("SEARCH")
+        const q = query(collection(db, "users"), where("username", "==", searchValue));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            setView()
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data().followers);
+            setUser(doc.data())
+
+        }, (error) => {
+            console.log(error)
+        });
+        searchRef.current.clear()
+        searchRef.current.blur()
+    }
+
+    const createRefToOwner = async () => {
+        try {
+            const updateTimestamp = await setDoc(doc(db, "users", uid, "messages", user.uid), {
+                timestamp: serverTimestamp()
+            });
+            // console.log("timestamp ", updateTimestamp)
+            try {
+                const addMessageRef = await addDoc(collection(db, "users", uid, "messages", user.uid, "messages"), {
+                    
+                })
+                console.log("OWNER REF SAVED TO DB ", addMessageRef.id)
+            }
+            catch (error) {
+                console.log(error)
+            }
+
+        }
+        catch (error) {
+            console.log(error)
+        }
+
+    }
+
+    const createRefToUser = async () => {
+        try {
+            const updateTimestamp = await setDoc(doc(db, "users", user.uid, "messages", uid), {
+                timestamp: serverTimestamp()
+            });
+            // console.log("user " + updateTimestamp.timestamp)
+            try {
+                const addMessageRef = await addDoc(collection(db, "users", user.uid, "messages", uid, "messages"), {})
+                console.log("USER REF SAVED TO DB ", addMessageRef.id)
+                handleNavigateToMessages()
+            }
+            catch (error) {
+                console.log(error)
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
+
+    }
+
+    const handleNavigateToMessages = () => {
+        navigation.navigate('Messages', { user: user, messageParam: message })
+    }
+
+    const handleUserClicked = () => {
+        createRefToOwner()
+        createRefToUser()
+    }
+
+    const handleSearchOnChange = (input) => {
+        if (input.length > 0) {
+            setSearchIconHidden(false)
+        } else {
+            setSearchIconHidden(true)
+        }
+        setIsSearchError(false)
+        setSearchValue(input)
+    }
+
+    const handleSearchOnFocus = () => {
+        setSearchValue()
+        setUser()
+        setView()
+        console.log('FOCUS')
+    }
+
+    const handleSearchEndEditing = () => {
+        setSearchIconHidden(true)
+    }
+
     const handleMessage = () => {
-        messageRef.current.clear()
-        messageRef.current.blur()
+        setIsMessageError(true)
     }
 
     const handleMessageOnChange = (input) => {
@@ -86,18 +146,16 @@ const ComposeMessageScreen = ({ route, navigation }) => {
         setMessageIconHidden(true)
     }
 
-
-
-    // const renderMessages = (message) => {
-    //     <LayoutComposeMessageItem uid={message.item.uid} messageUID={message.item.uid} message={message.item.message} profilePic={message.item.profilePic} username={message.item.username} time={message.item.time} messageId={message.item.id} />
-    // }
+    const renderMessages = (message) => {
+        <LayoutComposeMessageItem uid={message.item.uid} messageUID={message.item.uid} message={message.item.message} profilePic={message.item.profilePic} username={message.item.username} time={message.item.time} messageId={message.item.id} />
+    }
 
 
     return (
         <SafeAreaView style={{ flex: 1, marginTop: -insets.top }}>
             <Header
                 style={styles.header}
-                backgroundColor={'#fff'}
+                backgroundColor={woo_white}
                 leftComponent={
                     <Icon
                         name="chevron-left"
@@ -110,49 +168,108 @@ const ComposeMessageScreen = ({ route, navigation }) => {
                     />}
                 centerComponent={
                     <View >
-                        <Avatar
-                            rounded
-                            size="medium"
-                            onPress={() =>
-                                navigation.navigate('User')
-                            }
-                            source={{ uri: user.profile_pic_url }}
-                        />
+                        <Text style={{ fontSize: 25, color: { woo_black }, textAlign: 'center', fontWeight: 'bold' }}>new message</Text>
                     </View>
                 }
+                // rightComponent={
+                //     <Icon
+                //         name="user-plus"
+                //         type='font-awesome-5'
+                //         color={woo_black}
+                //         size={25}
+                //         onPress={() =>
+                //             navigation.navigate('MigoRequests')
+                //         }
+                //     />
+                // }
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <View style={styles.textInputContainer}>
-                <FlatList
-                    showsVerticalScrollIndicator={false}
-                    keyExtractor={message => message.id}
-                    data={messages}
-                    backgroundColor={"#fff"}
-                    // initialNumToRender={3}
-                    renderItem={(message) => <LayoutComposeMessageItem uid={uid} receiversUID={message.item.receiver_uid} sendersUID={message.item.senders_uid} message={message.item.message} time={message.item.created_at} messageId={message.item.id} />} />
+            <KeyboardAvoidingView backgroundColor={woo_white} behavior='position'>
+                <Input
+                    value={searchValue}
+                    ref={searchRef}
+                    onChangeText={text => handleSearchOnChange(text)}
+                    placeholder='search users by @username'
+                    fontSize={14}
+                    leftIcon={<Icon style={{ paddingEnd: 5 }} type='font-awesome-5' name='search' size={18} />}
+                    // errorStyle={{ color: 'red' }}
+                    // errorMessage={isSearchError && "sorry we couldn't find that Search"}
+                    autoCapitalize="none"
+                    onFocus={() => handleSearchOnFocus()}
+                    onEndEditing={() => handleSearchEndEditing()}
+                    rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
+                />
+            </KeyboardAvoidingView>
 
-                <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={keyboardVerticalOffset}>
+            <View style={styles.textInputContainer}>
+                {user && user ?
+                    user.uid === uid ?
+                        // searching for self
+                        <View style={styles.userInfoContainer}>
+                            <View style={styles.imageContainer}>
+                                <Avatar
+                                    rounded
+                                    size="medium"
+                                    source={{ uri: `${user.profile_pic_url}` }}
+                                />
+                            </View>
+                            <View style={styles.textContainer}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{SelfIdentity[Math.floor(Math.random() * SelfIdentity.length)].header}</Text>
+                                <Text style={{ fontSize: 12 }}>{SelfIdentity[Math.floor(Math.random() * SelfIdentity.length)].message}</Text>
+                            </View>
+                            {/* <View style={styles.requestButtonContainer}>
+                            <TouchableOpacity
+                                style={[styles.addButton, { backgroundColor: woo_gray }]}
+                                onPress={() => handleFollowUser()}
+                            ><Text style={styles.buttonText}>follow</Text>
+                            </TouchableOpacity>
+                        </View> */}
+                        </View>
+                        :
+                        // searching for user with no error
+                        <View style={styles.container}>
+
+                            <TouchableOpacity style={styles.userInfoContainer} onPress={() => handleUserClicked()}>
+                                <View style={styles.imageContainer}>
+                                    <Avatar
+                                        rounded
+                                        size="medium"
+                                        source={{ uri: `${user.profile_pic_url}` }}
+                                    />
+                                </View>
+                                <View style={styles.textContainer}>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{user.first_name + " " + user.last_name}</Text>
+                                    <Text style={{ fontSize: 12 }}>@{user.username}</Text>
+                                </View>
+                                <View style={styles.requestButtonContainer}>
+                                    {/* {renderView(view)} */}
+                                </View>
+                            </TouchableOpacity>
+
+                        </View>
+                    :
+                    view === 'none' ?
+                        <View style={{ alignItems: 'center' }}><Text> no user found </Text></View> : null
+                }
+
+                <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={keyboardVerticalOffset}>
                     <Input
                         value={message}
                         ref={messageRef}
+                        style={{ paddingStart: 5 }}
+                        errorStyle={{ color: 'red' }}
+                        errorMessage={isMessageError && "please add a user"}
                         onChangeText={message => handleMessageOnChange(message)}
                         placeholder='message'
                         fontSize={14}
                         backgroundColor={woo_white}
-                        // leftIcon={<Avatar
-                        //     rounded
-                        //     size="small"
-                        //     source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
-                        // />}
-                        // errorStyle={{ color: 'red' }}
-                        // errorMessage={isSearchError && "sorry we couldn't find that Search"}
                         autoCapitalize="none"
                         // onFocus={() => handleSearchOnFocus()}
                         onEndEditing={() => handleMessageEndEditing()}
-                        rightIcon={!isMessageIconHidden && <TouchableOpacity style={{ width: 18, height: 18 }}><Icon name="play" type='font-awesome-5' size={18} onPress={() => handleMessage()} /></TouchableOpacity>}
+                        rightIcon={!isMessageIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleMessage()} />}
                     />
                 </KeyboardAvoidingView>
             </View>
@@ -165,30 +282,45 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: woo_white
     },
+    userInfoContainer: {
+        flex: 1,
+        backgroundColor: woo_white,
+        alignItems: 'center',
+        flexDirection: 'row',
+        padding: 20,
+    },
+    imageContainer: {
+        flex: .4,
+        // backgroundColor: 'red'
+    },
+    textContainer: {
+        flex: 1,
+        // backgroundColor: 'blue'
+    },
     header: {
-        shadowColor: '#000',
+        shadowColor: woo_black,
         shadowOffset: { width: 1, height: 3 },
         shadowOpacity: 0.2,
         elevation: 4,
     },
     searchBarContainer: {
-        backgroundColor: "#fff",
+        backgroundColor: woo_white,
         borderBottomColor: 'transparent',
         borderTopColor: 'transparent'
     },
     searchBarInputContaner: {
-        backgroundColor: '#f37320'
+        backgroundColor: woo_orange
     },
     searchBarInput: {
-        backgroundColor: '#fff',
-        color: "#000",
+        backgroundColor: woo_white,
+        color: woo_black,
         paddingStart: 5
     },
     searchBarIcon: {
-        color: '#fff'
+        color: woo_white
     },
     searchBarClearIcon: {
-        color: '#fff',
+        color: woo_white,
     },
     centerComponent: {
         justifyContent: 'center',
@@ -204,7 +336,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 10,
         margin: 5,
-        color: '#fff',
+        color: woo_white,
     },
     ImageStyle: {
         padding: 10,

@@ -5,6 +5,7 @@ import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "fire
 import { db } from '../firebaseConfig';
 // import { Swipeable } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { woo_gray, woo_light_gray, woo_white } from '../assets/colors';
 
 const LayoutMessageItem = ({ messager, uid }) => {
 
@@ -54,7 +55,7 @@ const LayoutMessageItem = ({ messager, uid }) => {
             let dateTime = new Date(arrayofMessages[0].created_at * 1000)
             // let hours = dateTime.getHours()
             // let minutes = dateTime.getMinutes()
-            setTime(dateTime.toLocaleTimeString());
+            setTime(`${dateTime.getMonth() + 1}/${+ dateTime.getDate()}, ${dateTime.toLocaleTimeString()}`);
 
         }, (error) => {
 
@@ -122,10 +123,10 @@ const LayoutMessageItem = ({ messager, uid }) => {
         // renderRightActions={renderRightActions} >
         <View>
             {user && messages &&
-            
+
                 <TouchableOpacity
                     onPress={() =>
-                        navigation.navigate('ComposeMessage', { user: user })}
+                        navigation.navigate('Messages', { user: user })}
                     style={styles.container}
                 >
                     <View style={styles.imageContainer}>
@@ -153,7 +154,7 @@ const LayoutMessageItem = ({ messager, uid }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: woo_white,
         alignItems: 'center',
         flexDirection: 'row',
         padding: 20,
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     },
     timeContainer: {
         flex: 2,
+        alignItems: 'flex-end'
         // backgroundColor: 'blue'
     },
     username: {
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
 
     },
     time: {
-
+        fontSize: 10
     },
     deleteView: {
         flexDirection: 'row',

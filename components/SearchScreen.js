@@ -18,7 +18,7 @@ const SearchScreen = ({ navigation, route, }) => {
         console.log(' UID === ' + uid)
     }, [])
 
-    const keyboardVerticalOffset = Platform.OS === 'ios' ? 100 : 0
+    // const keyboardVerticalOffset = Platform.OS === 'ios' ? 180 : 0
 
     const [searchValue, setSearchValue] = useState([])
     const [user, setUser] = useState()

@@ -4,6 +4,8 @@ export const woo_orange = "#F37320"
 
 export const woo_gray = "#848884"
 
+export const woo_light_gray = "#DEDFE7"
+
 export const woo_off_white = "#FAF9F6"
 
 export const woo_white = "#FFFFFF"
