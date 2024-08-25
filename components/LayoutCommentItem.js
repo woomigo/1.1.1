@@ -1,8 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, TouchableWithoutFeedback } from 'react-native';
 import { Avatar } from '@rneui/themed'
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 
 const LayoutCommentItem = ({comment}) => {
+
+    const [profilePicURL, setProfilePicURL] = useState()
+    const [username, setUsername] = useState()
+    const [timestamp, setTimestamp] = useState()
+
+    useEffect(() => {
+        // console.log(wooComments)
+        const docRef = doc(db, "users", comment.item.comment_owner_uid);
+        const getProfileInfo = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setProfilePicURL(doc.data().profile_pic_url)
+            setUsername(doc.data().username)
+        }, (error) => {
+
+        })
+
+        return () => {
+            getProfileInfo()
+        };
+    }, [])
  
     return (
         <View style={styles.container}>
@@ -13,7 +35,7 @@ const LayoutCommentItem = ({comment}) => {
                     <Avatar
                             rounded
                             size="small"
-                            source={{ uri: comment.item.profile }}
+                            source={{ uri: profilePicURL }}
                         />
                         {/* <Image
                             style={styles.commentUserImage}
@@ -21,13 +43,13 @@ const LayoutCommentItem = ({comment}) => {
                         /> */}
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback>
-                        <Text style={styles.commentUsername}>{comment.item.username}</Text>
+                        <Text style={styles.commentUsername}>{username}</Text>
                     </TouchableWithoutFeedback>
 
                 </View>
 
                 <View style={styles.commentTimeContainer}>
-                    <Text style={styles.commentTimeAgo}>{`${comment.item.timeAgo} mins ago`}</Text>
+                    <Text style={styles.commentTimeAgo}>{new Date(comment.item.timestamp * 1000).toLocaleTimeString()}</Text>
                 </View>
 
             </View>

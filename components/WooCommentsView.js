@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Text, SafeAreaView, FlatList, KeyboardAvoidingView } from 'react-native'
 import { Icon, Header, Input, Avatar } from '@rneui/themed'
 import { Comments } from './shared'
@@ -7,14 +7,44 @@ import { Comments } from './shared'
 // import LayoutWooCommentComponent from './LayoutWooCommentComponent'
 import ListViewComments from './ListViewComments'
 import { woo_black, woo_white, woo_orange } from '../assets/colors'
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 
-const WooCommentsView = ({ navigation: { navigate } }) => {
+const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
+
+    const { uid } = route.params;
 
     const [comment, setComment] = useState()
+    const [wooComments, setWooComments] = useState()
     const [isCommentError, setIsCommentError] = useState()
     const [isCommentIconHidden, setCommentIconHidden] = useState(true)
 
     const commentRef = useRef()
+
+    const [profilePicURL, setProfilePicURL] = useState()
+
+    useEffect(() => {
+        const docRef = doc(db, "users", "2RB7bG1KN4SuXnnuUDC0fawcK4J2");
+        const getProfileInfo = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setProfilePicURL(doc.data().profile_pic_url)
+        }, (error) => {
+
+        })
+
+        const docWooRef = doc(db, "woos", "td9KvsNdsk39XblHAE4l");
+        const getWooComments = onSnapshot(docWooRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setWooComments(doc.data().woo_comments)
+        }, (error) => {
+
+        })
+
+        return () => {
+            getProfileInfo()
+            getWooComments()
+        };
+    }, [])
 
     const addCommentInput = () => {
         setComment('')
@@ -78,13 +108,13 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
                     }
                     centerComponent={
                         <View >
-                          <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo comments</Text>
+                            <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo comments</Text>
                         </View>
-                      }
-                      leftContainerStyle={styles.leftComponent}
-                      centerContainerStyle={styles.centerComponent}
+                    }
+                    leftContainerStyle={styles.leftComponent}
+                    centerContainerStyle={styles.centerComponent}
                 />
-                <ListViewComments comments={Comments} />
+                <ListViewComments comments={wooComments} />
                 <KeyboardAvoidingView behavior='position'>
                     <Input
                         value={comment}
@@ -95,7 +125,7 @@ const WooCommentsView = ({ navigation: { navigate } }) => {
                         leftIcon={<Avatar
                             rounded
                             size="small"
-                            source={{ uri: "https://images.unsplash.com/photo-1596215143922-eedeaba0d91c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" }}
+                            source={{ uri: profilePicURL }}
                         />}
                         // errorStyle={{ color: 'red' }}
                         // errorMessage={isCommentError && "sorry we couldn't find that comment"}

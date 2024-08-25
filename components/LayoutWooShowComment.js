@@ -1,46 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Avatar, Card } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 
-const LayoutWooShowComment = ({ wooID }) => {
+const LayoutWooShowComment = ({ wooID, wooComments }) => {
     const navigation = useNavigation();
+    const [profilePicURL, setProfilePicURL] = useState()
+    const [username, setUsername] = useState()
+    const [timestamp, setTimestamp] = useState()
+
+    useEffect(() => {
+        console.log(wooComments)
+        setTimestamp(wooComments[0].timestamp)
+        const docRef = doc(db, "users", wooComments[0].comment_owner_uid);
+        const getProfileInfo = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setProfilePicURL(doc.data().profile_pic_url)
+            setUsername(doc.data().username)
+        }, (error) => {
+
+        })
+
+        return () => {
+            getProfileInfo()
+        };
+    }, [])
+    
     return (
-        <Card containerStyle={styles.container}>
-            <View style={styles.commentHeaderContainer}>
-                <View style={styles.commentHeaderUserContainer}>
-                    <TouchableWithoutFeedback>
-
-                        <Avatar
-                            rounded
-                            size="small"
-                            source={{ uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80" }}
-                        />
-                    </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback>
-                        <Text style={styles.commentUsername}>{"BostonGirl"}</Text>
-                    </TouchableWithoutFeedback>
-
-                </View>
-
-                <View style={styles.commentTimeContainer}>
-                    <Text style={styles.commentTimeAgo}>{"4 mins ago"}</Text>
-                </View>
-
-            </View>
-            <View style={styles.commentContainer}>
-                <Text style={styles.comment}>{"I'll defintely be there!"}</Text>
-            </View>
-            <View style={styles.seeMoreCommentsContainer}>
-                <TouchableOpacity onPress={() =>
-                    navigation.navigate('WooCommentsView', { wooID: wooID })
-                } >
-                    <Text style={styles.seeMoreCommentsText}>{"see 323 more comments..."}</Text>
-                </TouchableOpacity>
-
-            </View>
-        </Card>
-        
+        <View>
+            {
+                wooComments.length > 0 ?
+                    < Card containerStyle={styles.container} >
+                        <View style={styles.commentHeaderContainer}>
+                            <View style={styles.commentHeaderUserContainer}>
+                                <TouchableWithoutFeedback>
+                                    <Avatar
+                                        rounded
+                                        size="small"
+                                        source={{ uri: profilePicURL }}
+                                    />
+                                </TouchableWithoutFeedback>
+                                <TouchableWithoutFeedback>
+                                    <Text style={styles.commentUsername}>{username}</Text>
+                                </TouchableWithoutFeedback>
+                            </View>
+                            <View style={styles.commentTimeContainer}>
+                                <Text style={styles.commentTimeAgo}>{new Date(timestamp * 1000).toLocaleTimeString()}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.commentContainer}>
+                            <Text style={styles.comment}>{wooComments[0].comment}</Text>
+                        </View>
+                        <View style={styles.seeMoreCommentsContainer}>
+                            <TouchableOpacity onPress={() =>
+                                navigation.navigate('WooCommentsView', { wooID: wooID })
+                            } >
+                                <Text style={styles.seeMoreCommentsText}>{`see ${wooComments.length - 1} more comments...`}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Card >
+                    :
+                    < Card containerStyle={styles.textContainer}>
+                        <Text style={styles.text}>no woo comments</Text>
+                    </Card >
+            }
+        </View>
     )
 }
 
@@ -51,6 +77,17 @@ const styles = StyleSheet.create({
         margin: 0,
         padding: 10
 
+    },
+    textContainer: {
+        width: '100%',
+        borderRadius: 5,
+        margin: 0,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
+        alignItems: 'center'
+    },
+    text: {
+        margin: 10
     },
     commentHeaderContainer: {
         flexDirection: 'row',

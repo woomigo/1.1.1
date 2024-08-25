@@ -32,7 +32,7 @@ const LayoutWooItem = ({ woo, uid, isGalleryView, currentVisibleIndex, currentIn
                 />
                 <LayoutWooLike uid={uid} wooID={woo.item.id} wooLikes={woo.item.data().woo_likes} wooMigos={woo.item.data().woo_migos} wooType={woo.item.data().woo_type} />
                 {/* <LayoutWooWriteComment />  */}
-                <LayoutWooShowComment wooID={woo.item.data().id} />
+                <LayoutWooShowComment wooID={woo.item.id} wooComments={woo.item.data().woo_comments} />
                 <LayoutWooGallery gallery={woo.item.data().woo_gallery} nav={'WooGalleryView'} />
                 <LayoutWooList nav={'WooListView'} chips={woo.item.data().woo_list}/>
             </View>
