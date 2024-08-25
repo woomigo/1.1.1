@@ -52,7 +52,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
     const saveMedia = async (woo_media_url, woo_type, woo_migos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, migo_woos) => {
         try {
             const docRef = await addDoc(collection(db, "woos"), {
-                woo_media_url, woo_type, woo_migos, migo_woos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, woo_comments: [], woo_gallery: []
+                woo_media_url, woo_type, woo_migos, migo_woos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, woo_comments: [], woo_gallery: [], woo_likes: []
             })
             console.log("MEDIA SAVED TO DB ", docRef.id)
             setLoading(false)

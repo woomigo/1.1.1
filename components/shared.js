@@ -340,31 +340,36 @@ export const Notifications = [
         id: 0,
         notification: "@joshwashere sent you a migo request",
         profile: "https://images.unsplash.com/photo-1615813967515-e1838c1c5116?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80",
-        time: "2 mins ago"
+        time: "2 mins ago",
+        unread: true
     },
     {
         id: 1,
         notification: "@jessismine accepted your migo request",
-        profile: "https://images.unsplash.com/photo-1615813967515-e1838c1c5116?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80",
-        time: "2 mins ago"
+        profile: "https://images.unsplash.com/flagged/photo-1556120010-d3bb313336ed?q=80&w=1418&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        time: "43 mins ago",
+        unread: true
     },
     {
         id: 2,
         notification: "@imtoolit liked your woo",
-        profile: "https://images.unsplash.com/photo-1615813967515-e1838c1c5116?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80",
-        time: "2 mins ago"
+        profile: "https://images.unsplash.com/photo-1575456088032-95fa05477439?q=80&w=1431&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        time: "2 hours ago",
+        unread: false
     },
     {
         id: 3,
         notification: "@johnjohn commented on your woo",
-        profile: "https://images.unsplash.com/photo-1615813967515-e1838c1c5116?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80",
-        time: "2 mins ago"
+        profile: "https://images.unsplash.com/photo-1489980557514-251d61e3eeb6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        time: "10 hours ago",
+        unread: false
     },
     {
         id: 4,
-        notification: "@coca-cola updated the time on a woo",
-        profile: "https://images.unsplash.com/photo-1615813967515-e1838c1c5116?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80",
-        time: "2 mins ago"
+        notification: "@kahn updated the time on a woo",
+        profile: "https://images.unsplash.com/photo-1587837073080-448bc6a2329b?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        time: "1 day ago",
+        unread: false
     },
 ];
 

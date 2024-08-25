@@ -1,16 +1,59 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Image, FlatList, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Image, FlatList, Alert, Pressable } from 'react-native';
 import { Icon, Card } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
-import { woo_black, woo_gray } from '../assets/colors';
+import { woo_black, woo_gray, woo_orange } from '../assets/colors';
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 // import LayoutMigosItem from './LayoutMigosItem';
 
-const LayoutWooLike = ({ wooMigos, wooType }) => {
+
+const WooMigoImage = ({ userID }) => {
+    const [profilePicURL, setProfilePicURL] = useState()
+
+    useEffect(() => {
+        const docRef = doc(db, "users", userID);
+        const getProfileInfo = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setProfilePicURL(doc.data().profile_pic_url)
+        }, (error) => {
+
+        })
+
+        return () => {
+            getProfileInfo()
+        };
+    }, [])
+
+    return (
+        <Image
+            style={styles.wooMigoImage}
+            source={{ uri: profilePicURL }}
+        />
+    )
+}
+
+const LayoutWooLike = ({ wooLikes, wooMigos, wooType, uid, wooID }) => {
     const navigation = useNavigation();
 
     const [isLiked, setIsLiked] = useState(false);
 
+    const addUIDToWooLikes = async () => {
+        await updateDoc(doc(db, "woos", wooID), {
+            woo_likes: arrayUnion(uid)
+        })
+        console.log("ADD")
+    }
+
+    const removeUIDFromWooLikes = async () => {
+        await updateDoc(doc(db, "woos", wooID), {
+            woo_likes: arrayRemove(uid)
+        })
+        console.log("REMOVE")
+    }
+
     const toggleIsLiked = () => {
+        isLiked ? removeUIDFromWooLikes() : addUIDToWooLikes()
         setIsLiked(!isLiked)
     }
 
@@ -40,14 +83,17 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
         <Card containerStyle={styles.container}>
             <View style={styles.likesWooMigosContainer}>
                 <View style={styles.likesContainer}>
-                    <TouchableWithoutFeedback style={{ marginEnd: 20 }} onPress={toggleIsLiked}>
+                    <Pressable style={{ marginEnd: 20, width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }} onPressOut={toggleIsLiked}>
                         <Icon
                             name="heart"
                             type='font-awesome-5'
-                            color="#f37320"
+                            color={woo_orange}
                             solid={isLiked}
+                            size={25}
+                            onPress={toggleIsLiked}
                         />
-                    </TouchableWithoutFeedback >
+                    </Pressable >
+                    <Text style={{}}>{wooLikes.length}</Text>
                     {/* {wooType !== 'private' ?
                         <TouchableOpacity
                             onPress={() =>
@@ -76,7 +122,7 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                         <View>
                             <TouchableOpacity
                                 onPress={() =>
-                                    navigation.navigate('WooMigosView')
+                                    navigation.navigate('WooMigosView', { migos: wooMigos })
                                 }>
                                 <Text style={styles.wooMigoCountText}>{Object.keys(wooMigos).filter((key) => key >= 0).length}</Text>
                             </TouchableOpacity>
@@ -84,27 +130,24 @@ const LayoutWooLike = ({ wooMigos, wooType }) => {
                         </View>
 
                         <View style={styles.wooMigosImagesContainer}>
-                            <Image
-                                style={styles.wooMigoImage}
-                                source={{ uri: wooMigos[0] }}
-                            />
-
-                            <Image
-                                style={styles.wooMigoImage}
-                                source={{ uri: wooMigos[1] }}
-                            />
-
-                            <Image
-                                style={styles.wooMigoImage}
-                                source={{ uri: wooMigos[2] }}
-                            />
-
-                            <Image
-                                style={styles.wooMigoImage}
-                                source={{ uri: wooMigos[3] }}
-                            />
+                            {
+                                wooMigos.length > 0 &&
+                                <WooMigoImage userID={wooMigos[0]} />
+                            }
+                            {
+                                wooMigos.length > 1 &&
+                                <WooMigoImage userID={wooMigos[1]} />
+                            }
+                            {
+                                wooMigos.length > 2 &&
+                                <WooMigoImage userID={wooMigos[2]} />
+                            }
+                            {
+                                wooMigos.length > 3 &&
+                                <WooMigoImage userID={wooMigos[3]} />
+                            }
                         </View>
-                    </View> 
+                    </View>
                 }
 
             </View>
@@ -136,6 +179,7 @@ const styles = StyleSheet.create({
     likesContainer: {
         flex: 1,
         marginHorizontal: 15,
+        alignItems: 'center',
         // justifyContent: 'space-around',
         // backgroundColor: 'yellow',
         flexDirection: 'row',
@@ -146,7 +190,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'green',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around',
+        justifyContent: 'space-evenly',
         marginEnd: 5,
 
     },

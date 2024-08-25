@@ -5,74 +5,88 @@ import { auth, db } from '../firebaseConfig';
 import ListViewGallery from './ListViewGallery';
 import ListViewWoos from "./ListViewWoos";
 import { Gallery, UserWoos } from './shared';
-import { woo_black, woo_gray, woo_orange } from "../assets/colors";
-import { where } from "firebase/firestore";
+import { woo_black, woo_gray, woo_orange, woo_white } from "../assets/colors";
+import { doc, getDoc, collection, query, where, onSnapshot } from "firebase/firestore";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+
 
 const HomeScreen = ({ navigation, route }) => {
 
     const { uid } = route.params;
 
-    const [user, setUser] = useState()
     const [woos, setWoos] = useState([])
-    const [gallery, setGallery] = useState([])
-    const [username, setUsername] = useState()
-    const [firstName, setFirstName] = useState()
-    const [lastName, setLastName] = useState()
-    const [profilePicURL, setProfilePicURL] = useState()
-    const [following, setFollowing] = useState([])
-    const [followers, setFollowers] = useState([])
-    const [migos, setMigos] = useState([])
-    const [migoWoos, setMigoWoos] = useState([])
-    const [recSubWoos, setRecSubWoos] = useState([])
-    const [notificationCount, setNotificationCount] = useState(0);
-    const [migosNotificationCount, setMigosNotificationCount] = useState(0);
-    const [messagesNotificationCount, setMessagesNotificationCount] = useState(0);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+
+    const auth = getAuth();
+
+    const logout = () => {
+        signOut(auth).then(() => {
+            // Sign-out successful.
+        }).catch((error) => {
+            // An error happened.
+        });
+    }
+
+
+
 
     useEffect(() => {
-
-        const docRef = doc(db, "users", uid);
-        const getProfileInfo = onSnapshot(docRef, (doc) => {
-            setUser(doc.data())
-            setGallery(doc.data().gallery)
-            setUsername(doc.data().username)
-            setFirstName(doc.data().first_name)
-            setLastName(doc.data().last_name)
-            setProfilePicURL(doc.data().profile_pic_url)
-            setFollowing(doc.data().following)
-            setFollowers(doc.data().followers)
-            setMigos(doc.data().migos)
-            setMigoWoos(doc.data().migo_woos)
-        }, (error) => {
-
-        })
-
-
-        const q = query(collection(db, "woos"), where("woo_migos", "==", uid), where("woo_sub_migos", "==", uid));
+        console.log("Anything " + uid)
+        const q = query(collection(db, "woos"), where("woo_migos", "array-contains", uid));
         const getWoos = onSnapshot(q, (querySnapshot) => {
             const homeWoos = [];
             querySnapshot.forEach((doc) => {
-                // console.log(doc.id)
-                homeWoos.push(doc.data());
+                console.log("HERE: " + JSON.stringify(doc))
+                homeWoos.push(doc);
             });
             setWoos(homeWoos)
         }, (error) => {
 
         });
-
         return () => {
-            getProfileInfo()
             getWoos()
         }
     }, [])
 
     return (
         <View style={styles.container}>
-            <SafeAreaView>
-                <ListViewGallery gallery={Gallery} view={"horizontal"} size="lrg" />
+            {/* <SafeAreaView> */}
+            <Header
+                containerStyle={styles.header}
+                backgroundColor={woo_white}
+                leftComponent={
 
-                <ListViewWoos view={'list'} woos={UserWoos} />
-            </SafeAreaView>
+                    <Icon
+                        type='font-awesome-5'
+                        color={woo_black}
+                        solid
+                        size={25}
+                    />
+
+                }
+                centerComponent={
+                    <View >
+                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woomigo</Text>
+                    </View>
+                }
+                rightComponent={
+                    <Icon
+                        name={'sign-out-alt'}
+                        type='font-awesome-5'
+                        color={woo_black}
+                        solid
+                        size={25}
+                        onPress={() => logout()
+                        }
+                    />
+
+                }
+                rightContainerStyle={styles.rightComponent}
+                leftContainerStyle={styles.leftComponent}
+                centerContainerStyle={styles.centerComponent}
+            />
+
+            <ListViewWoos view={'list'} woos={woos} uid={uid} />
+            {/* </SafeAreaView> */}
         </View>
     )
 }
@@ -80,7 +94,8 @@ const HomeScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FAF9F6'
+        backgroundColor: woo_white,
+        marginBottom: 100
     },
     header: {
         shadowColor: '#000',

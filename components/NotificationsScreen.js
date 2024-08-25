@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, Platform, Alert } from 'react-native'
 import { Header, Icon, Dialog } from "@rneui/themed";
 import { Notifications } from './shared';
 import ListViewNotifications from './ListViewNotifications';
-import { woo_black } from '../assets/colors';
+import { woo_black, woo_white } from '../assets/colors';
 
 const NotificationsScreen = ({navigation}) => {
     const [isNewNotification, setIsNewNotification] = useState(true)
@@ -75,7 +75,8 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
     },
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: woo_white
     },
     header: {
         shadowColor: '#000',

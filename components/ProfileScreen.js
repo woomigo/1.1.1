@@ -48,6 +48,8 @@ const ProfileScreen = ({ navigation, route }) => {
     // }
 
     useEffect(() => {
+        console.log("UID " + uid)
+
         const docRef = doc(db, "users", uid);
         const getProfileInfo = onSnapshot(docRef, (doc) => {
             // console.log("Document data:", doc.data());
@@ -81,7 +83,7 @@ const ProfileScreen = ({ navigation, route }) => {
             getProfileInfo()
             getOwnedWoos()
         };
-    }, [])
+    }, [uid])
 
     return (
         <View style={styles.container}>
@@ -113,21 +115,16 @@ const ProfileScreen = ({ navigation, route }) => {
 
                     }
                     centerComponent={
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <Avatar
                                 rounded
-                                size="medium"
+                                size="large"
                                 onPress={() =>
                                     navigation.navigate('Profile')
                                 }
                                 source={{ uri: profilePicURL }}
                             />
-                            <View>
-                                {/* <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center',  }}>Deserae Harrison</Text> */}
-                                <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center', fontWeight: 'bold' }}>{username}</Text>
-                                <Text style={{ color: woo_black, marginBottom: 3, textAlign: 'center' }}>1,2345 migos</Text>
-                            </View>
-
+                            <Text style={{ color: woo_black, marginVertical: 3, textAlign: 'center', fontWeight: 'bold', fontSize: 15 }}>{username}</Text>
                         </View>
                     }
                     rightComponent={
@@ -146,8 +143,6 @@ const ProfileScreen = ({ navigation, route }) => {
                     leftContainerStyle={styles.leftComponent}
                     centerContainerStyle={styles.centerComponent}
                 />
-
-
 
                 <Tab
                     value={index}

@@ -5,7 +5,9 @@ import { Migos } from './shared';
 import ListViewUsers from './ListViewUsers';
 import { woo_black, woo_orange } from '../assets/colors';
 
-const WooMigosView = ({ navigation }) => {
+const WooMigosView = ({ navigation, route }) => {
+
+    const { migos } = route.params;
 
     const [index, setIndex] = useState(0);
 
@@ -21,7 +23,7 @@ const WooMigosView = ({ navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('Home')
+                            navigation.goBack()
                         }
                     />}
                     centerComponent={
@@ -37,7 +39,7 @@ const WooMigosView = ({ navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <ListViewUsers users={Migos} searchBoxPlaceholder="search woo migos" />
+            <ListViewUsers users={migos} searchBoxPlaceholder="search woo migos" />
         </View>
 
 

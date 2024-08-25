@@ -6,7 +6,7 @@ import { woo_gray, woo_black } from '../assets/colors';
 // import {openMap, createOpenLink} from 'react-native-open-maps';
 //import { createOpenLink } from 'react-native-open-maps';
 
-const LayoutWooLocation = ({ wooLocation, startTime, endTime, wooDate, }) => {
+const LayoutWooLocation = ({ wooLocation, wooTime, startTime, endTime, wooDate, }) => {
 
     const query = { query: wooLocation };
     //const openMaps = createOpenLink(query);
@@ -28,7 +28,9 @@ const LayoutWooLocation = ({ wooLocation, startTime, endTime, wooDate, }) => {
                         color="#f37320"
                         size={16}
                     />
-                    <Text style={styles.wooDateTimeText}>{`${wooDate} @ ${startTime} ${endTime === undefined ? "" : `-`} ${endTime === undefined ? "" : endTime}`}</Text>
+                    <Text style={styles.wooDateTimeText}>{wooTime ? `${wooDate} @ ${wooTime}`
+                        :
+                        `${wooDate} @ ${startTime} ${endTime === undefined ? "" : `-`} ${endTime === undefined ? "" : endTime}`}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.locationContainer}>
                     <Icon

@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, FlatList } from 'react-native'
 import LayoutNotificationItem from './LayoutNotificationItem';
+import { woo_white } from '../assets/colors';
 
 const ListViewNotifications = ({ notifications }) => {
 
@@ -25,7 +26,7 @@ const ListViewNotifications = ({ notifications }) => {
 
 const styles = StyleSheet.create({
     container: {
-
+        backgroundColor: woo_white
     }
 })
 

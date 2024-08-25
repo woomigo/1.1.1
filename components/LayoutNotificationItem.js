@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert} from 'react-native';
 import { Avatar } from "@rneui/themed"
+import { woo_gray, woo_light_gray, woo_white } from '../assets/colors';
 // import { Swipeable } from 'react-native-gesture-handler';
 
 const LayoutNotificationItem = ({ notification }) => {
@@ -42,7 +43,7 @@ const LayoutNotificationItem = ({ notification }) => {
             <View>
                 <TouchableOpacity
                     onPress={console.log(() => 'notification')}
-                    style={styles.container}
+                    style={[styles.container, notification.item.unread && {backgroundColor: woo_light_gray}]}
                 >
                     <View style={styles.imageContainer}>
                         <Avatar
@@ -65,7 +66,6 @@ const LayoutNotificationItem = ({ notification }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
         alignItems: 'center',
         flexDirection: 'row',
         padding: 20,

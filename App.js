@@ -56,6 +56,7 @@ const HomeStack = () => {
       <Stack.Screen name="WooCommentsView" component={WooCommentsView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="WooGalleryView" component={WooGalleryView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="WooListView" component={WooListView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
+      <Stack.Screen name='User' component={UserScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
     </Stack.Navigator>
   )
 }
@@ -141,138 +142,102 @@ const App = () => {
 
   return (
     <NavigationContainer >
-      <Tab.Navigator screenOptions={{ tabBarShowLabel: false, tabBarActiveTintColor: woo_orange, tabBarInactiveTintColor: woo_gray, headerShown: false }}>
-        <Tab.Screen
-          name="HomeTab"
-          component={HomeStack}
-          options={{
-            title: "home",
-            tabBarIcon: ({ color }) => (
-              <Icon
-                name="home"
-                type='font-awesome-5'
-                color={color}
-                size={25}
-              />)
-          }} />
-
-        {/* <Tab.Screen
-          name="MenuTab"
-          component={MenuStack}
-          options={{
-            title: "menu",
-            tabBarIcon: ({ color }) => (
-              <Icon
-                name="bars"
-                type='font-awesome-5'
-                color={color}
-                size={25}
-              />)
-          }} /> */}
-        <Tab.Screen
-          name="ProfileTab"
-          component={ProfileStack}
-          options={{
-            title: "profile",
-            tabBarIcon: ({ color }) => (<Icon
-              name="user"
-              solid
-              type='font-awesome-5'
-              color={color}
-              size={25}
-            />),
-          }} />
-        <Tab.Screen
-          name="CameraTab"
-          component={CameraStack}
-          options={{
-            title: "camera",
-            tabBarIcon: ({ color }) => (<Icon
-              name="camera"
-              type='font-awesome-5'
-              color={color}
-              size={25}
-            />)
-          }} />
-        <Tab.Screen
-          name="SearchTab"
-          component={SearchStack}
-          options={{
-            title: "search",
-            tabBarIcon: ({ color }) => (
-              <Icon
-                name="search"
-                type='font-awesome-5'
-                color={color}
-                size={25}
-              />)
-          }} />
-        <Tab.Screen
-          name="MessagesTab"
-          component={MessagesStack}
-          options={{
-            title: "messages",
-            tabBarBadge: messagesNotificationCount > 0 ? messagesNotificationCount : undefined,
-            tabBarIcon: ({ color }) => (
-              <Icon
-                name="envelope"
-                solid
-                type='font-awesome-5'
-                color={color}
-                size={25}
-              />),
-          }} />
-        <Tab.Screen
-          name="NotificationsTab"
-          component={NotificationsStack}
-          options={{
-            title: "notifications",
-            tabBarBadge: notificationCount > 0 ? notificationCount : undefined,
-            tabBarIcon: ({ color }) => (
-              <Icon
-                name="bell"
-                solid
-                type='font-awesome-5'
-                color={color}
-                size={25}
-              />)
-          }} />
-      </Tab.Navigator>
+      {
+        isSignedIn ?
+          <Tab.Navigator screenOptions={{ tabBarShowLabel: false, tabBarActiveTintColor: woo_orange, tabBarInactiveTintColor: woo_gray, headerShown: false }}>
+            <Tab.Screen
+              name="HomeTab"
+              component={HomeStack}
+              options={{
+                title: "home",
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="home"
+                    type='font-awesome-5'
+                    color={color}
+                    size={25}
+                  />)
+              }} />
+            <Tab.Screen
+              name="ProfileTab"
+              component={ProfileStack}
+              options={{
+                title: "profile",
+                tabBarIcon: ({ color }) => (<Icon
+                  name="user"
+                  solid
+                  type='font-awesome-5'
+                  color={color}
+                  size={25}
+                />),
+              }} />
+            <Tab.Screen
+              name="CameraTab"
+              component={CameraStack}
+              options={{
+                title: "camera",
+                tabBarIcon: ({ color }) => (<Icon
+                  name="camera"
+                  type='font-awesome-5'
+                  color={color}
+                  size={25}
+                />)
+              }} />
+            <Tab.Screen
+              name="SearchTab"
+              component={SearchStack}
+              options={{
+                title: "search",
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="search"
+                    type='font-awesome-5'
+                    color={color}
+                    size={25}
+                  />)
+              }} />
+            <Tab.Screen
+              name="MessagesTab"
+              component={MessagesStack}
+              options={{
+                title: "messages",
+                tabBarBadge: messagesNotificationCount > 0 ? messagesNotificationCount : undefined,
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="envelope"
+                    solid
+                    type='font-awesome-5'
+                    color={color}
+                    size={25}
+                  />),
+              }} />
+            <Tab.Screen
+              name="NotificationsTab"
+              component={NotificationsStack}
+              options={{
+                title: "notifications",
+                tabBarBadge: notificationCount > 0 ? notificationCount : undefined,
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="bell"
+                    solid
+                    type='font-awesome-5'
+                    color={color}
+                    size={25}
+                  />)
+              }} />
+          </Tab.Navigator>
+          :
+          <Stack.Navigator options={{ headerShown: false }}>
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="RegisterFullname" component={RegisterFullnameScreen} options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="RegisterDOB" component={RegisterDOBScreen} options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="RegisterUsername" component={RegisterUsernameScreen} options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="RegisterProfilePicture" component={RegisterProfilePictureScreen} options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false, gestureEnabled: false }} />
+          </Stack.Navigator>
+      }
     </NavigationContainer>
-    // <NavigationContainer>
-    //   <Stack.Navigator options={{ headerShown: false }}>
-    //     {isSignedIn ? (
-    //       <>
-    //         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false, }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         
-    //         <Stack.Screen name="MigoRequests" component={MigoRequestScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-
-    //         <Stack.Screen name="ComposeMessage" component={ComposeMessageScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="WooDate" component={WooDateScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="WooTime" component={WooTimeScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="WooLocation" component={WooLocationScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="WooMigos" component={WooMigosScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="WooList" component={WooListScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-    //         <Stack.Screen name="WooPreviewEdit" component={WooPreviewEditScreen} options={{ headerShown: false }} initialParams={{ 'uid': uid }} />
-
-
-
-
-    //       </>
-    //     ) : (
-    //       <>
-    //         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, gestureEnabled: false }} />
-    //         <Stack.Screen name="RegisterFullname" component={RegisterFullnameScreen} options={{ headerShown: false, gestureEnabled: false }} />
-    //         <Stack.Screen name="RegisterDOB" component={RegisterDOBScreen} options={{ headerShown: false, gestureEnabled: false }} />
-    //         <Stack.Screen name="RegisterUsername" component={RegisterUsernameScreen} options={{ headerShown: false, gestureEnabled: false }} />
-    //         <Stack.Screen name="RegisterProfilePicture" component={RegisterProfilePictureScreen} options={{ headerShown: false, gestureEnabled: false }} />
-    //         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false, gestureEnabled: false }} />
-    //       </>
-    //     )}
-    //   </Stack.Navigator>
-    // </NavigationContainer>
   );
 }
 

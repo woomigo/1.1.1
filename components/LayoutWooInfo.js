@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image, TouchableWithoutFeedback, TouchableOpacity, Linking } from 'react-native';
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 import { Icon, Avatar, Card } from "@rneui/themed";
 import { woo_gray, woo_black } from '../assets/colors';
 
-const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profilePic, sharedProfilePic }) => {
+const LayoutWooInfo = ({ wooType, ownerUID, sharedProfilePic }) => {
+
+    const [user, setUser] = useState()
+    const [username, setUsername] = useState()
+    const [profilePicURL, setProfilePicURL] = useState()
+
+
+    useEffect(() => {
+        const docRef = doc(db, "users", ownerUID);
+        const getProfileInfo = onSnapshot(docRef, (doc) => {
+            // console.log("Document data:", doc.data());
+            setUser(doc.data())
+            setUsername(doc.data().username)
+            setProfilePicURL(doc.data().profile_pic_url)
+        }, (error) => {
+
+        })
+
+        return () => {
+            getProfileInfo()
+        };
+    }, [])
+
     const openCal = () => {
         if (Platform.OS === 'ios') {
             Linking.openURL('calshow:');
@@ -20,7 +44,7 @@ const LayoutWooInfo = ({ wooType, username, startTime, endTime, wooDate, profile
                     <Avatar
                         rounded
                         size="medium"
-                        source={{ uri: profilePic }}
+                        source={{ uri: profilePicURL }}
                     />
                 </TouchableWithoutFeedback>
                 <View style={{ justifyContent: 'flex-end' }}>
@@ -77,7 +101,7 @@ const styles = StyleSheet.create({
     wooOwnerUsernameText: {
         fontWeight: 'bold',
     },
- 
+
     textContainer: {
         marginStart: 5,
         justifyContent: 'center',
