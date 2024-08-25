@@ -6,7 +6,7 @@ import { woo_black, woo_orange } from '../assets/colors';
 
 const WooTimeScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooType, wooMigos, wooDate } = route.params;
+    const { wooMedia, wooType, wooMigos, migoWoos, wooDate } = route.params;
 
     const [time, setTime] = useState(new Date())
 
@@ -26,7 +26,7 @@ const WooTimeScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos })
+                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, migoWoos: migoWoos })
                         }
                     />}
                 centerComponent={
@@ -41,7 +41,7 @@ const WooTimeScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooLocation', {wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: time.toLocaleTimeString('en-us', { timeStyle: 'short' })})
+                            navigation.navigate('WooLocation', {wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, migoWoos: migoWoos, wooDate: wooDate, wooTime: time.toLocaleTimeString('en-us', { timeStyle: 'short' })})
                         }
                     />
                 }

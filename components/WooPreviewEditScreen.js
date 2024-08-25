@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Header, Icon, LinearProgress, Dialog } from "@rneui/themed";
 import { woo_black, woo_orange, woo_white } from '../assets/colors';
-import LayoutWooGallery from './LayoutWooGallery';
 import LayoutWooImage from './LayoutWooImage';
 import LayoutWooInfo from './LayoutWooInfo';
 import LayoutWooLike from './LayoutWooLike';
 import LayoutWooLocation from './LayoutWooLocation';
 import LayoutWooList from './LayoutWooList';
-import { onAuthStateChanged } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { auth, db, storage } from '../firebaseConfig';
+import { db, storage } from '../firebaseConfig';
 import { addDoc, collection, } from 'firebase/firestore';
 
 const WooPreviewEditScreen = ({ route, navigation }) => {
@@ -18,25 +16,11 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
     const [imageStorageProgress, setImageStorageProgress] = useState(0)
     const [loading, setLoading] = useState(false);
 
-    const { wooMedia, wooType, wooMigos, wooDate, wooTime, wooLocation, wooList, uid } = route.params;
+    const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime, wooLocation, wooList, uid } = route.params;
 
     useEffect(() => {
         console.log(`WOOMEDIA AT PREVIEW WOO ==== ${wooMedia.uri}`)
     }, [wooMedia])
-
-    // onAuthStateChanged(auth, (user) => {
-    //     if (user) {
-    //         // User is signed in, see docs for a list of available properties
-    //         // https://firebase.google.com/docs/reference/js/auth.user
-    //         const uid = user.uid;
-    //         setUID(user.uid)
-    //         // ...
-    //     } else {
-    //         // User is signed out
-    //         // ...
-    //     }
-    // });
-
 
     const uploadImage = async (uri, fileType) => {
         const res = await fetch(uri);
@@ -58,17 +42,17 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
                         console.log(url)
-                        saveMedia(url, wooType, wooMigos, wooDate, wooTime, wooLocation, wooList, new Date().getTime(), uid)
+                        saveMedia(url, wooType, wooMigos, migoWoos, wooDate, wooTime, wooLocation, wooList, new Date().getTime(), uid)
                     })
                 }
             )
         }
     }
 
-    const saveMedia = async (woo_media_url, woo_type, woo_migos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid) => {
+    const saveMedia = async (woo_media_url, woo_type, woo_migos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, migo_woos) => {
         try {
             const docRef = await addDoc(collection(db, "woos"), {
-                woo_media_url, woo_type, woo_migos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, woo_comments: [{comment_owner_uid: 541656, comment: "test db objects comment", comment_timestamp: new Date().getTime()},{comment_owner_uid: 541657, comment: "test db objects comment 2", comment_timestamp: new Date().getTime()}], woo_gallery: []
+                woo_media_url, woo_type, woo_migos, migo_woos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, woo_comments: [], woo_gallery: []
             })
             console.log("MEDIA SAVED TO DB ", docRef.id)
             setLoading(false)
@@ -107,7 +91,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooList', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooList: wooList })
+                            navigation.navigate('WooList', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, migoWoos: migoWoos, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooList: wooList, migoWoos: migoWoos })
                         }
                     />}
                 centerComponent={

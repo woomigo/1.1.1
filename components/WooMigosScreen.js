@@ -60,7 +60,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: selectedMigos })
+                            navigation.navigate('WooDate', { wooMedia: wooMedia, wooType: wooType, wooMigos: selectedMigos, migoWoos: migos })
                         }
                     />
                 }

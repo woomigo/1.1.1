@@ -65,7 +65,7 @@ const ProfileScreen = ({ navigation, route }) => {
         })
 
         const q = query(collection(db, "woos"), where("owner_uid", "==", uid));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const getOwnedWoos = onSnapshot(q, (querySnapshot) => {
             const ownedWoos = [];
             querySnapshot.forEach((doc) => {
                 // console.log(doc.id)
@@ -79,7 +79,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
         return () => {
             getProfileInfo()
-            unsubscribe()
+            getOwnedWoos()
         };
     }, [])
 
