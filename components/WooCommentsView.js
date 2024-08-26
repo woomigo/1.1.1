@@ -7,12 +7,12 @@ import { Comments } from './shared'
 // import LayoutWooCommentComponent from './LayoutWooCommentComponent'
 import ListViewComments from './ListViewComments'
 import { woo_black, woo_white, woo_orange } from '../assets/colors'
-import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 
 const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
 
-    const { uid } = route.params;
+
 
     const [comment, setComment] = useState()
     const [wooComments, setWooComments] = useState()
@@ -24,7 +24,9 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
     const [profilePicURL, setProfilePicURL] = useState()
 
     useEffect(() => {
-        const docRef = doc(db, "users", "2RB7bG1KN4SuXnnuUDC0fawcK4J2");
+        const { uid } = route.params;
+
+        const docRef = doc(db, "users", uid);
         const getProfileInfo = onSnapshot(docRef, (doc) => {
             // console.log("Document data:", doc.data());
             setProfilePicURL(doc.data().profile_pic_url)
@@ -32,7 +34,7 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
 
         })
 
-        const docWooRef = doc(db, "woos", "td9KvsNdsk39XblHAE4l");
+        const docWooRef = doc(db, "woos", wooID);
         const getWooComments = onSnapshot(docWooRef, (doc) => {
             // console.log("Document data:", doc.data());
             setWooComments(doc.data().woo_comments)
@@ -41,12 +43,25 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
         })
 
         return () => {
-            getProfileInfo()
-            getWooComments()
+            if (uid) {
+                getProfileInfo()
+            }
+            if (wooID) {
+                getWooComments()
+            }
         };
-    }, [])
+    }, [uid, wooID])
 
-    const addCommentInput = () => {
+    const addCommentToWoo = async () => {
+        console.log("FUCK")
+        await setDoc(doc(db, "woos", "td9KvsNdsk39XblHAE4l"), {
+            woo_comments: {
+                comment: comment,
+                comment_owner_uid: "2RB7bG1KN4SuXnnuUDC0fawcK4J2",
+                timestamp: serverTimestamp()
+            }
+        }, { merge: true })
+        console.log("ADD")
         setComment('')
         commentRef.current.clear()
         commentRef.current.blur()
@@ -132,7 +147,7 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
                         autoCapitalize="none"
                         // onFocus={() => handleCommentOnFocus()}
                         onEndEditing={() => handleCommentEndEditing()}
-                        rightIcon={!isCommentIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => addCommentInput()} />}
+                        rightIcon={!isCommentIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => addCommentToWoo()} />}
                     />
                 </KeyboardAvoidingView>
             </View>

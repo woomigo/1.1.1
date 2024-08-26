@@ -93,7 +93,11 @@ const EditMediaScreen = ({ navigation, route }) => {
                                 size={30}
                             />
                         </TouchableOpacity>
-                        <Pressable style={styles.button} >
+                        <Pressable style={styles.button}
+                            onPress={() =>
+                                navigation.navigate('AddMediaWooGallery', { wooMedia: wooMedia })
+                            }>
+
                             <Icon
                                 name="images"
                                 type='font-awesome-5'
@@ -102,9 +106,7 @@ const EditMediaScreen = ({ navigation, route }) => {
                             />
                         </Pressable>
                         <TouchableOpacity style={styles.button}
-                            // onPress={() =>
-                            //     navigation.navigate('WooDate', { wooMedia: wooMedia })
-                            // }
+
                             onPress={toggleOverlay}
                         >
                             <Icon

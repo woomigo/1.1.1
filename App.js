@@ -39,6 +39,7 @@ import UserScreen from './components/UserScreen';
 import WooListView from './components/WooListView';
 import MediaViewScreen from './components/MediaViewScreen';
 import MessagesScreen from './components/MessagesScreens';
+import AddMediaWooGalleryView from './components/AddMediaWooGalleryView';
 
 
 
@@ -87,6 +88,7 @@ const CameraStack = () => {
     <Stack.Navigator options={{ headerShown: false }} >
       <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="EditMedia" component={EditMediaScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
+      <Stack.Screen name="AddMediaWooGallery" component={AddMediaWooGalleryView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="WooDate" component={WooDateScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="WooTime" component={WooTimeScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="WooLocation" component={WooLocationScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
