@@ -36,8 +36,8 @@ const MediaViewScreen = ({ route, navigation }) => {
                 style={{width: '100%', height: 600}}
                 source={{ uri: mediaUrl }}
             />
-            <LayoutWooLike/>
-            <LayoutWooShowComment />
+
+            
         </View>
     )
 }

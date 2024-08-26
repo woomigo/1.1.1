@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Icon, Header, Input, Avatar } from '@rneui/themed'
 import { woo_white, woo_black } from '../assets/colors';
@@ -6,7 +6,13 @@ import ListViewGallery from './ListViewGallery';
 import { Gallery } from './shared';
 
 
-const WooGalleryView = ({ navigation, wooGallery }) => {
+const WooGalleryView = ({ navigation, route }) => {
+
+  const {wooGallery} = route.params;
+
+  useEffect(() => {
+    console.log("WOOGALLERY " + wooGallery)
+  })
 
   return (
     <View style={styles.container}>
@@ -32,7 +38,7 @@ const WooGalleryView = ({ navigation, wooGallery }) => {
         leftContainerStyle={styles.leftComponent}
         centerContainerStyle={styles.centerComponent}
       />
-      <ListViewGallery gallery={Gallery} view={"grid"} />
+      <ListViewGallery gallery={wooGallery} view={"list"} />
     </View>
   );
 }
@@ -40,7 +46,8 @@ const WooGalleryView = ({ navigation, wooGallery }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: woo_white
+    backgroundColor: woo_white,
+    marginBottom: 100
 },
   header: {
     shadowColor: '#000',

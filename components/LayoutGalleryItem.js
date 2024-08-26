@@ -30,9 +30,13 @@ const LayoutGalleryItem = ({ image, view, size, nav, navParams, horizBorderRadiu
     return (
         <View style={view === 'grid' ? styles.gridContainer : styles.container}>
             <TouchableWithoutFeedback
-                onPress={() => {
+                onPress={() => { nav == "MediaView" ?
                     navigation.navigate(`${nav}`
                         , {mediaUrl: `${image}`}
+                    )
+                    :
+                    navigation.navigate(`${nav}`
+                        , {wooGallery: navParams}
                     )
                 }}>
                 <Image
@@ -71,7 +75,8 @@ const styles = StyleSheet.create({
     listImage: {
         width: '100%',
         height: 500,
-        borderRadius: 5,
+        // borderRadius: 5,
+        marginBottom: 5
     }
 })
 

@@ -9,7 +9,7 @@ const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, n
     const [refreshing, setRefreshing] = useState(false);
 
     const renderGalleryPreview = (image) => (
-        <LayoutGalleryItem size={size} view={view} image={image.item} nav={nav} navParams={navParams} horizBorderRadius={horizBorderRadius} />
+        <LayoutGalleryItem size={size} view={view} image={image.item} nav={nav} navParams={gallery} horizBorderRadius={horizBorderRadius} />
     )
 
     const wait = (timeout) => {
@@ -28,7 +28,7 @@ const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, n
                     showsVerticalScrollIndicator={false}
                     key={woo => woo.id}
                     style={styles.gridViewFlatList}
-                    backgroundColor={"#fff"}
+                    backgroundColor={woo_orange}
                     keyExtractor={woo => woo.id}
                     data={gallery}
                     renderItem={renderGalleryPreview} />

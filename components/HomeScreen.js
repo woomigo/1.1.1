@@ -45,7 +45,7 @@ const HomeScreen = ({ navigation, route }) => {
         return () => {
             getWoos()
         }
-    }, [])
+    }, [uid])
 
     return (
         <View style={styles.container}>
