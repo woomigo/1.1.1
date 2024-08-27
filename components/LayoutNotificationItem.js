@@ -4,9 +4,13 @@ import { Avatar, Icon } from "@rneui/themed"
 import { woo_gray, woo_light_gray, woo_orange, woo_white } from '../assets/colors';
 import { doc, getDoc, collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from '../firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
 // import { Swipeable } from 'react-native-gesture-handler';
 
 const LayoutNotificationItem = ({ notification }) => {
+
+    const navigation = useNavigation();
+
     const [username, setUsername] = useState()
     const [setNotificationID, notificationID] = useState()
     const [lastName, setLastName] = useState()
@@ -63,11 +67,58 @@ const LayoutNotificationItem = ({ notification }) => {
         );
     };
 
+    // notification types
+    // woo
+    // message
+    // migo request received
+    // migo request accepted
+    // migo
+    // follower
+    // woo like
+    // woo comment
+
+    const renderIcon = (type) => {
+        switch (type) {
+            case 'woo like':
+                return <Icon
+                    name="heart"
+                    type='font-awesome-5'
+                    solid={true}
+                    color={woo_orange}
+                    size={25}
+                />;
+            default:
+                return <Icon
+                    name="bell"
+                    type='font-awesome-5'
+                    solid={true}
+                    color={woo_orange}
+                    size={25}
+                />
+        }
+    }
+
+    const navigationOnClick = (type) => {
+        switch (type) {
+            case 'woo like':
+                return navigation.
+                navigate('WooView', { wooID: notification.item.data().woo_id})
+            default:
+                return <Icon
+                    name="bell"
+                    type='font-awesome-5'
+                    solid={true}
+                    color={woo_orange}
+                    size={25}
+                />
+        }
+    }
+
     return (
         // <Swipeable style={styles.swipeRow} renderRightActions={renderRightActions} >
         <View>
             <TouchableOpacity
-                onPress={() => console.log('notification')}
+                onPress={() => navigationOnClick(notification.item.data().notification_type)}
                 style={[styles.container, !notification.item.data().is_read && { backgroundColor: woo_light_gray }]}
             >
                 <View style={{ flex: 4, flexDirection: 'row', alignItems: 'center' }}>
@@ -89,14 +140,7 @@ const LayoutNotificationItem = ({ notification }) => {
                 </View>
 
                 <View style={styles.iconContainer}>
-                    <Icon
-                        name="heart"
-                        type='font-awesome-5'
-                        solid={true}
-                        color={woo_orange}
-                        size={25}
-                    // onPress={confirmClearNotifications}
-                    />
+                    {renderIcon(notification.item.data().notification_type)}
                 </View>
             </TouchableOpacity>
         </View>
