@@ -12,10 +12,10 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
 
 
     useEffect(() => {
-        console.log(`LUI USER === ${JSON.stringify(uid.item)}`)
+        // console.log(`LUI USER === ${JSON.stringify(uid.item)}`)
         if (uid) {
             const getUserInfo = onSnapshot(doc(db, "users", uid.item), (doc) => {
-                console.log("Document data:", doc.data());
+                // console.log("Document data:", doc.data());
                 setUser(doc.data())
             })
 
@@ -69,17 +69,18 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
     const handleClick = () => {
         setSelected(!selected)
         onCheckBoxSelected(user.uid)
+        console.log("LUI HC === " + user.uid)
     }
 
     // const handleCheck = (event) => {
-    //     var selected_array = [...selected];
-    //     if (event.target.checked) {
-    //         selected_array = [...selected, event.target.value];
-    //     } else {
-    //         selected_array.splice(selected.indexOf(event.target.value), 1);
-    //     }
-    //     setSelected(selected_array);
-
+        // console.log("EV ---- " + event.target)
+        // var selected_array = [...selected];
+        // if (event.target.checked) {
+        //     selected_array = [...selected, event.target.value];
+        // } else {
+        //     selected_array.splice(selected.indexOf(event.target.value), 1);
+        // }
+        // setSelected(selected_array);
     // };
 
     return (

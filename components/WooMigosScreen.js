@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 import { woo_black, woo_orange } from '../assets/colors';
+import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 import { Migos } from './shared';
 import ListViewUsers from './ListViewUsers';
 
 const WooMigosScreen = ({ route, navigation }) => {
 
-    const { wooMedia, wooType } = route.params;
+    const { wooMedia, wooType, uid } = route.params;
 
     const [migos, setMigos] = useState([])
     const [selectedMigos, setSelectedMigos] = useState([])
 
     const returnMigosSelected = (migoList) => {
+        console.log("WMS ===> " + migoList)
         setSelectedMigos(migoList)
     }
 
@@ -20,9 +23,9 @@ const WooMigosScreen = ({ route, navigation }) => {
         const docRef = doc(db, "users", uid);
         const getMigos = onSnapshot(docRef, (doc) => {
             // console.log("Document data:", doc.data());
-            setUser(doc.data())
-            setFollowing(doc.data().following)
-            setFollowers(doc.data().followers)
+            // setUser(doc.data())
+            // setFollowing(doc.data().following)
+            // setFollowers(doc.data().followers)
             setMigos(doc.data().migos)
         }, (error) => {
 
@@ -75,7 +78,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                 variant="determinate"
             />
 
-            <ListViewUsers users={Migos} returnUsers={returnMigosSelected} searchBoxPlaceholder="search migos" kind="checkbox" />
+            <ListViewUsers users={migos} returnUsers={returnMigosSelected} searchBoxPlaceholder="search migos" kind="checkbox" />
 
         </View>
     )

@@ -15,8 +15,9 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
 
     const [imageStorageProgress, setImageStorageProgress] = useState(0)
     const [loading, setLoading] = useState(false);
+    const [wooLikes, setWooLikes] = useState([]);
 
-    const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime, wooLocation, wooList, uid } = route.params;
+    const { wooMedia, wooType, wooMigos, migoWoos, username, profilePicURL, wooDate, wooTime, wooLocation, wooList, uid } = route.params;
 
     useEffect(() => {
         console.log(`WOOMEDIA AT PREVIEW WOO ==== ${wooMedia.uri}`)
@@ -49,7 +50,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
         }
     }
 
-    const saveMedia = async (woo_media_url, woo_type, woo_migos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, migo_woos) => {
+    const saveMedia = async (woo_media_url, woo_type, woo_migos, migo_woos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid) => {
         try {
             const docRef = await addDoc(collection(db, "woos"), {
                 woo_media_url, woo_type, woo_migos, migo_woos, woo_date, woo_time, woo_location, woo_list, created_at, owner_uid, woo_comments: [], woo_gallery: [], woo_likes: []
@@ -91,7 +92,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('WooList', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, migoWoos: migoWoos, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooList: wooList, migoWoos: migoWoos })
+                            navigation.navigate('WooList', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, migoWoos: migoWoos, username: username, profilePicURL: profilePicURL, wooDate: wooDate, wooTime: wooTime, wooLocation: wooLocation, wooList: wooList, migoWoos: migoWoos })
                         }
                     />}
                 centerComponent={
@@ -122,7 +123,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
             />
 
             <ScrollView style={styles.wooContainer}>
-                <LayoutWooInfo wooType={wooType} profilePic={"https://images.unsplash.com/photo-1507153030234-657ffc3cf24a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3400&q=80"} username={"itsMaurice"}
+                <LayoutWooInfo wooType={wooType} ownerUID={uid}
                 />
                 {/* {woo.item.image != null ?  */}
                 <LayoutWooImage wooID={0} image={wooMedia} isPreview />
@@ -130,7 +131,7 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                 <LayoutWooLocation wooLocation={wooLocation} wooDate={wooDate} startTime={wooTime}
                 // endTime={woo.item.woo_end_time} 
                 />
-                <LayoutWooLike wooMigos={wooMigos} wooType={"post"} />
+                <LayoutWooLike wooMigos={wooMigos} wooType={wooType} wooLikes={wooLikes} />
                 <LayoutWooList chips={wooList} />
             </ScrollView>
 

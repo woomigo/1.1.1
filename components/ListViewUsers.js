@@ -16,7 +16,7 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "searc
     const searchRef = useRef()
 
     useEffect(() => {
-        console.log(`LVU USERS === ${JSON.stringify(users)}`)
+        // console.log(`LVU USERS === ${JSON.stringify(users)}`)
     })
 
     const handleSearch = () => {
@@ -43,17 +43,22 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "searc
         <LayoutUserItem kind={kind} onCheckBoxSelected={onCheckBoxSelected} uid={user} singleBtnText={singleBtnText} doubleBtn1Text={doubleBtn1Text} doubleBtn2Text={doubleBtn2Text} singleBtnColor={singleBtnColor} doubleBtn1Color={doubleBtn1Color} doubleBtn2Color={doubleBtn2Color} handleSingleBtnOnClick={handleSingleBtnOnClick} handleDoubleBtnOneOnClick={handleDoubleBtnOneOnClick} handleDoubleBtnTwoOnClick={handleDoubleBtnTwoOnClick} />
     )
 
-    const onCheckBoxSelected = (userId) => {
-        let listOfSelectedUsers;
+    let listOfSelectedUsers = [];
 
-        if (listOfSelectedUsers !== undefined || listOfSelectedUsers > 0) {
-            if (listOfSelectedUsers.contains(userId)) {
+    const onCheckBoxSelected = (userId) => {
+        if (listOfSelectedUsers !== undefined) {
+            listOfSelectedUsers = [...usersSelected]
+            if (listOfSelectedUsers.includes(userId)) {
+                console.log("INCLUDES --- " + listOfSelectedUsers)
                 listOfSelectedUsers.splice(listOfSelectedUsers.indexOf(userId), 1)
+            } else {
+                console.log("NOT INCLUDED ---- " + listOfSelectedUsers)
+                listOfSelectedUsers = [...listOfSelectedUsers, userId]
             }
         }
-        listOfSelectedUsers = [...listOfSelectedUsers, userId]
         setUsersSelected(listOfSelectedUsers)
         returnUsers(listOfSelectedUsers)
+        console.log("US +++ " + usersSelected)
     }
 
     return (

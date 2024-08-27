@@ -13,21 +13,24 @@ const LayoutWooShowComment = ({ wooID, wooComments }) => {
 
     useEffect(() => {
         console.log(wooComments)
-        setTimestamp(wooComments[0].timestamp)
-        const docRef = doc(db, "users", wooComments[0].comment_owner_uid);
-        const getProfileInfo = onSnapshot(docRef, (doc) => {
-            // console.log("Document data:", doc.data());
-            setProfilePicURL(doc.data().profile_pic_url)
-            setUsername(doc.data().username)
-        }, (error) => {
+        if (wooComments.length > 0) {
+            setTimestamp(wooComments[0].timestamp)
+            const docRef = doc(db, "users", wooComments[0].comment_owner_uid);
 
-        })
+            const getProfileInfo = onSnapshot(docRef, (doc) => {
+                // console.log("Document data:", doc.data());
+                setProfilePicURL(doc.data().profile_pic_url)
+                setUsername(doc.data().username)
+            }, (error) => {
 
-        return () => {
-            getProfileInfo()
-        };
+            })
+
+            return () => {
+                getProfileInfo()
+            };
+        }
     }, [])
-    
+
     return (
         <View>
             {

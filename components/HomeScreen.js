@@ -6,13 +6,13 @@ import ListViewGallery from './ListViewGallery';
 import ListViewWoos from "./ListViewWoos";
 import { Gallery, UserWoos } from './shared';
 import { woo_black, woo_gray, woo_orange, woo_white } from "../assets/colors";
-import { doc, getDoc, collection, query, where, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, onSnapshot, or } from "firebase/firestore";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 
 const HomeScreen = ({ navigation, route }) => {
 
-    const { uid } = route.params;
+    // const { uid } = route.params;
 
     const [woos, setWoos] = useState([])
 
@@ -30,8 +30,12 @@ const HomeScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        console.log("Anything " + uid)
-        const q = query(collection(db, "woos"), where("woo_migos", "array-contains", uid));
+        // console.log("Anything " + uid)
+        const q = query(collection(db, "woos"),
+        or(where("woo_migos", "array-contains", "2RB7bG1KN4SuXnnuUDC0fawcK4J2"), 
+        where("migo_woos", "array-contains", "2RB7bG1KN4SuXnnuUDC0fawcK4J2"), 
+        where("owner_uid", "==", "2RB7bG1KN4SuXnnuUDC0fawcK4J2")) 
+        );
         const getWoos = onSnapshot(q, (querySnapshot) => {
             const homeWoos = [];
             querySnapshot.forEach((doc) => {
@@ -45,7 +49,7 @@ const HomeScreen = ({ navigation, route }) => {
         return () => {
             getWoos()
         }
-    }, [uid])
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -85,7 +89,7 @@ const HomeScreen = ({ navigation, route }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <ListViewWoos view={'list'} woos={woos} uid={uid} />
+            <ListViewWoos view={'list'} woos={woos} uid={"2RB7bG1KN4SuXnnuUDC0fawcK4J2"} />
             {/* </SafeAreaView> */}
         </View>
     )

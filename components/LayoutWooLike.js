@@ -38,6 +38,10 @@ const LayoutWooLike = ({ wooLikes, wooMigos, wooType, uid, wooID }) => {
 
     const [isLiked, setIsLiked] = useState(false);
 
+    useEffect(() => {
+        wooLikes.includes(uid) && setIsLiked(true)
+    })
+
     const addUIDToWooLikes = async () => {
         await updateDoc(doc(db, "woos", wooID), {
             woo_likes: arrayUnion(uid)

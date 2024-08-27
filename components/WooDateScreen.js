@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, LinearProgress } from "@rneui/themed";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
@@ -13,6 +13,10 @@ const WooDateScreen = ({ route, navigation }) => {
     let currentDate = new Date();
     currentDate.setDate(currentDate.getDate());
     const today = currentDate;
+
+    useEffect(() => {
+        console.log("WOOMIGOS " + wooMigos)
+    })
 
     return (
         <View style={styles.container}>

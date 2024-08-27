@@ -11,8 +11,7 @@ import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRem
 import { db } from '../firebaseConfig';
 
 const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
-
-
+    const { uid } = route.params;
 
     const [comment, setComment] = useState()
     const [wooComments, setWooComments] = useState()
@@ -24,9 +23,9 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
     const [profilePicURL, setProfilePicURL] = useState()
 
     useEffect(() => {
-        const { uid } = route.params;
 
-        const docRef = doc(db, "users", uid);
+
+        const docRef = doc(db, "users", "2RB7bG1KN4SuXnnuUDC0fawcK4J2");
         const getProfileInfo = onSnapshot(docRef, (doc) => {
             // console.log("Document data:", doc.data());
             setProfilePicURL(doc.data().profile_pic_url)
@@ -34,7 +33,7 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
 
         })
 
-        const docWooRef = doc(db, "woos", wooID);
+        const docWooRef = doc(db, "woos", "td9KvsNdsk39XblHAE4l");
         const getWooComments = onSnapshot(docWooRef, (doc) => {
             // console.log("Document data:", doc.data());
             setWooComments(doc.data().woo_comments)
