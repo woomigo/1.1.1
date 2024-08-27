@@ -1,12 +1,49 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, StyleSheet, View, Platform, Alert } from 'react-native'
 import { Header, Icon, Dialog } from "@rneui/themed";
 import { Notifications } from './shared';
 import ListViewNotifications from './ListViewNotifications';
 import { woo_black, woo_white } from '../assets/colors';
+import { doc, getDoc, collection, query, where, onSnapshot, or } from "firebase/firestore";
+import { db } from '../firebaseConfig';
 
-const NotificationsScreen = ({navigation}) => {
+// notification types
+// woo
+// message
+// migo request received
+// migo request accepted
+// migo
+// follower
+// woo like
+// woo comment
+
+const NotificationsScreen = ({navigation, route}) => {
+
+    // const {uid} = route.params;
+
     const [isNewNotification, setIsNewNotification] = useState(true)
+    const [notifications, setNotifications] = useState([]);
+
+    useEffect(() => {
+        // console.log("Anything " + uid)
+        const q = query(collection(db, "notifications"),
+        where("receiver_uid", "array-contains", "2RB7bG1KN4SuXnnuUDC0fawcK4J2"), 
+        );
+        const getNotifications = onSnapshot(q, (querySnapshot) => {
+            const notificationsData = [];
+            querySnapshot.forEach((doc) => {
+                console.log("Notifications: " + JSON.stringify(doc.data()))
+                notificationsData.push(doc);
+            });
+            setNotifications(notificationsData)
+        }, (error) => {
+
+        });
+
+        return () => {
+            getNotifications()
+        }
+    }, [])
 
     const clearNotifications = () => {
         setIsNewNotification(false)
@@ -63,7 +100,7 @@ const NotificationsScreen = ({navigation}) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-           <ListViewNotifications notifications={Notifications} />
+           <ListViewNotifications notifications={notifications} />
 
         </View>
     )
