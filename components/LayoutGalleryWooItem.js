@@ -96,7 +96,7 @@ const LayoutGalleryWooItem = ({ uid, woo, nav, navParams, kind, wooMedia }) => {
                         {woo.item.woo_date} {woo.item.woo_time}
                     </Text>
                     <Text style={styles.textSecondary}>
-                        {woo.item.woo_location.coords.latitude}
+                        {woo.item.woo_location}
                     </Text>
                     <Image
                         style={styles.overlayImage}

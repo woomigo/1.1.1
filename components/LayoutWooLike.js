@@ -3,7 +3,7 @@ import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Ima
 import { Icon, Card } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { woo_black, woo_gray, woo_orange } from '../assets/colors';
-import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 // import LayoutMigosItem from './LayoutMigosItem';
 
@@ -33,13 +33,14 @@ const WooMigoImage = ({ userID }) => {
     )
 }
 
-const LayoutWooLike = ({ wooLikes, wooMigos, wooType, uid, wooID }) => {
+const LayoutWooLike = ({ wooLikes, wooMigos, wooType, uid, wooID, ownerUID }) => {
     const navigation = useNavigation();
 
     const [isLiked, setIsLiked] = useState(false);
+    const [receivedUID, setReceiverUID] = useState([])
 
     useEffect(() => {
-        wooLikes.includes(uid) && setIsLiked(true)
+        wooLikes.includes(uid) ? setIsLiked(true) : setIsLiked(false)
     })
 
     const addUIDToWooLikes = async () => {
@@ -56,9 +57,34 @@ const LayoutWooLike = ({ wooLikes, wooMigos, wooType, uid, wooID }) => {
         console.log("REMOVE")
     }
 
+    // const saveNotification = async () => {
+    //     try {
+    //         const docRef = await updateDoc(doc(db, "notifications"), {
+    //             is_read: false, notification_message: "liked your woo!", notification_type: "woo like", owner_uid: uid, receiver_uid: arrayUnion(ownerUID), timestamp: serverTimestamp, woo_id: wooID
+    //         })
+    //         console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef))
+    //     } catch (error) {
+    //         console.error("SAVE NOTIFICATION ERROR " + error)
+    //     }
+    // }
+
+    const saveNotification = async () => {
+        const timestamp = serverTimestamp()
+        if (uid != ownerUID) {  // prevents sending notification to self for liking own woo
+            try {
+                const docRef = await addDoc(collection(db, "notifications"), {
+                    is_read: false, notification_message: "liked your woo!", notification_type: "woo like", owner_uid: uid, timestamp: timestamp, receiver_uid: arrayUnion(ownerUID), woo_id: wooID
+                })
+                console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef))
+            } catch (error) {
+                console.error("SAVE NOTIFICATION ERROR " + error)
+            }
+        }
+    }
+
     const toggleIsLiked = () => {
         isLiked ? removeUIDFromWooLikes() : addUIDToWooLikes()
-        setIsLiked(!isLiked)
+        saveNotification()
     }
 
     const confirmAddToWoo = () =>

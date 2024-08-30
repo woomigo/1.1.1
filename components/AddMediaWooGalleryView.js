@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { Header, Icon, Avatar } from "@rneui/themed";
 import { woo_black, woo_white } from "../assets/colors";
 import ListViewGalleryWoo from "./ListViewGalleryWoo";
-import { doc, getDoc, collection, query, where, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, onSnapshot, or } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 
 const AddMediaWooGalleryView = ({ navigation, route }) => {
@@ -15,7 +15,10 @@ const AddMediaWooGalleryView = ({ navigation, route }) => {
     useEffect(() => {
         console.log("UID " + uid)
 
-        const q = query(collection(db, "woos"), where("woo_migos", "array-contains", uid));
+        const q = query(collection(db, "woos"),
+        or(where("woo_migos", "array-contains", uid),
+        where("owner_uid", "==", uid)) 
+        );
         const getOwnedWoos = onSnapshot(q, (querySnapshot) => {
             const ownedWoos = [];
             querySnapshot.forEach((doc) => {

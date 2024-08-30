@@ -39,7 +39,7 @@ const HomeScreen = ({ navigation, route }) => {
         const getWoos = onSnapshot(q, (querySnapshot) => {
             const homeWoos = [];
             querySnapshot.forEach((doc) => {
-                console.log("HERE: " + JSON.stringify(doc))
+                // console.log("HERE: " + JSON.stringify(doc))
                 homeWoos.push(doc);
             });
             setWoos(homeWoos)

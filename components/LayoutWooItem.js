@@ -30,7 +30,7 @@ const LayoutWooItem = ({ woo, uid, isGalleryView, currentVisibleIndex, currentIn
                 <LayoutWooLocation  wooDate={woo.item.data().woo_date} wooTime={woo.item.data().woo_time} startTime={woo.item.data().woo_start_time} endTime={woo.item.data().woo_end_time} 
                 // wooLocation={woo.item.data().woo_location} 
                 />
-                <LayoutWooLike uid={uid} wooID={woo.item.id} wooLikes={woo.item.data().woo_likes} wooMigos={woo.item.data().woo_migos} wooType={woo.item.data().woo_type} />
+                <LayoutWooLike uid={uid} wooID={woo.item.id} ownerUID={woo.item.data().owner_uid} wooLikes={woo.item.data().woo_likes} wooMigos={woo.item.data().woo_migos} wooType={woo.item.data().woo_type} />
                 {/* <LayoutWooWriteComment />  */}
                 <LayoutWooShowComment wooID={woo.item.id} wooComments={woo.item.data().woo_comments} />
                 <LayoutWooGallery gallery={woo.item.data().woo_gallery} nav={'WooGalleryView'} />
