@@ -1,15 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, KeyboardAvoidingView } from "react-native";
 import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { woo_black, woo_orange } from '../assets/colors';
 
 const WooLocationScreen = ({ route, navigation }) => {
 
+    // API Key
+    const API_KEY = 'AIzaSyBkyLliKkjhFTeZkMD1rKZpNQWIyhGWwug';
+
+
+
     const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime } = route.params;
 
     const [searchValue, setSearchValue] = useState([])
+    const [searchResults, setSearchResults] = useState()
     const [isSearchError, setIsSearchError] = useState()
     const [isSearchIconHidden, setSearchIconHidden] = useState(true)
     const [loading, setLoading] = useState(true);
@@ -21,15 +27,35 @@ const WooLocationScreen = ({ route, navigation }) => {
 
     const searchRef = useRef()
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
+
+
 
         searchRef.current.clear()
         searchRef.current.blur()
     }
 
-    const handleSearchOnChange = (input) => {
+    const handleSearchOnChange = async (input) => {
         if (input.length > 0) {
             setSearchIconHidden(false)
+
+            const googleAPIUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json
+            ?input=${input}
+            &language=en
+            &types=geocode
+            &key=${API_KEY}`
+
+            //  = "https://maps.googleapis.com/maps/api/place/textsearch/json";
+            const location = `${latitude}, ${longitude}&radius=2000`
+            const url = `${googleAPIUrl}?query=${input.trim()}&location=${location}&key=${API_KEY}`
+
+            try {
+                const resp = await fetch(url)
+                const json = await resp
+                console.log("WOO LOCATION SEARCH RESULTS ===> " + JSON.stringify(resp.predictions))
+            } catch (error) {
+                console.error("ERROR ===> " + error)
+            }
         } else {
             setSearchIconHidden(true)
         }
@@ -104,12 +130,12 @@ const WooLocationScreen = ({ route, navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={.67}
                 color={woo_orange}
                 variant="determinate"
-            />
+            /> */}
 
             <KeyboardAvoidingView behavior='position'>
                 <Input
@@ -126,10 +152,16 @@ const WooLocationScreen = ({ route, navigation }) => {
                     onEndEditing={() => handleSearchEndEditing()}
                     rightIcon={!isSearchIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => handleSearch()} />}
                 />
+                {
+                    searchResults && "LISTVIEW WITH RESULTS"
+                }
             </KeyboardAvoidingView>
 
             {!loading ?
-                <MapView region={region} showsUserLocation style={styles.map}>
+                <MapView
+                    // provider={PROVIDER_GOOGLE} 
+                    region={region}
+                    showsUserLocation style={styles.map}>
                     {/* <Marker
                     coordinate={latitude && { latitude: latitude, longitude: longitude }}
                     image={require('../assets/woomigo_icon.png')}

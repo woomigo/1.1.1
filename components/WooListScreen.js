@@ -70,12 +70,12 @@ const WooListScreen = ({ route, navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={.83}
                 color={woo_orange}
                 variant="determinate"
-            />
+            /> */}
 
             <KeyboardAvoidingView behavior='position'>
                 <Input

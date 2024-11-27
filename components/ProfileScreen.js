@@ -48,11 +48,11 @@ const ProfileScreen = ({ navigation, route }) => {
     // }
 
     useEffect(() => {
-        // console.log("UID " + uid)
+        console.log("UID " + uid)
 
-        const docRef = doc(db, "users", "2RB7bG1KN4SuXnnuUDC0fawcK4J2");
+        const docRef = doc(db, "users", uid);
         const getProfileInfo = onSnapshot(docRef, (doc) => {
-            // console.log("Document data:", doc.data());
+            console.log("Document data:", doc.data());
             setUser(doc.data())
             setGallery(doc.data().gallery)
             setUsername(doc.data().username)
@@ -66,7 +66,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
         }, [])
 
-        const q = query(collection(db, "woos"), where("owner_uid", "==", "2RB7bG1KN4SuXnnuUDC0fawcK4J2"));
+        const q = query(collection(db, "woos"), where("owner_uid", "==", uid));
         const getOwnedWoos = onSnapshot(q, (querySnapshot) => {
             const ownedWoos = [];
             querySnapshot.forEach((doc) => {

@@ -112,17 +112,17 @@ const LayoutUserItem = ({ uid, onCheckBoxSelected, kind, singleBtnText, doubleBt
 
 const styles = StyleSheet.create({
     container: {
-        flex: 3,
+        flex:8,
         backgroundColor: "#fff",
         alignItems: 'center',
         flexDirection: 'row',
-        padding: 20,
+        padding: 15,
     },
     imageContainer: {
-        flex: 1
+        flex: 2
     },
     textContainer: {
-        flex: 2
+        flex: 6
     },
     checkboxContainer: {
         flex: 1,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     requestsButtonsContainer: {
-        flex: 2,
+        flex: 5,
         flexDirection: 'row',
     },
     acceptButton: {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     requestButtonContainer: {
-        flex: 2,
+        flex: 3,
         flexDirection: 'row',
         justifyContent: 'center'
     }

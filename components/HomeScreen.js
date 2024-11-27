@@ -12,7 +12,7 @@ import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 const HomeScreen = ({ navigation, route }) => {
 
-    // const { uid } = route.params;
+    const { uid } = route.params;
 
     const [woos, setWoos] = useState([])
 
@@ -32,9 +32,9 @@ const HomeScreen = ({ navigation, route }) => {
     useEffect(() => {
         // console.log("Anything " + uid)
         const q = query(collection(db, "woos"),
-        or(where("woo_migos", "array-contains", "2RB7bG1KN4SuXnnuUDC0fawcK4J2"), 
-        where("migo_woos", "array-contains", "2RB7bG1KN4SuXnnuUDC0fawcK4J2"), 
-        where("owner_uid", "==", "2RB7bG1KN4SuXnnuUDC0fawcK4J2")) 
+        or(where("woo_migos", "array-contains", uid), 
+        where("migo_woos", "array-contains", uid), 
+        where("owner_uid", "==", uid)) 
         );
         const getWoos = onSnapshot(q, (querySnapshot) => {
             const homeWoos = [];
@@ -89,7 +89,7 @@ const HomeScreen = ({ navigation, route }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <ListViewWoos view={'list'} woos={woos} uid={"2RB7bG1KN4SuXnnuUDC0fawcK4J2"} />
+            <ListViewWoos view={'list'} woos={woos} uid={uid} />
             {/* </SafeAreaView> */}
         </View>
     )

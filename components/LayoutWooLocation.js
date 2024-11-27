@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Platform, Linking } from 'react-native';
 import { Icon, Card } from "@rneui/themed";
 import { woo_gray, woo_black } from '../assets/colors';
@@ -7,6 +7,10 @@ import { woo_gray, woo_black } from '../assets/colors';
 //import { createOpenLink } from 'react-native-open-maps';
 
 const LayoutWooLocation = ({ wooLocation, wooTime, startTime, endTime, wooDate, }) => {
+
+    useEffect(() => {
+        console.log(`WOO LOCATION === ${wooLocation}`)
+    })
 
     const query = { query: wooLocation };
     //const openMaps = createOpenLink(query);

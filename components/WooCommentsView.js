@@ -10,8 +10,8 @@ import { woo_black, woo_white, woo_orange } from '../assets/colors'
 import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 
-const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
-    const { uid } = route.params;
+const WooCommentsView = ({ navigation: { navigate }, route}) => {
+    const { uid, wooID } = route.params;
 
     const [comment, setComment] = useState()
     const [wooComments, setWooComments] = useState()
@@ -25,7 +25,7 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
     useEffect(() => {
 
 
-        const docRef = doc(db, "users", "2RB7bG1KN4SuXnnuUDC0fawcK4J2");
+        const docRef = doc(db, "users", uid);
         const getProfileInfo = onSnapshot(docRef, (doc) => {
             // console.log("Document data:", doc.data());
             setProfilePicURL(doc.data().profile_pic_url)
@@ -33,7 +33,7 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
 
         })
 
-        const docWooRef = doc(db, "woos", "td9KvsNdsk39XblHAE4l");
+        const docWooRef = doc(db, "woos", wooID);
         const getWooComments = onSnapshot(docWooRef, (doc) => {
             // console.log("Document data:", doc.data());
             setWooComments(doc.data().woo_comments)
@@ -53,10 +53,10 @@ const WooCommentsView = ({ navigation: { navigate }, route, wooID }) => {
 
     const addCommentToWoo = async () => {
         console.log("FUCK")
-        await setDoc(doc(db, "woos", "td9KvsNdsk39XblHAE4l"), {
+        await setDoc(doc(db, "woos", wooID), {
             woo_comments: {
                 comment: comment,
-                comment_owner_uid: "2RB7bG1KN4SuXnnuUDC0fawcK4J2",
+                comment_owner_uid: uid,
                 timestamp: serverTimestamp()
             }
         }, { merge: true })

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import ListViewChips from './ListViewChips';
 
 
-const LayoutWooList = ({ nav, chips, wooType }) => {
+const LayoutWooList = ({ nav, chips, wooType, wooID }) => {
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const LayoutWooList = ({ nav, chips, wooType }) => {
                 chips.length > 0 ?
                     <Card containerStyle={styles.container}>
                         <View style={styles.wooListContainer}>
-                            <ListViewChips nav={nav} chips={chips} view={'horizontal'} />
+                            <ListViewChips wooID={wooID} nav={nav} chips={chips} view={'horizontal'} />
                         </View>
                     </Card>
                     :

@@ -71,12 +71,12 @@ const WooMigosScreen = ({ route, navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={.17}
                 color={woo_orange}
                 variant="determinate"
-            />
+            /> */}
 
             <ListViewUsers users={migos} returnUsers={returnMigosSelected} searchBoxPlaceholder="search migos" kind="checkbox" />
 

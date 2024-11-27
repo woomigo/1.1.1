@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, StyleSheet, View, SafeAreaView, FlatList } from 'react-native'
 import { Header, Icon, Avatar } from "@rneui/themed"
-import { MenuItems } from './shared/';
+import { MenuItems } from './shared';
 import LayoutMenuItem from './LayoutMenuItem';
 import { woo_black } from '../assets/colors';
 import { UserMenuItems } from './shared';

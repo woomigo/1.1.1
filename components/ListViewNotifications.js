@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, FlatList } from 'react-native'
 import LayoutNotificationItem from './LayoutNotificationItem';
-import { woo_white } from '../assets/colors';
+import { woo_orange, woo_white } from '../assets/colors';
 
 const ListViewNotifications = ({ notifications }) => {
 
@@ -13,7 +13,7 @@ const ListViewNotifications = ({ notifications }) => {
         <View style={styles.container}>
             <FlatList
                 showsVerticalScrollIndicator={false}
-                backgroundColor={"#fff"}
+                backgroundColor={woo_white}
                 keyExtractor={notification => notification.id}
                 data={notifications}
                 renderItem={renderNotifications}
@@ -26,6 +26,7 @@ const ListViewNotifications = ({ notifications }) => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         backgroundColor: woo_white
     }
 })

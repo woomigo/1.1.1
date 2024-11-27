@@ -1,9 +1,8 @@
-import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
+import { Camera, CameraView, useCameraPermissions, CameraType, ImageType } from 'expo-camera';
 import { useState, useEffect, useRef } from 'react';
 import { Button, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from "@rneui/themed";
 import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
-import { CameraType, ImageType, VideoCodec } from 'expo-camera/build/legacy/Camera.types';
 import { useIsFocused } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -21,7 +20,7 @@ const CameraScreen = ({ navigation }) => {
 
     useEffect(() => {
 
-      console.log(CameraType.front)
+    //   console.log(CameraType.front)
       console.log(isFocused)
 
        }, [isFocused]);
@@ -46,7 +45,7 @@ const CameraScreen = ({ navigation }) => {
             try {
                 const imgData = await camRef.current.takePictureAsync({
                     base64: false,
-                    imageType: ImageType.png,
+                    // imageType: ImageType.png,
                     quality: 1,
                     isImageMirror: true
                 });

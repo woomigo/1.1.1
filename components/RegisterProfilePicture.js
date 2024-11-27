@@ -74,12 +74,12 @@ const RegisterProfilePictureScreen = ({ route, navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={.8}
                 color="#f37320"
                 variant="determinate"
-            />
+            /> */}
 
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Button title="Pick an image from camera roll" onPress={pickImage} />

@@ -163,12 +163,12 @@ const RegisterScreen = ({ route, navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={1}
                 color="#f37320"
                 variant="determinate"
-            />
+            /> */}
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={{ flex: 1 }}>
                     <View style={{ flex: .2, alignItems: 'center', marginTop: 15 }}>

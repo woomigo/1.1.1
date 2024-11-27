@@ -50,12 +50,12 @@ const WooTimeScreen = ({ route, navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={.50}
                 color={woo_orange}
                 variant="determinate"
-            />
+            /> */}
 
 
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>

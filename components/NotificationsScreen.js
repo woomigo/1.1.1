@@ -27,7 +27,7 @@ const NotificationsScreen = ({navigation, route}) => {
     useEffect(() => {
         // console.log("Anything " + uid)
         const q = query(collection(db, "notifications"),
-        where("receiver_uid", "array-contains", "2RB7bG1KN4SuXnnuUDC0fawcK4J2"), 
+        where("receiver_uid", "array-contains", "UX7oplUvf8VD6XVD1ScuaRy4JOg2"), 
         );
         const getNotifications = onSnapshot(q, (querySnapshot) => {
             const notificationsData = [];

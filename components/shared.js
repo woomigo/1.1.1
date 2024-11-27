@@ -412,7 +412,7 @@ export const Comments = [
 ];
 
 export const Chips = [
-    'table', 'chairs', 'cups', 'paper plates', 'coke', 'chips',
+    "Books", "Laptops", "Study Playlist", "Good Vibes", "Caffeine"
 ];
 
 export const SelfIdentity = [

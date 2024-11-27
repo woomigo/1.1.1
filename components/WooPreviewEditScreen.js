@@ -115,12 +115,12 @@ const WooPreviewEditScreen = ({ route, navigation }) => {
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
             />
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={1}
                 color={woo_orange}
                 variant="determinate"
-            />
+            /> */}
 
             <ScrollView style={styles.wooContainer}>
                 <LayoutWooInfo wooType={wooType} ownerUID={uid}

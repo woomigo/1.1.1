@@ -3,12 +3,12 @@ import { View, FlatList, StyleSheet, Text } from "react-native";
 import LayoutChipItem from "./LayoutChipItem";
 
 
-const ListViewChips = ({ chips, view, size, nav, navParams }) => {
+const ListViewChips = ({ chips, view, size, nav, navParams, wooID }) => {
 
 
 
     const renderChipPreview = (chip) => (
-        <LayoutChipItem size={size} view={view} chip={chip.item} nav={nav} navParams={navParams} />
+        <LayoutChipItem size={size} view={view} chip={chip.item} nav={nav} navParams={navParams} wooID={wooID} />
     )
 
     const renderView = (view) => {

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { woo_orange } from '../assets/colors';
 
 
-const LayoutChipItem = ({ chip, view, size, nav, navParams }) => {
+const LayoutChipItem = ({ chip, view, size, nav, navParams, wooID }) => {
     useEffect(()=> {
      
     })
@@ -33,13 +33,13 @@ const LayoutChipItem = ({ chip, view, size, nav, navParams }) => {
                 onPress={() => {
                     console.log('chip pressed')
                     navigation.navigate(`${nav}`,
-                    // `${navParams}`
+                    {wooID: wooID}
                 )
                 }}>
              <Chip  onPress={() => {
                     console.log('chip pressed')
                     navigation.navigate(`${nav}`,
-                    // `${navParams}`
+                    {wooID: wooID}
                 )
                 }} title={chip} color={woo_orange} containerStyle={{marginStart: 10, marginVertical: 10 }} />
             </TouchableWithoutFeedback>

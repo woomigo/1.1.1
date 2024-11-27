@@ -85,7 +85,7 @@ const ProfileStack = () => {
 
 const CameraStack = () => {
   return (
-    <Stack.Navigator options={{ headerShown: false }} >
+    <Stack.Navigator options={{ headerShown: false }} >    
       <Stack.Screen name="Camera" component={CameraScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="EditMedia" component={EditMediaScreen} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />
       <Stack.Screen name="AddMediaWooGallery" component={AddMediaWooGalleryView} options={{ headerShown: false }} initialParams={uid && { 'uid': uid }} />

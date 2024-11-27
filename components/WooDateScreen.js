@@ -57,12 +57,12 @@ const WooDateScreen = ({ route, navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <LinearProgress
+            {/* <LinearProgress
                 style={{}}
                 value={.33}
                 color={woo_orange}
                 variant="determinate"
-            />
+            /> */}
 
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
