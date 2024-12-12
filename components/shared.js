@@ -273,12 +273,6 @@ export const MenuItems = [
         text: "privacy policy",
         icon: "user-shield",
         navigation: "Settings"
-    },
-    {
-        id: 5,
-        text: "logout",
-        icon: "sign-out-alt",
-        navigation: "logout"
     }
 ];
 

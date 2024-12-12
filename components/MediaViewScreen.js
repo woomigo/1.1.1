@@ -21,7 +21,7 @@ const MediaViewScreen = ({ route, navigation }) => {
                         color={woo_black}
                         size={25}
                         onPress={() =>
-                            navigation.navigate('Profile')
+                            navigation.goBack()
                         }
                     />}
                 // centerComponent={

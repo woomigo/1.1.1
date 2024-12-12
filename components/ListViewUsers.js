@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, FlatList, KeyboardAvoidingView } from 'react-native'
 import { Input, Icon } from "@rneui/themed";
 import LayoutUserItem from "./LayoutUserItem";
-import { woo_green, woo_red } from "../assets/colors";
+import { woo_gray, woo_green, woo_orange, woo_red } from "../assets/colors";
 import { list } from "firebase/storage";
 
 
-const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = "#f37320", doubleBtn1Color = woo_green, doubleBtn2Color = woo_red, handleSingleBtnOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
+const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = woo_orange, doubleBtn1Color = woo_orange, doubleBtn2Color = woo_gray, handleSingleBtnOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
 
     const [usersSelected, setUsersSelected] = useState([]);
     const [searchValue, setSearchValue] = useState([])

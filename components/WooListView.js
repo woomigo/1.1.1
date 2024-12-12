@@ -6,26 +6,36 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
-import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot, serverTimestamp } from "firebase/firestore";
-import { db } from '../firebaseConfig';
+import { Header, Icon, ListItem, LinearProgress, Input } from "@rneui/themed";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  doc,
+  arrayRemove,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import { woo_black, woo_white } from "../assets/colors";
 import ListViewChips from "./ListViewChips";
 // import { Chips } from "./shared";
 
 const WooListView = ({ navigation: { navigate }, route }) => {
+  const { wooID } = route.params;
 
-    const {wooID} = route.params;
-
-    const [wooList, setWooList] = useState()
+  const [wooList, setWooList] = useState();
   useEffect(() => {
-    console.log(`WOOID WOOLIST ==== ${wooID}`)
+    console.log(`WOOID WOOLIST ==== ${wooID}`);
 
     const docWooRef = doc(db, "woos", wooID);
     const getWooList = onSnapshot(
       docWooRef,
       (doc) => {
-        // console.log("Document data:", doc.data());
+        console.log("Document data:", doc.data().woo_list);
         setWooList(doc.data().woo_list);
       },
       (error) => {}
@@ -70,7 +80,18 @@ const WooListView = ({ navigation: { navigate }, route }) => {
           leftContainerStyle={styles.leftComponent}
           centerContainerStyle={styles.centerComponent}
         />
-        <ListViewChips chips={wooList} />
+        {/* <ListViewChips chips={wooList} /> */}
+
+        {wooList &&
+          wooList.map((l, i) => (
+            <ListItem key={i} bottomDivider>
+              {/* <Avatar source={{ uri: l.avatar_url }} /> */}
+              <ListItem.Content>
+                <ListItem.Title>{l}</ListItem.Title>
+                {/* <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle> */}
+              </ListItem.Content>
+            </ListItem>
+          ))}
       </View>
     </TouchableWithoutFeedback>
   );

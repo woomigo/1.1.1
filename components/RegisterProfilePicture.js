@@ -5,7 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { storage } from '../firebaseConfig';
 
-const storageRef = ref(storage, 'some-child');
+
+
+
 
 const RegisterProfilePictureScreen = ({ route, navigation }) => {
 
@@ -24,13 +26,6 @@ const RegisterProfilePictureScreen = ({ route, navigation }) => {
 
         if (!result.canceled) {
             setImage(result.assets[0].uri);
-            // 'file' comes from the Blob or File API
-            uploadBytes(storageRef, result.assets[0].uri).then((snapshot) => {
-              console.log(`Uploaded a blob or file! --------> ${snapshot}`);
-            }, (error) => {
-
-            });
-
         }
     };
 
@@ -76,7 +71,7 @@ const RegisterProfilePictureScreen = ({ route, navigation }) => {
             />
             {/* <LinearProgress
                 style={{}}
-                value={.8}
+                value={.80}
                 color="#f37320"
                 variant="determinate"
             /> */}

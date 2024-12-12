@@ -172,19 +172,19 @@ const MigosScreen = ({ navigation, route }) => {
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>following</Text>
-                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)} />
+                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)} />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>followers</Text>
-                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_red} singleBtnText='remove'  handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}/>
+                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='remove'  handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}/>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>migos</Text>
-                        <ListViewUsers users={migos} searchBoxPlaceholder="search migos by @username" kind="single" singleBtnColor={woo_red} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowMigo(user)} />
+                        <ListViewUsers users={migos} searchBoxPlaceholder="search migos by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowMigo(user)} />
                     </View>
                 </TabView.Item>
             </TabView>

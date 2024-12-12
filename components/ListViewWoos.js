@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, RefreshControl, Switch } from "react-native";
 import { Icon } from "@rneui/themed";
 import LayoutWooItem from "./LayoutWooItem";
-import { woo_orange, woo_white } from "../assets/colors";
+import { woo_gray, woo_orange, woo_white } from "../assets/colors";
 
 
 
@@ -56,15 +56,15 @@ const ListViewWoos = ({ woos, view, uid }) => {
                     backgroundColor={woo_orange}
                     keyExtractor={woo => woo.id}
                     data={woos}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                            progressBackgroundColor={woo_white}
-                            tintColor={woo_white}
-                        />
-                    }
-                    initialNumToRender={3}
+                    // refreshControl={
+                    //     <RefreshControl
+                    //         refreshing={refreshing}
+                    //         onRefresh={onRefresh}
+                    //         progressBackgroundColor={woo_white}
+                    //         tintColor={woo_white}
+                    //     />
+                    // }
+                    // initialNumToRender={3}
                     onViewableItemsChanged={onViewRef.current}
                     renderItem={woo => <LayoutWooItem woo={woo} isGalleryView />}
                 />
@@ -75,17 +75,14 @@ const ListViewWoos = ({ woos, view, uid }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <View>
             {renderView(view)}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        // flex: 1,
-        backgroundColor: "#fff"
-    },
+
 })
 
 export default ListViewWoos;

@@ -125,7 +125,7 @@ const RegisterFullnameScreen = ({ navigation }) => {
             />
             {/* <LinearProgress
                 style={{}}
-                value={.2}
+                value={.20}
                 color="#f37320"
                 variant="determinate"
             /> */}

@@ -13,6 +13,7 @@ const LayoutWooInfo = ({ wooType, ownerUID, sharedProfilePic }) => {
 
 
     useEffect(() => {
+        console.log()
         const docRef = doc(db, "users", ownerUID);
         const getProfileInfo = onSnapshot(docRef, (doc) => {
             // console.log("Document data:", doc.data());

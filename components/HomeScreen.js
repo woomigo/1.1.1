@@ -7,7 +7,6 @@ import ListViewWoos from "./ListViewWoos";
 import { Gallery, UserWoos } from './shared';
 import { woo_black, woo_gray, woo_orange, woo_white } from "../assets/colors";
 import { doc, getDoc, collection, query, where, onSnapshot, or } from "firebase/firestore";
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 
 const HomeScreen = ({ navigation, route }) => {
@@ -16,15 +15,9 @@ const HomeScreen = ({ navigation, route }) => {
 
     const [woos, setWoos] = useState([])
 
-    const auth = getAuth();
 
-    const logout = () => {
-        signOut(auth).then(() => {
-            // Sign-out successful.
-        }).catch((error) => {
-            // An error happened.
-        });
-    }
+
+
 
 
 
@@ -57,40 +50,16 @@ const HomeScreen = ({ navigation, route }) => {
             <Header
                 containerStyle={styles.header}
                 backgroundColor={woo_white}
-                leftComponent={
-
-                    <Icon
-                        type='font-awesome-5'
-                        color={woo_black}
-                        solid
-                        size={25}
-                    />
-
-                }
                 centerComponent={
                     <View >
                         <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woomigo</Text>
                     </View>
                 }
-                rightComponent={
-                    <Icon
-                        name={'sign-out-alt'}
-                        type='font-awesome-5'
-                        color={woo_black}
-                        solid
-                        size={25}
-                        onPress={() => logout()
-                        }
-                    />
-
-                }
-                rightContainerStyle={styles.rightComponent}
-                leftContainerStyle={styles.leftComponent}
+                
                 centerContainerStyle={styles.centerComponent}
             />
 
             <ListViewWoos view={'list'} woos={woos} uid={uid} />
-            {/* </SafeAreaView> */}
         </View>
     )
 }

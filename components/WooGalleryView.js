@@ -38,7 +38,13 @@ const WooGalleryView = ({ navigation, route }) => {
         leftContainerStyle={styles.leftComponent}
         centerContainerStyle={styles.centerComponent}
       />
-      <ListViewGallery gallery={wooGallery} view={"list"} />
+       {/* <ListViewGallery
+                gallery={gallery}
+                inverted
+                view={"grid"}
+                nav={"MediaView"}
+              /> */}
+      <ListViewGallery gallery={wooGallery} view={"grid"} nav={"MediaView"} />
     </View>
   );
 }
@@ -47,7 +53,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: woo_white,
-    marginBottom: 100
 },
   header: {
     shadowColor: '#000',
