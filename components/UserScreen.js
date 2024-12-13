@@ -26,7 +26,7 @@ const UserScreen = ({ navigation, route }) => {
       (querySnapshot) => {
         const ownedPublicWoos = [];
         querySnapshot.forEach((doc) => {
-          ownedPublicWoos.push(doc.data());
+          ownedPublicWoos.push(doc);
         });
         setWoos(ownedPublicWoos);
       },

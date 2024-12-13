@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, FlatList } from "react-native";
 import LayoutWooItem from "./LayoutWooItem";
 import { woo_orange } from "../assets/colors";
 
 const ListViewWoos = ({ woos, view, uid }) => {
+
+    useEffect(() => {
+        console.log(`LISTVIEWWOOS ==== ${JSON.stringify(woos[0])}`)
+    })
 
     const [currentVisibleIndex, setCurrentVisibleIndex] = useState();
     const [refreshing, setRefreshing] = React.useState(false);

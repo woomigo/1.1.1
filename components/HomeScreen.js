@@ -27,7 +27,7 @@ const HomeScreen = ({ route }) => {
       (querySnapshot) => {
         const homeWoos = [];
         querySnapshot.forEach((doc) => {
-          homeWoos.push(doc.data());
+          homeWoos.push(doc);
         });
         setWoos(homeWoos);
       },

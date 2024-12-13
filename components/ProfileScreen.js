@@ -54,7 +54,7 @@ const ProfileScreen = ({ navigation, route }) => {
       (querySnapshot) => {
         const ownedWoos = [];
         querySnapshot.forEach((doc) => {
-          ownedWoos.push(doc.data());
+          ownedWoos.push(doc);
         });
         setWoos(ownedWoos);
       },
