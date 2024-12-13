@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Image, FlatList, Alert } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 import { Card } from '@rneui/themed';
-import { useNavigation } from '@react-navigation/native';
 import ListViewChips from './ListViewChips';
 
-
-const LayoutWooList = ({ nav, chips, wooType, wooID }) => {
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        console.log(chips)
-    })
+const LayoutWooList = ({ chips, wooID }) => {
 
     return (
         <View>
@@ -18,7 +11,7 @@ const LayoutWooList = ({ nav, chips, wooType, wooID }) => {
                 chips.length > 0 ?
                     <Card containerStyle={styles.container}>
                         <View style={styles.wooListContainer}>
-                            <ListViewChips wooID={wooID} nav={nav} chips={chips} view={'horizontal'} />
+                            <ListViewChips wooID={wooID} chips={chips} view={'horizontal'} />
                         </View>
                     </Card>
                     :

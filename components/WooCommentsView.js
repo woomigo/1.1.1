@@ -1,16 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Text, SafeAreaView, FlatList, KeyboardAvoidingView } from 'react-native'
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Text, KeyboardAvoidingView } from 'react-native'
 import { Icon, Header, Input, Avatar } from '@rneui/themed'
-import { Comments } from './shared'
-// import LayoutCommentItem from './LayoutCommentItem'
-// import LayoutInputTextComponent from './LayoutInputTextComponent'
-// import LayoutWooCommentComponent from './LayoutWooCommentComponent'
 import ListViewComments from './ListViewComments'
-import { woo_black, woo_white, woo_orange } from '../assets/colors'
-import { collection, query, where, getDocs, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { woo_black, woo_white } from '../assets/colors'
+import { doc, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 
-const WooCommentsView = ({ navigation: { navigate }, route}) => {
+const WooCommentsView = ({ navigation, route}) => {
     const { uid, wooID } = route.params;
 
     const [comment, setComment] = useState()
@@ -27,7 +23,6 @@ const WooCommentsView = ({ navigation: { navigate }, route}) => {
 
         const docRef = doc(db, "users", uid);
         const getProfileInfo = onSnapshot(docRef, (doc) => {
-            // console.log("Document data:", doc.data());
             setProfilePicURL(doc.data().profile_pic_url)
         }, (error) => {
 
@@ -35,7 +30,6 @@ const WooCommentsView = ({ navigation: { navigate }, route}) => {
 
         const docWooRef = doc(db, "woos", wooID);
         const getWooComments = onSnapshot(docWooRef, (doc) => {
-            // console.log("Document data:", doc.data());
             setWooComments(doc.data().woo_comments)
         }, (error) => {
 
@@ -80,27 +74,6 @@ const WooCommentsView = ({ navigation: { navigate }, route}) => {
         setCommentIconHidden(true)
     }
 
-    // const onSubmitHandler = () => {
-    //     signInWithCommentAndPassword(auth, emailAddress, password)
-    //         .then((userCredential) => {
-    //             const user = userCredential.user;
-    //         })
-    //         .catch((error) => {
-    //             const errorCode = error.code;
-    //             const errorMessage = error.message;
-    //             console.error(`ERROR CODE === ${errorCode} AND ERROR MESSAGE === ${errorMessage}`)
-    //             if (errorCode == 'auth/user-not-found') {
-    //                 setIsEmailError(true)
-    //             }
-    //             if (errorCode == 'auth/wrong-password') {
-    //                 setIsPasswordError(true)
-    //             }
-    //             if (errorCode == 'auth/too-many-requests') {
-    //                 setIsTooManyRequestsError(true)
-    //             }
-    //         });
-    // }
-
     return (
 
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -116,7 +89,7 @@ const WooCommentsView = ({ navigation: { navigate }, route}) => {
                             color={woo_black}
                             size={20}
                             onPress={() =>
-                                navigate('Home')
+                                navigation.goBack()
                             }
                         />
                     }
@@ -141,10 +114,7 @@ const WooCommentsView = ({ navigation: { navigate }, route}) => {
                             size="small"
                             source={{ uri: profilePicURL }}
                         />}
-                        // errorStyle={{ color: 'red' }}
-                        // errorMessage={isCommentError && "sorry we couldn't find that comment"}
                         autoCapitalize="none"
-                        // onFocus={() => handleCommentOnFocus()}
                         onEndEditing={() => handleCommentEndEditing()}
                         rightIcon={!isCommentIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => addCommentToWoo()} />}
                     />

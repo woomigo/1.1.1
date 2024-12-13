@@ -24,7 +24,7 @@ import { woo_black, woo_white } from "../assets/colors";
 import ListViewChips from "./ListViewChips";
 // import { Chips } from "./shared";
 
-const WooListView = ({ navigation: { navigate }, route }) => {
+const WooListView = ({ navigation, route }) => {
   const { wooID } = route.params;
 
   const [wooList, setWooList] = useState();
@@ -60,7 +60,7 @@ const WooListView = ({ navigation: { navigate }, route }) => {
               type="font-awesome-5"
               color={woo_black}
               size={20}
-              onPress={() => navigate("Home")}
+              onPress={() => navigation.goBack()}
             />
           }
           centerComponent={

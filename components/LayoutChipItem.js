@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
-import { Chip, withTheme, lightColors } from '@rneui/themed';
+import { View, TouchableWithoutFeedback } from 'react-native';
+import { Chip } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { woo_orange } from '../assets/colors';
 
 
-const LayoutChipItem = ({ chip, view, size, nav, navParams, wooID }) => {
+const LayoutChipItem = ({ chip, size, wooID }) => {
     useEffect(()=> {
      
     })
@@ -25,20 +25,18 @@ const LayoutChipItem = ({ chip, view, size, nav, navParams, wooID }) => {
         }
     }
 
-    // const setHorizontal
-
     return (
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
             <TouchableWithoutFeedback
                 onPress={() => {
                     console.log('chip pressed')
-                    navigation.navigate(`${nav}`,
+                    navigation.navigate("WooListView",
                     {wooID: wooID}
                 )
                 }}>
              <Chip  onPress={() => {
                     console.log('chip pressed')
-                    navigation.navigate(`${nav}`,
+                    navigation.navigate("WooListView",
                     {wooID: wooID}
                 )
                 }} title={chip} color={woo_orange} containerStyle={{marginStart: 10, marginVertical: 10 }} />
@@ -47,35 +45,5 @@ const LayoutChipItem = ({ chip, view, size, nav, navParams, wooID }) => {
     )
 
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        // margin: 10
-        // backgroundColor: 'red'
-    },
-    horizontalImage: {
-        margin: 5
-    },
-
-    gridContainer: {
-        flex: 1,
-        height: 200,
-        width: '100%',
-        margin: 3
-    },
-    gridImage: {
-        flex: 1,
-        height: '100%',
-        width: '100%',
-        resizeMode: 'cover',
-        borderRadius: 5
-    },
-    listImage: {
-        width: '100%',
-        height: 500,
-        borderRadius: 5,
-    }
-})
 
 export default LayoutChipItem;

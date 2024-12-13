@@ -142,6 +142,24 @@ const ProfileStack = () => {
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />
+            <Stack.Screen
+        name="WooCommentsView"
+        component={WooCommentsView}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="WooGalleryView"
+        component={WooGalleryView}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="WooListView"
+        component={WooListView}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
       <Stack.Screen
         name="User"
         component={UserScreen}

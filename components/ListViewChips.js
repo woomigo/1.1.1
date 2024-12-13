@@ -1,14 +1,14 @@
 import React from "react";
-import { View, FlatList, StyleSheet, Text } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import LayoutChipItem from "./LayoutChipItem";
 
 
-const ListViewChips = ({ chips, view, size, nav, navParams, wooID }) => {
+const ListViewChips = ({ chips, view, size, wooID }) => {
 
 
 
     const renderChipPreview = (chip) => (
-        <LayoutChipItem size={size} view={view} chip={chip.item} nav={nav} navParams={navParams} wooID={wooID} />
+        <LayoutChipItem size={size} view={view} chip={chip.item} wooID={wooID} />
     )
 
     const renderView = (view) => {
@@ -16,9 +16,7 @@ const ListViewChips = ({ chips, view, size, nav, navParams, wooID }) => {
             case 'horizontal':
                 return <FlatList
                     horizontal
-                    // key={woo => woo.id}
                     showsHorizontalScrollIndicator={false}
-                    // style={styles.wooGalleryPreviewList}
                     backgroundColor={"#fff"}
                     data={chips}
                     renderItem={renderChipPreview} />;
@@ -26,9 +24,7 @@ const ListViewChips = ({ chips, view, size, nav, navParams, wooID }) => {
                 return <View style={styles.container}>
                     <FlatList
                         showsVerticalScrollIndicator={false}
-                        // key={}
                         backgroundColor={"#fff"}
-                        // keyExtractor={woo => woo.id}
                         data={chips}
                         renderItem={renderChipPreview} />
                 </View>;
