@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { Header, Icon, Avatar, Tab, TabView, Button } from "@rneui/themed";
+import { View, Text, StyleSheet, Image } from "react-native";
+import { Header, Icon, Avatar, Tab, TabView, } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
-import ListViewGalleryWoo from "./ListViewGalleryWoo";
-import { Gallery } from "./shared";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
 import {
   doc,
-  getDoc,
   collection,
   query,
   where,
@@ -20,15 +17,12 @@ import ListViewWoos from "./ListViewWoos";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
-  const [isFollowing, setIsFollowing] = useState(false);
   const [user, setUser] = useState();
   const [isProfileOwnedByUser, setIsProfileOwnedByUser] = useState(true);
   const [woos, setWoos] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
   const [profilePicURL, setProfilePicURL] = useState();
   const [following, setFollowing] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -36,27 +30,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const { uid } = route.params;
 
-  // const docRef = doc(db, "users", uid);
-  // const getProfileInfo = async () => {
-
-  // const docSnap = await getDoc(docRef);
-
-  // if (docSnap.exists()) {
-  //     // console.log("Document data:", docSnap.data());
-  //     setGallery(docSnap.data().gallery)
-  //     setUsername(docSnap.data().username)
-  //     setFirstName(docSnap.data().first_name)
-  //     setLastName(docSnap.data().last_name)
-  //     setProfilePicURL(docSnap.data().profile_pic_url)
-  // } else {
-  //     // docSnap.data() will be undefined in this case
-  //     // console.log("No such document!");
-  // }
-  // }
-
   useEffect(() => {
-    // console.log("UID " + uid)
-
     const docRef = doc(db, "users", uid);
     const getProfileInfo = onSnapshot(
       docRef,
@@ -65,8 +39,6 @@ const ProfileScreen = ({ navigation, route }) => {
         setUser(doc.data());
         setGallery(doc.data().gallery);
         setUsername(doc.data().username);
-        setFirstName(doc.data().first_name);
-        setLastName(doc.data().last_name);
         setProfilePicURL(doc.data().profile_pic_url);
         setFollowing(doc.data().following);
         setFollowers(doc.data().followers);
@@ -82,10 +54,8 @@ const ProfileScreen = ({ navigation, route }) => {
       (querySnapshot) => {
         const ownedWoos = [];
         querySnapshot.forEach((doc) => {
-          // console.log(doc.id)
           ownedWoos.push(doc.data());
         });
-        // console.log("Woos Owned by this USER: ", ownedWoos.join(", "));
         setWoos(ownedWoos);
       },
       (error) => {}
@@ -100,7 +70,6 @@ const ProfileScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <Drawer
-        // drawerStyle={{ marginTop: 100 }}
         drawerPosition="right"
         open={open}
         onOpen={() => setOpen(true)}
@@ -179,11 +148,6 @@ const ProfileScreen = ({ navigation, route }) => {
             backgroundColor: woo_white,
           }}
         >
-          {/* <Tab.Item
-                    title="subscribed"
-                    titleStyle={{ fontSize: 12, color: woo_black }}
-                    icon={{ name: 'sign-in-alt', type: 'font-awesome-5', color: woo_black }}
-                /> */}
           <Tab.Item
             title="woos"
             titleStyle={{ fontSize: 12, color: woo_black }}
@@ -198,7 +162,6 @@ const ProfileScreen = ({ navigation, route }) => {
               />
             }
           />
-
           <Tab.Item
             title="gallery"
             titleStyle={{ fontSize: 12, color: woo_black }}
@@ -210,18 +173,12 @@ const ProfileScreen = ({ navigation, route }) => {
           />
         </Tab>
         <TabView value={index} onChange={setIndex} animationType="spring">
-          {/* <TabView.Item style={{ width: '100%' }}>
-                    <View style={styles.tabHeader}>
-                        <Text style={styles.tabText}>Published Woos</Text>
-                        <ListViewWoos woos={UserWoos} isGridView />
-                    </View>
-                </TabView.Item> */}
           <TabView.Item style={{ width: "100%" }}>
             <View style={styles.tabHeader}>
-              <ListViewWoos view={"gallery"} woos={woos} uid={uid} />
+              <ListViewWoos view={"list"} woos={woos} uid={uid} />
             </View>
           </TabView.Item>
-          <TabView.Item style={{ height: "100%", width: "100%" }}>
+          <TabView.Item style={{ width: "100%" }}>
             <View style={styles.tabHeader}>
               <ListViewGallery
                 gallery={gallery}
@@ -245,12 +202,6 @@ const styles = StyleSheet.create({
   profileInfo: {
     textAlign: "center",
   },
-  header: {
-    // shadowColor: '#000',
-    // shadowOffset: { width: 1, height: 3 },
-    // shadowOpacity: 0.2,
-    // elevation: 4,
-  },
   leftComponent: {
     justifyContent: "center",
     alignItems: "center",
@@ -270,14 +221,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   tabHeader: {
-    // flex: 1,
-    // backgroundColor: 'red',
     marginTop: 10,
     padding: 5,
     alignItems: "center",
   },
   tabText: {
-    // flex: 1,
     fontSize: 18,
     color: woo_black,
     fontWeight: "bold",

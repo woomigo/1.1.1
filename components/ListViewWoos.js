@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, RefreshControl, Switch } from "react-native";
-import { Icon } from "@rneui/themed";
+import React, { useState } from "react";
+import { View, FlatList } from "react-native";
 import LayoutWooItem from "./LayoutWooItem";
-import { woo_gray, woo_orange, woo_white } from "../assets/colors";
-
-
-
+import { woo_orange } from "../assets/colors";
 
 const ListViewWoos = ({ woos, view, uid }) => {
 
@@ -68,7 +64,6 @@ const ListViewWoos = ({ woos, view, uid }) => {
                     onViewableItemsChanged={onViewRef.current}
                     renderItem={woo => <LayoutWooItem woo={woo} isGalleryView />}
                 />
-
             default:
                 return '';
         }
@@ -80,9 +75,5 @@ const ListViewWoos = ({ woos, view, uid }) => {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-
-})
 
 export default ListViewWoos;
