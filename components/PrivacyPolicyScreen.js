@@ -37,7 +37,7 @@ const PrivacyPolicyScreen = ({ route, navigation }) => {
         leftContainerStyle={styles.leftComponent}
         centerContainerStyle={styles.centerComponent}
       />
-      <WebView style={{}} source={{ uri: "https://www.woomigo.com" }} />
+      <WebView style={{}} source={{ uri: "https://woomigo.com/privacy-policy" }} />
     </View>
   );
 };
