@@ -1,130 +1,187 @@
-import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, TouchableWithoutFeedback, View, StyleSheet, Text, Image, FlatList, Alert, Pressable } from 'react-native';
-import { Icon, Card } from '@rneui/themed';
-import { useNavigation } from '@react-navigation/native';
-import { woo_black, woo_gray, woo_orange } from '../assets/colors';
-import { collection, addDoc, updateDoc, arrayUnion, doc, arrayRemove, onSnapshot, serverTimestamp } from "firebase/firestore";
-import { db } from '../firebaseConfig';
+import React, { useEffect, useState } from "react";
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  FlatList,
+  Alert,
+  Pressable,
+} from "react-native";
+import { Icon, Card } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
+import { woo_black, woo_gray, woo_orange } from "../assets/colors";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  arrayUnion,
+  doc,
+  arrayRemove,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebaseConfig";
 // import LayoutMigosItem from './LayoutMigosItem';
 
-
 const WooMigoImage = ({ userID }) => {
-    const [profilePicURL, setProfilePicURL] = useState()
+  const [profilePicURL, setProfilePicURL] = useState();
 
-    useEffect(() => {
-        const docRef = doc(db, "users", userID);
-        const getProfileInfo = onSnapshot(docRef, (doc) => {
-            // console.log("Document data:", doc.data());
-            setProfilePicURL(doc.data().profile_pic_url)
-        }, (error) => {
+  useEffect(() => {
+    const docRef = doc(db, "users", userID);
+    const getProfileInfo = onSnapshot(
+      docRef,
+      (doc) => {
+        // console.log("Document data:", doc.data());
+        setProfilePicURL(doc.data().profile_pic_url);
+      },
+      (error) => {}
+    );
 
-        })
+    return () => {
+      getProfileInfo();
+    };
+  }, []);
 
-        return () => {
-            getProfileInfo()
-        };
-    }, [])
+  return <Image style={styles.wooMigoImage} source={{ uri: profilePicURL }} />;
+};
 
-    return (
-        <Image
-            style={styles.wooMigoImage}
-            source={{ uri: profilePicURL }}
-        />
-    )
-}
+const LayoutWooLike = ({
+  wooLikes,
+  wooMigos,
+  wooType,
+  uid,
+  wooID,
+  ownerUID,
+}) => {
+  const navigation = useNavigation();
 
-const LayoutWooLike = ({ wooLikes, wooMigos, wooType, uid, wooID, ownerUID }) => {
-    const navigation = useNavigation();
+  const [isLiked, setIsLiked] = useState(false);
+  const [isWooMigo, setIsWooMigo] = useState(false);
+  const [receivedUID, setReceiverUID] = useState([]);
 
-    const [isLiked, setIsLiked] = useState(false);
-    const [receivedUID, setReceiverUID] = useState([])
+  useEffect(() => {
+    wooLikes.includes(uid) ? setIsLiked(true) : setIsLiked(false);
+    wooMigos.includes(uid) ? setIsWooMigo(true) : setIsWooMigo(false);
+  });
 
-    useEffect(() => {
-        wooLikes.includes(uid) ? setIsLiked(true) : setIsLiked(false)
-    })
+  const addUIDToWooLikes = async () => {
+    await updateDoc(doc(db, "woos", wooID), {
+      woo_likes: arrayUnion(uid),
+    });
+    console.log("ADD");
+  };
 
-    const addUIDToWooLikes = async () => {
-        await updateDoc(doc(db, "woos", wooID), {
-            woo_likes: arrayUnion(uid)
-        })
-        console.log("ADD")
+  const removeUIDFromWooLikes = async () => {
+    await updateDoc(doc(db, "woos", wooID), {
+      woo_likes: arrayRemove(uid),
+    });
+    console.log("REMOVE");
+  };
+
+  const addWooToProfile = async () => {
+    await updateDoc(doc(db, "woos", wooID), {
+      woo_migos: arrayUnion(uid),
+      migo_woos: arrayRemove(uid),
+    });
+  };
+
+  const removeWooFromProfile = async () => {
+    await updateDoc(doc(db, "woos", wooID), {
+      woo_migos: arrayRemove(uid),
+      migo_woos: arrayUnion(uid),
+    });
+  };
+
+  // const saveNotification = async () => {
+  //     try {
+  //         const docRef = await updateDoc(doc(db, "notifications"), {
+  //             is_read: false, notification_message: "liked your woo!", notification_type: "woo like", owner_uid: uid, receiver_uid: arrayUnion(ownerUID), timestamp: serverTimestamp, woo_id: wooID
+  //         })
+  //         console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef))
+  //     } catch (error) {
+  //         console.error("SAVE NOTIFICATION ERROR " + error)
+  //     }
+  // }
+
+  const saveNotification = async () => {
+    const timestamp = serverTimestamp();
+    if (uid != ownerUID) {
+      // prevents sending notification to self for liking own woo
+      try {
+        const docRef = await addDoc(collection(db, "notifications"), {
+          is_read: false,
+          notification_message: "liked your woo!",
+          notification_type: "woo like",
+          owner_uid: uid,
+          timestamp: timestamp,
+          receiver_uid: arrayUnion(ownerUID),
+          woo_id: wooID,
+        });
+        console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef));
+      } catch (error) {
+        console.error("SAVE NOTIFICATION ERROR " + error);
+      }
     }
+  };
 
-    const removeUIDFromWooLikes = async () => {
-        await updateDoc(doc(db, "woos", wooID), {
-            woo_likes: arrayRemove(uid)
-        })
-        console.log("REMOVE")
-    }
+  const toggleIsLiked = () => {
+    isLiked ? removeUIDFromWooLikes() : addUIDToWooLikes();
+    saveNotification();
+  };
 
-    // const saveNotification = async () => {
-    //     try {
-    //         const docRef = await updateDoc(doc(db, "notifications"), {
-    //             is_read: false, notification_message: "liked your woo!", notification_type: "woo like", owner_uid: uid, receiver_uid: arrayUnion(ownerUID), timestamp: serverTimestamp, woo_id: wooID
-    //         })
-    //         console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef))
-    //     } catch (error) {
-    //         console.error("SAVE NOTIFICATION ERROR " + error)
-    //     }
-    // }
+  const toggleAddWoo = () => {
+    isWooMigo ? removeWooFromProfile() : addWooToProfile();
+  };
 
-    const saveNotification = async () => {
-        const timestamp = serverTimestamp()
-        if (uid != ownerUID) {  // prevents sending notification to self for liking own woo
-            try {
-                const docRef = await addDoc(collection(db, "notifications"), {
-                    is_read: false, notification_message: "liked your woo!", notification_type: "woo like", owner_uid: uid, timestamp: timestamp, receiver_uid: arrayUnion(ownerUID), woo_id: wooID
-                })
-                console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef))
-            } catch (error) {
-                console.error("SAVE NOTIFICATION ERROR " + error)
-            }
-        }
-    }
+  const confirmAddToWoo = () =>
+    Alert.alert(
+      "Add Woo",
+      "Are you sure you would like to add this woo to your woos?",
+      [
+        {
+          text: "Add",
+          onPress: () => navigation.navigate("Woos"),
+          style: "default",
+        },
+        {
+          text: "Cancel",
+          style: "destructive",
+          onPress: () => {
+            console.log("Clear Pressed");
+            clearNotfications;
+          },
+        },
+      ]
+    );
 
-    const toggleIsLiked = () => {
-        isLiked ? removeUIDFromWooLikes() : addUIDToWooLikes()
-        saveNotification()
-    }
-
-    const confirmAddToWoo = () =>
-        Alert.alert(
-            "Add Woo",
-            "Are you sure you would like to add this woo to your woos?",
-            [
-                {
-                    text: "Add",
-                    onPress: () => navigation.navigate('Woos'),
-                    style: "default"
-                },
-                {
-                    text: "Cancel",
-                    style: "destructive",
-                    onPress: () => {
-                        console.log("Clear Pressed")
-                        clearNotfications
-                    }
-                }
-            ]
-        );
-
-
-    return (
-        <Card containerStyle={styles.container}>
-            <View style={styles.likesWooMigosContainer}>
-                <View style={styles.likesContainer}>
-                    <Pressable style={{ marginEnd: 20, width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }} onPressOut={toggleIsLiked}>
-                        <Icon
-                            name="heart"
-                            type='font-awesome-5'
-                            color={woo_orange}
-                            solid={isLiked}
-                            size={25}
-                            onPress={toggleIsLiked}
-                        />
-                    </Pressable >
-                    <Text style={{}}>{wooLikes.length}</Text>
-                    {/* {wooType !== 'private' ?
+  return (
+    <Card containerStyle={styles.container}>
+      <View style={styles.likesWooMigosContainer}>
+        <View style={styles.likesContainer}>
+          <Pressable
+            style={{
+              marginEnd: 20,
+              width: 40,
+              height: 40,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPressOut={toggleIsLiked}
+          >
+            <Icon
+              name="heart"
+              type="font-awesome-5"
+              color={woo_orange}
+              solid={isLiked}
+              size={25}
+              onPress={toggleIsLiked}
+            />
+          </Pressable>
+          <Text style={{}}>{wooLikes.length}</Text>
+          {/* {wooType !== 'private' ?
                         <TouchableOpacity
                             onPress={() =>
                                 navigation.navigate('Share')
@@ -138,104 +195,103 @@ const LayoutWooLike = ({ wooLikes, wooMigos, wooType, uid, wooID, ownerUID }) =>
                         : <TouchableOpacity></TouchableOpacity>
                     } */}
 
-                    {wooType === 'public' ? <TouchableOpacity style={{ marginStart: 50 }} onPress={confirmAddToWoo}>
-                        <Icon
-                            name="plus-square"
-                            type='font-awesome-5'
-                            color={woo_gray}
-                        />
-                    </TouchableOpacity> : <TouchableOpacity></TouchableOpacity>}
-
-                </View>
-                {wooMigos &&
-                    <View style={styles.wooMigosContainer}>
-                        <View>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    navigation.navigate('WooMigosView', { migos: wooMigos })
-                                }>
-                                <Text style={styles.wooMigoCountText}>{Object.keys(wooMigos).filter((key) => key >= 0).length}</Text>
-                            </TouchableOpacity>
-
-                        </View>
-
-                        <View style={styles.wooMigosImagesContainer}>
-                            {
-                                wooMigos.length > 0 &&
-                                <WooMigoImage userID={wooMigos[0]} />
-                            }
-                            {
-                                wooMigos.length > 1 &&
-                                <WooMigoImage userID={wooMigos[1]} />
-                            }
-                            {
-                                wooMigos.length > 2 &&
-                                <WooMigoImage userID={wooMigos[2]} />
-                            }
-                            {
-                                wooMigos.length > 3 &&
-                                <WooMigoImage userID={wooMigos[3]} />
-                            }
-                        </View>
-                    </View>
+          {wooType === "public" && uid != ownerUID ? (
+            <TouchableOpacity
+              style={{ marginStart: 50 }}
+              onPress={toggleAddWoo}
+            >
+              {isWooMigo ? (
+                <Icon
+                  name="check-square"
+                  type="font-awesome-5"
+                  color={woo_gray}
+                />
+              ) : (
+                <Icon
+                  name="plus-square"
+                  type="font-awesome-5"
+                  color={woo_gray}
+                />
+              )}
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity></TouchableOpacity>
+          )}
+        </View>
+        {wooMigos && (
+          <View style={styles.wooMigosContainer}>
+            <View>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("WooMigosView", { migos: wooMigos })
                 }
-
+              >
+                <Text style={styles.wooMigoCountText}>
+                  {Object.keys(wooMigos).filter((key) => key >= 0).length}
+                </Text>
+              </TouchableOpacity>
             </View>
 
-        </Card>
-    )
-}
+            <View style={styles.wooMigosImagesContainer}>
+              {wooMigos.length > 0 && <WooMigoImage userID={wooMigos[0]} />}
+              {wooMigos.length > 1 && <WooMigoImage userID={wooMigos[1]} />}
+              {wooMigos.length > 2 && <WooMigoImage userID={wooMigos[2]} />}
+              {wooMigos.length > 3 && <WooMigoImage userID={wooMigos[3]} />}
+            </View>
+          </View>
+        )}
+      </View>
+    </Card>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        borderRadius: 5,
-        margin: 0,
-        padding: 10
-        // flex: .7,
-        // paddingTop: 5,
-        // paddingBottom: 5,
-        // marginTop: 5,
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        // backgroundColor: 'red'
-
-    },
-    likesWooMigosContainer: {
-        justifyContent: 'space-between',
-        // backgroundColor: 'red',
-        flexDirection: 'row',
-    },
-    likesContainer: {
-        flex: 1,
-        marginHorizontal: 15,
-        alignItems: 'center',
-        // justifyContent: 'space-around',
-        // backgroundColor: 'yellow',
-        flexDirection: 'row',
-
-    },
-    wooMigosContainer: {
-        flex: 1,
-        // backgroundColor: 'green',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        marginEnd: 5,
-
-    },
-    wooMigoCountText: {
-        textDecorationLine: "underline"
-    },
-    wooMigosImagesContainer: {
-        flexDirection: 'row',
-    },
-    wooMigoImage: {
-        width: 30,
-        height: 30,
-        borderRadius: 25,
-        marginEnd: 5
-    },
-})
+  container: {
+    width: "100%",
+    borderRadius: 5,
+    margin: 0,
+    padding: 10,
+    // flex: .7,
+    // paddingTop: 5,
+    // paddingBottom: 5,
+    // marginTop: 5,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // backgroundColor: 'red'
+  },
+  likesWooMigosContainer: {
+    justifyContent: "space-between",
+    // backgroundColor: 'red',
+    flexDirection: "row",
+  },
+  likesContainer: {
+    flex: 1,
+    marginHorizontal: 15,
+    alignItems: "center",
+    // justifyContent: 'space-around',
+    // backgroundColor: 'yellow',
+    flexDirection: "row",
+  },
+  wooMigosContainer: {
+    flex: 1,
+    // backgroundColor: 'green',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    marginEnd: 5,
+  },
+  wooMigoCountText: {
+    textDecorationLine: "underline",
+  },
+  wooMigosImagesContainer: {
+    flexDirection: "row",
+  },
+  wooMigoImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 25,
+    marginEnd: 5,
+  },
+});
 
 export default LayoutWooLike;
