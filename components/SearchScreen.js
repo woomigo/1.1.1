@@ -82,10 +82,10 @@ const SearchScreen = ({ navigation, route, }) => {
     const handleFollowUser = () => {
         console.log(`FOLLOW!!!! ${user.username}`)
         setView("loading")
-        if (user.profile_visibility === "public") {
+        if (user.is_private_profile === false) {
             addUIDToOwnerFollowing()
             addUIDToUserFollowers()
-        } else if (user.profile_visibility === "private") {
+        } else if (user.is_private_profile === true) {
             addUIDToOwnerRequestSent()
             addUIDToUserRequestReceived()
         }
@@ -93,12 +93,12 @@ const SearchScreen = ({ navigation, route, }) => {
 
     const handleAddMigo = () => {
         setView("loading")
-        if (user.profile_visibility === "public") {
+        if (user.is_private_profile === false) {
             addUIDToOwnerMigos()
             addUIDToUserMigos()
             removeUIDFromUserFollowing()
         }
-        else if (user.profile_visibility === "private") {
+        else if (user.is_private_profile === true) {
             addUIDToOwnerRequestSent()
             addUIDToUserRequestReceived()
         }
