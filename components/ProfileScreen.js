@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { Header, Icon, Avatar, Tab, TabView, } from "@rneui/themed";
+import { Header, Icon, Avatar, Tab, TabView } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
 import {
@@ -9,6 +9,8 @@ import {
   query,
   where,
   onSnapshot,
+  and,
+  or,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Drawer } from "react-native-drawer-layout";
@@ -48,7 +50,13 @@ const ProfileScreen = ({ navigation, route }) => {
       []
     );
 
-    const q = query(collection(db, "woos"), where("owner_uid", "==", uid));
+    const q = query(
+      collection(db, "woos"),
+      or(
+        where("owner_uid", "==", uid),
+        where("woo_migos", "array-contains", uid)
+      )
+     );
     const getOwnedWoos = onSnapshot(
       q,
       (querySnapshot) => {
