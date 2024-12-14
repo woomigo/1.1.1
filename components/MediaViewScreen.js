@@ -33,7 +33,7 @@ const MediaViewScreen = ({ route, navigation }) => {
                 centerContainerStyle={styles.centerComponent}
             />
             <Image
-                style={{width: '100%', height: 600}}
+                style={{width: '100%', height: 600, borderRadius: 25}}
                 source={{ uri: mediaUrl }}
             />
 
@@ -45,7 +45,8 @@ const MediaViewScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: woo_white
+        backgroundColor: woo_white,
+        padding: 5
         // justifyContent: 'center',
         // alignItems: 'center'
     },
