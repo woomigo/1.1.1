@@ -92,7 +92,7 @@ const WooListScreen = ({ route, navigation }) => {
                     rightIcon={!isListIconHidden && <Icon name="play" type='font-awesome-5' size={18} onPress={() => addListInput()} />}
                 />
             </KeyboardAvoidingView>
-            <ListViewChips chips={list}/>
+            <ListViewChips view={"list"} chips={list}/>
 
         </View>
     )

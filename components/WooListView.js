@@ -80,18 +80,7 @@ const WooListView = ({ navigation, route }) => {
           leftContainerStyle={styles.leftComponent}
           centerContainerStyle={styles.centerComponent}
         />
-        {/* <ListViewChips chips={wooList} /> */}
-
-        {wooList &&
-          wooList.map((l, i) => (
-            <ListItem key={i} bottomDivider>
-              {/* <Avatar source={{ uri: l.avatar_url }} /> */}
-              <ListItem.Content>
-                <ListItem.Title>{l}</ListItem.Title>
-                {/* <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle> */}
-              </ListItem.Content>
-            </ListItem>
-          ))}
+        <ListViewChips view={"list"} chips={wooList} />
       </View>
     </TouchableWithoutFeedback>
   );

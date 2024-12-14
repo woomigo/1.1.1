@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, FlatList, KeyboardAvoidingView } from 'react-native'
 import { Input, Icon } from "@rneui/themed";
 import LayoutUserItem from "./LayoutUserItem";
-import { woo_gray, woo_green, woo_orange, woo_red } from "../assets/colors";
+import { woo_black, woo_gray, woo_green, woo_orange, woo_red, woo_white } from "../assets/colors";
 import { list } from "firebase/storage";
 
 
@@ -98,7 +98,8 @@ const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "searc
             {users &&
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    backgroundColor={"#fff"}
+                    backgroundColor={woo_white}
+                    style={{height: '100%'}}
                     keyExtractor={user => user.id}
                     data={users}
                     renderItem={renderUsers}
@@ -116,26 +117,26 @@ const styles = StyleSheet.create({
 
     },
     searchBarContainer: {
-        backgroundColor: "#fff",
+        backgroundColor: woo_red,
         borderBottomColor: 'transparent',
         borderTopColor: 'transparent'
     },
     searchBarInputContaner: {
-        backgroundColor: '#f37320',
+        backgroundColor: woo_orange,
         height: 30
     },
     searchBarInput: {
-        backgroundColor: '#fff',
-        color: "#000",
+        backgroundColor: woo_white,
+        color: woo_black,
         paddingStart: 5,
         height: 30,
         fontSize: 12
     },
     searchBarIcon: {
-        color: '#fff'
+        color: woo_white
     },
     searchBarClearIcon: {
-        color: '#fff'
+        color: woo_white
     }
 })
 

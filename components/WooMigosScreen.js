@@ -78,7 +78,7 @@ const WooMigosScreen = ({ route, navigation }) => {
                 variant="determinate"
             /> */}
 
-            <ListViewUsers users={migos} returnUsers={returnMigosSelected} searchBoxPlaceholder="search migos" kind="checkbox" />
+            <ListViewUsers users={migos} returnUsers={returnMigosSelected} hideSearchBar searchBoxPlaceholder="search migos" kind="checkbox" />
 
         </View>
     )
