@@ -42,6 +42,9 @@ import MessagesScreen from "./components/MessagesScreens";
 import AddMediaWooGalleryView from "./components/AddMediaWooGalleryView";
 import ForgotPasswordView from "./components/ForgotPasswordScreen";
 import ForgotPasswordScreen from "./components/ForgotPasswordScreen";
+import SettingsScreen from "./components/SettingsScreen";
+import EditProfileScreen from "./components/EditProfileScreen";
+import PrivacyPolicyScreen from "./components/PrivacyPolicyScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -142,7 +145,25 @@ const ProfileStack = () => {
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />
-            <Stack.Screen
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
         name="WooCommentsView"
         component={WooCommentsView}
         options={{ headerShown: false }}
