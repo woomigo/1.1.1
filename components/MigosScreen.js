@@ -151,6 +151,7 @@ const MigosScreen = ({ navigation, route }) => {
                 containerStyle={{
                     backgroundColor: "white"
                 }}
+                style={styles.tabContainer}
             >
                 <Tab.Item
                     title="following"
@@ -168,23 +169,29 @@ const MigosScreen = ({ navigation, route }) => {
                     icon={{ name: 'people-arrows', type: 'font-awesome-5', color: woo_orange }}
                 />
             </Tab>
-            <TabView value={index} onChange={setIndex} animationType="spring">
+            <TabView value={index} onChange={setIndex} animationType="spring" style={{        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 4,
+        marginTop: 5,
+        marginBottom: 5,}}>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>following</Text>
-                        <ListViewUsers users={following} searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)} />
+                        <ListViewUsers users={following} hideSearchBar searchBoxPlaceholder="search following by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)} />
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>followers</Text>
-                        <ListViewUsers users={followers} searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='remove'  handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}/>
+                        <ListViewUsers users={followers} hideSearchBar searchBoxPlaceholder="search followers by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='remove'  handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}/>
                     </View>
                 </TabView.Item>
                 <TabView.Item style={{ width: '100%' }}>
                     <View style={styles.tabHeader}>
                         <Text style={styles.tabText}>migos</Text>
-                        <ListViewUsers users={migos} searchBoxPlaceholder="search migos by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowMigo(user)} />
+                        <ListViewUsers users={migos} hideSearchBar searchBoxPlaceholder="search migos by @username" kind="single" singleBtnColor={woo_gray} singleBtnText='unfollow' handleSingleBtnOnClick={(user) => handleUnfollowMigo(user)} />
                     </View>
                 </TabView.Item>
             </TabView>
@@ -221,9 +228,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    tabContainer: {
+
+      },
     tabHeader: {
         marginTop: 10,
-        padding: 5,
+        // padding: 5,
         // alignItems: 'center'
     },
     tabText: {

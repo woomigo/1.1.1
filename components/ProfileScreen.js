@@ -56,7 +56,7 @@ const ProfileScreen = ({ navigation, route }) => {
         where("owner_uid", "==", uid),
         where("woo_migos", "array-contains", uid)
       )
-     );
+    );
     const getOwnedWoos = onSnapshot(
       q,
       (querySnapshot) => {
@@ -152,9 +152,9 @@ const ProfileScreen = ({ navigation, route }) => {
             height: 3,
           }}
           containerStyle={{
-            marginTop: 20,
             backgroundColor: woo_white,
           }}
+          style={styles.tabContainer}
         >
           <Tab.Item
             title="woos"
@@ -222,15 +222,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  subHeader: {
-    marginTop: 10,
-    padding: 0,
-    flexDirection: "row",
-    justifyContent: "space-around",
+  tabContainer: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 4,
+    marginTop: 5,
+    marginBottom: 5,
   },
   tabHeader: {
-    marginTop: 10,
-    padding: 5,
+    // padding: 5,
     alignItems: "center",
   },
   tabText: {
