@@ -6,7 +6,7 @@ import { woo_black, woo_gray, woo_green, woo_orange, woo_red, woo_white } from "
 import { list } from "firebase/storage";
 
 
-const ListViewUsers = ({ returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = woo_orange, doubleBtn1Color = woo_orange, doubleBtn2Color = woo_gray, handleSingleBtnOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
+const ListViewUsers = ({ uid, returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = woo_orange, doubleBtn1Color = woo_orange, doubleBtn2Color = woo_gray, handleSingleBtnOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
 
     const [usersSelected, setUsersSelected] = useState([]);
     const [searchValue, setSearchValue] = useState([])

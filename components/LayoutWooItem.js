@@ -11,14 +11,14 @@ import LayoutWooList from "./LayoutWooList";
 // import LayoutWooVideo from './LayoutWooVideo';
 
 const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
-
   useEffect(() => {
-    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo.item.id)}`)
-})
+    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo.item.id)}`);
+  });
 
   return (
     <View style={styles.container}>
       <LayoutWooInfo
+        uid={uid}
         wooType={woo.item.data().woo_type}
         ownerUID={woo.item.data().owner_uid}
         sharedProfilePic={woo.item.data().shared_by_profile_pic}
@@ -52,10 +52,14 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
         wooType={woo.item.data().woo_type}
       />
       <LayoutWooShowComment
+        uid={uid}
         wooID={woo.item.id}
         wooComments={woo.item.data().woo_comments}
       />
-      <LayoutWooGallery gallery={woo.item.data().woo_gallery} nav={"WooGalleryView"} />
+      <LayoutWooGallery
+        gallery={woo.item.data().woo_gallery}
+        nav={"WooGalleryView"}
+      />
       <LayoutWooList
         wooID={woo.item.id}
         nav={"WooListView"}

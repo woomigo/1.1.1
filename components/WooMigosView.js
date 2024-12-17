@@ -7,7 +7,7 @@ import { woo_black, woo_orange } from '../assets/colors';
 
 const WooMigosView = ({ navigation, route }) => {
 
-    const { migos } = route.params;
+    const { uid, migos } = route.params;
 
     const [index, setIndex] = useState(0);
 
@@ -39,7 +39,7 @@ const WooMigosView = ({ navigation, route }) => {
                 centerContainerStyle={styles.centerComponent}
             />
 
-            <ListViewUsers users={migos} searchBoxPlaceholder="search woo migos" />
+            <ListViewUsers uid={uid} users={migos} hideSearchBar searchBoxPlaceholder="search woo migos" />
         </View>
 
 

@@ -1,32 +1,31 @@
-import React from 'react'
-import { View, StyleSheet, FlatList } from 'react-native'
-import LayoutCommentItem from './LayoutCommentItem'
+import React from "react";
+import { View, StyleSheet, FlatList } from "react-native";
+import LayoutCommentItem from "./LayoutCommentItem";
 
-const ListViewComments = ({ comments }) => {
+const ListViewComments = ({ uid, comments }) => {
+  const renderComments = (comment) => (
+    <LayoutCommentItem uid={uid} comment={comment} />
+  );
 
-    const renderComments = (comment) => (
-        <LayoutCommentItem comment={comment} />
-    )
-
-    return (
-        <View style={styles.container}>
-            <FlatList
-                showsVerticalScrollIndicator={false}
-                backgroundColor={"#fff"}
-                keyExtractor={notification => notification.id}
-                data={comments}
-                renderItem={renderComments}
-                initialNumToRender={3}
-                maxToRenderPerBatch={3}
-            />
-        </View>
-    )
-}
+  return (
+    <View style={styles.container}>
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        backgroundColor={"#fff"}
+        keyExtractor={(notification) => notification.id}
+        data={comments}
+        renderItem={renderComments}
+        initialNumToRender={3}
+        maxToRenderPerBatch={3}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    }
-})
+  container: {
+    flex: 1,
+  },
+});
 
 export default ListViewComments;
