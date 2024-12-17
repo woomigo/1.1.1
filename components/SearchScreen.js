@@ -140,7 +140,7 @@ const SearchScreen = ({ navigation, route }) => {
     setView("none");
     const q = query(
       collection(db, "users"),
-      where("username", "==", searchValue)
+      where("username", "==", searchValue.toLowerCase().trim())
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach(

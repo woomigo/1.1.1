@@ -32,7 +32,7 @@ const ListViewUsers = ({ uid, returnUsers, users, kind, searchBoxPlaceholder = "
             setSearchIconHidden(true)
         }
         setIsSearchError(false)
-        setSearchValue(input)
+        setSearchValue(input.toLowerCase().trim())
     }
 
     const handleSearchEndEditing = () => {

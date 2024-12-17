@@ -21,7 +21,7 @@ const RegisterUsernameScreen = ({ route, navigation }) => {
 
     const handleUsernameOnChange = (username) => {
         setIsUsernameError(false)
-        setUsername(username)
+        setUsername(username.toLowerCase().trim())
     }
 
     const handleUsernameOnFocus = () => {
