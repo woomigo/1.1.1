@@ -4,8 +4,11 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 import { Icon, Avatar, Card } from "@rneui/themed";
 import { woo_gray, woo_black } from '../assets/colors';
+import { useNavigation } from '@react-navigation/native';
 
 const LayoutWooInfo = ({ wooType, ownerUID, sharedProfilePic }) => {
+
+    const navigation = useNavigation();
 
     const [user, setUser] = useState()
     const [username, setUsername] = useState()
@@ -49,7 +52,7 @@ const LayoutWooInfo = ({ wooType, ownerUID, sharedProfilePic }) => {
                     />
                 </TouchableWithoutFeedback>
                 <View style={{ justifyContent: 'flex-end' }}>
-                    <TouchableWithoutFeedback >
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('User', { user: user })}>
                         <Text style={styles.wooOwnerUsernameText}>@{username}</Text>
                     </TouchableWithoutFeedback>
                 </View>

@@ -577,14 +577,14 @@ export const MenuItems = [
 export const UserMenuItems = [
   {
     id: 0,
-    text: "message",
-    icon: "envelope",
+    text: "block",
+    icon: "ban",
     navigation: "Messages",
   },
   {
     id: 1,
-    text: "settings",
-    icon: "cog",
+    text: "report",
+    icon: "flag",
     navigation: "UserSettings",
   },
 ];
