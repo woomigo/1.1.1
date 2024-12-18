@@ -203,7 +203,7 @@ const MessagesScreen = ({ route, navigation }) => {
             <Avatar
               rounded
               size="medium"
-              onPress={() => navigation.navigate("User")}
+              onPress={() => navigation.navigate("User", { user: user })}
               source={{ uri: user.profile_pic_url }}
             />
           </View>

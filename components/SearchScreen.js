@@ -52,82 +52,6 @@ const SearchScreen = ({ navigation, route }) => {
 
   const searchRef = useRef();
 
-  const userRef = doc(db, "users", uid);
-  // const searchUserRef = ;
-
-  const addUIDToOwnerFollowing = async () => {
-    await updateDoc(userRef, {
-      following: arrayUnion(user.uid),
-    });
-  };
-
-  const addUIDToUserFollowers = async () => {
-    await updateDoc(doc(db, "users", user.uid), {
-      followers: arrayUnion(uid),
-    });
-    setView("success");
-  };
-
-  const addUIDToOwnerRequestSent = async () => {
-    await updateDoc(userRef, {
-      sent_migo_requests: arrayUnion(user.uid),
-    });
-  };
-
-  const addUIDToUserRequestReceived = async () => {
-    await updateDoc(doc(db, "users", user.uid), {
-      received_migo_requests: arrayUnion(uid),
-    });
-    setView("successMigoRequest");
-  };
-
-  const addUIDToOwnerMigos = async () => {
-    await updateDoc(userRef, {
-      migos: arrayUnion(user.uid),
-    });
-  };
-
-  const addUIDToUserMigos = async () => {
-    await updateDoc(doc(db, "users", user.uid), {
-      migos: arrayUnion(uid),
-    });
-    setView("migoSuccess");
-  };
-
-  const removeUIDFromUserFollowing = async () => {
-    await updateDoc(doc(db, "users", user.uid), {
-      following: arrayRemove(uid),
-    });
-  };
-
-  const handleFollowUser = () => {
-    console.log(`FOLLOW!!!! ${user.username}`);
-    setView("loading");
-    if (user.is_private_profile === false) {
-      addUIDToOwnerFollowing();
-      addUIDToUserFollowers();
-    } else if (user.is_private_profile === true) {
-      addUIDToOwnerRequestSent();
-      addUIDToUserRequestReceived();
-    }
-  };
-
-  const handleAddMigo = () => {
-    setView("loading");
-    if (user.is_private_profile === false) {
-      addUIDToOwnerMigos();
-      addUIDToUserMigos();
-      removeUIDFromUserFollowing();
-    } else if (user.is_private_profile === true) {
-      addUIDToOwnerRequestSent();
-      addUIDToUserRequestReceived();
-    }
-  };
-
-  const handleUserFollowed = () => {
-    console.log("YUP IT WORKED!!!");
-  };
-
   const handleSearchOnFocus = () => {
     setSearchValue();
     setUser();
@@ -391,7 +315,7 @@ const SearchScreen = ({ navigation, route }) => {
               style={styles.container}
               onPress={() => {
                 user.uid !== uid &&
-                    navigation.navigate("User", { user: user });
+                  navigation.navigate("User", { userUID: user.uid });
               }}
             >
               <View style={styles.userInfoContainer}>

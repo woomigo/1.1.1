@@ -3,7 +3,17 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, ButtonGroup } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import ListViewGalleryWoo from "./ListViewGalleryWoo";
-import { collection, query, where, onSnapshot, and } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  and,
+  doc,
+  arrayRemove,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Drawer } from "react-native-drawer-layout";
 import { woo_black, woo_gray, woo_orange, woo_white } from "../assets/colors";
@@ -11,17 +21,45 @@ import UserMenuScreen from "./UserMenuScreen";
 
 const UserScreen = ({ navigation, route }) => {
   const [isFollowerOrMigo, setIsFollowerOrMigo] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [woos, setWoos] = useState();
   const [open, setOpen] = useState(false);
+  const [gallery, setGallery] = useState([]);
+  const [username, setUsername] = useState();
+  const [isPrivateProfile, setIsPrivateProfile] = useState();
+  const [profilePicURL, setProfilePicURL] = useState();
+  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [migos, setMigos] = useState([]);
+  const [receivedMigoRequests, setReceivedMigoRequests] = useState();
 
   const { user, uid } = route.params;
+
+  const userRef = doc(db, "users", uid);
 
   useEffect(() => {
     user.migos.includes(uid) || user.followers.includes(uid)
       ? setIsFollowerOrMigo(true)
       : setIsFollowerOrMigo(false);
+
+    const docRef = doc(db, "users", user.uid);
+    const getProfileInfo = onSnapshot(
+      docRef,
+      (doc) => {
+        console.log("Document data:", doc.data());
+        setGallery(doc.data().gallery);
+        setUsername(doc.data().username);
+        setIsPrivateProfile(doc.data().is_private_profile);
+        setProfilePicURL(doc.data().profile_pic_url);
+        setFollowing(doc.data().following);
+        setFollowers(doc.data().followers);
+        setMigos(doc.data().migos);
+        setReceivedMigoRequests(doc.data().received_migo_requests);
+      },
+      (error) => {},
+      []
+    );
 
     const q = query(
       collection(db, "woos"),
@@ -38,10 +76,169 @@ const UserScreen = ({ navigation, route }) => {
       },
       (error) => {}
     );
+
+    console.log(`FOLLOWERS ${followers} MIGOS ${migos}`);
+
     return () => {
+      getProfileInfo();
       unsubscribe();
     };
-  }, [isFollowerOrMigo]);
+  }, []);
+
+  const addUIDToOwnerFollowing = async () => {
+    await updateDoc(userRef, {
+      following: arrayUnion(user.uid),
+    });
+  };
+
+  const addUIDToUserFollowers = async () => {
+    await updateDoc(doc(db, "users", user.uid), {
+      followers: arrayUnion(uid),
+    });
+  };
+
+  const addUIDToUserFollowing = async () => {
+    await updateDoc(doc(db, "users", user.uid), {
+      following: arrayUnion(uid),
+    });
+  };
+
+  const addUIDToOwnerRequestSent = async () => {
+    await updateDoc(userRef, {
+      sent_migo_requests: arrayUnion(user.uid),
+    });
+    console.log("OWNER REQUEST SENT TO USER");
+  };
+
+  const addUIDToUserRequestReceived = async () => {
+    await updateDoc(doc(db, "users", user.uid), {
+      received_migo_requests: arrayUnion(uid),
+    });
+    console.log("USER RECEIVES REQUEST FROM OWNER");
+  };
+
+  const removeUIDFromOwnerSent = async () => {
+    console.log("REMOVEFROMOWNER");
+    await updateDoc(userRef, {
+      sent_migo_requests: arrayRemove(user.uid),
+    });
+  };
+
+  const removeUIDFromUserReceived = async () => {
+    console.log("REMOVEFROMUSER");
+    await updateDoc(doc(db, "users", user.uid), {
+      received_migo_requests: arrayRemove(uid),
+    });
+    // setView("migoRequestSuccess")
+  };
+
+  const addUIDToOwnerMigos = async () => {
+    await updateDoc(userRef, {
+      migos: arrayUnion(user.uid),
+    });
+  };
+
+  const addUIDToUserMigos = async () => {
+    await updateDoc(doc(db, "users", user.uid), {
+      migos: arrayUnion(uid),
+    });
+  };
+
+  const removeUIDToOwnerMigos = async () => {
+    await updateDoc(userRef, {
+      migos: arrayRemove(user.uid),
+    });
+  };
+
+  const removeUIDToUserMigos = async () => {
+    await updateDoc(doc(db, "users", user.uid), {
+      migos: arrayRemove(uid),
+    });
+  };
+
+  const removeUIDFromUserFollowers = async () => {
+    await updateDoc(doc(db, "users", user.uid), {
+      followers: arrayRemove(uid),
+    });
+  };
+  const removeUIDFromUserFollowing = async () => {
+    await updateDoc(doc(db, "users", user.uid), {
+      following: arrayRemove(uid),
+    });
+  };
+
+  const handleFollowUser = () => {
+    console.log(`FOLLOW!!!! ${username}`);
+    setLoading("");
+    if (isPrivateProfile === false) {
+      addUIDToOwnerFollowing();
+      addUIDToUserFollowers();
+    } else if (isPrivateProfile === true) {
+      addUIDToOwnerRequestSent();
+      addUIDToUserRequestReceived();
+    }
+  };
+
+  const handleAddMigo = () => {
+    setLoading("");
+    if (isPrivateProfile === false) {
+      addUIDToOwnerMigos();
+      addUIDToUserMigos();
+      removeUIDFromUserFollowing();
+    } else if (isPrivateProfile === true) {
+      addUIDToOwnerRequestSent();
+      addUIDToUserRequestReceived();
+    }
+  };
+
+  const handleUnfollow = () => {
+    if (migos.includes(uid)) {
+      removeUIDToOwnerMigos();
+      removeUIDToUserMigos();
+      addUIDToUserFollowing();
+      setLoading("");
+    } else if (followers.includes(uid)) {
+      removeUIDFromUserFollowers()
+    }
+  };
+
+  const handleCancelMigoRequest = () => {
+    console.log("HANDLE CANCEL");
+    removeUIDFromOwnerSent();
+    removeUIDFromUserReceived();
+  };
+
+  const handleUserFollowed = () => {
+    console.log("YUP IT WORKED!!!");
+  };
+
+  const onUnfollowSubmit = () => {
+    console.log("UNFOLLOW");
+    handleUnfollow();
+  };
+
+  const onCancelMigoRequestSubmit = () => {
+    console.log("CANCEL");
+    if (receivedMigoRequests.includes(uid)) {
+      handleCancelMigoRequest();
+    }
+  };
+
+  const onfollowMigoRequestsSubmit = () => {
+    if (following.includes(uid)) {
+      //migo or migo request
+      console.log(
+        "They're following me and now this is a request to become a migo"
+      );
+      handleAddMigo();
+    } else if (!migos.includes(uid) || !followers.includes(uid)) {
+      //follow or follow request
+      console.log(
+        "We're not migos and I don't already follow them and this is a request to follow them"
+      );
+      handleFollowUser();
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -79,7 +276,7 @@ const UserScreen = ({ navigation, route }) => {
                 rounded
                 size="medium"
                 onPress={() => navigation.navigate("Profile")}
-                source={{ uri: user.profile_pic_url }}
+                source={{ uri: profilePicURL }}
               />
               <View>
                 <Text
@@ -90,7 +287,7 @@ const UserScreen = ({ navigation, route }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  @{user.username}
+                  @{username}
                 </Text>
                 <Text
                   style={{
@@ -99,7 +296,7 @@ const UserScreen = ({ navigation, route }) => {
                     textAlign: "center",
                   }}
                 >
-                  migos: {user.migos.length}
+                  migos: {migos.length}
                 </Text>
               </View>
             </View>
@@ -129,23 +326,42 @@ const UserScreen = ({ navigation, route }) => {
           }}
         >
           {isFollowerOrMigo ? (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                onUnfollowSubmit();
+              }}
+            >
               <Icon
                 name="user-minus"
                 solid
                 type="font-awesome-5"
                 color={woo_gray}
                 size={25}
+                onPress={() => {
+                  onUnfollowSubmit();
+                }}
+              />
+            </TouchableOpacity>
+          ) : user.received_migo_requests.includes(uid) ? (
+            <TouchableOpacity onPress={() => onCancelMigoRequestSubmit()}>
+              <Icon
+                name="user-clock"
+                solid
+                type="font-awesome-5"
+                color={woo_gray}
+                size={25}
+                onPress={() => onCancelMigoRequestSubmit()}
               />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => onfollowMigoRequestsSubmit()}>
               <Icon
                 name="user-plus"
                 solid
                 type="font-awesome-5"
                 color={woo_gray}
                 size={25}
+                onPress={() => onfollowMigoRequestsSubmit()}
               />
             </TouchableOpacity>
           )}
@@ -181,7 +397,7 @@ const UserScreen = ({ navigation, route }) => {
             }}
           >
             <Icon
-              name={"lock"}
+              name={"user-lock"}
               type="font-awesome-5"
               color={woo_black}
               size={40}
@@ -196,7 +412,7 @@ const UserScreen = ({ navigation, route }) => {
                 fontSize: 18,
               }}
             >
-              {`@${user.username}'s`}
+              {`@${username}'s`}
             </Text>
             <Text
               style={{
@@ -262,7 +478,7 @@ const UserScreen = ({ navigation, route }) => {
               <TabView.Item style={{ width: "100%" }}>
                 <View style={styles.tabHeader}>
                   <Text style={styles.tabText}>Gallery</Text>
-                  <ListViewGallery gallery={user.gallery} view={"grid"} />
+                  <ListViewGallery gallery={gallery} view={"grid"} />
                 </View>
               </TabView.Item>
             </TabView>
