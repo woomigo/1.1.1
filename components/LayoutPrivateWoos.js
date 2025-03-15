@@ -7,8 +7,9 @@ import {
   Text,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { woo_orange } from "../assets/colors";
 
-const LayoutPrivateWoos = ({ image, isVisible }) => {
+const LayoutPrivateWoos = ({ image, isVisible, isRead = true }) => {
   useEffect(() => {});
 
   const navigation = useNavigation();
@@ -18,9 +19,12 @@ const LayoutPrivateWoos = ({ image, isVisible }) => {
       <TouchableWithoutFeedback onPress={() => {}}>
         <View>
           {isVisible ? (
-            <View style={styles.image}></View>
+            <View style={isRead ? styles.image : styles.imageUnread}></View>
           ) : (
-            <Image style={styles.image} source={{ uri: image }} />
+            <Image
+              style={isRead ? styles.image : styles.imageUnread}
+              source={{ uri: image }}
+            />
           )}
         </View>
       </TouchableWithoutFeedback>
@@ -38,6 +42,15 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 25,
+  },
+  imageUnread: {
+    backgroundColor: "#d9d9d9",
+    margin: 5,
+    width: 150,
+    height: 150,
+    borderRadius: 25,
+    borderWidth: 3,
+    borderColor: woo_orange,
   },
 });
 
