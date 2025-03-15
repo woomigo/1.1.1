@@ -12,6 +12,10 @@ const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, n
         <LayoutGalleryItem size={size} view={view} image={image.item} nav={nav} navParams={gallery} horizBorderRadius={horizBorderRadius} />
     )
 
+    const renderHorizontalGalleryPreview = (image) => (
+        <LayoutGalleryItem size={size} view={view} image={image.item.image} nav={nav} navParams={navParams} horizBorderRadius={horizBorderRadius} />
+    )
+
     const wait = (timeout) => {
         return new Promise(resolve => setTimeout(resolve, timeout));
     }
@@ -64,7 +68,7 @@ const ListViewGallery = ({ gallery, woos, view, size, isTrunc, truncText, nav, n
                     style={styles.wooGalleryPreviewList}
                     backgroundColor={"#fff"}
                     data={gallery}
-                    renderItem={renderGalleryPreview} />;
+                    renderItem={renderHorizontalGalleryPreview} />;
             default:
                 return '';
         }
