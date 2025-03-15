@@ -1,13 +1,9 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import LayoutWooGallery from "./LayoutWooGallery";
 import LayoutWooImage from "./LayoutWooImage";
 import LayoutWooInfo from "./LayoutWooInfo";
 import LayoutWooLike from "./LayoutWooLike";
-import LayoutWooLocation from "./LayoutWooLocation";
-import LayoutWooShowComment from "./LayoutWooShowComment";
 import { woo_white } from "../assets/colors";
-import LayoutWooList from "./LayoutWooList";
 // import LayoutWooVideo from './LayoutWooVideo';
 
 const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
@@ -16,14 +12,8 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
   });
 
   return (
-    <View style={styles.container}>
-      <LayoutWooInfo
-        uid={uid}
-        wooType={woo.item.data().woo_type}
-        ownerUID={woo.item.data().owner_uid}
-        sharedProfilePic={woo.item.data().shared_by_profile_pic}
-      />
-      {woo.item.data().woo_media_url != null ? (
+    <View style={styles.container}>      {
+      woo.item.data().woo_media_url != null ? (
         <LayoutWooImage
           wooID={woo.item.id}
           image={woo.item.data().woo_media_url}
@@ -35,14 +25,7 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
           currentVisibleIndex={currentVisibleIndex}
           currentIndex={currentIndex}
         />
-      )}
-      <LayoutWooLocation
-        wooDate={woo.item.data().woo_date}
-        wooTime={woo.item.data().woo_time}
-        startTime={woo.item.data().woo_start_time}
-        endTime={woo.item.data().woo_end_time}
-        wooLocation={woo.item.data().woo_location}
-      />
+      )}      
       <LayoutWooLike
         uid={uid}
         wooID={woo.item.id}
@@ -51,19 +34,17 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
         wooMigos={woo.item.data().woo_migos}
         wooType={woo.item.data().woo_type}
       />
-      <LayoutWooShowComment
+      <LayoutWooInfo
         uid={uid}
-        wooID={woo.item.id}
-        wooComments={woo.item.data().woo_comments}
-      />
-      <LayoutWooGallery
-        gallery={woo.item.data().woo_gallery}
-        nav={"WooGalleryView"}
-      />
-      <LayoutWooList
-        wooID={woo.item.id}
-        nav={"WooListView"}
-        chips={woo.item.data().woo_list}
+        wooType={woo.item.data().woo_type}
+        ownerUID={woo.item.data().owner_uid}
+        sharedProfilePic={woo.item.data().shared_by_profile_pic}
+        wooMigos={woo.item.data().woo_migos}
+        wooDate={woo.item.data().woo_date}
+        wooTime={woo.item.data().woo_time}
+        startTime={woo.item.data().woo_start_time}
+        endTime={woo.item.data().woo_end_time}
+        wooLocation={woo.item.data().woo_location}
       />
     </View>
   );
@@ -74,6 +55,7 @@ const styles = StyleSheet.create({
     flex: 14,
     backgroundColor: woo_white,
     padding: 5,
+    paddingBottom: 10,
     marginBottom: 5,
   },
 });

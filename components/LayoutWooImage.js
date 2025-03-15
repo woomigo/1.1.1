@@ -20,9 +20,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 8,
     }, image: {
+        backgroundColor: "#d9d9d9",
         height: 500,
-        width: '100%',
-        borderRadius: 5,
+        // width: '100%',
+        borderRadius: 25,
+        margin: 10
     }
 })
 
