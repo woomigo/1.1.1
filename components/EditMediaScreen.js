@@ -7,22 +7,48 @@ import {
   Pressable,
   ImageBackground,
 } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome6";
 import { Icon, Overlay, Button, Dialog } from "@rneui/themed";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { woo_gray, woo_orange, woo_red, woo_white } from "../assets/colors";
+import {
+  woo_gray,
+  woo_orange,
+  woo_red,
+  woo_white,
+  woo_black,
+} from "../assets/colors";
 import { db, storage } from "../firebaseConfig";
+import TopSheet from "./TopSheetComponent";
 
 const EditMediaScreen = ({ navigation, route }) => {
   const { uid, wooMedia, isImage } = route.params;
   const [visible, setVisible] = useState(false);
   const [imageStorageProgress, setImageStorageProgress] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const userRef = doc(db, "users", uid);
 
+  const topPosition = useSharedValue(-300); // Initial position off-screen
+
   const toggleOverlay = () => {
     setVisible(!visible);
+  };
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      top: withTiming(topPosition.value, { duration: 300 }),
+    };
+  });
+
+  const toggleTopSheet = () => {
+    setIsVisible(!isVisible);
   };
 
   const uploadImage = async (uri, fileType) => {
@@ -65,8 +91,8 @@ const EditMediaScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log(`EDITMEDIA === ${JSON.stringify(wooMedia)}`);
-  });
+    topPosition.value = isVisible ? -650 : -350;
+  }, [isVisible]);
 
   return (
     <View style={styles.container}>
@@ -86,19 +112,32 @@ const EditMediaScreen = ({ navigation, route }) => {
           <Dialog.Loading />
         </Dialog>
         <View style={styles.buttonContainer}>
-          <View style={styles.topButtonContainer}>
-            <TouchableOpacity
-              style={styles.flipCameraButton}
-              onPress={() => navigation.navigate("Camera")}
-            >
-              <Icon
-                name="times"
-                type="font-awesome-5"
-                color={"white"}
-                size={30}
-              />
-            </TouchableOpacity>
-          </View>
+        <TopSheet isVisible={isVisible} />
+          <Animated.View style={[styles.topSheet, animatedStyle]}>
+            <View style={styles.topButtonContainer}> 
+            <View style={styles.filterButtonContainer}>   
+              <TouchableOpacity
+                  style={styles.filterButton}
+                  onPress={() => navigation.navigate("Camera")}
+                >
+                  <Icon
+                    name="times"
+                    type="font-awesome-5"
+                    color={woo_black}
+                    size={30}
+                  />
+                </TouchableOpacity>
+                </View>
+              <View style={styles.filterButtonContainer}>
+                <TouchableOpacity
+                  style={styles.filterButton}
+                  onPress={toggleTopSheet}
+                >
+                  <FontAwesomeIcon name="sliders" size={30} color={woo_black} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Animated.View>
           <View style={styles.bottomButtonContainer}>
             <TouchableOpacity
               style={styles.button}
@@ -107,7 +146,7 @@ const EditMediaScreen = ({ navigation, route }) => {
               <Icon
                 name="user-plus"
                 type="font-awesome-5"
-                color={"white"}
+                color={woo_black}
                 size={30}
               />
             </TouchableOpacity>
@@ -122,7 +161,7 @@ const EditMediaScreen = ({ navigation, route }) => {
               <Icon
                 name="images"
                 type="font-awesome-5"
-                color={"white"}
+                color={woo_black}
                 size={30}
               />
             </Pressable>
@@ -130,7 +169,7 @@ const EditMediaScreen = ({ navigation, route }) => {
               <Icon
                 name="chevron-right"
                 type="font-awesome-5"
-                color={woo_white}
+                color={woo_black}
                 size={35}
               />
             </TouchableOpacity>
@@ -164,7 +203,7 @@ const EditMediaScreen = ({ navigation, route }) => {
               wooType: "private",
             });
           }}
-          buttonStyle={{ margin: 10, backgroundColor: woo_gray }}
+          buttonStyle={{ margin: 10, backgroundColor: woo_gray, borderRadius: 25 }}
         />
         <Button
           icon={
@@ -184,7 +223,7 @@ const EditMediaScreen = ({ navigation, route }) => {
               wooType: "public",
             });
           }}
-          buttonStyle={{ margin: 10, backgroundColor: woo_gray }}
+          buttonStyle={{ margin: 10, backgroundColor: woo_gray, borderRadius: 25 }}
         />
         <Button
           icon={
@@ -198,7 +237,7 @@ const EditMediaScreen = ({ navigation, route }) => {
           }
           title="back to edit woo"
           onPress={toggleOverlay}
-          buttonStyle={{ margin: 10, backgroundColor: woo_red }}
+          buttonStyle={{ margin: 10, backgroundColor: woo_red, borderRadius: 25 }}
         />
       </Overlay>
     </View>
@@ -215,25 +254,51 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   topButtonContainer: {
-    // backgroundColor: 'red',
+    flex: 1,
+    backgroundColor: 'red',
     flexDirection: "row",
-    marginTop: 75,
+    justifyContent: 'space-between',
     marginHorizontal: 20,
   },
   bottomButtonContainer: {
-    // backgroundColor: 'green',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+    borderRadius: 50,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     marginBottom: 50,
-    marginHorizontal: 20,
+    marginHorizontal: 40,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
   },
   overlay: {
     padding: 40,
+    borderRadius: 50,
     // backgroundColor: 'red'
   },
+  filterButtonContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 50,
+    width: 50,
+    borderRadius: 35,
+  },
+  filterButton: {
+    backgroundColor: "#d9d9d950",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+  },
   button: {
-    margin: 10,
+    backgroundColor: "#d9d9d9",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 60,
+    width: 60,
+    borderRadius: 30,
   },
   textPrimary: {
     marginVertical: 20,

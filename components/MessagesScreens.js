@@ -195,7 +195,10 @@ const MessagesScreen = ({ route, navigation }) => {
             type="font-awesome-5"
             color={woo_black}
             size={25}
-            onPress={() => navigation.navigate("MessagesPreview")}
+            onPress={() => {
+              // navigation.popToTop();
+              navigation.goBack();
+            }}
           />
         }
         centerComponent={
@@ -219,7 +222,7 @@ const MessagesScreen = ({ route, navigation }) => {
           keyboardVerticalOffset={keyboardVerticalOffset}
         >
           <FlatList
-            style={{ height: '90%' }}
+            style={{ height: "90%" }}
             // inverted
             showsVerticalScrollIndicator={false}
             keyExtractor={(message) => message.id}

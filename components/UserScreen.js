@@ -198,7 +198,7 @@ const UserScreen = ({ navigation, route }) => {
       addUIDToUserFollowing();
       setLoading("");
     } else if (followers.includes(uid)) {
-      removeUIDFromUserFollowers()
+      removeUIDFromUserFollowers();
     }
   };
 
@@ -365,7 +365,15 @@ const UserScreen = ({ navigation, route }) => {
               />
             </TouchableOpacity>
           )}
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("MessagesTab", {
+                screen: "Messages",
+                initial: false,
+                params: { user: user },
+              })
+            }
+          >
             <Icon
               name="envelope"
               solid
