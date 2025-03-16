@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
+  SafeAreaView,
+  Dimensions,
 } from "react-native";
 import { Header, Icon, Input, Avatar, Skeleton } from "@rneui/themed";
 import {
@@ -33,6 +35,7 @@ import { FlatList } from "react-native";
 import ListViewUsers from "./ListViewUsers";
 import { SelfIdentity } from "./shared";
 import { render } from "react-native-web";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 const SearchScreen = ({ navigation, route }) => {
   const { uid } = route.params;
@@ -209,74 +212,130 @@ const SearchScreen = ({ navigation, route }) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Header
-          containerStyle={styles.header}
-          backgroundColor={"#fff"}
-          // leftComponent={
+    <SafeAreaView style={styles.container}>
+      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+      <View style={styles.header}>
+        <View
+          style={{
+            // backgroundColor: "blue",
+            flex: 3,
+            alignItems: "flex-start",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 22,
+              color: woo_black,
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            search
+          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            // backgroundColor: "red",
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
+          <FontAwesome6Icon
+            name="magnifying-glass"
+            size={26}
+            color={woo_black}
+            onPress={() => setIsPrivateVisible(!isPrivateVisible)}
+          />
+          <FontAwesome6Icon
+            name="ellipsis"
+            size={26}
+            color={woo_black}
+            onPress={() => setIsPrivateVisible(!isPrivateVisible)}
+          />
+        </View>
+      </View>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flex: 1, height: 1, backgroundColor: "#b3b3b3", marginHorizontal: 10, marginVertical: 10 }} />
+      </View>
 
-          //   }
-          centerComponent={
-            <View>
-              <Text
-                style={{
-                  fontSize: 25,
-                  color: woo_black,
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                search
+      {/* <Input
+        value={searchValue}
+        ref={searchRef}
+        onChangeText={(text) => handleSearchOnChange(text)}
+        placeholder="search users by @username"
+        fontSize={14}
+        backgroundColor={woo_white}
+        leftIcon={
+          <Icon
+            style={{ paddingEnd: 5 }}
+            type="font-awesome-5"
+            name="search"
+            size={18}
+          />
+        }
+        // errorStyle={{ color: 'red' }}
+        // errorMessage={isSearchError && "sorry we couldn't find that Search"}
+        autoCapitalize="none"
+        onFocus={() => handleSearchOnFocus()}
+        onBlur={() => handleOnBlur()}
+        onEndEditing={() => handleSearchEndEditing()}
+        rightIcon={
+          !isSearchIconHidden && (
+            <TouchableOpacity style={{ width: 18, height: 18 }}>
+              <Icon
+                name="play"
+                type="font-awesome-5"
+                size={18}
+                onPress={() => handleSearch()}
+              />
+            </TouchableOpacity>
+          )
+        }
+      /> */}
+
+      {user && user ? (
+        user.uid === uid ? (
+          // searching for self
+          <View style={styles.userInfoContainer}>
+            <View style={styles.imageContainer}>
+              <Avatar
+                rounded
+                size="medium"
+                source={{ uri: `${user.profile_pic_url}` }}
+              />
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={{ fontWeight: "bold", fontSize: 14 }}>
+                {
+                  SelfIdentity[Math.floor(Math.random() * SelfIdentity.length)]
+                    .header
+                }
+              </Text>
+              <Text style={{ fontSize: 12 }}>
+                {
+                  SelfIdentity[Math.floor(Math.random() * SelfIdentity.length)]
+                    .message
+                }
               </Text>
             </View>
-          }
-          // rightComponent={
-
-          // }
-          rightContainerStyle={styles.rightComponent}
-          leftContainerStyle={styles.leftComponent}
-          centerContainerStyle={styles.centerComponent}
-        />
-
-        <Input
-          value={searchValue}
-          ref={searchRef}
-          onChangeText={(text) => handleSearchOnChange(text)}
-          placeholder="search users by @username"
-          fontSize={14}
-          backgroundColor={woo_white}
-          leftIcon={
-            <Icon
-              style={{ paddingEnd: 5 }}
-              type="font-awesome-5"
-              name="search"
-              size={18}
-            />
-          }
-          // errorStyle={{ color: 'red' }}
-          // errorMessage={isSearchError && "sorry we couldn't find that Search"}
-          autoCapitalize="none"
-          onFocus={() => handleSearchOnFocus()}
-          onBlur={() => handleOnBlur()}
-          onEndEditing={() => handleSearchEndEditing()}
-          rightIcon={
-            !isSearchIconHidden && (
-              <TouchableOpacity style={{ width: 18, height: 18 }}>
-                <Icon
-                  name="play"
-                  type="font-awesome-5"
-                  size={18}
-                  onPress={() => handleSearch()}
-                />
-              </TouchableOpacity>
-            )
-          }
-        />
-
-        {user && user ? (
-          user.uid === uid ? (
-            // searching for self
+            {/* <View style={styles.requestButtonContainer}>
+                            <TouchableOpacity
+                                style={[styles.addButton, { backgroundColor: woo_gray }]}
+                                onPress={() => handleFollowUser()}
+                            ><Text style={styles.buttonText}>follow</Text>
+                            </TouchableOpacity>
+                        </View> */}
+          </View>
+        ) : (
+          // searching for user with no error
+          <TouchableOpacity
+            style={styles.container}
+            onPress={() => {
+              user.uid !== uid &&
+                navigation.navigate("User", { userUID: user.uid });
+            }}
+          >
             <View style={styles.userInfoContainer}>
               <View style={styles.imageContainer}>
                 <Avatar
@@ -287,64 +346,23 @@ const SearchScreen = ({ navigation, route }) => {
               </View>
               <View style={styles.textContainer}>
                 <Text style={{ fontWeight: "bold", fontSize: 14 }}>
-                  {
-                    SelfIdentity[
-                      Math.floor(Math.random() * SelfIdentity.length)
-                    ].header
-                  }
+                  {user.first_name + " " + user.last_name}
                 </Text>
-                <Text style={{ fontSize: 12 }}>
-                  {
-                    SelfIdentity[
-                      Math.floor(Math.random() * SelfIdentity.length)
-                    ].message
-                  }
-                </Text>
+                <Text style={{ fontSize: 12 }}>@{user.username}</Text>
               </View>
-              {/* <View style={styles.requestButtonContainer}>
-                            <TouchableOpacity
-                                style={[styles.addButton, { backgroundColor: woo_gray }]}
-                                onPress={() => handleFollowUser()}
-                            ><Text style={styles.buttonText}>follow</Text>
-                            </TouchableOpacity>
-                        </View> */}
+              <View style={styles.requestButtonContainer}>
+                {renderView(view)}
+              </View>
             </View>
-          ) : (
-            // searching for user with no error
-            <TouchableOpacity
-              style={styles.container}
-              onPress={() => {
-                user.uid !== uid &&
-                  navigation.navigate("User", { userUID: user.uid });
-              }}
-            >
-              <View style={styles.userInfoContainer}>
-                <View style={styles.imageContainer}>
-                  <Avatar
-                    rounded
-                    size="medium"
-                    source={{ uri: `${user.profile_pic_url}` }}
-                  />
-                </View>
-                <View style={styles.textContainer}>
-                  <Text style={{ fontWeight: "bold", fontSize: 14 }}>
-                    {user.first_name + " " + user.last_name}
-                  </Text>
-                  <Text style={{ fontSize: 12 }}>@{user.username}</Text>
-                </View>
-                <View style={styles.requestButtonContainer}>
-                  {renderView(view)}
-                </View>
-              </View>
-            </TouchableOpacity>
-          )
-        ) : view === "none" ? (
-          <View style={{ alignItems: "center" }}>
-            <Text> no user found </Text>
-          </View>
-        ) : null}
-      </View>
-    </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        )
+      ) : view === "none" ? (
+        <View style={{ alignItems: "center" }}>
+          <Text> no user found </Text>
+        </View>
+      ) : null}
+      {/* </TouchableWithoutFeedback> */}
+    </SafeAreaView>
   );
 };
 
@@ -357,10 +375,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   header: {
-    // shadowColor: '#000',
-    // shadowOffset: { width: 1, height: 3 },
-    // shadowOpacity: 0.2,
-    // elevation: 4,
+    height: 50,
+    alignItems: "flex-end",
+    flexDirection: "row",
+    paddingHorizontal: 20,
   },
   leftComponent: {
     justifyContent: "center",

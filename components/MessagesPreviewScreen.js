@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { Header, Icon } from "@rneui/themed";
 import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 import ListViewPreviewMessages from './ListViewPreviewMessages';
 import { woo_black } from '../assets/colors';
+import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 
 
 const MessagesPreviewScreen = ({ navigation, route }) => {
@@ -41,8 +42,8 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
     }, [])
 
     return (
-        <View style={styles.container}>
-            <Header
+        <SafeAreaView style={styles.container}>
+            {/* <Header
                 containerStyle={styles.header}
                 backgroundColor={'#fff'}
                 // leftComponent={
@@ -70,11 +71,64 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
                 rightContainerStyle={styles.rightComponent}
                 leftContainerStyle={styles.leftComponent}
                 centerContainerStyle={styles.centerComponent}
-            />
+            /> */}
+
+                  <View style={styles.header}>
+                    <View
+                      style={{
+                        // backgroundColor: "blue",
+                        flex: 3,
+                        alignItems: "flex-start",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 22,
+                          color: woo_black,
+                          textAlign: "center",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        messages
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        // backgroundColor: "red",
+                        flexDirection: "row",
+                        justifyContent: "space-around",
+                      }}
+                    >
+                      <FontAwesome6Icon
+                        name="pen-to-square"
+                        size={26}
+                        color={woo_black}
+                        onPress={() => setIsPrivateVisible(!isPrivateVisible)}
+                      />
+                      <FontAwesome6Icon
+                        name="ellipsis"
+                        size={26}
+                        color={woo_black}
+                        onPress={() => setIsPrivateVisible(!isPrivateVisible)}
+                      />
+                    </View>
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        height: 1,
+                        backgroundColor: "#b3b3b3",
+                        marginHorizontal: 10,
+                        marginVertical: 10,
+                      }}
+                    />
+                  </View>
 
             <ListViewPreviewMessages uid={uid} messagers={messagers} />
 
-        </View>
+        </SafeAreaView>
     )
 
 }
@@ -88,13 +142,11 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     header: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 4,
-        marginBottom: 5,
-    },
+        height: 50,
+        alignItems: "flex-end",
+        flexDirection: "row",
+        paddingHorizontal: 20,
+      },
     leftComponent: {
         justifyContent: 'center',
         alignItems: 'center',

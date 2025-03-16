@@ -22,50 +22,50 @@ const LayoutMessageItem = ({ messager, uid }) => {
     //     }
     // }
 
-    useEffect(() => {
-        console.log(messager.item)
-    })
+    // useEffect(() => {
+    //     console.log(messager.item)
+    // })
 
-    useEffect(() => {
-        const docRef = doc(db, "users", messager.item);
-        const getProfileInfo = onSnapshot(docRef, (doc) => {
-            // console.log("Document data:", doc.data());
-            setUser(doc.data())
-            // setGallery(doc.data().gallery)
-            // setUsername(doc.data().username)
-            // setFirstName(doc.data().first_name)
-            // setLastName(doc.data().last_name)
-            // setProfilePicURL(doc.data().profile_pic_url)
-            // setFollowing(doc.data().following)
-            // setFollowers(doc.data().followers)
-            // setMigos(doc.data().migos)
-        }, (error) => {
+    // useEffect(() => {
+    //     const docRef = doc(db, "users", messager.item);
+    //     const getProfileInfo = onSnapshot(docRef, (doc) => {
+    //         // console.log("Document data:", doc.data());
+    //         setUser(doc.data())
+    //         // setGallery(doc.data().gallery)
+    //         // setUsername(doc.data().username)
+    //         // setFirstName(doc.data().first_name)
+    //         // setLastName(doc.data().last_name)
+    //         // setProfilePicURL(doc.data().profile_pic_url)
+    //         // setFollowing(doc.data().following)
+    //         // setFollowers(doc.data().followers)
+    //         // setMigos(doc.data().migos)
+    //     }, (error) => {
 
-        })
+    //     })
 
-        const q = query(collection(db, "users", uid, "messages", messager.item, "messages"), orderBy("created_at", "desc"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const arrayofMessages = [];
-            querySnapshot.forEach((doc) => {
-                console.log(doc.data())
-                arrayofMessages.push(doc.data());
-            });
-            // console.log("Messages Owned by this USER: ", arrayofMessages.join(", "));
-            setMessages(arrayofMessages)
-            let dateTime = new Date(arrayofMessages[0].created_at * 1000)
-            // let hours = dateTime.getHours()
-            // let minutes = dateTime.getMinutes()
-            setTime(`${dateTime.getMonth() + 1}/${+ dateTime.getDate()}, ${dateTime.toLocaleTimeString()}`);
+    //     const q = query(collection(db, "users", uid, "messages", messager.item, "messages"), orderBy("created_at", "desc"));
+    //     const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //         const arrayofMessages = [];
+    //         querySnapshot.forEach((doc) => {
+    //             console.log(doc.data())
+    //             arrayofMessages.push(doc.data());
+    //         });
+    //         // console.log("Messages Owned by this USER: ", arrayofMessages.join(", "));
+    //         setMessages(arrayofMessages)
+    //         let dateTime = new Date(arrayofMessages[0].created_at * 1000)
+    //         // let hours = dateTime.getHours()
+    //         // let minutes = dateTime.getMinutes()
+    //         setTime(`${dateTime.getMonth() + 1}/${+ dateTime.getDate()}, ${dateTime.toLocaleTimeString()}`);
 
-        }, (error) => {
+    //     }, (error) => {
 
-        });
+    //     });
 
-        return () => {
-            getProfileInfo()
-            unsubscribe()
-        };
-    }, [])
+    //     return () => {
+    //         getProfileInfo()
+    //         unsubscribe()
+    //     };
+    // }, [])
 
 
     const navigation = useNavigation();
