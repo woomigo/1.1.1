@@ -40,11 +40,11 @@ import WooListView from "./components/WooListView";
 import MediaViewScreen from "./components/MediaViewScreen";
 import MessagesScreen from "./components/MessagesScreens";
 import AddMediaWooGalleryView from "./components/AddMediaWooGalleryView";
-import ForgotPasswordView from "./components/ForgotPasswordScreen";
 import ForgotPasswordScreen from "./components/ForgotPasswordScreen";
 import SettingsScreen from "./components/SettingsScreen";
 import EditProfileScreen from "./components/EditProfileScreen";
 import PrivacyPolicyScreen from "./components/PrivacyPolicyScreen";
+import WooScreen from "./components/WooScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -98,6 +98,12 @@ const HomeStack = () => {
       <Stack.Screen
         name="MediaView"
         component={MediaViewScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="Woo"
+        component={WooScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />

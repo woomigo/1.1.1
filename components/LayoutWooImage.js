@@ -7,9 +7,9 @@ const LayoutWooImage = ({ wooID, image, isPreview }) => {
 
     return (
         <TouchableWithoutFeedback
-            // onPress={() => !isPreview ?
-            //     navigation.navigate('Woo', { wooID: wooID }) : console.log('PREVIEW')
-            // } 
+            onPress={() => !isPreview ?
+                navigation.navigate('Woo', { wooID: wooID }) : console.log('PREVIEW')
+            } 
             style={styles.container}>
             <Image style={styles.image} source={!isPreview ? { uri: image } : image} />
         </TouchableWithoutFeedback>

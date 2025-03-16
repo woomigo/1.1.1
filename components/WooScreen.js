@@ -1,17 +1,19 @@
 import { View, Text, StyleSheet } from "react-native";
 
 const WooScreen = () => {
+  return (
     <View style={styles.container}>
-        <Text>Woo Screen</Text>
+      <Text>Woo Screen</Text>
     </View>
-}
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    }
-})
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export default WooScreen;
