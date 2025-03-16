@@ -245,13 +245,11 @@ const SearchScreen = ({ navigation, route }) => {
             name="magnifying-glass"
             size={26}
             color={woo_black}
-            onPress={() => setIsPrivateVisible(!isPrivateVisible)}
           />
           <FontAwesome6Icon
             name="ellipsis"
             size={26}
             color={woo_black}
-            onPress={() => setIsPrivateVisible(!isPrivateVisible)}
           />
         </View>
       </View>

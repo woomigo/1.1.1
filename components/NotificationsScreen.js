@@ -142,13 +142,11 @@ const NotificationsScreen = ({ navigation, route }) => {
             name="bell"
             size={26}
             color={woo_black}
-            onPress={() => setIsPrivateVisible(!isPrivateVisible)}
           />
           <FontAwesome6Icon
             name="ellipsis"
             size={26}
             color={woo_black}
-            onPress={() => setIsPrivateVisible(!isPrivateVisible)}
           />
         </View>
       </View>

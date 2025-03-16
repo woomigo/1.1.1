@@ -104,13 +104,11 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
                         name="pen-to-square"
                         size={26}
                         color={woo_black}
-                        onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                       />
                       <FontAwesome6Icon
                         name="ellipsis"
                         size={26}
                         color={woo_black}
-                        onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                       />
                     </View>
                   </View>
