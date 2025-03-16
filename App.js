@@ -45,6 +45,7 @@ import SettingsScreen from "./components/SettingsScreen";
 import EditProfileScreen from "./components/EditProfileScreen";
 import PrivacyPolicyScreen from "./components/PrivacyPolicyScreen";
 import WooScreen from "./components/WooScreen";
+import MigoGroupsScreen from "./components/MigoGroupsScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -136,6 +137,12 @@ const ProfileStack = () => {
       <Stack.Screen
         name="Migos"
         component={MigosScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="MigoGroups"
+        component={MigoGroupsScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />

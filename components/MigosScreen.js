@@ -169,7 +169,7 @@ const MigosScreen = ({ navigation, route }) => {
           }}
         >
           <Pressable onPress={() => navigation.navigate("Profile")}>
-            <FontAwesome6Icon name="arrow-left" size={26} color={woo_black} />
+            <FontAwesome6Icon name="chevron-left" size={24} color={woo_black} />
           </Pressable>
         </View>
         <View
@@ -199,22 +199,14 @@ const MigosScreen = ({ navigation, route }) => {
             justifyContent: "space-around",
           }}
         >
-          <FontAwesome6Icon name="user-group" size={26} color={woo_black} />
+          <Pressable onPress={() => navigation.navigate("MigoGroups")}>
+            <FontAwesome6Icon name="user-group" size={26} color={woo_black} />
+          </Pressable>
+
           <Pressable onPress={() => navigation.navigate("MigoRequests")}>
             <FontAwesome6Icon name="user-plus" size={26} color={woo_black} />
           </Pressable>
         </View>
-      </View>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <View
-          style={{
-            flex: 1,
-            height: 1,
-            backgroundColor: "#b3b3b3",
-            marginHorizontal: 10,
-            marginVertical: 10,
-          }}
-        />
       </View>
       <Tab
         value={index}
@@ -224,6 +216,7 @@ const MigosScreen = ({ navigation, route }) => {
           height: 3,
         }}
         containerStyle={{
+          marginTop: 30,
           backgroundColor: "white",
         }}
         style={styles.tabContainer}

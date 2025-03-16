@@ -190,7 +190,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
           }}
         >
           <Pressable onPress={() => navigation.navigate("Migos")}>
-            <FontAwesome6Icon name="arrow-left" size={26} color={woo_black} />
+            <FontAwesome6Icon name="chevron-left" size={24} color={woo_black} />
           </Pressable>
         </View>
         <View
