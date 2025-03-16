@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
-import { Header, Icon, Avatar, Tab, TabView } from "@rneui/themed";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+  Platform,
+  ScrollView,
+  Dimensions,
+} from "react-native";
+import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
 import {
@@ -16,6 +25,8 @@ import { db } from "../firebaseConfig";
 import { Drawer } from "react-native-drawer-layout";
 import MenuScreen from "./MenuScreen";
 import ListViewWoos from "./ListViewWoos";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { Switch } from "react-native";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
@@ -25,10 +36,17 @@ const ProfileScreen = ({ navigation, route }) => {
   const [gallery, setGallery] = useState([]);
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState();
+  const [firstName, setFirstName] = useState();
+  const [lastName, setLastName] = useState();
   const [profilePicURL, setProfilePicURL] = useState();
   const [following, setFollowing] = useState([]);
   const [followers, setFollowers] = useState([]);
-  const [migos, setMigos] = useState([]);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+  const { width } = Dimensions.get("window");
+
+  const Tab = ({ children }) => <View style={{ width }}>{children}</View>;
 
   const { uid } = route.params;
 
@@ -41,10 +59,11 @@ const ProfileScreen = ({ navigation, route }) => {
         setUser(doc.data());
         setGallery(doc.data().gallery);
         setUsername(doc.data().username);
+        setFirstName(doc.data().first_name);
+        setLastName(doc.data().last_name);
         setProfilePicURL(doc.data().profile_pic_url);
         setFollowing(doc.data().following);
         setFollowers(doc.data().followers);
-        setMigos(doc.data().migos);
       },
       (error) => {},
       []
@@ -76,129 +95,350 @@ const ProfileScreen = ({ navigation, route }) => {
   }, [uid]);
 
   return (
-    <View style={styles.container}>
-      <Drawer
-        drawerPosition="right"
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
-        renderDrawerContent={() => {
-          return <MenuScreen user={user} />;
-        }}
-      >
-        <Header
-          containerStyle={styles.header}
-          backgroundColor={woo_white}
-          leftComponent={
-            <Icon
-              name={isProfileOwnedByUser ? "users" : "bars"}
-              type="font-awesome-5"
-              color={woo_black}
-              solid
-              size={25}
-              onPress={
-                isProfileOwnedByUser
-                  ? () =>
-                      navigation.navigate("Migos", {
-                        followers: followers,
-                        following: following,
-                        migos: migos,
-                      })
-                  : "open drawer"
-              }
-            />
-          }
-          centerComponent={
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Drawer
+          drawerPosition="right"
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          renderDrawerContent={() => {
+            return <MenuScreen user={user} />;
+          }}
+        >
+          <Image style={styles.image} source={{ uri: profilePicURL }} />
+          <Card
+            containerStyle={{
+              borderRadius: 20,
+              marginTop: -60,
+              marginBottom: 10,
+              ...Platform.select({
+                ios: {
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 2.5,
+                },
+                android: {
+                  elevation: 4,
+                },
+              }),
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
               <Avatar
                 rounded
-                size="large"
+                size="medium"
                 onPress={() => navigation.navigate("Profile")}
                 source={{ uri: profilePicURL }}
               />
-              <Text
+              <View style={{ justifyContent: "center", marginStart: 5 }}>
+                <Text
+                  style={{
+                    color: woo_black,
+                    fontWeight: "bold",
+                    fontSize: 14,
+                  }}
+                >
+                  {firstName} {lastName}
+                </Text>
+                <Text
+                  style={{
+                    color: woo_black,
+                    fontSize: 12,
+                  }}
+                >
+                  @{username}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around",
+                alignItems: "center",
+                marginTop: 10,
+              }}
+            >
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    color: woo_black,
+                    fontSize: 12,
+                  }}
+                >
+                  {followers.length}
+                </Text>
+                <Text
+                  style={{
+                    color: woo_black,
+                    fontSize: 12,
+                  }}
+                >
+                  followers
+                </Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    color: woo_black,
+                    fontSize: 12,
+                  }}
+                >
+                  {following.length}
+                </Text>
+                <Text
+                  style={{
+                    color: woo_black,
+                    fontSize: 12,
+                  }}
+                >
+                  following
+                </Text>
+              </View>
+              <Button
+                title="edit profile"
+                buttonStyle={{
+                  backgroundColor: woo_black,
+                  borderRadius: 30,
+                  paddingHorizontal: 15,
+                }}
+                titleStyle={{ fontSize: 12 }}
+              />
+              <View
                 style={{
-                  color: woo_black,
-                  marginVertical: 3,
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: 15,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row",
                 }}
               >
-                {username}
-              </Text>
+                <FontAwesome6Icon
+                  style={{ marginEnd: 5 }}
+                  name="list"
+                  size={20}
+                  color={woo_black}
+                />
+                <Switch
+                  trackColor={{ false: "#767577", true: woo_orange }}
+                  // thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                />
+              </View>
             </View>
-          }
-          rightComponent={
-            <Icon
-              name={"bars"}
-              type="font-awesome-5"
-              color={woo_black}
-              solid
-              size={25}
-              onPress={() => setOpen((prevOpen) => !prevOpen)}
+          </Card>
+          {/* <Tab
+            value={index}
+            onChange={(e) => setIndex(e)}
+            indicatorStyle={{
+              backgroundColor: woo_orange,
+              height: 3,
+            }}
+            containerStyle={{
+              backgroundColor: woo_white,
+            }}
+            style={styles.tabContainer}
+          >
+            <Tab.Item
+              title="woos"
+              titleStyle={{ fontSize: 12, color: woo_black }}
+              iconContainerStyle={{
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              icon={
+                <Image
+                  style={{ width: 30, height: 24 }}
+                  source={require("../assets/woomigo_icon.png")}
+                />
+              }
             />
-          }
-          rightContainerStyle={styles.rightComponent}
-          leftContainerStyle={styles.leftComponent}
-          centerContainerStyle={styles.centerComponent}
-        />
+            <Tab.Item
+              title="gallery"
+              titleStyle={{ fontSize: 12, color: woo_black }}
+              icon={{
+                name: "photo-video",
+                type: "font-awesome-5",
+                color: woo_orange,
+              }}
+            />
+            <Tab.Item
+              title="subscribed"
+              titleStyle={{ fontSize: 12, color: woo_black }}
+              icon={{
+                name: "bookmark",
+                type: "font-awesome-6",
+                color: woo_orange,
+              }}
+            />
+          </Tab> */}
+          {/* <TabView value={index} onChange={setIndex} animationType="spring">
+            <TabView.Item>
+              <View style={styles.tabHeader}>
+                <ListViewWoos view={"list"} woos={woos} uid={uid} />
+              </View>
+            </TabView.Item>
+            <TabView.Item>
+              <View style={styles.tabHeader}>
+                <ListViewGallery
+                  gallery={gallery}
+                  inverted
+                  view={"grid"}
+                  nav={"MediaView"}
+                />
+              </View>
+            </TabView.Item>
+            <TabView.Item>
+              <View style={styles.tabHeader}>
+                <ListViewGallery
+                  gallery={gallery}
+                  inverted
+                  view={"grid"}
+                  nav={"MediaView"}
+                />
+              </View>
+            </TabView.Item>
+          </TabView> */}
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 15 }}
+          >
+            <Tab>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Image
+                  style={{ width: 30, height: 24 }}
+                  source={require("../assets/woomigo_icon.png")}
+                />
+                <Text style={{ fontSize: 12 }}>owned woos</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  marginEnd: 20,
+                }}
+              >
+                <View style={{ alignItems: "center" }}>
+                  <FontAwesome6Icon
+                    style={{ marginHorizontal: 5 }}
+                    name="photo-film"
+                    size={15}
+                    color={woo_orange}
+                  />
+                  <Text style={{ fontSize: 12 }}>gallery</Text>
+                </View>
 
-        <Tab
-          value={index}
-          onChange={(e) => setIndex(e)}
-          indicatorStyle={{
-            backgroundColor: woo_orange,
-            height: 3,
-          }}
-          containerStyle={{
-            backgroundColor: woo_white,
-          }}
-          style={styles.tabContainer}
-        >
-          <Tab.Item
-            title="woos"
-            titleStyle={{ fontSize: 12, color: woo_black }}
-            iconContainerStyle={{
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            icon={
-              <Image
-                style={{ width: 30, height: 24 }}
-                source={require("../assets/woomigo_icon.png")}
-              />
-            }
-          />
-          <Tab.Item
-            title="gallery"
-            titleStyle={{ fontSize: 12, color: woo_black }}
-            icon={{
-              name: "photo-video",
-              type: "font-awesome-5",
-              color: woo_orange,
-            }}
-          />
-        </Tab>
-        <TabView value={index} onChange={setIndex} animationType="spring">
-          <TabView.Item style={{ width: "100%" }}>
-            <View style={styles.tabHeader}>
+                <FontAwesome6Icon
+                  style={{ marginHorizontal: 5 }}
+                  name="arrow-right"
+                  size={15}
+                  color={woo_black}
+                />
+              </View>
               <ListViewWoos view={"list"} woos={woos} uid={uid} />
-            </View>
-          </TabView.Item>
-          <TabView.Item style={{ width: "100%" }}>
-            <View style={styles.tabHeader}>
-              <ListViewGallery
-                gallery={gallery}
-                inverted
-                view={"grid"}
-                nav={"MediaView"}
-              />
-            </View>
-          </TabView.Item>
-        </TabView>
-      </Drawer>
-    </View>
+            </Tab>
+            <Tab>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <FontAwesome6Icon
+                  style={{ marginHorizontal: 5 }}
+                  name="photo-film"
+                  size={20}
+                  color={woo_orange}
+                />
+                <Text style={{ fontSize: 12 }}>gallery</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginHorizontal: 20,
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesome6Icon
+                    style={{ marginHorizontal: 5 }}
+                    name="arrow-left"
+                    size={15}
+                    color={woo_black}
+                  />
+                  <View style={{ alignItems: "center" }}>
+                    <Image
+                      style={{ width: 20, height: 18 }}
+                      source={require("../assets/woomigo_icon.png")}
+                    />
+                    <Text style={{ fontSize: 12 }}>woos</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ alignItems: "center" }}>
+                    <FontAwesome6Icon
+                      style={{ marginHorizontal: 5 }}
+                      name="bookmark"
+                      solid
+                      size={15}
+                      color={woo_orange}
+                    />
+                    <Text style={{ fontSize: 12 }}>subscribed</Text>
+                  </View>
+
+                  <FontAwesome6Icon
+                    style={{ marginHorizontal: 5 }}
+                    name="arrow-right"
+                    size={15}
+                    color={woo_black}
+                  />
+                </View>
+              </View>
+              <ListViewWoos view={"list"} woos={woos} uid={uid} />
+            </Tab>
+            <Tab>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <FontAwesome6Icon
+                  style={{ marginHorizontal: 5 }}
+                  name="bookmark"
+                  solid
+                  size={20}
+                  color={woo_orange}
+                />
+                <Text style={{ fontSize: 12 }}>subscribed</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginHorizontal: 20,
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesome6Icon
+                    style={{ marginHorizontal: 5 }}
+                    name="arrow-left"
+                    size={15}
+                    color={woo_black}
+                  />
+                  <View style={{ alignItems: "center" }}>
+                    <FontAwesome6Icon
+                      style={{ marginHorizontal: 5 }}
+                      name="photo-film"
+                      size={20}
+                      color={woo_orange}
+                    />
+                    <Text style={{ fontSize: 12 }}>gallery</Text>
+                  </View>
+                </View>
+              </View>
+              <ListViewWoos view={"list"} woos={woos} uid={uid} />
+            </Tab>
+          </ScrollView>
+        </Drawer>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -206,6 +446,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: woo_white,
+  },
+  image: {
+    backgroundColor: "#d9d9d9",
+    height: 300,
   },
   profileInfo: {
     textAlign: "center",
