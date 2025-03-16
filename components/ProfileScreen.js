@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
@@ -161,40 +162,54 @@ const ProfileScreen = ({ navigation, route }) => {
               }}
             >
               <View style={{ alignItems: "center" }}>
-                <Text
-                  style={{
-                    color: woo_black,
-                    fontSize: 12,
-                  }}
+                <Pressable
+                  style={{ alignItems: "center" }}
+                  onPress={() =>
+                    navigation.navigate("Migos", { indexParam: 0 })
+                  }
                 >
-                  {followers.length}
-                </Text>
-                <Text
-                  style={{
-                    color: woo_black,
-                    fontSize: 12,
-                  }}
-                >
-                  followers
-                </Text>
+                  <Text
+                    style={{
+                      color: woo_black,
+                      fontSize: 12,
+                    }}
+                  >
+                    {followers.length}
+                  </Text>
+                  <Text
+                    style={{
+                      color: woo_black,
+                      fontSize: 12,
+                    }}
+                  >
+                    followers
+                  </Text>
+                </Pressable>
               </View>
-              <View style={{ alignItems: "center" }}>
-                <Text
-                  style={{
-                    color: woo_black,
-                    fontSize: 12,
-                  }}
+              <View>
+                <Pressable
+                  style={{ alignItems: "center" }}
+                  onPress={() =>
+                    navigation.navigate("Migos", { indexParam: 1 })
+                  }
                 >
-                  {following.length}
-                </Text>
-                <Text
-                  style={{
-                    color: woo_black,
-                    fontSize: 12,
-                  }}
-                >
-                  following
-                </Text>
+                  <Text
+                    style={{
+                      color: woo_black,
+                      fontSize: 12,
+                    }}
+                  >
+                    {following.length}
+                  </Text>
+                  <Text
+                    style={{
+                      color: woo_black,
+                      fontSize: 12,
+                    }}
+                  >
+                    following
+                  </Text>
+                </Pressable>
               </View>
               <Button
                 title="edit profile"
@@ -395,11 +410,11 @@ const ProfileScreen = ({ navigation, route }) => {
                 </View>
               </View>
               <ListViewGallery
-                  gallery={gallery}
-                  inverted
-                  view={"grid"}
-                  nav={"MediaView"}
-                />
+                gallery={gallery}
+                inverted
+                view={"grid"}
+                nav={"MediaView"}
+              />
             </Tab>
             <Tab>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
