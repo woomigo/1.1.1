@@ -394,7 +394,12 @@ const ProfileScreen = ({ navigation, route }) => {
                   />
                 </View>
               </View>
-              <ListViewWoos view={"list"} woos={woos} uid={uid} />
+              <ListViewGallery
+                  gallery={gallery}
+                  inverted
+                  view={"grid"}
+                  nav={"MediaView"}
+                />
             </Tab>
             <Tab>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
