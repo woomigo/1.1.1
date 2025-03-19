@@ -38,15 +38,6 @@ const ListViewWoos = ({ woos, view, uid }) => {
             backgroundColor={woo_orange}
             keyExtractor={(woo) => woo.id}
             data={woos}
-            // refreshControl={
-            //     <RefreshControl
-            //         refreshing={refreshing}
-            //         onRefresh={onRefresh}
-            //         progressBackgroundColor={woo_white}
-            //         tintColor={woo_white}
-            //     />
-            // }
-            // initialNumToRender={3}
             onViewableItemsChanged={onViewRef.current}
             renderItem={(woo) => <LayoutWooItem woo={woo} uid={uid} />}
           />
@@ -59,15 +50,6 @@ const ListViewWoos = ({ woos, view, uid }) => {
             backgroundColor={woo_orange}
             keyExtractor={(woo) => woo.id}
             data={woos}
-            // refreshControl={
-            //     <RefreshControl
-            //         refreshing={refreshing}
-            //         onRefresh={onRefresh}
-            //         progressBackgroundColor={woo_white}
-            //         tintColor={woo_white}
-            //     />
-            // }
-            // initialNumToRender={3}
             onViewableItemsChanged={onViewRef.current}
             renderItem={(woo) => <LayoutWooItem woo={woo} isGalleryView />}
           />
