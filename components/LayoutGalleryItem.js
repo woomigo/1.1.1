@@ -55,6 +55,7 @@ const LayoutGalleryItem = ({
                     width: setHorizontalSize(),
                     height: setHorizontalSize(),
                     borderRadius: horizBorderRadius,
+                    backgroundColor: "#d9d9d9",
                   },
                 ]
               : view === "grid"

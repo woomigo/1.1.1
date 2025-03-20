@@ -12,12 +12,23 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
   });
 
   return (
-    <View style={styles.container}>      {
-      woo.item.data().woo_media_url != null ? (
+    <View style={styles.container}>
+      {woo.item.data().woo_media_url != null ? (
         <LayoutWooImage
+          uid={uid}
+          wooDate={woo.item.data().woo_date}
           wooID={woo.item.id}
           image={woo.item.data().woo_media_url}
-          isPreview={false}
+          ownerUID={woo.item.data().owner_uid}
+          wooLikes={woo.item.data().woo_likes}
+          wooMigos={woo.item.data().woo_migos}
+          wooType={woo.item.data().woo_type}
+          wooTime={woo.item.data().woo_time}
+          startTime={woo.item.data().woo_start_time}
+          endTime={woo.item.data().woo_end_time}
+          wooLocation={woo.item.data().woo_location}
+          wooComments={woo.item.data().woo_comments}
+          wooGallery={woo.item.data().woo_gallery}
         />
       ) : (
         <LayoutWooVideo
@@ -25,7 +36,7 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
           currentVisibleIndex={currentVisibleIndex}
           currentIndex={currentIndex}
         />
-      )}      
+      )}
       <LayoutWooLike
         uid={uid}
         wooID={woo.item.id}
@@ -42,8 +53,6 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
         wooMigos={woo.item.data().woo_migos}
         wooDate={woo.item.data().woo_date}
         wooTime={woo.item.data().woo_time}
-        startTime={woo.item.data().woo_start_time}
-        endTime={woo.item.data().woo_end_time}
         wooLocation={woo.item.data().woo_location}
       />
     </View>
