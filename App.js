@@ -1,3 +1,4 @@
+import 'react-native-get-random-values'
 import "react-native-gesture-handler";
 import React, { useState } from "react";
 import { LogBox } from "react-native";
