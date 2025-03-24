@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   Dimensions,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
@@ -50,6 +51,35 @@ const ProfileScreen = ({ navigation, route }) => {
   const Tab = ({ children }) => <View style={{ width }}>{children}</View>;
 
   const { uid } = route.params;
+
+  const scrollViewRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0); // Track current page index
+  const totalPages = 3; // Adjust based on the number of items
+
+  // Swipe Right (Next Page)
+  const handleSwipeRight = () => {
+    if (scrollViewRef.current && currentIndex < totalPages - 1) {
+      const newIndex = currentIndex + 1;
+      scrollViewRef.current.scrollTo({ x: newIndex * width, animated: true });
+      setCurrentIndex(newIndex);
+    }
+  };
+
+  // Swipe Left (Previous Page)
+  const handleSwipeLeft = () => {
+    if (scrollViewRef.current && currentIndex > 0) {
+      const newIndex = currentIndex - 1;
+      scrollViewRef.current.scrollTo({ x: newIndex * width, animated: true });
+      setCurrentIndex(newIndex);
+    }
+  };
+
+  // Auto-detect user scrolling
+  const handleScroll = (event) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / width); // Calculate current page index
+    setCurrentIndex(index);
+  };
 
   useEffect(() => {
     const docRef = doc(db, "users", uid);
@@ -243,82 +273,13 @@ const ProfileScreen = ({ navigation, route }) => {
               </View>
             </View>
           </Card>
-          {/* <Tab
-            value={index}
-            onChange={(e) => setIndex(e)}
-            indicatorStyle={{
-              backgroundColor: woo_orange,
-              height: 3,
-            }}
-            containerStyle={{
-              backgroundColor: woo_white,
-            }}
-            style={styles.tabContainer}
-          >
-            <Tab.Item
-              title="woos"
-              titleStyle={{ fontSize: 12, color: woo_black }}
-              iconContainerStyle={{
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              icon={
-                <Image
-                  style={{ width: 30, height: 24 }}
-                  source={require("../assets/woomigo_icon.png")}
-                />
-              }
-            />
-            <Tab.Item
-              title="gallery"
-              titleStyle={{ fontSize: 12, color: woo_black }}
-              icon={{
-                name: "photo-video",
-                type: "font-awesome-5",
-                color: woo_orange,
-              }}
-            />
-            <Tab.Item
-              title="subscribed"
-              titleStyle={{ fontSize: 12, color: woo_black }}
-              icon={{
-                name: "bookmark",
-                type: "font-awesome-6",
-                color: woo_orange,
-              }}
-            />
-          </Tab> */}
-          {/* <TabView value={index} onChange={setIndex} animationType="spring">
-            <TabView.Item>
-              <View style={styles.tabHeader}>
-                <ListViewWoos view={"list"} woos={woos} uid={uid} />
-              </View>
-            </TabView.Item>
-            <TabView.Item>
-              <View style={styles.tabHeader}>
-                <ListViewGallery
-                  gallery={gallery}
-                  inverted
-                  view={"grid"}
-                  nav={"MediaView"}
-                />
-              </View>
-            </TabView.Item>
-            <TabView.Item>
-              <View style={styles.tabHeader}>
-                <ListViewGallery
-                  gallery={gallery}
-                  inverted
-                  view={"grid"}
-                  nav={"MediaView"}
-                />
-              </View>
-            </TabView.Item>
-          </TabView> */}
           <ScrollView
+            ref={scrollViewRef}
             horizontal
-            pagingEnabled
             showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            onScroll={handleScroll} // Detect scrolling
+            scrollEventThrottle={16} // Optimize scroll event handling
             style={{ marginTop: 15 }}
           >
             <Tab>
@@ -329,6 +290,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 />
                 <Text style={{ fontSize: 12 }}>owned woos</Text>
               </View>
+
               <View
                 style={{
                   flexDirection: "row",
@@ -337,23 +299,33 @@ const ProfileScreen = ({ navigation, route }) => {
                   marginEnd: 20,
                 }}
               >
-                <View style={{ alignItems: "center" }}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                  onPress={handleSwipeRight}
+                >
+                  <View style={{ alignItems: "center" }}>
+                    <FontAwesome6Icon
+                      style={{ marginHorizontal: 5 }}
+                      name="photo-film"
+                      size={15}
+                      color={woo_orange}
+                    />
+                    <Text style={{ fontSize: 12 }}>gallery</Text>
+                  </View>
+
                   <FontAwesome6Icon
                     style={{ marginHorizontal: 5 }}
-                    name="photo-film"
+                    name="arrow-right"
                     size={15}
-                    color={woo_orange}
+                    color={woo_black}
                   />
-                  <Text style={{ fontSize: 12 }}>gallery</Text>
-                </View>
-
-                <FontAwesome6Icon
-                  style={{ marginHorizontal: 5 }}
-                  name="arrow-right"
-                  size={15}
-                  color={woo_black}
-                />
+                </TouchableOpacity>
               </View>
+
               <ListViewWoos view={"list"} woos={woos} uid={uid} />
             </Tab>
             <Tab>
@@ -375,38 +347,55 @@ const ProfileScreen = ({ navigation, route }) => {
                 }}
               >
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <FontAwesome6Icon
-                    style={{ marginHorizontal: 5 }}
-                    name="arrow-left"
-                    size={15}
-                    color={woo_black}
-                  />
-                  <View style={{ alignItems: "center" }}>
-                    <Image
-                      style={{ width: 20, height: 18 }}
-                      source={require("../assets/woomigo_icon.png")}
-                    />
-                    <Text style={{ fontSize: 12 }}>woos</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ alignItems: "center" }}>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                    onPress={handleSwipeLeft}
+                  >
                     <FontAwesome6Icon
                       style={{ marginHorizontal: 5 }}
-                      name="bookmark"
-                      solid
+                      name="arrow-left"
                       size={15}
-                      color={woo_orange}
+                      color={woo_black}
                     />
-                    <Text style={{ fontSize: 12 }}>subscribed</Text>
-                  </View>
-
-                  <FontAwesome6Icon
-                    style={{ marginHorizontal: 5 }}
-                    name="arrow-right"
-                    size={15}
-                    color={woo_black}
-                  />
+                    <View style={{ alignItems: "center" }}>
+                      <Image
+                        style={{ width: 20, height: 18 }}
+                        source={require("../assets/woomigo_icon.png")}
+                      />
+                      <Text style={{ fontSize: 12 }}>woos</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                    onPress={handleSwipeRight}
+                  >
+                    <View style={{ alignItems: "center" }}>
+                      <FontAwesome6Icon
+                        style={{ marginHorizontal: 5 }}
+                        name="bookmark"
+                        solid
+                        size={15}
+                        color={woo_orange}
+                      />
+                      <Text style={{ fontSize: 12 }}>subscribed</Text>
+                    </View>
+                    <FontAwesome6Icon
+                      style={{ marginHorizontal: 5 }}
+                      name="arrow-right"
+                      size={15}
+                      color={woo_black}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
               <ListViewGallery
@@ -436,21 +425,30 @@ const ProfileScreen = ({ navigation, route }) => {
                 }}
               >
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <FontAwesome6Icon
-                    style={{ marginHorizontal: 5 }}
-                    name="arrow-left"
-                    size={15}
-                    color={woo_black}
-                  />
-                  <View style={{ alignItems: "center" }}>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                    onPress={handleSwipeLeft}
+                  >
                     <FontAwesome6Icon
                       style={{ marginHorizontal: 5 }}
-                      name="photo-film"
-                      size={20}
-                      color={woo_orange}
+                      name="arrow-left"
+                      size={15}
+                      color={woo_black}
                     />
-                    <Text style={{ fontSize: 12 }}>gallery</Text>
-                  </View>
+                    <View style={{ alignItems: "center" }}>
+                      <FontAwesome6Icon
+                        style={{ marginHorizontal: 5 }}
+                        name="photo-film"
+                        size={20}
+                        color={woo_orange}
+                      />
+                      <Text style={{ fontSize: 12 }}>gallery</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
               <ListViewWoos view={"list"} woos={woos} uid={uid} />
