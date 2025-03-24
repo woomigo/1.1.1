@@ -5,16 +5,19 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as Location from "expo-location";
 import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
 import { GOOGLE_API_KEY } from "@env";
 
 const API_KEY = GOOGLE_API_KEY;
 
-const WooLocationScreen = () => {
+const WooLocationScreen = ({ route, navigation }) => {
+
+  const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime } = route.params;
+
   const [region, setRegion] = useState(null); // Stores user location
   const [address, setAddress] = useState(""); // Stores the user's address
   const mapRef = useRef(null);
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   // Function to get the user's location
   const getUserLocation = async () => {

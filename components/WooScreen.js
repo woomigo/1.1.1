@@ -47,7 +47,7 @@ const WooScreen = ({ navigation, route }) => {
     wooTime,
     wooLocation,
     wooComments,
-    wooGallery
+    wooGallery,
   } = route.params;
 
   const { month, day } = getMonthAndDay(wooDate);
@@ -122,14 +122,13 @@ const WooScreen = ({ navigation, route }) => {
           <View
             style={[
               styles.card,
-              { flex: 2.5, alignItems: "center", justifyContent: "center" },
+              { flex: 2.5, justifyContent: "center" },
             ]}
           >
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "center",
               }}
             >
               <Avatar
@@ -311,16 +310,16 @@ const WooScreen = ({ navigation, route }) => {
 
             <MapView
               style={styles.map}
-              initialRegion={{
-                latitude: 40.7128,
-                longitude: -74.006,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
+              region={wooLocation.region}
+              initialRegion={wooLocation.region}
+              scrollEnabled={false}
+              zoomEnabled={false}    // Disables pinch-to-zoom
+              pitchEnabled={false}   // Disables 3D tilt gestures
+              rotateEnabled={false}  // Disables map rotation
             >
               <Marker
-                coordinate={{ latitude: 40.7128, longitude: -74.006 }}
-                title={wooLocation}
+                coordinate={wooLocation.region}
+                title={wooLocation.address}
               />
             </MapView>
           </View>
@@ -375,8 +374,7 @@ const WooScreen = ({ navigation, route }) => {
           </View>
         </View>
 
-
-                {/* Fifth
+        {/* Fifth
                 Row */}
         <View
           style={{
@@ -388,7 +386,7 @@ const WooScreen = ({ navigation, route }) => {
           }}
         >
           <View style={[styles.card, { flex: 1 }]}>
-           <LayoutWooGallery gallery={wooGallery} nav={'WooGalleryView'}/>
+            <LayoutWooGallery gallery={wooGallery} nav={"WooGalleryView"} />
           </View>
         </View>
       </ScrollView>
@@ -403,7 +401,7 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: "#d9d9d9",
-    height: 300,
+    height: 600,
   },
   card: {
     backgroundColor: "#1e1e1e25",

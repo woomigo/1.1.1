@@ -26,7 +26,7 @@ const WooMigosScreen = ({ route, navigation }) => {
             // setUser(doc.data())
             // setFollowing(doc.data().following)
             // setFollowers(doc.data().followers)
-            setMigos(doc.data().migos)
+            setMigos(doc.data().followers)
         }, (error) => {
 
         })
