@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Pressable,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
@@ -33,6 +34,8 @@ import { Switch } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { getMonthAndDay, getTimeAgo, truncUsername } from "./utility";
 import LayoutWooGallery from "./LayoutWooGallery";
+import DraggableBottomSheet from "./DraggableBottomSheet";
+import ListViewComments from "./ListViewComments";
 
 const WooScreen = ({ navigation, route }) => {
   const {
@@ -52,12 +55,42 @@ const WooScreen = ({ navigation, route }) => {
 
   const { month, day } = getMonthAndDay(wooDate);
 
+  const scrollViewRef = useRef(null);
+
   const [user, setUser] = useState();
   const [username, setUsername] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [profilePicURL, setProfilePicURL] = useState();
   const [timeAgo, setTImeAgo] = useState("");
+  const [isCommentBottomSheetVisible, setIsCommentBottomSheetVisible] =
+    useState(false);
+  const [isWooMigosBottomSheetVisible, setIsWooMigosBottomSheetVisible] =
+    useState(false);
+  const [isWooGalleryBottomSheetVisible, setIsWooGalleryBottomSheetVisible] =
+    useState(false);
+  const [isWooListBottomSheetVisible, setIsWooListBottomSheetVisible] =
+    useState(false);
+
+  const handleOpenCommentBottomSheet = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
+    setIsCommentBottomSheetVisible(true);
+  };
+
+  const handleOpenWooMigosBottomSheet = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
+    setIsWooMigosBottomSheetVisible(true);
+  };
+
+  const handleOpenWooGalleryBottomSheet = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
+    setIsWooGalleryBottomSheetVisible(true);
+  };
+
+  const handleOpenWooListBottomSheet = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
+    setIsWooListBottomSheetVisible(true);
+  };
 
   useEffect(() => {
     setTImeAgo(getTimeAgo(wooComments[0].timestamp.seconds));
@@ -85,6 +118,7 @@ const WooScreen = ({ navigation, route }) => {
     const [profilePicURL, setProfilePicURL] = useState();
 
     useEffect(() => {
+      console.log(isCommentBottomSheetVisible);
       const docRef = doc(db, "users", userID);
       const getProfileInfo = onSnapshot(
         docRef,
@@ -107,289 +141,357 @@ const WooScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Image style={styles.image} source={{ uri: image }} />
-        {/* FIRST 
+      <KeyboardAvoidingView
+        behavior={"position"}
+        // style={styles.container}
+      >
+        <ScrollView ref={scrollViewRef} scrollEventThrottle={16}>
+          <Image style={styles.image} source={{ uri: image }} />
+          {/* FIRST 
         ROW */}
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            marginHorizontal: 10,
-            marginVertical: 5,
-          }}
-        >
           <View
-            style={[
-              styles.card,
-              { flex: 2.5, justifyContent: "center" },
-            ]}
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              marginHorizontal: 10,
+              marginVertical: 5,
+            }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                rounded
-                size="medium"
-                onPress={() => navigation.navigate("Profile")}
-                source={{ uri: profilePicURL }}
-              />
-              <View style={{ marginStart: 5 }}>
-                <Text>{firstName}</Text>
-                <Text>{lastName}</Text>
-                <Text style={{ fontSize: 12 }}>@{username}</Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={[
-              styles.card,
-              { flex: 1, marginStart: 5, justifyContent: "center" },
-            ]}
-          >
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center",
-              }}
+              style={[styles.card, { flex: 2.5, justifyContent: "center" }]}
             >
               <View
                 style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Avatar
+                  rounded
+                  size="medium"
+                  onPress={() => navigation.navigate("Profile")}
+                  source={{ uri: profilePicURL }}
+                />
+                <View style={{ marginStart: 5 }}>
+                  <Text>{firstName}</Text>
+                  <Text>{lastName}</Text>
+                  <Text style={{ fontSize: 12 }}>@{username}</Text>
+                </View>
+              </View>
+            </View>
+            <View
+              style={[
+                styles.card,
+                { flex: 1, marginStart: 5, justifyContent: "center" },
+              ]}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
                   justifyContent: "space-around",
                   alignItems: "center",
                 }}
               >
-                <FontAwesome6Icon
-                  name="heart"
-                  style={{}}
-                  size={30}
-                  color={woo_black}
-                  onPress={() => setIsPrivateVisible(!isPrivateVisible)}
-                />
-                <Text style={{ marginTop: 3 }}>{wooLikes.length}</Text>
-              </View>
-              <View>
-                <FontAwesome6Icon
-                  name="paper-plane"
-                  style={{}}
-                  size={30}
-                  color={woo_black}
-                  onPress={() => setIsPrivateVisible(!isPrivateVisible)}
-                />
-                <Text style={{ marginTop: 3 }}>{}</Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={[
-              styles.card,
-              {
-                flex: 1,
-                marginStart: 5,
-                alignItems: "center",
-                justifyContent: "center",
-              },
-            ]}
-          >
-            <View
-              style={{
-                flex: 1,
-                // flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center",
-                // backgroundColor: "orange",
-              }}
-            >
-              <View style={styles.date}>
-                <Text style={styles.dateText}>{month}</Text>
-                <Text style={styles.dateText}>{day}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* SECOND 
-        ROW */}
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            marginHorizontal: 10,
-            marginBottom: 5,
-            marginTop: 0,
-          }}
-        >
-          <View
-            style={[
-              styles.card,
-              { flex: 1, alignItems: "center", justifyContent: "center" },
-            ]}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <FontAwesome6Icon
-                name="clock"
-                style={{}}
-                size={16}
-                color={woo_black}
-                onPress={() => setIsPrivateVisible(!isPrivateVisible)}
-              />
-              <View style={{ marginStart: 5 }}>
-                <Text>{wooTime}</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={[styles.card, { flex: 1, marginStart: 5 }]}>
-            <View
-              style={{
-                flex: 1,
-                // flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center",
-                // backgroundColor: "orange",
-              }}
-            >
-              <View style={styles.wooMigosImagesContainer}>
-                {wooMigos.length > 0 && <WooMigoImage userID={wooMigos[0]} />}
-                {wooMigos.length > 1 && <WooMigoImage userID={wooMigos[1]} />}
-                {wooMigos.length > 2 && <WooMigoImage userID={wooMigos[2]} />}
-                {wooMigos.length > 3 && <WooMigoImage userID={wooMigos[3]} />}
-                {wooMigos.length > 4 && (
-                  <View
-                    style={[
-                      styles.wooMigoImage,
-                      {
-                        backgroundColor: woo_orange,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      },
-                    ]}
-                  >
-                    <Text style={{ color: woo_white, fontSize: 12 }}>
-                      +{wooMigos.length - 4}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          </View>
-        </View>
-        {/* Third 
-                Row */}
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            marginHorizontal: 10,
-            marginBottom: 5,
-            marginTop: 0,
-          }}
-        >
-          <View style={[styles.card, { flex: 1 }]}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <FontAwesome6Icon
-                name="location-dot"
-                style={{}}
-                size={16}
-                color={woo_black}
-                onPress={() => setIsPrivateVisible(!isPrivateVisible)}
-              />
-              <Text style={styles.infoText}> {wooLocation}</Text>
-            </View>
-
-            <MapView
-              style={styles.map}
-              region={wooLocation.region}
-              initialRegion={wooLocation.region}
-              scrollEnabled={false}
-              zoomEnabled={false}    // Disables pinch-to-zoom
-              pitchEnabled={false}   // Disables 3D tilt gestures
-              rotateEnabled={false}  // Disables map rotation
-            >
-              <Marker
-                coordinate={wooLocation.region}
-                title={wooLocation.address}
-              />
-            </MapView>
-          </View>
-        </View>
-        {/* Fourth
-                Row */}
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            marginHorizontal: 10,
-            marginBottom: 5,
-            marginTop: 0,
-          }}
-        >
-          <View style={[styles.card, { flex: 1 }]}>
-            <View style={styles.commentHeaderContainer}>
-              <View style={styles.commentHeaderUserContainer}>
-                <TouchableWithoutFeedback>
-                  <Avatar
-                    rounded
-                    size="small"
-                    onPress={() => navigation.navigate("Profile")}
-                    source={{
-                      uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80",
-                    }}
+                <View
+                  style={{
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                  }}
+                >
+                  <FontAwesome6Icon
+                    name="heart"
+                    style={{}}
+                    size={30}
+                    color={woo_black}
+                    onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
-                </TouchableWithoutFeedback>
+                  <Text style={{ marginTop: 3 }}>{wooLikes.length}</Text>
+                </View>
                 <View>
-                  <TouchableWithoutFeedback>
-                    <Text style={styles.commentUsername}>{"boston_girl"}</Text>
-                  </TouchableWithoutFeedback>
-                  <View style={styles.commentContainer}>
-                    <Text style={styles.comment}>{wooComments[0].comment}</Text>
-
-                    <Text style={styles.commentTimeAgo}>{timeAgo}</Text>
-                  </View>{" "}
+                  <FontAwesome6Icon
+                    name="paper-plane"
+                    style={{}}
+                    size={30}
+                    color={woo_black}
+                    onPress={() => setIsPrivateVisible(!isPrivateVisible)}
+                  />
+                  <Text style={{ marginTop: 3 }}>{}</Text>
                 </View>
               </View>
             </View>
-            <View style={styles.seeMoreCommentsContainer}>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("CommentsComponent", { wooID: wooID })
-                }
+            <View
+              style={[
+                styles.card,
+                {
+                  flex: 1,
+                  marginStart: 5,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+              ]}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  // flexDirection: "row",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  // backgroundColor: "orange",
+                }}
               >
-                <Text style={styles.seeMoreCommentsText}>
-                  {`see ${wooComments.length - 1} more comments...`}
-                </Text>
-              </TouchableOpacity>
+                <View style={styles.date}>
+                  <Text style={styles.dateText}>{month}</Text>
+                  <Text style={styles.dateText}>{day}</Text>
+                </View>
+              </View>
             </View>
           </View>
-        </View>
 
-        {/* Fifth
-                Row */}
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            marginHorizontal: 10,
-            marginBottom: 5,
-            marginTop: 0,
-          }}
-        >
-          <View style={[styles.card, { flex: 1 }]}>
-            <LayoutWooGallery gallery={wooGallery} nav={"WooGalleryView"} />
+          {/* SECOND 
+        ROW */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              marginHorizontal: 10,
+              marginBottom: 5,
+              marginTop: 0,
+            }}
+          >
+            <View
+              style={[
+                styles.card,
+                { flex: 1, alignItems: "center", justifyContent: "center" },
+              ]}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <FontAwesome6Icon
+                  name="clock"
+                  style={{}}
+                  size={16}
+                  color={woo_black}
+                  onPress={() => setIsPrivateVisible(!isPrivateVisible)}
+                />
+                <View style={{ marginStart: 5 }}>
+                  <Text>{wooTime}</Text>
+                </View>
+              </View>
+            </View>
+
+            <Pressable
+              style={[styles.card, { flex: 1, marginStart: 5 }]}
+              onPress={() => handleOpenWooMigosBottomSheet()}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  // flexDirection: "row",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  // backgroundColor: "orange",
+                }}
+              >
+                <View style={styles.wooMigosImagesContainer}>
+                  {wooMigos.length > 0 && <WooMigoImage userID={wooMigos[0]} />}
+                  {wooMigos.length > 1 && <WooMigoImage userID={wooMigos[1]} />}
+                  {wooMigos.length > 2 && <WooMigoImage userID={wooMigos[2]} />}
+                  {wooMigos.length > 3 && <WooMigoImage userID={wooMigos[3]} />}
+                  {wooMigos.length > 4 && (
+                    <View
+                      style={[
+                        styles.wooMigoImage,
+                        {
+                          backgroundColor: woo_orange,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        },
+                      ]}
+                    >
+                      <Text style={{ color: woo_white, fontSize: 12 }}>
+                        +{wooMigos.length - 4}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+            </Pressable>
           </View>
-        </View>
-      </ScrollView>
+          {/* Third 
+                Row */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              marginHorizontal: 10,
+              marginBottom: 5,
+              marginTop: 0,
+            }}
+          >
+            <View style={[styles.card, { flex: 1 }]}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <FontAwesome6Icon
+                  name="location-dot"
+                  style={{}}
+                  size={16}
+                  color={woo_black}
+                  onPress={() => setIsPrivateVisible(!isPrivateVisible)}
+                />
+                <Text style={styles.infoText}> {wooLocation}</Text>
+              </View>
+
+              <MapView
+                style={styles.map}
+                region={wooLocation.region}
+                initialRegion={wooLocation.region}
+                scrollEnabled={false}
+                zoomEnabled={false} // Disables pinch-to-zoom
+                pitchEnabled={false} // Disables 3D tilt gestures
+                rotateEnabled={false} // Disables map rotation
+              >
+                <Marker
+                  coordinate={wooLocation.region}
+                  title={wooLocation.address}
+                />
+              </MapView>
+            </View>
+          </View>
+          {/* Fourth
+                Row */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              marginHorizontal: 10,
+              marginBottom: 5,
+              marginTop: 0,
+            }}
+          >
+            <Pressable
+              style={[styles.card, { flex: 1 }]}
+              onPress={() => handleOpenCommentBottomSheet()}
+            >
+              <View style={styles.commentHeaderContainer}>
+                <View style={styles.commentHeaderUserContainer}>
+                  <TouchableWithoutFeedback>
+                    <Avatar
+                      rounded
+                      size="small"
+                      onPress={() => navigation.navigate("Profile")}
+                      source={{
+                        uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80",
+                      }}
+                    />
+                  </TouchableWithoutFeedback>
+                  <View>
+                    <TouchableWithoutFeedback>
+                      <Text style={styles.commentUsername}>
+                        {"boston_girl"}
+                      </Text>
+                    </TouchableWithoutFeedback>
+                    <View style={styles.commentContainer}>
+                      <Text style={styles.comment}>
+                        {wooComments[0].comment}
+                      </Text>
+
+                      <Text style={styles.commentTimeAgo}>{timeAgo}</Text>
+                    </View>{" "}
+                  </View>
+                </View>
+              </View>
+              <View style={styles.seeMoreCommentsContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("CommentsComponent", { wooID: wooID })
+                  }
+                >
+                  <Text style={styles.seeMoreCommentsText}>
+                    {`see ${wooComments.length - 1} more comments...`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </View>
+
+          {/* Fifth
+                Row */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              marginHorizontal: 10,
+              marginBottom: 5,
+              marginTop: 0,
+            }}
+          >
+            <Pressable
+              style={[styles.card, { flex: 1 }]}
+              onPress={() => handleOpenWooGalleryBottomSheet()}
+            >
+              <LayoutWooGallery gallery={wooGallery} nav={"WooGalleryView"} />
+            </Pressable>
+          </View>
+
+          {/* Bottom Sheets */}
+
+          <DraggableBottomSheet
+            profilePicURL={profilePicURL}
+            title={"comments"}
+            isVisible={isCommentBottomSheetVisible}
+            onClose={() => setIsCommentBottomSheetVisible(false)}
+            showInput
+            placeholderText={"add a comment..."}
+          >
+            <Text style={styles.sheetTitle}>Draggable Content</Text>
+            <Text style={styles.sheetText}>
+              You can drag this sheet up or down!
+            </Text>
+            {/* <ListViewComments uid={uid} comments={wooComments} /> */}
+          </DraggableBottomSheet>
+
+          <DraggableBottomSheet
+            profilePicURL={profilePicURL}
+            title={"migos"}
+            isVisible={isWooMigosBottomSheetVisible}
+            onClose={() => setIsWooMigosBottomSheetVisible(false)}
+          >
+            <Text style={styles.sheetTitle}>Draggable Content</Text>
+            <Text style={styles.sheetText}>
+              You can drag this sheet up or down!
+            </Text>
+          </DraggableBottomSheet>
+
+          <DraggableBottomSheet
+            profilePicURL={profilePicURL}
+            title={"gallery"}
+            isVisible={isWooGalleryBottomSheetVisible}
+            onClose={() => setIsWooGalleryBottomSheetVisible(false)}
+          >
+            <Text style={styles.sheetTitle}>Draggable Content</Text>
+            <Text style={styles.sheetText}>
+              You can drag this sheet up or down!
+            </Text>
+          </DraggableBottomSheet>
+
+          <DraggableBottomSheet
+            profilePicURL={profilePicURL}
+            title={"list"}
+            isVisible={isWooListBottomSheetVisible}
+            onClose={() => setIsWooListBottomSheetVisible(false)}
+          >
+            <Text style={styles.sheetTitle}>Draggable Content</Text>
+            <Text style={styles.sheetText}>
+              You can drag this sheet up or down!
+            </Text>
+          </DraggableBottomSheet>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

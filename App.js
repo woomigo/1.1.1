@@ -1,4 +1,4 @@
-import 'react-native-get-random-values'
+import "react-native-get-random-values";
 import "react-native-gesture-handler";
 import React, { useState } from "react";
 import { LogBox } from "react-native";
@@ -47,6 +47,7 @@ import EditProfileScreen from "./components/EditProfileScreen";
 import PrivacyPolicyScreen from "./components/PrivacyPolicyScreen";
 import WooScreen from "./components/WooScreen";
 import MigoGroupsScreen from "./components/MigoGroupsScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -337,156 +338,158 @@ const App = () => {
   });
 
   return (
-    <NavigationContainer>
-      {isSignedIn ? (
-        <Tab.Navigator
-          screenOptions={{
-            tabBarShowLabel: false,
-            tabBarActiveTintColor: woo_orange,
-            tabBarInactiveTintColor: woo_gray,
-            headerShown: false,
-          }}
-        >
-          <Tab.Screen
-            name="HomeTab"
-            component={HomeStack}
-            options={{
-              title: "home",
-              tabBarIcon: ({ color }) => (
-                <Icon
-                  name="home"
-                  type="font-awesome-5"
-                  color={color}
-                  size={25}
-                />
-              ),
+    <GestureHandlerRootView>
+      <NavigationContainer>
+        {isSignedIn ? (
+          <Tab.Navigator
+            screenOptions={{
+              tabBarShowLabel: false,
+              tabBarActiveTintColor: woo_orange,
+              tabBarInactiveTintColor: woo_gray,
+              headerShown: false,
             }}
-          />
-          <Tab.Screen
-            name="ProfileTab"
-            component={ProfileStack}
-            options={{
-              title: "profile",
-              tabBarIcon: ({ color }) => (
-                <Icon
-                  name="user"
-                  solid
-                  type="font-awesome-5"
-                  color={color}
-                  size={25}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="CameraTab"
-            component={CameraStack}
-            options={{
-              title: "camera",
-              tabBarIcon: ({ color }) => (
-                <Icon
-                  name="camera"
-                  type="font-awesome-5"
-                  color={color}
-                  size={25}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="SearchTab"
-            component={SearchStack}
-            options={{
-              title: "search",
-              tabBarIcon: ({ color }) => (
-                <Icon
-                  name="search"
-                  type="font-awesome-5"
-                  color={color}
-                  size={25}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="MessagesTab"
-            component={MessagesStack}
-            options={{
-              title: "messages",
-              tabBarBadge:
-                messagesNotificationCount > 0
-                  ? messagesNotificationCount
-                  : undefined,
-              tabBarIcon: ({ color }) => (
-                <Icon
-                  name="envelope"
-                  solid
-                  type="font-awesome-5"
-                  color={color}
-                  size={25}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="NotificationsTab"
-            component={NotificationsStack}
-            options={{
-              title: "notifications",
-              tabBarBadge:
-                notificationCount > 0 ? notificationCount : undefined,
-              tabBarIcon: ({ color }) => (
-                <Icon
-                  name="bell"
-                  solid
-                  type="font-awesome-5"
-                  color={color}
-                  size={25}
-                />
-              ),
-            }}
-          />
-        </Tab.Navigator>
-      ) : (
-        <Stack.Navigator options={{ headerShown: false }}>
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="ForgotPassword"
-            component={ForgotPasswordScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="RegisterFullname"
-            component={RegisterFullnameScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="RegisterDOB"
-            component={RegisterDOBScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="RegisterUsername"
-            component={RegisterUsernameScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="RegisterProfilePicture"
-            component={RegisterProfilePictureScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
+          >
+            <Tab.Screen
+              name="HomeTab"
+              component={HomeStack}
+              options={{
+                title: "home",
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="home"
+                    type="font-awesome-5"
+                    color={color}
+                    size={25}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="ProfileTab"
+              component={ProfileStack}
+              options={{
+                title: "profile",
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="user"
+                    solid
+                    type="font-awesome-5"
+                    color={color}
+                    size={25}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="CameraTab"
+              component={CameraStack}
+              options={{
+                title: "camera",
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="camera"
+                    type="font-awesome-5"
+                    color={color}
+                    size={25}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="SearchTab"
+              component={SearchStack}
+              options={{
+                title: "search",
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="search"
+                    type="font-awesome-5"
+                    color={color}
+                    size={25}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="MessagesTab"
+              component={MessagesStack}
+              options={{
+                title: "messages",
+                tabBarBadge:
+                  messagesNotificationCount > 0
+                    ? messagesNotificationCount
+                    : undefined,
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="envelope"
+                    solid
+                    type="font-awesome-5"
+                    color={color}
+                    size={25}
+                  />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="NotificationsTab"
+              component={NotificationsStack}
+              options={{
+                title: "notifications",
+                tabBarBadge:
+                  notificationCount > 0 ? notificationCount : undefined,
+                tabBarIcon: ({ color }) => (
+                  <Icon
+                    name="bell"
+                    solid
+                    type="font-awesome-5"
+                    color={color}
+                    size={25}
+                  />
+                ),
+              }}
+            />
+          </Tab.Navigator>
+        ) : (
+          <Stack.Navigator options={{ headerShown: false }}>
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPasswordScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="RegisterFullname"
+              component={RegisterFullnameScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="RegisterDOB"
+              component={RegisterDOBScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="RegisterUsername"
+              component={RegisterUsernameScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="RegisterProfilePicture"
+              component={RegisterProfilePictureScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 
