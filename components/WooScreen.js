@@ -447,13 +447,12 @@ const WooScreen = ({ navigation, route }) => {
             onClose={() => setIsCommentBottomSheetVisible(false)}
             showInput
             placeholderText={"add a comment..."}
-          >
-            <Text style={styles.sheetTitle}>Draggable Content</Text>
-            <Text style={styles.sheetText}>
-              You can drag this sheet up or down!
-            </Text>
-            {/* <ListViewComments uid={uid} comments={wooComments} /> */}
-          </DraggableBottomSheet>
+            isFlatlist
+            flatlistData={wooComments}
+            renderData={(comment) => (
+              <LayoutCommentItem uid={uid} comment={comment} />
+            )}
+          ></DraggableBottomSheet>
 
           <DraggableBottomSheet
             profilePicURL={profilePicURL}
@@ -490,6 +489,7 @@ const WooScreen = ({ navigation, route }) => {
               You can drag this sheet up or down!
             </Text>
           </DraggableBottomSheet>
+          <ListViewComments uid={uid} comments={wooComments} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

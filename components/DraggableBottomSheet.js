@@ -15,12 +15,15 @@ import {
   Platform,
 } from "react-native";
 import BottomSheet, {
+  BottomSheetFlashList,
   BottomSheetFlatList,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { woo_black, woo_orange } from "../assets/colors";
 import { Avatar, Input, Icon, Switch } from "@rneui/themed";
+
+const keyExtractor = (item) => item;
 
 const DraggableBottomSheet = ({
   profilePicURL,
@@ -33,6 +36,9 @@ const DraggableBottomSheet = ({
   isSwitchEnabled,
   placeholderText,
   showInput,
+  isFlatlist = false,
+  flatListData,
+  renderData,
 }) => {
   const bottomSheetRef = useRef(null);
   const snapPoints = [780];
@@ -93,7 +99,14 @@ const DraggableBottomSheet = ({
             </View>
           </View>
           {children}
-          {/* <BottomSheetFlatList>{children}</BottomSheetFlatList> */}
+          {isFlatlist && (
+            <BottomSheetFlatList
+              data={flatListData}
+              keyExtractor={(i) => i}
+              renderItem={renderData}
+              contentContainerStyle={styles.contentContainer}
+            />
+          )}
         </View>
 
         {/* Fixed Input for Comments */}
