@@ -33,7 +33,7 @@ import { Switch } from "react-native";
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
   const [user, setUser] = useState();
-  const [isProfileOwnedByUser, setIsProfileOwnedByUser] = useState(true);
+  const [isProfileOwnedByUser, setIsProfileOwnedByUser] = useState(false);
   const [woos, setWoos] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [open, setOpen] = useState(false);
@@ -43,6 +43,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const [profilePicURL, setProfilePicURL] = useState();
   const [following, setFollowing] = useState([]);
   const [followers, setFollowers] = useState([]);
+  const [isFollowing, setIsFollowing] = useState();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
@@ -50,7 +51,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const Tab = ({ children }) => <View style={{ width }}>{children}</View>;
 
-  const { uid } = route.params;
+  const { uid, userUID } = route.params;
 
   const scrollViewRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0); // Track current page index
@@ -82,7 +83,8 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    const docRef = doc(db, "users", uid);
+    setIsProfileOwnedByUser(!userUID);
+    const docRef = doc(db, "users", userUID ? userUID : uid);
     const getProfileInfo = onSnapshot(
       docRef,
       (doc) => {
@@ -137,6 +139,30 @@ const ProfileScreen = ({ navigation, route }) => {
             return <MenuScreen user={user} />;
           }}
         >
+          {!isProfileOwnedByUser && (
+            <View style={styles.topButtonsContainer}>
+              <View style={styles.topButtons}>
+                <View style={styles.topButtonBackground}>
+                  <FontAwesome6Icon
+                    name="angle-left"
+                    style={{}}
+                    size={30}
+                    color={woo_white}
+                    onPress={() => navigation.goBack()}
+                  />
+                </View>
+                <View style={styles.topButtonBackground}>
+                  <FontAwesome6Icon
+                    name="envelope"
+                    style={{}}
+                    size={30}
+                    color={woo_white}
+                    onPress={() => messageUser()}
+                  />
+                </View>
+              </View>
+            </View>
+          )}
           <Image style={styles.image} source={{ uri: profilePicURL }} />
           <Card
             containerStyle={{
@@ -156,32 +182,47 @@ const ProfileScreen = ({ navigation, route }) => {
               }),
             }}
           >
-            <View style={{ flexDirection: "row" }}>
-              <Avatar
-                rounded
-                size="medium"
-                onPress={() => navigation.navigate("Profile")}
-                source={{ uri: profilePicURL }}
-              />
-              <View style={{ justifyContent: "center", marginStart: 5 }}>
-                <Text
-                  style={{
-                    color: woo_black,
-                    fontWeight: "bold",
-                    fontSize: 14,
-                  }}
-                >
-                  {firstName} {lastName}
-                </Text>
-                <Text
-                  style={{
-                    color: woo_black,
-                    fontSize: 12,
-                  }}
-                >
-                  @{username}
-                </Text>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <Avatar
+                  rounded
+                  size="medium"
+                  onPress={() => navigation.navigate("Profile")}
+                  source={{ uri: profilePicURL }}
+                />
+                <View style={{ justifyContent: "center", marginStart: 5 }}>
+                  <Text
+                    style={{
+                      color: woo_black,
+                      fontWeight: "bold",
+                      fontSize: 14,
+                    }}
+                  >
+                    {firstName} {lastName}
+                  </Text>
+                  <Text
+                    style={{
+                      color: woo_black,
+                      fontSize: 12,
+                    }}
+                  >
+                    @{username}
+                  </Text>
+                </View>
               </View>
+              {!isProfileOwnedByUser && (
+                <View style={{ marginEnd: 10 }}>
+                  <FontAwesome6Icon
+                    name="ellipsis"
+                    style={{}}
+                    size={20}
+                    color={woo_black}
+                    onPress={() => userMenu()}
+                  />
+                </View>
+              )}
             </View>
             <View
               style={{
@@ -242,7 +283,13 @@ const ProfileScreen = ({ navigation, route }) => {
                 </Pressable>
               </View>
               <Button
-                title="edit profile"
+                title={
+                  isProfileOwnedByUser
+                    ? "edit profile"
+                    : isFollowing
+                    ? "unfollow"
+                    : "follow"
+                }
                 buttonStyle={{
                   backgroundColor: woo_black,
                   borderRadius: 30,
@@ -464,6 +511,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: woo_white,
+  },
+  topButtonsContainer: {
+    flex: 1,
+    flexDirection: "row",
+    // backgroundColor: "blue",
+    position: "absolute",
+    zIndex: 1,
+  },
+  topButtons: {
+    flex: 1,
+    margin: 10,
+    marginHorizontal: 20,
+    flexDirection: "row",
+    // position: "absolute",
+    justifyContent: "space-between",
+    alignItems: "center",
+    // backgroundColor: "red",
+  },
+  topButtonBackground: {
+    height: 45,
+    width: 45,
+    backgroundColor: "#d9d9d999",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 23,
   },
   image: {
     backgroundColor: "#d9d9d9",

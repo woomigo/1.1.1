@@ -92,12 +92,12 @@ const HomeStack = () => {
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />
-      <Stack.Screen
-        name="User"
-        component={UserScreen}
+      {/* <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
-      />
+      /> */}
       <Stack.Screen
         name="MediaView"
         component={MediaViewScreen}
@@ -196,12 +196,12 @@ const ProfileStack = () => {
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />
-      <Stack.Screen
-        name="User"
-        component={UserScreen}
+      {/* <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
-      />
+      /> */}
       <Stack.Screen
         name="MediaView"
         component={MediaViewScreen}
@@ -308,8 +308,8 @@ const MessagesStack = () => {
         initialParams={uid && { uid: uid }}
       />
       <Stack.Screen
-        name="User"
-        component={UserScreen}
+        name="Profile"
+        component={ProfileScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />

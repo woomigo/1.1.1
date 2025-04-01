@@ -163,7 +163,7 @@ const WooScreen = ({ navigation, route }) => {
             </View>
             <View style={styles.topButtonBackground}>
               <FontAwesome6Icon
-                name="heart"
+                name="bookmark"
                 style={{}}
                 size={30}
                 color={woo_white}
@@ -536,6 +536,7 @@ const styles = StyleSheet.create({
   topButtons: {
     flex: 1,
     margin: 10,
+    marginHorizontal: 20, 
     flexDirection: "row",
     // position: "absolute",
     justifyContent: "space-between",

@@ -206,7 +206,7 @@ const MessagesScreen = ({ route, navigation }) => {
             <Avatar
               rounded
               size="medium"
-              onPress={() => navigation.navigate("User", { user: user })}
+              onPress={() => user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid })}
               source={{ uri: user.profile_pic_url }}
             />
           </View>

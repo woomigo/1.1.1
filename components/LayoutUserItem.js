@@ -112,7 +112,7 @@ const LayoutUserItem = ({
           <TouchableOpacity
             style={styles.container}
             onPress={() => {
-              user.uid !== uid && navigation.navigate("User", { user: user });
+              user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
             }}
           >
             <View style={styles.imageContainer}>

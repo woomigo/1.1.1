@@ -74,7 +74,7 @@ const LayoutCommentItem = ({ uid, comment, comments }) => {
         <View style={styles.commentHeaderUserContainer}>
           <TouchableWithoutFeedback
             onPress={() => {
-              user.uid !== uid && navigation.navigate("User", { user: user });
+              user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
             }}
           >
             <Text style={styles.commentUsername}>{username}</Text>

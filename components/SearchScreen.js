@@ -330,8 +330,7 @@ const SearchScreen = ({ navigation, route }) => {
           <TouchableOpacity
             style={styles.container}
             onPress={() => {
-              user.uid !== uid &&
-                navigation.navigate("User", { userUID: user.uid });
+              user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
             }}
           >
             <View style={styles.userInfoContainer}>
