@@ -1,10 +1,15 @@
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import LayoutCommentItem from "./LayoutCommentItem";
+import LayoutRepliesItem from "./LayoutRepliesItem";
 
-const ListViewComments = ({ uid, comments }) => {
+const ListViewComments = ({ uid, comments, isReplies }) => {
   const renderComments = (comment) => (
-    <LayoutCommentItem uid={uid} comment={comment} />
+    <LayoutCommentItem uid={uid} comment={comment} comments={comments} />
+  );
+
+  const renderReplies = (comment) => (
+    <LayoutRepliesItem uid={uid} comment={comment} comments={comments} />
   );
 
   return (
@@ -12,9 +17,9 @@ const ListViewComments = ({ uid, comments }) => {
       <FlatList
         showsVerticalScrollIndicator={false}
         backgroundColor={"#fff"}
-        keyExtractor={(notification) => notification.id}
+        keyExtractor={(comment) => `${comment.id}`}
         data={comments}
-        renderItem={renderComments}
+        renderItem={isReplies ? renderReplies : renderComments}
         initialNumToRender={3}
         maxToRenderPerBatch={3}
       />

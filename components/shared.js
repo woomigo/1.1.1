@@ -679,42 +679,42 @@ export const Comments = [
   {
     id: 0,
     comment: "so excited!",
-    profile:
+    profile_pic_url:
       "https://images.unsplash.com/photo-1626847152272-c64724db41c4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
     username: "ricky_bobby_bitch",
-    timeAgo: 3,
+    time_ago: "3 secs ago",
   },
   {
     id: 1,
     comment: "should I bring drinks?",
-    profile:
+    profile_pic_url:
       "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80",
     username: "mikey356",
-    timeAgo: 46,
+    time_ago: "46 minutes ago",
   },
   {
     id: 2,
     comment: "May not make it :(",
-    profile:
+    profile_pic_url:
       "https://images.unsplash.com/photo-1508002366005-75a695ee2d17?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=968&q=80",
     username: "jess2U",
-    timeAgo: 123,
+    time_ago: "123 days ago",
   },
   {
     id: 3,
     comment: "jess you better come!!!",
-    profile:
+    profile_pic_url:
       "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
     username: "whatsit2u",
-    timeAgo: 92,
+    time_ago: "92 months ago",
   },
   {
     id: 4,
     comment: "gonna be a little late... but im there",
-    profile:
+    profile_pic_url:
       "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
     username: "jackofall",
-    timeAgo: 10,
+    time_ago: "10 years ago",
   },
 ];
 
