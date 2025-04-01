@@ -92,6 +92,10 @@ const WooScreen = ({ navigation, route }) => {
     setIsWooListBottomSheetVisible(true);
   };
 
+  const subscribeToWoo = () => {
+    console.log("SUBSCRIBED!!!");
+  };
+
   useEffect(() => {
     setTImeAgo(getTimeAgo(wooComments[0].timestamp.seconds));
     const docRef = doc(db, "users", ownerUID);
@@ -143,9 +147,31 @@ const WooScreen = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={"position"}
-        // style={styles.container}
+        // style={styles.topButtonsContainer}
       >
         <ScrollView ref={scrollViewRef} scrollEventThrottle={16}>
+        <View style={styles.topButtonsContainer}>
+          <View style={styles.topButtons}>
+            <View style={styles.topButtonBackground}>
+              <FontAwesome6Icon
+                name="angle-left"
+                style={{}}
+                size={30}
+                color={woo_white}
+                onPress={() => navigation.goBack()}
+              />
+            </View>
+            <View style={styles.topButtonBackground}>
+              <FontAwesome6Icon
+                name="heart"
+                style={{}}
+                size={30}
+                color={woo_white}
+                onPress={() => subscribeToWoo()}
+              />
+            </View>
+          </View>
+        </View>
           <Image style={styles.image} source={{ uri: image }} />
           {/* FIRST 
         ROW */}
@@ -489,7 +515,6 @@ const WooScreen = ({ navigation, route }) => {
               You can drag this sheet up or down!
             </Text>
           </DraggableBottomSheet>
-          <ListViewComments uid={uid} comments={wooComments} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -500,6 +525,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: woo_white,
+  },
+  topButtonsContainer: {
+    flex: 1,
+    flexDirection: "row",
+    // backgroundColor: "blue",
+    position: "absolute",
+    zIndex: 1,
+  },
+  topButtons: {
+    flex: 1,
+    margin: 10,
+    flexDirection: "row",
+    // position: "absolute",
+    justifyContent: "space-between",
+    alignItems: "center",
+    // backgroundColor: "red",
+  },
+  topButtonBackground: {
+    height: 45,
+    width: 45,
+    backgroundColor: "#d9d9d999",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 23
   },
   image: {
     backgroundColor: "#d9d9d9",
