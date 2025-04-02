@@ -69,6 +69,12 @@ const HomeStack = () => {
         initialParams={uid && { uid: uid }}
       />
       <Stack.Screen
+        name="Migos"
+        component={MigosScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
         name="WooMigosView"
         component={WooMigosView}
         options={{ headerShown: false }}

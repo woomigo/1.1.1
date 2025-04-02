@@ -19,7 +19,7 @@ import { woo_black, woo_gray, woo_orange, woo_red } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 const MigosScreen = ({ navigation, route }) => {
-  const { uid, indexParam = 0 } = route.params;
+  const { uid, indexParam = 0, userUID } = route.params;
 
   const userRef = doc(db, "users", uid);
 
@@ -32,7 +32,7 @@ const MigosScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     setIndex(indexParam);
-    const docRef = doc(db, "users", uid);
+    const docRef = doc(db, "users", userUID ? userUID : uid);
     const getMigos = onSnapshot(docRef, (doc) => {
       // console.log("Document data:", doc.data());
       setUser(doc.data());
@@ -199,13 +199,32 @@ const MigosScreen = ({ navigation, route }) => {
             justifyContent: "space-around",
           }}
         >
-          <Pressable onPress={() => navigation.navigate("MigoGroups")}>
-            <FontAwesome6Icon name="user-group" size={26} color={woo_black} />
-          </Pressable>
+          {!userUID && (
+            <View
+              style={{
+                flex: 1,
+                // backgroundColor: "red",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <Pressable onPress={() => navigation.navigate("MigoGroups")}>
+                <FontAwesome6Icon
+                  name="user-group"
+                  size={26}
+                  color={woo_black}
+                />
+              </Pressable>
 
-          <Pressable onPress={() => navigation.navigate("MigoRequests")}>
-            <FontAwesome6Icon name="user-plus" size={26} color={woo_black} />
-          </Pressable>
+              <Pressable onPress={() => navigation.navigate("MigoRequests")}>
+                <FontAwesome6Icon
+                  name="user-plus"
+                  size={26}
+                  color={woo_black}
+                />
+              </Pressable>
+            </View>
+          )}
         </View>
       </View>
       <Tab

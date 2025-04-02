@@ -239,7 +239,10 @@ const ProfileScreen = ({ navigation, route }) => {
                 <Pressable
                   style={{ alignItems: "center" }}
                   onPress={() =>
-                    navigation.navigate("Migos", { indexParam: 0 })
+                    navigation.navigate("Migos", {
+                      indexParam: 0,
+                      userUID: userUID,
+                    })
                   }
                 >
                   <Text
@@ -264,7 +267,10 @@ const ProfileScreen = ({ navigation, route }) => {
                 <Pressable
                   style={{ alignItems: "center" }}
                   onPress={() =>
-                    navigation.navigate("Migos", { indexParam: 1 })
+                    navigation.navigate("Migos", {
+                      indexParam: 1,
+                      userUID: userUID,
+                    })
                   }
                 >
                   <Text
