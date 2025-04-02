@@ -11,7 +11,7 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
+import { Avatar, Tab, TabView, Card, Button, Icon } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
 import {
@@ -44,6 +44,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const [following, setFollowing] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [isFollowing, setIsFollowing] = useState();
+  const [isProfilePrivate, setIsPofilePrivate] = useState();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
@@ -97,6 +98,8 @@ const ProfileScreen = ({ navigation, route }) => {
         setProfilePicURL(doc.data().profile_pic_url);
         setFollowing(doc.data().following);
         setFollowers(doc.data().followers);
+        setIsPofilePrivate(doc.data().is_private_profile);
+        setIsFollowing(doc.data().followers.includes(uid));
       },
       (error) => {},
       []
@@ -320,104 +323,77 @@ const ProfileScreen = ({ navigation, route }) => {
               </View>
             </View>
           </Card>
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            onScroll={handleScroll} // Detect scrolling
-            scrollEventThrottle={16} // Optimize scroll event handling
-            style={{ marginTop: 15 }}
-          >
-            <Tab>
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <Image
-                  style={{ width: 30, height: 24 }}
-                  source={require("../assets/woomigo_icon.png")}
-                />
-                <Text style={{ fontSize: 12 }}>owned woos</Text>
-              </View>
-
-              <View
+          {!isProfileOwnedByUser && !isFollowing && isProfilePrivate ? (
+            <View
+              style={{
+                flex: 1,
+                // borderColor: woo_black,
+                // borderWidth: 5,
+                margin: 5,
+                marginTop: 50,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Icon
+                name={"user-lock"}
+                type="font-awesome-5"
+                color={woo_black}
+                size={40}
+                style={{ margin: 5 }}
+              />
+              <Text
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  marginEnd: 20,
+                  color: woo_black,
+                  marginBottom: 3,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 18,
                 }}
               >
-                <TouchableOpacity
+                {`@${username}'s`}
+              </Text>
+              <Text
+                style={{
+                  color: woo_black,
+                  marginBottom: 3,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 18,
+                }}
+              >
+                profile is private
+              </Text>
+            </View>
+          ) : (
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              onScroll={handleScroll} // Detect scrolling
+              scrollEventThrottle={16} // Optimize scroll event handling
+              style={{ marginTop: 15 }}
+            >
+              <Tab>
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <Image
+                    style={{ width: 30, height: 24 }}
+                    source={require("../assets/woomigo_icon.png")}
+                  />
+                  <Text style={{ fontSize: 12 }}>owned woos</Text>
+                </View>
+
+                <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "flex-end",
                     alignItems: "center",
+                    marginEnd: 20,
                   }}
-                  onPress={handleSwipeRight}
                 >
-                  <View style={{ alignItems: "center" }}>
-                    <FontAwesome6Icon
-                      style={{ marginHorizontal: 5 }}
-                      name="photo-film"
-                      size={15}
-                      color={woo_orange}
-                    />
-                    <Text style={{ fontSize: 12 }}>gallery</Text>
-                  </View>
-
-                  <FontAwesome6Icon
-                    style={{ marginHorizontal: 5 }}
-                    name="arrow-right"
-                    size={15}
-                    color={woo_black}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <ListViewWoos view={"list"} woos={woos} uid={uid} />
-            </Tab>
-            <Tab>
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <FontAwesome6Icon
-                  style={{ marginHorizontal: 5 }}
-                  name="photo-film"
-                  size={20}
-                  color={woo_orange}
-                />
-                <Text style={{ fontSize: 12 }}>gallery</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginHorizontal: 20,
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <TouchableOpacity
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                    }}
-                    onPress={handleSwipeLeft}
-                  >
-                    <FontAwesome6Icon
-                      style={{ marginHorizontal: 5 }}
-                      name="arrow-left"
-                      size={15}
-                      color={woo_black}
-                    />
-                    <View style={{ alignItems: "center" }}>
-                      <Image
-                        style={{ width: 20, height: 18 }}
-                        source={require("../assets/woomigo_icon.png")}
-                      />
-                      <Text style={{ fontSize: 12 }}>woos</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <TouchableOpacity
                     style={{
                       flexDirection: "row",
@@ -429,13 +405,13 @@ const ProfileScreen = ({ navigation, route }) => {
                     <View style={{ alignItems: "center" }}>
                       <FontAwesome6Icon
                         style={{ marginHorizontal: 5 }}
-                        name="bookmark"
-                        solid
+                        name="photo-film"
                         size={15}
                         color={woo_orange}
                       />
-                      <Text style={{ fontSize: 12 }}>subscribed</Text>
+                      <Text style={{ fontSize: 12 }}>gallery</Text>
                     </View>
+
                     <FontAwesome6Icon
                       style={{ marginHorizontal: 5 }}
                       name="arrow-right"
@@ -444,63 +420,140 @@ const ProfileScreen = ({ navigation, route }) => {
                     />
                   </TouchableOpacity>
                 </View>
-              </View>
-              <ListViewGallery
-                gallery={gallery}
-                inverted
-                view={"grid"}
-                nav={"MediaView"}
-              />
-            </Tab>
-            <Tab>
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <FontAwesome6Icon
-                  style={{ marginHorizontal: 5 }}
-                  name="bookmark"
-                  solid
-                  size={20}
-                  color={woo_orange}
-                />
-                <Text style={{ fontSize: 12 }}>subscribed</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginHorizontal: 20,
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <TouchableOpacity
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                    }}
-                    onPress={handleSwipeLeft}
-                  >
-                    <FontAwesome6Icon
-                      style={{ marginHorizontal: 5 }}
-                      name="arrow-left"
-                      size={15}
-                      color={woo_black}
-                    />
-                    <View style={{ alignItems: "center" }}>
+
+                <ListViewWoos view={"list"} woos={woos} uid={uid} />
+              </Tab>
+              <Tab>
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <FontAwesome6Icon
+                    style={{ marginHorizontal: 5 }}
+                    name="photo-film"
+                    size={20}
+                    color={woo_orange}
+                  />
+                  <Text style={{ fontSize: 12 }}>gallery</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginHorizontal: 20,
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                      }}
+                      onPress={handleSwipeLeft}
+                    >
                       <FontAwesome6Icon
                         style={{ marginHorizontal: 5 }}
-                        name="photo-film"
-                        size={20}
-                        color={woo_orange}
+                        name="arrow-left"
+                        size={15}
+                        color={woo_black}
                       />
-                      <Text style={{ fontSize: 12 }}>gallery</Text>
-                    </View>
-                  </TouchableOpacity>
+                      <View style={{ alignItems: "center" }}>
+                        <Image
+                          style={{ width: 20, height: 18 }}
+                          source={require("../assets/woomigo_icon.png")}
+                        />
+                        <Text style={{ fontSize: 12 }}>woos</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                      }}
+                      onPress={handleSwipeRight}
+                    >
+                      <View style={{ alignItems: "center" }}>
+                        <FontAwesome6Icon
+                          style={{ marginHorizontal: 5 }}
+                          name="bookmark"
+                          solid
+                          size={15}
+                          color={woo_orange}
+                        />
+                        <Text style={{ fontSize: 12 }}>subscribed</Text>
+                      </View>
+                      <FontAwesome6Icon
+                        style={{ marginHorizontal: 5 }}
+                        name="arrow-right"
+                        size={15}
+                        color={woo_black}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-              <ListViewWoos view={"list"} woos={woos} uid={uid} />
-            </Tab>
-          </ScrollView>
+                <ListViewGallery
+                  gallery={gallery}
+                  inverted
+                  view={"grid"}
+                  nav={"MediaView"}
+                />
+              </Tab>
+              <Tab>
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <FontAwesome6Icon
+                    style={{ marginHorizontal: 5 }}
+                    name="bookmark"
+                    solid
+                    size={20}
+                    color={woo_orange}
+                  />
+                  <Text style={{ fontSize: 12 }}>subscribed</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginHorizontal: 20,
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                      }}
+                      onPress={handleSwipeLeft}
+                    >
+                      <FontAwesome6Icon
+                        style={{ marginHorizontal: 5 }}
+                        name="arrow-left"
+                        size={15}
+                        color={woo_black}
+                      />
+                      <View style={{ alignItems: "center" }}>
+                        <FontAwesome6Icon
+                          style={{ marginHorizontal: 5 }}
+                          name="photo-film"
+                          size={20}
+                          color={woo_orange}
+                        />
+                        <Text style={{ fontSize: 12 }}>gallery</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <ListViewWoos view={"list"} woos={woos} uid={uid} />
+              </Tab>
+            </ScrollView>
+          )}
         </Drawer>
       </ScrollView>
     </SafeAreaView>
