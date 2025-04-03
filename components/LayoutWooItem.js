@@ -8,7 +8,7 @@ import { woo_white } from "../assets/colors";
 
 const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
   useEffect(() => {
-    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo.item.id)}`);
+    // console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo.item.id)}`);
   });
 
   return (

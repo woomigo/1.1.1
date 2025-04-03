@@ -168,7 +168,7 @@ const MigosScreen = ({ navigation, route }) => {
             justifyContent: "flex-start",
           }}
         >
-          <Pressable onPress={() => navigation.navigate("Profile")}>
+          <Pressable onPress={() => navigation.goBack()}>
             <FontAwesome6Icon name="chevron-left" size={24} color={woo_black} />
           </Pressable>
         </View>

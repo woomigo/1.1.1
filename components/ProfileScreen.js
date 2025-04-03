@@ -84,12 +84,13 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    console.log(`USERUID ======s ${userUID}`)
     setIsProfileOwnedByUser(!userUID);
     const docRef = doc(db, "users", userUID ? userUID : uid);
     const getProfileInfo = onSnapshot(
       docRef,
       (doc) => {
-        console.log("Document data:", doc.data());
+        // console.log("Document data:", doc.data());
         setUser(doc.data());
         setGallery(doc.data().gallery);
         setUsername(doc.data().username);
@@ -239,7 +240,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 <Pressable
                   style={{ alignItems: "center" }}
                   onPress={() =>
-                    navigation.navigate("Migos", {
+                    navigation.push("Migos", {
                       indexParam: 0,
                       userUID: userUID,
                     })
@@ -267,7 +268,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 <Pressable
                   style={{ alignItems: "center" }}
                   onPress={() =>
-                    navigation.navigate("Migos", {
+                    navigation.push("Migos", {
                       indexParam: 1,
                       userUID: userUID,
                     })

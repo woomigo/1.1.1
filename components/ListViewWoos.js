@@ -5,7 +5,7 @@ import { woo_orange } from "../assets/colors";
 
 const ListViewWoos = ({ woos, view, uid }) => {
   useEffect(() => {
-    console.log(`LISTVIEWWOOS ==== ${JSON.stringify(woos[0])}`);
+    // console.log(`LISTVIEWWOOS ==== ${JSON.stringify(woos[0])}`);
   });
 
   const [currentVisibleIndex, setCurrentVisibleIndex] = useState();

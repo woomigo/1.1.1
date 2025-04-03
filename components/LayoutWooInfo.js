@@ -115,7 +115,7 @@ const LayoutWooInfo = ({
           <View style={{ justifyContent: "flex-end" }}>
             <TouchableWithoutFeedback
               onPress={() => {
-                user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
+                user.uid !== uid && navigation.push("Profile", { userUID: user.uid });
               }}
             >
               <View style={{ marginStart: 5 }}>
