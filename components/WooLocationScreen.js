@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Text,
+  Keyboard,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -11,12 +18,14 @@ import { GOOGLE_API_KEY } from "@env";
 const API_KEY = GOOGLE_API_KEY;
 
 const WooLocationScreen = ({ route, navigation }) => {
-
-  const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime } = route.params;
+  const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime } =
+    route.params;
 
   const [region, setRegion] = useState(null); // Stores user location
   const [address, setAddress] = useState(""); // Stores the user's address
+
   const mapRef = useRef(null);
+  const googlePlacesRef = useRef(null);
   // const navigation = useNavigation();
 
   // Function to get the user's location
@@ -76,6 +85,18 @@ const WooLocationScreen = ({ route, navigation }) => {
     }
   };
 
+  const handleChangeText = (text) => {
+    if (text === "") {
+      googlePlacesRef.current.blur();
+      Keyboard.dismiss();
+    }
+  };
+
+  const handleBlur = () => {
+    googlePlacesRef.current.blur();
+    Keyboard.dismiss();
+  };
+
   // Fetch user location on mount
   useEffect(() => {
     console.log(`GGGAAAPPPKKK ${API_KEY}`);
@@ -86,10 +107,17 @@ const WooLocationScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       {/* Google Places Autocomplete Input */}
       <GooglePlacesAutocomplete
-        placeholder="Search location"
-        minLength={2}
+        ref={googlePlacesRef}
+        placeholder="search woo location"
+        enablePoweredByContainer={false}
+        keyboardShouldPersistTaps="handled"
+        onBlur={() => handleBlur}
         fetchDetails={true}
         onFail={(error) => console.error("Autocomplete Error:", error)}
+        textInputProps={{
+          onBlur: handleBlur,
+          onChangeText: handleChangeText, // Handle input change
+        }}
         onPress={(data, details = null) => {
           console.log("Selected Place:", data.description);
           if (details) {
