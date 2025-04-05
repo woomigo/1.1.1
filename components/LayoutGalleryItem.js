@@ -42,7 +42,7 @@ const LayoutGalleryItem = ({
       <TouchableWithoutFeedback
         onPress={() => {
           nav == "MediaView"
-            ? navigation.navigate(`${nav}`, { mediaUrl: `${image}` })
+            ? navigation.navigate(`${nav}`, { mediaURL: `${image}` })
             : navigation.navigate(`${nav}`, { wooGallery: navParams });
         }}
       >

@@ -331,6 +331,8 @@ const ProfileScreen = ({ navigation, route }) => {
             </View>
           </Card>
           {!isProfileOwnedByUser && !isFollowing && isProfilePrivate ? (
+
+            // locked profile ui
             <View
               style={{
                 flex: 1,
@@ -373,6 +375,8 @@ const ProfileScreen = ({ navigation, route }) => {
               </Text>
             </View>
           ) : (
+
+            //Tab begins with woo, galllery, subscribed
             <ScrollView
               ref={scrollViewRef}
               horizontal
@@ -382,6 +386,8 @@ const ProfileScreen = ({ navigation, route }) => {
               scrollEventThrottle={16} // Optimize scroll event handling
               style={{ marginTop: 15 }}
             >
+
+              {/* OWNED WOOS */}
               <Tab>
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
@@ -430,6 +436,8 @@ const ProfileScreen = ({ navigation, route }) => {
 
                 <ListViewWoos view={"list"} woos={woos} uid={uid} />
               </Tab>
+
+              {/* GALLERY */}
               <Tab>
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
@@ -509,6 +517,8 @@ const ProfileScreen = ({ navigation, route }) => {
                   nav={"MediaView"}
                 />
               </Tab>
+
+              {/* SUBSCRIBED WOOS */}
               <Tab>
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
