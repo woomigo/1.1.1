@@ -97,7 +97,9 @@ const WooScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    setTImeAgo(getTimeAgo(wooComments[0].timestamp.seconds));
+    setTImeAgo(
+      wooComments.length > 0 && getTimeAgo(wooComments[0].timestamp.seconds)
+    );
     const docRef = doc(db, "users", ownerUID);
     const getWooOwnerProfileInfo = onSnapshot(
       docRef,
@@ -150,28 +152,28 @@ const WooScreen = ({ navigation, route }) => {
         // style={styles.topButtonsContainer}
       >
         <ScrollView ref={scrollViewRef} scrollEventThrottle={16}>
-        <View style={styles.topButtonsContainer}>
-          <View style={styles.topButtons}>
-            <View style={styles.topButtonBackground}>
-              <FontAwesome6Icon
-                name="angle-left"
-                style={{}}
-                size={30}
-                color={woo_white}
-                onPress={() => navigation.goBack()}
-              />
-            </View>
-            <View style={styles.topButtonBackground}>
-              <FontAwesome6Icon
-                name="bookmark"
-                style={{}}
-                size={30}
-                color={woo_white}
-                onPress={() => subscribeToWoo()}
-              />
+          <View style={styles.topButtonsContainer}>
+            <View style={styles.topButtons}>
+              <View style={styles.topButtonBackground}>
+                <FontAwesome6Icon
+                  name="angle-left"
+                  style={{}}
+                  size={30}
+                  color={woo_white}
+                  onPress={() => navigation.goBack()}
+                />
+              </View>
+              <View style={styles.topButtonBackground}>
+                <FontAwesome6Icon
+                  name="bookmark"
+                  style={{}}
+                  size={30}
+                  color={woo_white}
+                  onPress={() => subscribeToWoo()}
+                />
+              </View>
             </View>
           </View>
-        </View>
           <Image style={styles.image} source={{ uri: image }} />
           {/* FIRST 
         ROW */}
@@ -390,6 +392,7 @@ const WooScreen = ({ navigation, route }) => {
           </View>
           {/* Fourth
                 Row */}
+
           <View
             style={{
               flex: 1,
@@ -403,45 +406,55 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenCommentBottomSheet()}
             >
-              <View style={styles.commentHeaderContainer}>
-                <View style={styles.commentHeaderUserContainer}>
-                  <TouchableWithoutFeedback>
-                    <Avatar
-                      rounded
-                      size="small"
-                      onPress={() => navigation.navigate("Profile")}
-                      source={{
-                        uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80",
-                      }}
-                    />
-                  </TouchableWithoutFeedback>
-                  <View>
-                    <TouchableWithoutFeedback>
-                      <Text style={styles.commentUsername}>
-                        {"boston_girl"}
-                      </Text>
-                    </TouchableWithoutFeedback>
-                    <View style={styles.commentContainer}>
-                      <Text style={styles.comment}>
-                        {wooComments[0].comment}
-                      </Text>
+              {wooComments.length > 0 ? (
+                <>
+                  <View style={styles.commentHeaderContainer}>
+                    <View style={styles.commentHeaderUserContainer}>
+                      <TouchableWithoutFeedback>
+                        <Avatar
+                          rounded
+                          size="small"
+                          onPress={() => navigation.navigate("Profile")}
+                          source={{
+                            uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80",
+                          }}
+                        />
+                      </TouchableWithoutFeedback>
+                      <View>
+                        <TouchableWithoutFeedback>
+                          <Text style={styles.commentUsername}>
+                            {"boston_girl"}
+                          </Text>
+                        </TouchableWithoutFeedback>
+                        <View style={styles.commentContainer}>
+                          <Text style={styles.comment}>
+                            {wooComments[0].comment}
+                          </Text>
 
-                      <Text style={styles.commentTimeAgo}>{timeAgo}</Text>
-                    </View>{" "}
+                          <Text style={styles.commentTimeAgo}>{timeAgo}</Text>
+                        </View>{" "}
+                      </View>
+                    </View>
                   </View>
+                  <View style={styles.seeMoreCommentsContainer}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("CommentsComponent", {
+                          wooID: wooID,
+                        })
+                      }
+                    >
+                      <Text style={styles.seeMoreCommentsText}>
+                        {`see ${wooComments.length - 1} more comments...`}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <Text>no comments</Text>
                 </View>
-              </View>
-              <View style={styles.seeMoreCommentsContainer}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("CommentsComponent", { wooID: wooID })
-                  }
-                >
-                  <Text style={styles.seeMoreCommentsText}>
-                    {`see ${wooComments.length - 1} more comments...`}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+              )}
             </Pressable>
           </View>
 
@@ -536,7 +549,7 @@ const styles = StyleSheet.create({
   topButtons: {
     flex: 1,
     margin: 10,
-    marginHorizontal: 20, 
+    marginHorizontal: 20,
     flexDirection: "row",
     // position: "absolute",
     justifyContent: "space-between",
@@ -549,7 +562,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#d9d9d999",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 23
+    borderRadius: 23,
   },
   image: {
     backgroundColor: "#d9d9d9",

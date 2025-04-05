@@ -100,7 +100,7 @@ const HomeScreen = ({ route }) => {
               justifyContent: "flex-end",
             }}
           >
-            <Text style={styles.smallText}>view all</Text>
+            {/* <Text style={styles.smallText}>view all</Text> */}
           </View>
         </View>
         <ListViewPrivateWoos gallery={Gallery} isVisible={isPrivateVisible}/>
@@ -123,7 +123,7 @@ const HomeScreen = ({ route }) => {
               public woos
             </Text>
           </View>
-          <Text style={styles.smallText}>view all</Text>
+          {/* <Text style={styles.smallText}>view all</Text> */}
         </View>
         <ListViewWoos view={"list"} woos={woos} uid={uid} />
       </ScrollView>

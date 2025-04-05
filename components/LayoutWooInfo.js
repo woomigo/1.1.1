@@ -14,23 +14,7 @@ import { Icon, Avatar, Card } from "@rneui/themed";
 import { woo_gray, woo_black, woo_orange, woo_white } from "../assets/colors";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-
-const getMonthAndDay = (dateString) => {
-  const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  ];
-
-  const parts = dateString.split('/');
-  if (parts.length !== 3) return { month: 'Invalid', day: 'Invalid' };
-
-  const monthIndex = parseInt(parts[0], 10) - 1; // Convert to zero-based index
-  const day = parseInt(parts[1], 10); // Extract day
-
-  if (monthIndex < 0 || monthIndex > 11 || isNaN(day)) return { month: 'Invalid', day: 'Invalid' };
-
-  return { month: months[monthIndex], day };
-};
+import { getMonthAndDay } from "./utility";
 
 const LayoutWooInfo = ({
   uid,
