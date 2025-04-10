@@ -8,7 +8,7 @@ import { woo_white } from "../assets/colors";
 
 const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
   useEffect(() => {
-    // console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo.item.id)}`);
+    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo.item.id)}`);
   });
 
   return (
@@ -29,6 +29,7 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
           wooLocation={woo.item.data().woo_location}
           wooComments={woo.item.data().woo_comments}
           wooGallery={woo.item.data().woo_gallery}
+          wooList={woo.item.data().woo_list}
         />
       ) : (
         <LayoutWooVideo

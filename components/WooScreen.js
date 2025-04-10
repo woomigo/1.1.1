@@ -36,6 +36,7 @@ import { getMonthAndDay, getTimeAgo, truncUsername } from "./utility";
 import LayoutWooGallery from "./LayoutWooGallery";
 import DraggableBottomSheet from "./DraggableBottomSheet";
 import ListViewComments from "./ListViewComments";
+import ListViewWooList from "./ListViewWooList";
 
 const WooScreen = ({ navigation, route }) => {
   const {
@@ -51,6 +52,7 @@ const WooScreen = ({ navigation, route }) => {
     wooLocation,
     wooComments,
     wooGallery,
+    wooList
   } = route.params;
 
   const { month, day } = getMonthAndDay(wooDate);
@@ -451,7 +453,9 @@ const WooScreen = ({ navigation, route }) => {
                   </View>
                 </>
               ) : (
-                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
                   <Text>no comments</Text>
                 </View>
               )}
@@ -476,6 +480,8 @@ const WooScreen = ({ navigation, route }) => {
               <LayoutWooGallery gallery={wooGallery} nav={"WooGalleryView"} />
             </Pressable>
           </View>
+
+          <ListViewWooList view={"grid"} wooList={wooList} size="xl" />
 
           {/* Bottom Sheets */}
 

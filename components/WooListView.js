@@ -21,7 +21,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { woo_black, woo_white } from "../assets/colors";
-import ListViewChips from "./ListViewChips";
+import ListViewChips from "./ListViewWooList";
+import ListViewWooList from "./ListViewWooList";
 // import { Chips } from "./shared";
 
 const WooListView = ({ navigation, route }) => {
@@ -80,7 +81,7 @@ const WooListView = ({ navigation, route }) => {
           leftContainerStyle={styles.leftComponent}
           centerContainerStyle={styles.centerComponent}
         />
-        <ListViewChips view={"list"} chips={wooList} />
+        <ListViewWooList view={"list"} chips={wooList} />
       </View>
     </TouchableWithoutFeedback>
   );

@@ -19,7 +19,8 @@ const LayoutWooImage = ({
   wooTime,
   wooLocation,
   wooComments,
-  wooGallery
+  wooGallery,
+  wooList
 }) => {
   const navigation = useNavigation();
 
@@ -38,7 +39,8 @@ const LayoutWooImage = ({
           wooTime,
           wooLocation,
           wooComments,
-          wooGallery
+          wooGallery,
+          wooList
         })
       }
       style={styles.container}
