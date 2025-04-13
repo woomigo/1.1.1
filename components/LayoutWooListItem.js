@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableWithoutFeedback, StyleSheet, Text } from "react-native";
-import { Chip, Avatar, LinearProgress } from "@rneui/themed";
+import { View, StyleSheet, Text } from "react-native";
+import { Avatar } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
-import { woo_gray, woo_orange, woo_white } from "../assets/colors";
-import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { woo_white } from "../assets/colors";
 import ProgressBar from "./ProgressBar";
-import { Picker } from "@react-native-picker/picker";
-import ItemCounter from "./SelectableInputCounter";
 import SelectableInputCounter from "./SelectableInputCounter";
 
 const LayoutWooListItem = ({
   item,
   size,
-  itemsAmt = 5,
-  itemsSlctd = 2,
+  itemsAmt,
+  itemsSlctd,
   view,
 }) => {
   const [selectedItem, setSelectedItem] = useState(0);
   const itemsLeft = itemsAmt - itemsSlctd;
 
   useEffect(() => {
-    console.log("LWLIT" + item);
-    console.log("User selected:", selectedItem);
+    console.log("VIEW " + view);
+    console.log("LWLIT " + item);
+    console.log("User selected: ", selectedItem);
   });
   const navigation = useNavigation();
 
@@ -57,14 +55,75 @@ const LayoutWooListItem = ({
     switch (view) {
       case "grid":
         return (
-          <View style={[styles.card, { flex: 1 }]}>
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: selectedItem > 0 ? "#d9d9d9" : woo_white,
+                width: 180,
+                height: 250,
+              },
+            ]}
+          >
+            <Avatar
+              size={60}
+              rounded
+              icon={{
+                name: "list",
+                type: "font-awesome",
+                color: selectedItem > 0 ? "#d9d9d9" : woo_white,
+                size: 24,
+              }}
+              containerStyle={{
+                backgroundColor: !selectedItem > 0 ? "#d9d9d9" : woo_white,
+                margin: 5,
+              }}
+            />
             <Text>{item}</Text>
+            <ProgressBar
+              backgroundColor={selectedItem > 0 ? woo_white : "#d9d9d9"}
+              itemsAmt={itemsAmt}
+              itemsSlctd={itemsSlctd}
+              animated
+            />
+            <SelectableInputCounter
+              itemsAmt={itemsAmt}
+              itemsSlctd={itemsSlctd}
+              onChange={(val) => setSelectedItem(val)}
+            />
           </View>
         );
       case "list":
         return 60;
       case "horizontal":
-        return 80;
+        return (
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: selectedItem > 0 ? "#d9d9d9" : woo_white,
+                width: 80,
+                height: 100,
+              },
+            ]}
+          >
+            <Avatar
+              size={28}
+              rounded
+              icon={{
+                name: "list",
+                type: "font-awesome",
+                color: selectedItem > 0 ? "#d9d9d9" : woo_white,
+                size: 12,
+              }}
+              containerStyle={{
+                backgroundColor: !selectedItem > 0 ? "#d9d9d9" : woo_white,
+                margin: 5,
+              }}
+            />
+            <Text style={{ fontSize: 10 }}>{item}</Text>
+          </View>
+        );
       case "small":
       default:
         return 25;
@@ -75,52 +134,10 @@ const LayoutWooListItem = ({
     <View
       style={{
         flex: 1,
-        // flexDirection: "row",
         alignItems: "center",
-        // justifyContent: "flex-start",
       }}
     >
-      <View
-        style={[
-          styles.card,
-          {
-            backgroundColor: selectedItem > 0 ? '#d9d9d9' : woo_white,
-            width: 180,
-            height: 250,
-          },
-        ]}
-      >
-        <Avatar
-          size={60}
-          rounded
-          icon={{ name: "list", type: "font-awesome", color: selectedItem > 0 ? '#d9d9d9' : woo_white, size: 24 }}
-          containerStyle={{ backgroundColor: !selectedItem > 0 ? '#d9d9d9' : woo_white, margin: 5 }}
-        />
-        <Text>{item}</Text>
-        <ProgressBar backgroundColor={selectedItem > 0 ? woo_white : '#d9d9d9'} itemsAmt={itemsAmt} itemsSlctd={itemsSlctd} animated />
-        <SelectableInputCounter
-          itemsAmt={itemsAmt}
-          itemsSlctd={itemsSlctd}
-          onChange={(val) => setSelectedItem(val)}
-        />
-      </View>
-
-      {/* <TouchableWithoutFeedback
-        onPress={() => {
-          console.log("chip pressed");
-          navigation.navigate("WooListView", { wooID: wooID });
-        }}
-      >
-        <Chip
-          onPress={() => {
-            console.log("chip pressed");
-            navigation.navigate("WooListView", { wooID: wooID });
-          }}
-          title={chip}
-          color={woo_orange}
-          containerStyle={{ marginStart: 10, marginVertical: 10 }}
-        />
-      </TouchableWithoutFeedback> */}
+      {returnView()}
     </View>
   );
 };
@@ -137,7 +154,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     alignItems: "center",
-    // marginBottom: 15,
   },
 });
 

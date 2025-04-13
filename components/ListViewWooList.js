@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { ListItem } from "@rneui/themed";
+import { Button, ListItem } from "@rneui/themed";
 import LayoutWooListItem from "./LayoutWooListItem";
-import { woo_white } from "../assets/colors";
+import { woo_orange, woo_white } from "../assets/colors";
+import SearchInput from "./SearchInput";
 
 const ListViewWooList = ({ wooList, view, size, wooID }) => {
+  const [filteredResults, setFilteredResults] = useState(wooList);
+  const [itemsAmt, setItemsAmt] = useState(5);
+  const [itemsSlctd, setItemsSlctd] = useState(2);
+
+  useEffect(() => {
+    console.log(`WOOLIST ==== ${wooList}`);
+  });
+
+  const handleListUpdate = (update) => {
+    console.log("list updated to" + update);
+  };
+
   const renderHorizontal = (item) => (
     <LayoutWooListItem
       size={size}
@@ -29,6 +42,9 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
       view={"grid"}
       item={item.item}
       wooID={wooID}
+      itemsAmt={5}
+      itemsSlctd={2}
+      onListUpdated={handleListUpdate()}
     />
   );
 
@@ -60,16 +76,10 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
             showsVerticalScrollIndicator={false}
             key={(woo) => woo.id}
             scrollEnabled={false}
-            // style={{
-            //   height: "100%",
-            //   width: "100%",
-            //   flexGrow: 0,
-            //   marginTop: 10,
-            // }}
             backgroundColor={woo_white}
             keyExtractor={(woo) => woo.id}
             numColumns={2}
-            data={wooList}
+            data={filteredResults}
             renderItem={renderGrid}
           />
         );
@@ -85,7 +95,37 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
     }
   };
 
-  return renderView(view);
+  return (
+    <View>
+      {view == "grid" && (
+        <SearchInput
+          data={wooList}
+          onResultsChange={setFilteredResults}
+          showEmptyMessage={true}
+          placeholder="search woo list"
+        />
+      )}
+
+      {renderView(view)}
+      {view == "grid" && (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Button
+            onPress={() => setItemsSlctd((prev) => prev + 1)}
+            title="update list"
+            buttonStyle={{
+              backgroundColor: woo_orange,
+              borderRadius: 3,
+            }}
+            containerStyle={{
+              width: 220,
+              marginTop: 20,
+              marginBottom: 30,
+            }}
+          />
+        </View>
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

@@ -10,7 +10,7 @@ const LayoutWooGallery = ({ gallery, nav }) => {
             {
                 gallery.length > 0 ?
                     < Card containerStyle={styles.container}>
-                        <ListViewGallery nav={nav} gallery={gallery} view="horizontal" size="med" horizBorderRadius={5} />
+                        <ListViewGallery nav={nav} gallery={gallery} view="horizontal" size="xlrg" horizBorderRadius={5} />
                     </Card >
                     :
                     < Card containerStyle={styles.textContainer}>

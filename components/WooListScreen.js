@@ -1,8 +1,15 @@
-import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
-import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  FlatList,
+} from "react-native";
+import { Header, Icon, LinearProgress, Input, Button } from "@rneui/themed";
 import { woo_black, woo_orange } from "../assets/colors";
 import ListViewChips from "./ListViewWooList";
+import SelectableInputCounter from "./SelectableInputCounter";
 
 const WooListScreen = ({ route, navigation }) => {
   const {
@@ -15,32 +22,69 @@ const WooListScreen = ({ route, navigation }) => {
     wooLocation,
   } = route.params;
 
-  const [list, setList] = useState([]);
-  const [listItem, setListItem] = useState();
-  const [isListError, setIsListError] = useState();
-  const [isListIconHidden, setListIconHidden] = useState(true);
+  const [items, setItems] = useState([]);
+  const [itemName, setItemName] = useState("");
 
-  const listRef = useRef();
+  useEffect(() => {
+    console.log("ITEMS: ==== " + JSON.stringify(items));
+  });
 
-  const addListInput = () => {
-    setList([...list, listItem]);
-    listRef.current.clear();
-    listRef.current.blur();
-  };
-
-  const handleListOnChange = (input) => {
-    if (input.length > 0) {
-      setListIconHidden(false);
-    } else {
-      setListIconHidden(true);
+  // Add a new item to the list
+  const addItem = () => {
+    if (itemName) {
+      const newItem = {
+        id: (items.length + 1).toString(),
+        name: itemName,
+        maxAmount: 0, // Initialize maxAmount to 0
+      };
+      setItems([...items, newItem]);
+      setItemName("");
     }
-    setIsListError(false);
-    setListItem(input);
   };
 
-  const handleListEndEditing = () => {
-    setListIconHidden(true);
+  // Set the max amount for the item
+  const setMaxAmount = (id, value) => {
+    const newItems = items.map((item) =>
+      item.id === id ? { ...item, maxAmount: value } : item
+    );
+    setItems(newItems);
   };
+
+  // Render each item
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Text style={styles.itemName}>{item.name}</Text>
+
+      {/* Input for setting maxAmount */}
+      <SelectableInputCounter
+        isGeneric={true}
+        value={item.maxAmount}
+        min={0}
+        max={10}
+        onChange={(text) => setMaxAmount(item.id, text)}
+      />
+    </View>
+  );
+
+  // const addListInput = () => {
+  //   setList([...list, listItem]);
+  //   listRef.current.clear();
+  //   listRef.current.blur();
+  // };
+
+  // const handleListOnChange = (input) => {
+  //   if (input.length > 0) {
+  //     setListIconHidden(false);
+  //   } else {
+  //     setListIconHidden(true);
+  //   }
+  //   setIsListError(false);
+  //   setListItem(input);
+  // };
+
+  // const handleListEndEditing = () => {
+  //   setListIconHidden(true);
+  // };
 
   return (
     <View style={styles.container}>
@@ -94,7 +138,7 @@ const WooListScreen = ({ route, navigation }) => {
                 wooDate: wooDate,
                 wooTime: wooTime,
                 wooLocation: wooLocation,
-                wooList: list,
+                wooList: items,
               })
             }
           />
@@ -112,9 +156,9 @@ const WooListScreen = ({ route, navigation }) => {
 
       <KeyboardAvoidingView behavior="position">
         <Input
-          value={listItem}
-          ref={listRef}
-          onChangeText={(text) => handleListOnChange(text)}
+          value={itemName}
+          onChangeText={setItemName}
+          // ref={listRef}
           placeholder="add an item"
           leftIcon={
             <Icon
@@ -127,21 +171,25 @@ const WooListScreen = ({ route, navigation }) => {
           // errorStyle={{ color: 'red' }}
           // errorMessage={isListError && "sorry we couldn't find that List"}
           autoCapitalize="none"
-          // onFocus={() => handleListOnFocus()}
-          onEndEditing={() => handleListEndEditing()}
-          rightIcon={
-            !isListIconHidden && (
-              <Icon
-                name="play"
-                type="font-awesome-5"
-                size={18}
-                onPress={() => addListInput()}
-              />
-            )
-          }
+        />
+        <Button
+          title="Add Item"
+          onPress={addItem}
+          buttonStyle={{
+            backgroundColor: woo_orange,
+            borderRadius: 3,
+          }}
+          containerStyle={{
+            marginHorizontal: 10,
+            marginBottom: 10,
+          }}
         />
       </KeyboardAvoidingView>
-      <ListViewChips view={"list"} chips={list} />
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+      />
     </View>
   );
 };
@@ -171,6 +219,17 @@ const styles = StyleSheet.create({
   rightComponent: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  itemContainer: {
+    padding: 10,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    backgroundColor: "#d9d9d9",
+    borderRadius: 8,
+  },
+  itemName: {
+    fontWeight: "600",
+    fontSize: 18,
   },
 });
 

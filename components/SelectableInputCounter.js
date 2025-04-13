@@ -16,8 +16,8 @@ const SelectableInputCounter = ({
   min,
   max,
   onChange,
-  itemsAmt,
-  itemsSlctd,
+  itemsAmt = 5,
+  itemsSlctd = 0,
 }) => {
   // If not generic, calculate limits based on items left
   const derivedMin = isGeneric ? min : 0;

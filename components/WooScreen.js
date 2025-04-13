@@ -30,7 +30,6 @@ import { Drawer } from "react-native-drawer-layout";
 import MenuScreen from "./MenuScreen";
 import ListViewWoos from "./ListViewWoos";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import { Switch } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { getMonthAndDay, getTimeAgo, truncUsername } from "./utility";
 import LayoutWooGallery from "./LayoutWooGallery";
@@ -52,7 +51,7 @@ const WooScreen = ({ navigation, route }) => {
     wooLocation,
     wooComments,
     wooGallery,
-    wooList
+    wooList,
   } = route.params;
 
   const { month, day } = getMonthAndDay(wooDate);
@@ -477,11 +476,32 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenWooGalleryBottomSheet()}
             >
-              <LayoutWooGallery gallery={wooGallery} nav={"WooGalleryView"} />
+              <LayoutWooGallery gallery={wooGallery} />
             </Pressable>
           </View>
 
-          <ListViewWooList view={"grid"} wooList={wooList} size="xl" />
+          {/* Sixth
+                Row */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              marginHorizontal: 10,
+              marginBottom: 5,
+              marginTop: 0,
+            }}
+          >
+            <Pressable
+              style={[styles.card, { flex: 1 }]}
+              onPress={() => handleOpenWooListBottomSheet()}
+            >
+              <ListViewWooList
+                view={"horizontal"}
+                wooList={wooList}
+                size="xl"
+              />
+            </Pressable>
+          </View>
 
           {/* Bottom Sheets */}
 
@@ -529,10 +549,7 @@ const WooScreen = ({ navigation, route }) => {
             isVisible={isWooListBottomSheetVisible}
             onClose={() => setIsWooListBottomSheetVisible(false)}
           >
-            <Text style={styles.sheetTitle}>Draggable Content</Text>
-            <Text style={styles.sheetText}>
-              You can drag this sheet up or down!
-            </Text>
+            <ListViewWooList view={"grid"} wooList={wooList} size="xl" />
           </DraggableBottomSheet>
         </ScrollView>
       </KeyboardAvoidingView>

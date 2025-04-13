@@ -17,7 +17,7 @@ const LayoutGalleryItem = ({
   horizBorderRadius,
 }) => {
   useEffect(() => {
-    //    console.log(`LGI === ${JSON.stringify(image)}`)
+       console.log(`LGI === ${JSON.stringify(image)}`)
   });
   const navigation = useNavigation();
 

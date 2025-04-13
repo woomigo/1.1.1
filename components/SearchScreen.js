@@ -36,6 +36,7 @@ import ListViewUsers from "./ListViewUsers";
 import { SelfIdentity } from "./shared";
 import { render } from "react-native-web";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import SearchInput from "./SearchInput";
 
 const SearchScreen = ({ navigation, route }) => {
   const { uid } = route.params;
@@ -246,16 +247,27 @@ const SearchScreen = ({ navigation, route }) => {
             size={26}
             color={woo_black}
           />
-          <FontAwesome6Icon
-            name="ellipsis"
-            size={26}
-            color={woo_black}
-          />
+          <FontAwesome6Icon name="ellipsis" size={26} color={woo_black} />
         </View>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <View style={{ flex: 1, height: 1, backgroundColor: "#b3b3b3", marginHorizontal: 10, marginVertical: 10 }} />
+        <View
+          style={{
+            flex: 1,
+            height: 1,
+            backgroundColor: "#b3b3b3",
+            marginHorizontal: 10,
+            marginVertical: 10,
+          }}
+        />
       </View>
+
+      {/* <SearchInput
+        data={wooList}
+        onResultsChange={setFilteredResults}
+        showEmptyMessage={true}
+        placeholder="search woo list"
+      /> */}
 
       {/* <Input
         value={searchValue}
@@ -330,7 +342,8 @@ const SearchScreen = ({ navigation, route }) => {
           <TouchableOpacity
             style={styles.container}
             onPress={() => {
-              user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
+              user.uid !== uid &&
+                navigation.navigate("Profile", { userUID: user.uid });
             }}
           >
             <View style={styles.userInfoContainer}>

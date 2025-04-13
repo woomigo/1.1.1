@@ -33,7 +33,7 @@ const ListViewGallery = ({
     <LayoutGalleryItem
       size={size}
       view={view}
-      image={image.item.image}
+      image={image.item}
       nav={nav}
       navParams={navParams}
       horizBorderRadius={horizBorderRadius}
