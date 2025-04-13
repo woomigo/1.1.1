@@ -10,6 +10,7 @@ import { Header, Icon, LinearProgress, Input, Button } from "@rneui/themed";
 import { woo_black, woo_orange } from "../assets/colors";
 import ListViewChips from "./ListViewWooList";
 import SelectableInputCounter from "./SelectableInputCounter";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 const WooListScreen = ({ route, navigation }) => {
   const {
@@ -42,6 +43,11 @@ const WooListScreen = ({ route, navigation }) => {
     }
   };
 
+  // Remove an item by ID
+  const removeItem = (id) => {
+    setItems(items.filter((item) => item.id !== id));
+  };
+
   // Set the max amount for the item
   const setMaxAmount = (id, value) => {
     const newItems = items.map((item) =>
@@ -53,7 +59,16 @@ const WooListScreen = ({ route, navigation }) => {
   // Render each item
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemName}>{item.name}</Text>
+      <View style={{flex: 1, justifyContent: 'space-between' ,flexDirection: 'row'}}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <FontAwesome6Icon
+          style={{ marginEnd: 5 }}
+          name="trash-alt"
+          size={18}
+          color={woo_black}
+          onPress={() => removeItem(item.id)}
+        />{" "}
+      </View>
 
       {/* Input for setting maxAmount */}
       <SelectableInputCounter
