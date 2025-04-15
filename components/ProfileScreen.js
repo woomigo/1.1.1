@@ -84,7 +84,7 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log(`USERUID ======s ${userUID}`)
+    console.log(`USERUID ======s ${userUID}`);
     setIsProfileOwnedByUser(!userUID);
     const docRef = doc(db, "users", userUID ? userUID : uid);
     const getProfileInfo = onSnapshot(
@@ -143,9 +143,9 @@ const ProfileScreen = ({ navigation, route }) => {
             return <MenuScreen user={user} />;
           }}
         >
-          {!isProfileOwnedByUser && (
-            <View style={styles.topButtonsContainer}>
-              <View style={styles.topButtons}>
+          <View style={styles.topButtonsContainer}>
+            <View style={[styles.topButtons, isProfileOwnedByUser && {justifyContent: 'flex-end'}]}>
+              {!isProfileOwnedByUser && (
                 <View style={styles.topButtonBackground}>
                   <FontAwesome6Icon
                     name="angle-left"
@@ -155,18 +155,28 @@ const ProfileScreen = ({ navigation, route }) => {
                     onPress={() => navigation.goBack()}
                   />
                 </View>
-                <View style={styles.topButtonBackground}>
+              )}
+              <View style={styles.topButtonBackground}>
+                {isProfileOwnedByUser ? (
                   <FontAwesome6Icon
-                    name="envelope"
+                    name={"bars"}
+                    style={{}}
+                    size={30}
+                    color={woo_white}
+                    onPress={() => setOpen((prevOpen) => !prevOpen)}
+                  />
+                ) : (
+                  <FontAwesome6Icon
+                    name={"envelope"}
                     style={{}}
                     size={30}
                     color={woo_white}
                     onPress={() => messageUser()}
                   />
-                </View>
+                )}
               </View>
             </View>
-          )}
+          </View>
           <Image style={styles.image} source={{ uri: profilePicURL }} />
           <Card
             containerStyle={{
@@ -331,7 +341,6 @@ const ProfileScreen = ({ navigation, route }) => {
             </View>
           </Card>
           {!isProfileOwnedByUser && !isFollowing && isProfilePrivate ? (
-
             // locked profile ui
             <View
               style={{
@@ -375,7 +384,6 @@ const ProfileScreen = ({ navigation, route }) => {
               </Text>
             </View>
           ) : (
-
             //Tab begins with woo, galllery, subscribed
             <ScrollView
               ref={scrollViewRef}
@@ -386,7 +394,6 @@ const ProfileScreen = ({ navigation, route }) => {
               scrollEventThrottle={16} // Optimize scroll event handling
               style={{ marginTop: 15 }}
             >
-
               {/* OWNED WOOS */}
               <Tab>
                 <View

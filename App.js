@@ -48,6 +48,9 @@ import PrivacyPolicyScreen from "./components/PrivacyPolicyScreen";
 import WooScreen from "./components/WooScreen";
 import MigoGroupsScreen from "./components/MigoGroupsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import MessageDetailsScreen from "./components/MessagesDetails";
+import NewMessageScreen from "./components/NewMessageScreen";
+import ManageParticipantsScreen from "./components/ManageParticipantsScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -304,6 +307,24 @@ const MessagesStack = () => {
       <Stack.Screen
         name="ComposeMessage"
         component={ComposeMessageScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="NewMessage"
+        component={NewMessageScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="MessageDetails"
+        component={MessageDetailsScreen}
+        options={{ headerShown: false }}
+        initialParams={uid && { uid: uid }}
+      />
+      <Stack.Screen
+        name="ManageParticipants"
+        component={ManageParticipantsScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />

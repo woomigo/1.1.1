@@ -675,6 +675,81 @@ export const Notifications = [
   },
 ];
 
+export const sampleMessages = [
+  {
+    id: "1",
+    sender: "Anna Brown",
+    text: "Hey! Are we still meeting up later?",
+    timestamp: "10:45 AM",
+    unread: true,
+    archived: false,
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+  },
+  {
+    id: "2",
+    sender: "Mark Robinson",
+    text: "Sent over the documents. Let me know.",
+    timestamp: "9:22 AM",
+    unread: false,
+    archived: false,
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+  {
+    id: "3",
+    sender: "Lena Ortiz",
+    text: "This weekend was amazing, thank you ❤️",
+    timestamp: "Yesterday",
+    unread: true,
+    archived: false,
+    image: "",
+  },
+  {
+    id: "4",
+    sender: "Tommy Hall",
+    text: "Just archived some old files for you.",
+    timestamp: "Yesterday",
+    unread: false,
+    archived: true,
+    image: "https://randomuser.me/api/portraits/men/51.jpg",
+  },
+  {
+    id: "5",
+    sender: "Customer Support",
+    text: "Your ticket has been resolved.",
+    timestamp: "Mon",
+    unread: true,
+    archived: false,
+    image: "",
+  },
+  {
+    id: "6",
+    sender: "Vanessa Chen",
+    text: "Let’s schedule that catch-up soon.",
+    timestamp: "Sun",
+    unread: false,
+    archived: true,
+    image: "",
+  },
+  {
+    id: "7",
+    sender: "System Notification",
+    text: "Your account settings were updated.",
+    timestamp: "Sat",
+    unread: false,
+    archived: false,
+    image: "",
+  },
+  {
+    id: "8",
+    sender: "Jake Holloway",
+    text: "Sent the photos! Check your inbox.",
+    timestamp: "Fri",
+    unread: true,
+    archived: false,
+    image: "https://randomuser.me/api/portraits/men/14.jpg",
+  },
+];
+
 export const Comments = [
   {
     id: 0,
