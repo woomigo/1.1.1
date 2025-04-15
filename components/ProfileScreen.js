@@ -10,6 +10,7 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { Avatar, Tab, TabView, Card, Button, Icon } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
@@ -46,46 +47,23 @@ const ProfileScreen = ({ navigation, route }) => {
   const [isFollowing, setIsFollowing] = useState();
   const [isProfilePrivate, setIsPofilePrivate] = useState();
   const [isEnabled, setIsEnabled] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const indicatorAnim = useRef(new Animated.Value(0)).current;
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const { width } = Dimensions.get("window");
 
-  const Tab = ({ children }) => <View style={{ width }}>{children}</View>;
-
   const { uid, userUID } = route.params;
-
-  const scrollViewRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(0); // Track current page index
-  const totalPages = 3; // Adjust based on the number of items
-
-  // Swipe Right (Next Page)
-  const handleSwipeRight = () => {
-    if (scrollViewRef.current && currentIndex < totalPages - 1) {
-      const newIndex = currentIndex + 1;
-      scrollViewRef.current.scrollTo({ x: newIndex * width, animated: true });
-      setCurrentIndex(newIndex);
-    }
-  };
-
-  // Swipe Left (Previous Page)
-  const handleSwipeLeft = () => {
-    if (scrollViewRef.current && currentIndex > 0) {
-      const newIndex = currentIndex - 1;
-      scrollViewRef.current.scrollTo({ x: newIndex * width, animated: true });
-      setCurrentIndex(newIndex);
-    }
-  };
-
-  // Auto-detect user scrolling
-  const handleScroll = (event) => {
-    const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / width); // Calculate current page index
-    setCurrentIndex(index);
-  };
 
   useEffect(() => {
     console.log(`USERUID ======s ${userUID}`);
     setIsProfileOwnedByUser(!userUID);
+
+    Animated.spring(indicatorAnim, {
+      toValue: activeTab * (width / 3),
+      useNativeDriver: true,
+    }).start();
+
     const docRef = doc(db, "users", userUID ? userUID : uid);
     const getProfileInfo = onSnapshot(
       docRef,
@@ -129,22 +107,59 @@ const ProfileScreen = ({ navigation, route }) => {
       getProfileInfo();
       getOwnedWoos();
     };
-  }, [uid]);
+  }, [uid, activeTab]);
+
+  const renderTabBar = () => (
+    <View style={styles.tabBarContainer}>
+      <View style={styles.tabBar}>
+        {["woos", "gallery", "subscribed"].map((label, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.tab, { width: width / 3 }]}
+            onPress={() => setActiveTab(index)}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === index && styles.activeTabText,
+              ]}
+            >
+              {label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              transform: [{ translateX: indicatorAnim }],
+              width: width / 3,
+            },
+          ]}
+        />
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Drawer
-          drawerPosition="right"
-          open={open}
-          onOpen={() => setOpen(true)}
-          onClose={() => setOpen(false)}
-          renderDrawerContent={() => {
-            return <MenuScreen user={user} />;
-          }}
-        >
+      <Drawer
+        drawerPosition="right"
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
+        renderDrawerContent={() => {
+          return <MenuScreen user={user} />;
+        }}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.topButtonsContainer}>
-            <View style={[styles.topButtons, isProfileOwnedByUser && {justifyContent: 'flex-end'}]}>
+            <View
+              style={[
+                styles.topButtons,
+                isProfileOwnedByUser && { justifyContent: "flex-end" },
+              ]}
+            >
               {!isProfileOwnedByUser && (
                 <View style={styles.topButtonBackground}>
                   <FontAwesome6Icon
@@ -177,7 +192,9 @@ const ProfileScreen = ({ navigation, route }) => {
               </View>
             </View>
           </View>
+
           <Image style={styles.image} source={{ uri: profilePicURL }} />
+
           <Card
             containerStyle={{
               borderRadius: 20,
@@ -384,202 +401,31 @@ const ProfileScreen = ({ navigation, route }) => {
               </Text>
             </View>
           ) : (
-            //Tab begins with woo, galllery, subscribed
             <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              onScroll={handleScroll} // Detect scrolling
-              scrollEventThrottle={16} // Optimize scroll event handling
-              style={{ marginTop: 15 }}
+              contentContainerStyle={styles.container}
+              stickyHeaderIndices={[0]}
             >
-              {/* OWNED WOOS */}
-              <Tab>
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
-                  <Image
-                    style={{ width: 30, height: 24 }}
-                    source={require("../assets/woomigo_icon.png")}
-                  />
-                  <Text style={{ fontSize: 12 }}>owned woos</Text>
-                </View>
+              {/* Tab Switcher */}
+              {renderTabBar()}
 
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    marginEnd: 20,
-                  }}
-                >
-                  <TouchableOpacity
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                    }}
-                    onPress={handleSwipeRight}
-                  >
-                    <View style={{ alignItems: "center" }}>
-                      <FontAwesome6Icon
-                        style={{ marginHorizontal: 5 }}
-                        name="photo-film"
-                        size={15}
-                        color={woo_orange}
-                      />
-                      <Text style={{ fontSize: 12 }}>gallery</Text>
-                    </View>
-
-                    <FontAwesome6Icon
-                      style={{ marginHorizontal: 5 }}
-                      name="arrow-right"
-                      size={15}
-                      color={woo_black}
-                    />
-                  </TouchableOpacity>
-                </View>
-
+              {activeTab === 0 && (
                 <ListViewWoos view={"list"} woos={woos} uid={uid} />
-              </Tab>
-
-              {/* GALLERY */}
-              <Tab>
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
-                  <FontAwesome6Icon
-                    style={{ marginHorizontal: 5 }}
-                    name="photo-film"
-                    size={20}
-                    color={woo_orange}
-                  />
-                  <Text style={{ fontSize: 12 }}>gallery</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginHorizontal: 20,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                      }}
-                      onPress={handleSwipeLeft}
-                    >
-                      <FontAwesome6Icon
-                        style={{ marginHorizontal: 5 }}
-                        name="arrow-left"
-                        size={15}
-                        color={woo_black}
-                      />
-                      <View style={{ alignItems: "center" }}>
-                        <Image
-                          style={{ width: 20, height: 18 }}
-                          source={require("../assets/woomigo_icon.png")}
-                        />
-                        <Text style={{ fontSize: 12 }}>woos</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                      }}
-                      onPress={handleSwipeRight}
-                    >
-                      <View style={{ alignItems: "center" }}>
-                        <FontAwesome6Icon
-                          style={{ marginHorizontal: 5 }}
-                          name="bookmark"
-                          solid
-                          size={15}
-                          color={woo_orange}
-                        />
-                        <Text style={{ fontSize: 12 }}>subscribed</Text>
-                      </View>
-                      <FontAwesome6Icon
-                        style={{ marginHorizontal: 5 }}
-                        name="arrow-right"
-                        size={15}
-                        color={woo_black}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
+              )}
+              {activeTab === 1 && (
                 <ListViewGallery
                   gallery={gallery}
                   inverted
                   view={"grid"}
                   nav={"MediaView"}
                 />
-              </Tab>
-
-              {/* SUBSCRIBED WOOS */}
-              <Tab>
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
-                  <FontAwesome6Icon
-                    style={{ marginHorizontal: 5 }}
-                    name="bookmark"
-                    solid
-                    size={20}
-                    color={woo_orange}
-                  />
-                  <Text style={{ fontSize: 12 }}>subscribed</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginHorizontal: 20,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                      }}
-                      onPress={handleSwipeLeft}
-                    >
-                      <FontAwesome6Icon
-                        style={{ marginHorizontal: 5 }}
-                        name="arrow-left"
-                        size={15}
-                        color={woo_black}
-                      />
-                      <View style={{ alignItems: "center" }}>
-                        <FontAwesome6Icon
-                          style={{ marginHorizontal: 5 }}
-                          name="photo-film"
-                          size={20}
-                          color={woo_orange}
-                        />
-                        <Text style={{ fontSize: 12 }}>gallery</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                </View>
+              )}
+              {activeTab === 2 && (
                 <ListViewWoos view={"list"} woos={woos} uid={uid} />
-              </Tab>
+              )}
             </ScrollView>
           )}
-        </Drawer>
-      </ScrollView>
+        </ScrollView>
+      </Drawer>
     </SafeAreaView>
   );
 };
@@ -621,35 +467,33 @@ const styles = StyleSheet.create({
   profileInfo: {
     textAlign: "center",
   },
-  leftComponent: {
-    justifyContent: "center",
-    alignItems: "center",
+  tabBarContainer: {
+    backgroundColor: "#fff",
+    zIndex: 10,
   },
-  centerComponent: {
-    justifyContent: "center",
-    alignItems: "center",
+  tabBar: {
+    flexDirection: "row",
+    position: "relative",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
-  rightComponent: {
-    justifyContent: "center",
+  tab: {
     alignItems: "center",
-  },
-  tabContainer: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 4,
-    marginTop: 5,
-    marginBottom: 5,
-  },
-  tabHeader: {
-    // padding: 5,
-    alignItems: "center",
+    paddingVertical: 12,
   },
   tabText: {
-    fontSize: 18,
-    color: woo_black,
+    fontSize: 12,
+    color: "#666",
+  },
+  activeTabText: {
+    color: "#000",
     fontWeight: "bold",
+  },
+  indicator: {
+    position: "absolute",
+    bottom: 0,
+    height: 3,
+    backgroundColor: woo_orange,
   },
 });
 

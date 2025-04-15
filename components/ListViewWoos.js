@@ -3,7 +3,7 @@ import { View, FlatList } from "react-native";
 import LayoutWooItem from "./LayoutWooItem";
 import { woo_orange } from "../assets/colors";
 
-const ListViewWoos = ({ woos, view, uid }) => {
+const ListViewWoos = ({ woos, view, uid, scrollEnabled = false }) => {
   useEffect(() => {
     // console.log(`LISTVIEWWOOS ==== ${JSON.stringify(woos[0])}`);
   });
@@ -32,11 +32,12 @@ const ListViewWoos = ({ woos, view, uid }) => {
       case "list":
         return (
           <FlatList
-            scrollEnabled={false}
+            scrollEnabled={scrollEnabled}
             showsVerticalScrollIndicator={false}
             key={(woo) => woo.id}
             backgroundColor={woo_orange}
             keyExtractor={(woo) => woo.id}
+            style={{ height: "100%", width: "100%" }}
             data={woos}
             onViewableItemsChanged={onViewRef.current}
             renderItem={(woo) => <LayoutWooItem woo={woo} uid={uid} />}

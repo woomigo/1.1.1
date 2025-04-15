@@ -15,6 +15,7 @@ const ListViewGallery = ({
   horizBorderRadius = 25,
   gridNumOfColumns = 3,
   inverted,
+  scrollEnabled = false
 }) => {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -54,7 +55,7 @@ const ListViewGallery = ({
       case "list":
         return (
           <FlatList
-            scrollEnabled={false}
+            scrollEnabled={scrollEnabled}
             showsVerticalScrollIndicator={false}
             key={(woo) => woo.id}
             style={styles.gridViewFlatList}
@@ -69,7 +70,7 @@ const ListViewGallery = ({
           <FlatList
             showsVerticalScrollIndicator={false}
             key={(woo) => woo.id}
-            scrollEnabled={false}
+            scrollEnabled={scrollEnabled}
             style={{
               height: "100%",
               width: "100%",
