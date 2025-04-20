@@ -137,7 +137,7 @@ const LayoutWooInfo = ({
               color={woo_black}
               onPress={() => setIsPrivateVisible(!isPrivateVisible)}
             />
-            <Text style={styles.wooTimeLocationText}>{wooLocation}</Text>
+            <Text style={styles.wooTimeLocationText}>{wooLocation.address}</Text>
           </View>
         </View>
         <View style={styles.migosContainer}>

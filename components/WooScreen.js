@@ -235,7 +235,7 @@ const WooScreen = ({ navigation, route }) => {
                     color={woo_black}
                     onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
-                  <Text style={{ marginTop: 3 }}>{wooLikes.length}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 12 }}>{wooLikes.length}</Text>
                 </View>
                 <View>
                   <FontAwesome6Icon
@@ -372,7 +372,7 @@ const WooScreen = ({ navigation, route }) => {
                   color={woo_black}
                   onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                 />
-                <Text style={styles.infoText}> {wooLocation}</Text>
+                <Text style={styles.infoText}> {wooLocation.address}</Text>
               </View>
 
               <MapView

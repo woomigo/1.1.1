@@ -99,7 +99,7 @@ const WooLocationScreen = ({ route, navigation }) => {
 
   // Fetch user location on mount
   useEffect(() => {
-    console.log(`GGGAAAPPPKKK ${API_KEY}`);
+    // console.log(`GGGAAAPPPKKK ${JSON.stringify(region)}`);
     getUserLocation();
   }, []);
 
