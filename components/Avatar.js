@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 
-const Avatar = ({ name, image }) => {
+const Avatar = ({ name, image, size = 36 }) => {
   const initials =
     name &&
     name
@@ -11,7 +11,10 @@ const Avatar = ({ name, image }) => {
       .toUpperCase();
 
   return image ? (
-    <Image source={{ uri: image }} style={styles.image} />
+    <Image
+      source={{ uri: image }}
+      style={[styles.image, { width: size, height: size }]}
+    />
   ) : (
     <View style={styles.container}>
       <Text style={styles.text}>{initials}</Text>

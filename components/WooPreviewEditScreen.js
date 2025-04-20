@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from "react-native";
-import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
+import { Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
 import {
@@ -33,6 +33,8 @@ import { Switch } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { getMonthAndDay, getTimeAgo, truncUsername } from "./utility";
 import LayoutWooGallery from "./LayoutWooGallery";
+import Avatar from "./Avatar";
+import ListViewWooList from "./ListViewWooList";
 
 const WooPreviewEditScreen = ({ navigation, route }) => {
   const {
@@ -78,7 +80,7 @@ const WooPreviewEditScreen = ({ navigation, route }) => {
   const [timeAgo, setTImeAgo] = useState("");
 
   useEffect(() => {
-    console.log(username);
+    console.log(" WOOMIGOS " + JSON.stringify(wooMigos));
     // setTImeAgo(wooComments.length > 0 && getTimeAgo(wooComments[0].timestamp.seconds));
     const docRef = doc(db, "users", uid);
     const getWooOwnerProfileInfo = onSnapshot(
@@ -99,33 +101,23 @@ const WooPreviewEditScreen = ({ navigation, route }) => {
     };
   }, [uid]);
 
-  const WooMigoImage = ({ userID }) => {
-    const [profilePicURL, setProfilePicURL] = useState();
-
-    useEffect(() => {
-      const docRef = doc(db, "users", userID);
-      const getProfileInfo = onSnapshot(
-        docRef,
-        (doc) => {
-          // console.log("Document data:", doc.data());
-          setProfilePicURL(doc.data().profile_pic_url);
-        },
-        (error) => {}
-      );
-
-      return () => {
-        getProfileInfo();
-      };
-    }, []);
-
-    return (
-      <Image style={styles.wooMigoImage} source={{ uri: profilePicURL }} />
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView style={{marginBottom: 60}}>
+        <View style={styles.topButtonsContainer}>
+          <View style={styles.topButtons}>
+            <View style={styles.topButtonBackground}>
+              <FontAwesome6Icon
+                name="angle-left"
+                style={{}}
+                size={30}
+                color={woo_white}
+                onPress={() => navigation.goBack()}
+              />
+            </View>
+            <View></View>
+          </View>
+        </View>
         <Image style={styles.image} source={{ uri: wooMedia.uri }} />
         {/* FIRST 
         ROW */}
@@ -140,20 +132,21 @@ const WooPreviewEditScreen = ({ navigation, route }) => {
           <View
             style={[
               styles.card,
-              { flex: 2.5, justifyContent: "center" },
+              { flex: 2, justifyContent: "center", marginEnd: 5 },
             ]}
           >
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
+                // backgroundColor: 'red'
               }}
             >
               <Avatar
-                rounded
-                size="medium"
+                size={40}
+                name={firstName + " " + lastName}
                 onPress={() => navigation.navigate("Profile")}
-                source={{ uri: profilePicURL }}
+                image={profilePicURL}
               />
               <View style={{ marginStart: 5 }}>
                 <Text>{firstName}</Text>
@@ -269,37 +262,31 @@ const WooPreviewEditScreen = ({ navigation, route }) => {
           </View>
 
           <View style={[styles.card, { flex: 1, marginStart: 5 }]}>
-            <View
-              style={{
-                flex: 1,
-                // flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center",
-                // backgroundColor: "orange",
-              }}
-            >
-              <View style={styles.wooMigosImagesContainer}>
-                {wooMigos.length > 0 && <WooMigoImage userID={wooMigos[0]} />}
-                {wooMigos.length > 1 && <WooMigoImage userID={wooMigos[1]} />}
-                {wooMigos.length > 2 && <WooMigoImage userID={wooMigos[2]} />}
-                {wooMigos.length > 3 && <WooMigoImage userID={wooMigos[3]} />}
-                {wooMigos.length > 4 && (
+            <View style={styles.avatarRow}>
+              {wooMigos &&
+                wooMigos.slice(0, 5).map((user, index) => (
                   <View
+                    key={user.id}
                     style={[
-                      styles.wooMigoImage,
-                      {
-                        backgroundColor: woo_orange,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      },
+                      styles.avatarWrapper,
+                      index !== 0 && styles.overlap,
                     ]}
                   >
-                    <Text style={{ color: woo_white, fontSize: 12 }}>
-                      +{wooMigos.length - 4}
-                    </Text>
+                    <Avatar
+                      name={user.name}
+                      image={user.profilePicUrl}
+                      size={36}
+                    />
                   </View>
-                )}
-              </View>
+                ))}
+
+              {wooMigos && wooMigos.length > 5 && (
+                <View style={[styles.avatarWrapper, styles.overlap]}>
+                  <View style={styles.extraAvatar}>
+                    <Text style={styles.extraText}>+{wooMigos.length - 5}</Text>
+                  </View>
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -407,7 +394,38 @@ const WooPreviewEditScreen = ({ navigation, route }) => {
             {/* <LayoutWooGallery gallery={wooGallery} nav={'WooGalleryView'}/> */}
           </View>
         </View>
+
+         {/* Sixth
+                Row */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              marginHorizontal: 10,
+              marginBottom: 5,
+              marginTop: 0,
+            }}
+          >
+            <Pressable
+              style={[styles.card, { flex: 1 }]}
+              onPress={() => handleOpenWooListBottomSheet()}
+            >
+              <ListViewWooList
+                view={"preview"}
+                wooList={wooList}
+                size="xl"
+              />
+            </Pressable>
+          </View>
       </ScrollView>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.createWooButton}
+          // onPress={handleCreateWoo} // Function to create chat/group
+        >
+          <Text style={styles.createWooText}>create woo</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -417,13 +435,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: woo_white,
   },
+  topButtonsContainer: {
+    flex: 1,
+    flexDirection: "row",
+    // backgroundColor: "blue",
+    position: "absolute",
+    zIndex: 1,
+  },
+  topButtons: {
+    flex: 1,
+    margin: 10,
+    marginHorizontal: 20,
+    flexDirection: "row",
+    // position: "absolute",
+    justifyContent: "space-between",
+    alignItems: "center",
+    // backgroundColor: "red",
+  },
+  topButtonBackground: {
+    height: 45,
+    width: 45,
+    backgroundColor: "#d9d9d999",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 23,
+  },
   image: {
     backgroundColor: "#d9d9d9",
     height: 600,
   },
   card: {
     backgroundColor: "#1e1e1e25",
-    padding: 15,
+    padding: 5,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -444,15 +487,33 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: woo_white,
   },
-  wooMigosImagesContainer: {
+  avatarRow: {
     flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: woo_white,
+    padding: 5,
+    borderRadius: 10,
   },
-  wooMigoImage: {
-    backgroundColor: "#1e1e1e",
-    width: 35,
-    height: 35,
+  avatarWrapper: {
+    borderWidth: 2,
+    borderColor: "#fff",
+    borderRadius: 36,
+  },
+  overlap: {
+    marginLeft: -20,
+  },
+  extraAvatar: {
+    width: 36,
+    height: 36,
     borderRadius: 18,
-    marginEnd: -10,
+    backgroundColor: "#e0e0e0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  extraText: {
+    fontWeight: "600",
+    color: "#333",
+    fontSize: 12,
   },
   infoText: {
     fontSize: 14,
@@ -508,6 +569,26 @@ const styles = StyleSheet.create({
   seeMoreCommentsText: {
     textDecorationLine: "underline",
     fontSize: 12,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 5, // Distance from the bottom of the screen
+    left: 16,
+    right: 16, // Optional: keep it aligned to left and right edges
+    marginBottom: 5, // Adds space from bottom of the screen
+  },
+
+  createWooButton: {
+    backgroundColor: woo_orange,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  createWooText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

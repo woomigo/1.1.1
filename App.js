@@ -23,7 +23,6 @@ import MigoRequestScreen from "./components/MigoRequestsScreen";
 import MenuScreen from "./components/MenuScreen";
 import SearchScreen from "./components/SearchScreen";
 import MessagesPreviewScreen from "./components/MessagesPreviewScreen";
-import ComposeMessageScreen from "./components/ComposeMessageScreen";
 import NotificationsScreen from "./components/NotificationsScreen";
 import WooDateScreen from "./components/WooDateScreen";
 import WooTimeScreen from "./components/WooTimeScreen";
@@ -36,10 +35,8 @@ import WooMigosView from "./components/WooMigosView";
 import WooCommentsView from "./components/WooCommentsView";
 import WooGalleryView from "./components/WooGalleryView";
 import EditMediaScreen from "./components/EditMediaScreen";
-import UserScreen from "./components/UserScreen";
 import WooListView from "./components/WooListView";
 import MediaViewScreen from "./components/MediaViewScreen";
-import MessagesScreen from "./components/MessagesScreens";
 import AddMediaWooGalleryView from "./components/AddMediaWooGalleryView";
 import ForgotPasswordScreen from "./components/ForgotPasswordScreen";
 import SettingsScreen from "./components/SettingsScreen";
@@ -304,12 +301,12 @@ const MessagesStack = () => {
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="ComposeMessage"
         component={ComposeMessageScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
-      />
+      /> */}
       <Stack.Screen
         name="NewMessage"
         component={NewMessageScreen}
@@ -328,12 +325,12 @@ const MessagesStack = () => {
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Messages"
         component={MessagesScreen}
         options={{ headerShown: false }}
         initialParams={uid && { uid: uid }}
-      />
+      /> */}
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}

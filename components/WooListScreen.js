@@ -5,6 +5,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
 import { Header, Icon, LinearProgress, Input, Button } from "@rneui/themed";
 import { woo_black, woo_orange } from "../assets/colors";
@@ -59,7 +60,13 @@ const WooListScreen = ({ route, navigation }) => {
   // Render each item
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <View style={{flex: 1, justifyContent: 'space-between' ,flexDirection: 'row'}}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "space-between",
+          flexDirection: "row",
+        }}
+      >
         <Text style={styles.itemName}>{item.name}</Text>
         <FontAwesome6Icon
           style={{ marginEnd: 5 }}
@@ -106,24 +113,6 @@ const WooListScreen = ({ route, navigation }) => {
       <Header
         style={styles.header}
         backgroundColor={"#fff"}
-        leftComponent={
-          <Icon
-            name="chevron-left"
-            type="font-awesome-5"
-            color={woo_black}
-            size={25}
-            onPress={() =>
-              navigation.navigate("WooLocation", {
-                wooMedia: wooMedia,
-                wooType: wooType,
-                wooMigos: wooMigos,
-                migoWoos: migoWoos,
-                wooDate: wooDate,
-                wooTime: wooTime,
-              })
-            }
-          />
-        }
         centerComponent={
           <View>
             <Text
@@ -138,28 +127,6 @@ const WooListScreen = ({ route, navigation }) => {
             </Text>
           </View>
         }
-        rightComponent={
-          <Icon
-            name="chevron-right"
-            type="font-awesome-5"
-            color={woo_black}
-            size={25}
-            onPress={() =>
-              navigation.navigate("WooPreviewEdit", {
-                wooMedia: wooMedia,
-                wooType: wooType,
-                wooMigos: wooMigos,
-                migoWoos: migoWoos,
-                wooDate: wooDate,
-                wooTime: wooTime,
-                wooLocation: wooLocation,
-                wooList: items,
-              })
-            }
-          />
-        }
-        rightContainerStyle={styles.rightComponent}
-        leftContainerStyle={styles.leftComponent}
         centerContainerStyle={styles.centerComponent}
       />
       {/* <LinearProgress
@@ -205,6 +172,41 @@ const WooListScreen = ({ route, navigation }) => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
+      {/* Navigation Buttons */}
+      <View style={styles.navButtons}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("WooLocation", {
+              wooMedia: wooMedia,
+              wooType: wooType,
+              wooMigos: wooMigos,
+              migoWoos: migoWoos,
+              wooDate: wooDate,
+              wooTime: wooTime,
+            })
+          }
+          style={styles.button}
+        >
+          <Icon name="arrow-left" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("WooPreviewEdit", {
+              wooMedia: wooMedia,
+              wooType: wooType,
+              wooMigos: wooMigos,
+              migoWoos: migoWoos,
+              wooDate: wooDate,
+              wooTime: wooTime,
+              wooLocation: wooLocation,
+              wooList: items,
+            })
+          }
+          style={styles.button}
+        >
+          <Icon name="arrow-right" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -245,6 +247,21 @@ const styles = StyleSheet.create({
   itemName: {
     fontWeight: "600",
     fontSize: 18,
+  },
+  navButtons: {
+    position: "absolute",
+    bottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 30,
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    padding: 15,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

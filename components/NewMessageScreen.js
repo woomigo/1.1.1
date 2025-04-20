@@ -369,7 +369,7 @@ const listenToFollowers = (onUpdate) => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Group Participants</Text>
+            <Text style={styles.modalTitle}>manage participants</Text>
             <FlatList
               data={selectedUsers}
               keyExtractor={(item) => item.id}

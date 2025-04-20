@@ -18,7 +18,7 @@ const LayoutWooListItem = ({
 
   useEffect(() => {
     console.log("VIEW " + view);
-    console.log("LWLIT " + item);
+    console.log("LWLIT " + JSON.stringify(item));
     console.log("User selected: ", selectedItem);
   });
   const navigation = useNavigation();
@@ -93,8 +93,35 @@ const LayoutWooListItem = ({
             />
           </View>
         );
-      case "list":
-        return 60;
+      case "preview":
+        return (
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: selectedItem > 0 ? "#d9d9d9" : woo_white,
+                width: 80,
+                height: 100,
+              },
+            ]}
+          >
+            <Avatar
+              size={28}
+              rounded
+              icon={{
+                name: "list",
+                type: "font-awesome",
+                color: selectedItem > 0 ? "#d9d9d9" : woo_white,
+                size: 12,
+              }}
+              containerStyle={{
+                backgroundColor: !selectedItem > 0 ? "#d9d9d9" : woo_white,
+                margin: 5,
+              }}
+            />
+            <Text style={{ fontSize: 10 }}>{item.name}</Text>
+          </View>
+        );
       case "horizontal":
         return (
           <View

@@ -27,6 +27,15 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
     />
   );
 
+  const renderPreview = (item) => (
+    <LayoutWooListItem
+      size={size}
+      view={"preview"}
+      item={item.item}
+      wooID={wooID}
+    />
+  );
+
   const renderList = (item) => (
     <LayoutWooListItem
       size={size}
@@ -81,6 +90,19 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
             numColumns={2}
             data={filteredResults}
             renderItem={renderGrid}
+          />
+        );
+
+      case "preview":
+        return (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            key={(woo) => woo.id}
+            scrollEnabled={false}
+            backgroundColor={woo_white}
+            keyExtractor={(woo) => woo.id}
+            data={filteredResults}
+            renderItem={renderPreview}
           />
         );
       default:
