@@ -235,7 +235,9 @@ const WooScreen = ({ navigation, route }) => {
                     color={woo_black}
                     onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 12 }}>{wooLikes.length}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 12 }}>
+                    {wooLikes.length}
+                  </Text>
                 </View>
                 <View>
                   <FontAwesome6Icon
@@ -318,38 +320,54 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1, marginStart: 5 }]}
               onPress={() => handleOpenWooMigosBottomSheet()}
             >
-              <View
-                style={{
-                  flex: 1,
-                  // flexDirection: "row",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  // backgroundColor: "orange",
-                }}
-              >
-                <View style={styles.wooMigosImagesContainer}>
-                  {wooMigos.length > 0 && <WooMigoImage userID={wooMigos[0]} />}
-                  {wooMigos.length > 1 && <WooMigoImage userID={wooMigos[1]} />}
-                  {wooMigos.length > 2 && <WooMigoImage userID={wooMigos[2]} />}
-                  {wooMigos.length > 3 && <WooMigoImage userID={wooMigos[3]} />}
-                  {wooMigos.length > 4 && (
-                    <View
-                      style={[
-                        styles.wooMigoImage,
-                        {
-                          backgroundColor: woo_orange,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        },
-                      ]}
-                    >
-                      <Text style={{ color: woo_white, fontSize: 12 }}>
-                        +{wooMigos.length - 4}
-                      </Text>
-                    </View>
-                  )}
+              {wooMigos.length > 0 ? (
+                <View
+                  style={{
+                    flex: 1,
+                    // flexDirection: "row",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    // backgroundColor: "orange",
+                  }}
+                >
+                  <View style={styles.wooMigosImagesContainer}>
+                    {wooMigos.length > 0 && (
+                      <WooMigoImage userID={wooMigos[0]} />
+                    )}
+                    {wooMigos.length > 1 && (
+                      <WooMigoImage userID={wooMigos[1]} />
+                    )}
+                    {wooMigos.length > 2 && (
+                      <WooMigoImage userID={wooMigos[2]} />
+                    )}
+                    {wooMigos.length > 3 && (
+                      <WooMigoImage userID={wooMigos[3]} />
+                    )}
+                    {wooMigos.length > 4 && (
+                      <View
+                        style={[
+                          styles.wooMigoImage,
+                          {
+                            backgroundColor: woo_orange,
+                            justifyContent: "center",
+                            alignItems: "center",
+                          },
+                        ]}
+                      >
+                        <Text style={{ color: woo_white, fontSize: 12 }}>
+                          +{wooMigos.length - 4}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
-              </View>
+              ) : (
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <Text>no migos</Text>
+                </View>
+              )}
             </Pressable>
           </View>
           {/* Third 
@@ -476,7 +494,15 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenWooGalleryBottomSheet()}
             >
-              <LayoutWooGallery gallery={wooGallery} />
+              {wooGallery.length > 0 ? (
+                <LayoutWooGallery gallery={wooGallery} />
+              ) : (
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <Text>no gallery</Text>
+                </View>
+              )}
             </Pressable>
           </View>
 
@@ -495,11 +521,19 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenWooListBottomSheet()}
             >
-              <ListViewWooList
-                view={"horizontal"}
-                wooList={wooList}
-                size="xl"
-              />
+              {wooList.length > 0 ? (
+                <ListViewWooList
+                  view={"horizontal"}
+                  wooList={wooList}
+                  size="xl"
+                />
+              ) : (
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <Text>no list</Text>
+                </View>
+              )}
             </Pressable>
           </View>
 
