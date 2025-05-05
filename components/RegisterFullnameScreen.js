@@ -1,197 +1,124 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 
-const RegisterFullnameScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation }) => {
+  const localhost = "http://192.168.12.240:3000";
 
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [isFirstNameError, setIsFirstNameError] = useState(false)
-    const [isLastNameError, setIsLastNameError] = useState(false)
-    const [isFirstNameIconHidden, setFirstNameIconHidden] = useState(true)
-    const [isLastNameIconHidden, setLastNameIconHidden] = useState(true)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    // const getMyObject = async () => {
-    //     try {
-    //       const jsonValue = await AsyncStorage.getItem('fullname')
-    //       return jsonValue != null ? JSON.parse(jsonValue) : null
-    //     } catch(e) {
-    //       // read error
-    //     }
-
-    //     console.log('Done.')
-    //   }
-
-    const firstNameRef = useRef()
-    const lastNameRef = useRef()
-
-    const clearFirstNameInput = () => {
-        setFirstName('')
-        firstNameRef.current.clear()
-        firstNameRef.current.blur()
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
     }
 
-    const clearLastNameInput = () => {
-        setLastName('')
-        lastNameRef.current.clear()
-        lastNameRef.current.blur()
+    try {
+      // Call the backend API to register
+      const response = await fetch(`${localhost}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, isProfileComplete: false }),
+      });
+
+      const data = await response.json();
+
+      console.log(`DATA TOKEN === ${JSON.stringify(data)}`);
+
+      if (data.token) {
+        // Save the token in AsyncStorage
+        await AsyncStorage.setItem("token", data.token);
+
+        // Navigate to the MoreInfoScreen
+        navigation.navigate("MoreInfo");
+      } else {
+        // Handle registration errors
+        Alert.alert("Error", data.error || "Registration failed");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Something went wrong");
     }
+  };
 
-    const handleFirstnameOnChange = (name) => {
-        setIsFirstNameError(false)
-        setFirstName(name)
-    }
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Create Account</Text>
 
-    const handleLastnameOnChange = (name) => {
-        setIsLastNameError(false)
-        setLastName(name)
-    }
+      <TextInput
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        style={styles.input}
+      />
 
-    const handleFirstNameOnFocus = () => {
-        setFirstNameIconHidden(false)
-    }
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        style={styles.input}
+      />
 
-    const handleLastNameOnFocus = () => {
-        setLastNameIconHidden(false)
-    }
+      <TextInput
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+        style={styles.input}
+      />
 
-    const handleFirstNameEndEditing = () => {
-        setFirstNameIconHidden(true)
-    }
+      <View style={styles.button}>
+        <Button title="Register" onPress={handleRegister} />
+      </View>
 
-    const handleLastNameEndEditing = () => {
-        setLastNameIconHidden(true)
-    }
-
-    // const storeData = async (value) => {
-    //     try {
-    //         const jsonValue = JSON.stringify(value);
-    //         await AsyncStorage.setItem('fullname', jsonValue);
-    //         console.log(`${jsonValue} STORED`)
-    //     } catch (e) {
-    //         console.error(e)
-    //     }
-    // };
-
-    const handleNextOnClick = () => {
-        console.log('NEXT CLICKED')
-        if (firstName.length <= 0 || lastName.length <= 0) {
-            if (firstName.length <= 0) {
-                setIsFirstNameError(true)
-            }
-            if (lastName.length <= 0) {
-                setIsLastNameError(true)
-            }
-
-        } else {
-  
-            navigation.navigate('RegisterDOB', { firstName: firstName, lastName: lastName })
-        }
-    }
-
-    return (
-        <View style={styles.container}>
-            <Header
-                style={styles.header}
-                backgroundColor={'#fff'}
-                leftComponent={
-                    <Icon
-                        name="chevron-left"
-                        type='font-awesome-5'
-                        color="#f37320"
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Login')
-                        }
-                    />}
-                centerComponent={
-                    <View >
-                        <Text style={{ fontSize: 25, color: "#f37320", textAlign: 'center', fontWeight: 'bold' }}>register</Text>
-                    </View>
-                }
-                rightComponent={
-                    <Icon
-                        name="chevron-right"
-                        type='font-awesome-5'
-                        color="#f37320"
-                        size={25}
-                        onPress={() => handleNextOnClick()}
-                    />
-                }
-                rightContainerStyle={styles.rightComponent}
-                leftContainerStyle={styles.leftComponent}
-                centerContainerStyle={styles.centerComponent}
-            />
-            {/* <LinearProgress
-                style={{}}
-                value={.20}
-                color="#f37320"
-                variant="determinate"
-            /> */}
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View style={{ flex: .8, alignItems: 'center', justifyContent: 'center' }}>
-                    <Input
-                        label='Full Name'
-                        labelStyle={{ color: 'black', marginBottom: 10 }}
-                        style={{}}
-                        ref={firstNameRef}
-                        value={firstName}
-                        onChangeText={(text) => handleFirstnameOnChange(text)}
-                        placeholder='first name'
-                        autoCapitalize="none"
-                        errorStyle={{ color: 'red' }}
-                        errorMessage={isFirstNameError && 'please add your first name'}
-                        onFocus={() => handleFirstNameOnFocus()}
-                        onEndEditing={() => handleFirstNameEndEditing()}
-                        rightIcon={!isFirstNameIconHidden && <Icon Icon name="close" size={18} onPress={() => clearFirstNameInput()} />}
-                    />
-                    <Input
-                        style={{ marginTop: 10 }}
-                        ref={lastNameRef}
-                        value={lastName}
-                        onChangeText={(text) => handleLastnameOnChange(text)}
-                        placeholder='last name'
-                        autoCapitalize="none"
-                        errorStyle={{ color: 'red' }}
-                        errorMessage={isLastNameError && 'please add your last name'}
-                        onFocus={() => handleLastNameOnFocus()}
-                        onEndEditing={() => handleLastNameEndEditing()}
-                        rightIcon={!isLastNameIconHidden && <Icon Icon name="close" size={18} onPress={() => clearLastNameInput()} />}
-                    />
-                </View>
-            </TouchableWithoutFeedback>
-        </View>
-    )
-
-}
+      <Text
+        style={styles.loginLink}
+        onPress={() => navigation.navigate("Login")}
+      >
+        Already have an account? Log in
+      </Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff"
-    },
-    profileInfo: {
-        textAlign: 'center'
-    },
-    header: {
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 3 },
-        shadowOpacity: 0.2,
-        elevation: 4,
-    },
-    leftComponent: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    centerComponent: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    rightComponent: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-})
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 25,
+    backgroundColor: "#f9f9f9",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
+    marginBottom: 30,
+    textAlign: "center",
+  },
+  input: {
+    height: 48,
+    backgroundColor: "#fff",
+    marginBottom: 15,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    borderColor: "#ddd",
+    borderWidth: 1,
+  },
+  button: {
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  loginLink: {
+    textAlign: "center",
+    color: "#007BFF",
+    textDecorationLine: "underline",
+  },
+});
 
-export default RegisterFullnameScreen
+export default RegisterScreen;

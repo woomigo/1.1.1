@@ -1,7 +1,7 @@
 import "react-native-get-random-values";
 import "react-native-gesture-handler";
-import React, { useState } from "react";
-import { LogBox } from "react-native";
+import React, { useEffect, useState } from "react";
+import { LogBox, Text, View } from "react-native";
 import { Icon } from "@rneui/themed";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -48,10 +48,16 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import MessageDetailsScreen from "./components/MessagesDetails";
 import NewMessageScreen from "./components/NewMessageScreen";
 import ManageParticipantsScreen from "./components/ManageParticipantsScreen";
+import MoreInfoScreen from "./components/MoreInfoScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 let uid;
+
+const AuthStack = createNativeStackNavigator();
+const OnboardingStack = createNativeStackNavigator();
+const AppStack = createNativeStackNavigator();
 
 const HomeStack = () => {
   return (
@@ -340,181 +346,276 @@ const MessagesStack = () => {
     </Stack.Navigator>
   );
 };
-
 const App = () => {
-  LogBox.ignoreAllLogs(); //Ignore all log notifications
-
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  // const [uid, setUID] = useState(null);
-  const [messagesNotificationCount, setMessagesNotificationCount] = useState();
-  const [notificationCount, setNotificationCount] = useState(0);
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setIsSignedIn(true);
-      // setUID(user.uid);
-      uid = user.uid;
-      // ...
-    } else {
-      // User is signed out
-      setIsSignedIn(false);
-    }
+  console.log("APP");
+  const [loading, setLoading] = useState(true);
+  const [userState, setUserState] = useState({
+    isLoggedIn: false,
+    isProfileComplete: false,
   });
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const localhost = "http://192.168.12.240:3000";
+
+  useEffect(() => {
+    console.log("UE");
+    const checkLogin = async () => {
+      const token = await AsyncStorage.getItem("token");
+      setToken(token);
+      if (token) {
+        try {
+          const response = await fetch(`${localhost}/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            setUserState({
+              isLoggedIn: true,
+              isProfileComplete: data.is_profile_complete,
+            });
+            setUser(data);
+            console.log(`DATA ===s ${JSON.stringify(data)}`);
+          } else {
+            setUserState({ isLoggedIn: false, isProfileComplete: false });
+          }
+        } catch (err) {
+          console.error(err);
+          setUserState({ isLoggedIn: false, isProfileComplete: false });
+        }
+      } else {
+        setUserState({ isLoggedIn: false, isProfileComplete: false });
+        console.log("Actually HERE");
+      }
+
+      setLoading(false);
+    };
+
+    checkLogin();
+  }, [token]);
+
+  if (loading)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Splash Screen</Text>
+      </View>
+    ); // or a splash screen
 
   return (
-    <GestureHandlerRootView>
-      <NavigationContainer>
-        {isSignedIn ? (
-          <Tab.Navigator
-            screenOptions={{
-              tabBarShowLabel: false,
-              tabBarActiveTintColor: woo_orange,
-              tabBarInactiveTintColor: woo_gray,
-              headerShown: false,
-            }}
-          >
-            <Tab.Screen
-              name="HomeTab"
-              component={HomeStack}
-              options={{
-                title: "home",
-                tabBarIcon: ({ color }) => (
-                  <Icon
-                    name="home"
-                    type="font-awesome-5"
-                    color={color}
-                    size={25}
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="ProfileTab"
-              component={ProfileStack}
-              options={{
-                title: "profile",
-                tabBarIcon: ({ color }) => (
-                  <Icon
-                    name="user"
-                    solid
-                    type="font-awesome-5"
-                    color={color}
-                    size={25}
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="CameraTab"
-              component={CameraStack}
-              options={{
-                title: "camera",
-                tabBarIcon: ({ color }) => (
-                  <Icon
-                    name="camera"
-                    type="font-awesome-5"
-                    color={color}
-                    size={25}
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="SearchTab"
-              component={SearchStack}
-              options={{
-                title: "search",
-                tabBarIcon: ({ color }) => (
-                  <Icon
-                    name="search"
-                    type="font-awesome-5"
-                    color={color}
-                    size={25}
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="MessagesTab"
-              component={MessagesStack}
-              options={{
-                title: "messages",
-                tabBarBadge:
-                  messagesNotificationCount > 0
-                    ? messagesNotificationCount
-                    : undefined,
-                tabBarIcon: ({ color }) => (
-                  <Icon
-                    name="envelope"
-                    solid
-                    type="font-awesome-5"
-                    color={color}
-                    size={25}
-                  />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="NotificationsTab"
-              component={NotificationsStack}
-              options={{
-                title: "notifications",
-                tabBarBadge:
-                  notificationCount > 0 ? notificationCount : undefined,
-                tabBarIcon: ({ color }) => (
-                  <Icon
-                    name="bell"
-                    solid
-                    type="font-awesome-5"
-                    color={color}
-                    size={25}
-                  />
-                ),
-              }}
-            />
-          </Tab.Navigator>
+    <NavigationContainer>
+      {userState.isLoggedIn ? (
+        userState.isProfileComplete ? (
+          <AppStack.Navigator>
+            <AppStack.Screen name="Home" component={HomeScreen} />
+          </AppStack.Navigator>
         ) : (
-          <Stack.Navigator options={{ headerShown: false }}>
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{ headerShown: false, gestureEnabled: false }}
+          <OnboardingStack.Navigator>
+            <OnboardingStack.Screen
+              name="MoreInfo"
+              component={MoreInfoScreen}
+              initialParams={{ user: user, token: token }}
             />
-            <Stack.Screen
-              name="ForgotPassword"
-              component={ForgotPasswordScreen}
-              options={{ headerShown: false, gestureEnabled: false }}
-            />
-            <Stack.Screen
-              name="RegisterFullname"
-              component={RegisterFullnameScreen}
-              options={{ headerShown: false, gestureEnabled: false }}
-            />
-            <Stack.Screen
-              name="RegisterDOB"
-              component={RegisterDOBScreen}
-              options={{ headerShown: false, gestureEnabled: false }}
-            />
-            <Stack.Screen
-              name="RegisterUsername"
-              component={RegisterUsernameScreen}
-              options={{ headerShown: false, gestureEnabled: false }}
-            />
-            <Stack.Screen
-              name="RegisterProfilePicture"
-              component={RegisterProfilePictureScreen}
-              options={{ headerShown: false, gestureEnabled: false }}
-            />
-            <Stack.Screen
-              name="Register"
-              component={RegisterScreen}
-              options={{ headerShown: false, gestureEnabled: false }}
-            />
-          </Stack.Navigator>
-        )}
-      </NavigationContainer>
-    </GestureHandlerRootView>
+            <AppStack.Screen name="Home" component={HomeScreen} initialParams={{ user: user, token: token }}
+             />
+          </OnboardingStack.Navigator>
+        )
+      ) : (
+        <AuthStack.Navigator>
+          <AuthStack.Screen name="Login" component={LoginScreen} />
+          <AuthStack.Screen
+            name="RegisterFullname"
+            component={RegisterFullnameScreen}
+          />
+          <OnboardingStack.Screen name="MoreInfo" component={MoreInfoScreen} />
+        </AuthStack.Navigator>
+      )}
+    </NavigationContainer>
   );
 };
+
+// const App = () => {
+//   LogBox.ignoreAllLogs(); //Ignore all log notifications
+
+//   const [isSignedIn, setIsSignedIn] = useState(false);
+//   // const [uid, setUID] = useState(null);
+//   const [messagesNotificationCount, setMessagesNotificationCount] = useState();
+//   const [notificationCount, setNotificationCount] = useState(0);
+
+//   onAuthStateChanged(auth, (user) => {
+//     if (user) {
+//       setIsSignedIn(true);
+//       // setUID(user.uid);
+//       uid = user.uid;
+//       // ...
+//     } else {
+//       // User is signed out
+//       setIsSignedIn(false);
+//     }
+//   });
+
+//   return (
+//     <GestureHandlerRootView>
+//       <NavigationContainer>
+//         {isSignedIn ? (
+//           <Tab.Navigator
+//             screenOptions={{
+//               tabBarShowLabel: false,
+//               tabBarActiveTintColor: woo_orange,
+//               tabBarInactiveTintColor: woo_gray,
+//               headerShown: false,
+//             }}
+//           >
+//             <Tab.Screen
+//               name="HomeTab"
+//               component={HomeStack}
+//               options={{
+//                 title: "home",
+//                 tabBarIcon: ({ color }) => (
+//                   <Icon
+//                     name="home"
+//                     type="font-awesome-5"
+//                     color={color}
+//                     size={25}
+//                   />
+//                 ),
+//               }}
+//             />
+//             <Tab.Screen
+//               name="ProfileTab"
+//               component={ProfileStack}
+//               options={{
+//                 title: "profile",
+//                 tabBarIcon: ({ color }) => (
+//                   <Icon
+//                     name="user"
+//                     solid
+//                     type="font-awesome-5"
+//                     color={color}
+//                     size={25}
+//                   />
+//                 ),
+//               }}
+//             />
+//             <Tab.Screen
+//               name="CameraTab"
+//               component={CameraStack}
+//               options={{
+//                 title: "camera",
+//                 tabBarIcon: ({ color }) => (
+//                   <Icon
+//                     name="camera"
+//                     type="font-awesome-5"
+//                     color={color}
+//                     size={25}
+//                   />
+//                 ),
+//               }}
+//             />
+//             <Tab.Screen
+//               name="SearchTab"
+//               component={SearchStack}
+//               options={{
+//                 title: "search",
+//                 tabBarIcon: ({ color }) => (
+//                   <Icon
+//                     name="search"
+//                     type="font-awesome-5"
+//                     color={color}
+//                     size={25}
+//                   />
+//                 ),
+//               }}
+//             />
+//             <Tab.Screen
+//               name="MessagesTab"
+//               component={MessagesStack}
+//               options={{
+//                 title: "messages",
+//                 tabBarBadge:
+//                   messagesNotificationCount > 0
+//                     ? messagesNotificationCount
+//                     : undefined,
+//                 tabBarIcon: ({ color }) => (
+//                   <Icon
+//                     name="envelope"
+//                     solid
+//                     type="font-awesome-5"
+//                     color={color}
+//                     size={25}
+//                   />
+//                 ),
+//               }}
+//             />
+//             <Tab.Screen
+//               name="NotificationsTab"
+//               component={NotificationsStack}
+//               options={{
+//                 title: "notifications",
+//                 tabBarBadge:
+//                   notificationCount > 0 ? notificationCount : undefined,
+//                 tabBarIcon: ({ color }) => (
+//                   <Icon
+//                     name="bell"
+//                     solid
+//                     type="font-awesome-5"
+//                     color={color}
+//                     size={25}
+//                   />
+//                 ),
+//               }}
+//             />
+//           </Tab.Navigator>
+//         ) : (
+//           <Stack.Navigator options={{ headerShown: false }}>
+//             <Stack.Screen
+//               name="Login"
+//               component={LoginScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//             <Stack.Screen
+//               name="ForgotPassword"
+//               component={ForgotPasswordScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//             <Stack.Screen
+//               name="RegisterFullname"
+//               component={RegisterFullnameScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//              <Stack.Screen
+//               name="MoreInfo"
+//               component={MoreInfoScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//             <Stack.Screen
+//               name="RegisterDOB"
+//               component={RegisterDOBScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//             <Stack.Screen
+//               name="RegisterUsername"
+//               component={RegisterUsernameScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//             <Stack.Screen
+//               name="RegisterProfilePicture"
+//               component={RegisterProfilePictureScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//             <Stack.Screen
+//               name="Register"
+//               component={RegisterScreen}
+//               options={{ headerShown: false, gestureEnabled: false }}
+//             />
+//           </Stack.Navigator>
+//         )}
+//       </NavigationContainer>
+//     </GestureHandlerRootView>
+//   );
+// };
 
 export default App;

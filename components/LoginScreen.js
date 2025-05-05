@@ -8,13 +8,15 @@ import {
   Keyboard,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Icon, Input } from "@rneui/themed";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
-  const [emailAddress, setEmailAddress] = useState("");
+  const [email, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailError, setIsEmailError] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -24,6 +26,7 @@ const LoginScreen = ({ navigation }) => {
 
   const emailRef = useRef();
   const passwordRef = useRef();
+  const localhost = "http://192.168.12.240:3000";
 
   const clearEmailInput = () => {
     setEmailAddress("");
@@ -63,6 +66,30 @@ const LoginScreen = ({ navigation }) => {
     setPasswordIconHidden(true);
   };
 
+  const handleLogin = async () => {
+    try {
+      const res = await fetch(`${localhost}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        Alert.alert("Login Failed", data.error || "Invalid credentials");
+        return;
+      }
+
+      await AsyncStorage.setItem("token", data.token);
+      console.log(`DATA AT LOGIN SUBMIT IS ${JSON.stringify(data)}`);
+      navigation.navigate("MoreInfo", { user: { id: 23 }, token: data.token }); // Or 'Home' if user already completed more info
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Something went wrong. Try again.");
+    }
+  };
+
   const onSubmitHandler = () => {
     signInWithEmailAndPassword(auth, emailAddress, password)
       .then((userCredential) => {
@@ -98,7 +125,7 @@ const LoginScreen = ({ navigation }) => {
         <View style={styles.middleViewStyle}>
           <View>
             <Input
-              value={emailAddress}
+              value={email}
               ref={emailRef}
               onChangeText={(text) => handleEmailOnChange(text)}
               keyboardType="email-address"
@@ -179,7 +206,7 @@ const LoginScreen = ({ navigation }) => {
           <View>
             <TouchableOpacity
               style={styles.loginBtnStyle}
-              onPress={onSubmitHandler}
+              onPress={handleLogin}
             >
               <Text style={styles.loginBtnTextStyle}>log in</Text>
             </TouchableOpacity>
