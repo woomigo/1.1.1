@@ -24,6 +24,42 @@ exports.createWoo = async (req, res) => {
   }
 };
 
+exports.getFeedPosts = async (req, res) => {
+    const userId = req.user.id;
+  
+    try {
+      const [woos] = await db.query(
+        `SELECT 
+           w.id AS woo_id,
+           w.title,
+           w.content,
+           w.is_private,
+           w.created_at,
+           u.id AS user_id,
+           u.first_name,
+           u.last_name,
+           u.username,
+           u.profile_pic_url,
+           COUNT(wl_all.user_id) AS like_count,
+           MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
+         FROM woos w
+         JOIN followers f ON w.owner_uid = f.followee_id
+         JOIN users u ON w.owner_uid = u.id
+         LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+         LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+         WHERE f.follower_id = ? AND w.type = "private"
+         GROUP BY w.id
+         ORDER BY w.created_at DESC`,
+        [userId, userId]
+      );
+  
+      res.json(posts);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+  
+
 exports.getWooById = async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;
