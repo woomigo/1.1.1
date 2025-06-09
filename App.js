@@ -53,300 +53,292 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-let uid;
+// let user;
 
 const AuthStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
 const AppStack = createNativeStackNavigator();
 
-const HomeStack = () => {
-  return (
-    <Stack.Navigator options={{ headerShown: false }}>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="Migos"
-        component={MigosScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooMigosView"
-        component={WooMigosView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooCommentsView"
-        component={WooCommentsView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooGalleryView"
-        component={WooGalleryView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooListView"
-        component={WooListView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      {/* <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      /> */}
-      <Stack.Screen
-        name="MediaView"
-        component={MediaViewScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="Woo"
-        component={WooScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-    </Stack.Navigator>
-  );
-};
 
-const NotificationsStack = () => {
-  return (
-    <Stack.Navigator options={{ headerShown: false }}>
-      <Stack.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-    </Stack.Navigator>
-  );
-};
 
-const ProfileStack = () => {
-  return (
-    <Stack.Navigator options={{ headerShown: false }}>
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="Migos"
-        component={MigosScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="MigoGroups"
-        component={MigoGroupsScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="MigoRequests"
-        component={MigoRequestScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="Menu"
-        component={MenuScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="EditProfile"
-        component={EditProfileScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="PrivacyPolicy"
-        component={PrivacyPolicyScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooCommentsView"
-        component={WooCommentsView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooGalleryView"
-        component={WooGalleryView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooListView"
-        component={WooListView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      {/* <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      /> */}
-      <Stack.Screen
-        name="MediaView"
-        component={MediaViewScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const CameraStack = () => {
-  return (
-    <Stack.Navigator options={{ headerShown: false }}>
-      <Stack.Screen
-        name="Camera"
-        component={CameraScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="EditMedia"
-        component={EditMediaScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="AddMediaWooGallery"
-        component={AddMediaWooGalleryView}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooDate"
-        component={WooDateScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooTime"
-        component={WooTimeScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooLocation"
-        component={WooLocationScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooMigos"
-        component={WooMigosScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooList"
-        component={WooListScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="WooPreviewEdit"
-        component={WooPreviewEditScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const SearchStack = () => {
-  return (
-    <Stack.Navigator options={{ headerShown: false }}>
-      <Stack.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const MessagesStack = () => {
-  return (
-    <Stack.Navigator options={{ headerShown: false }}>
-      <Stack.Screen
-        name="MessagesPreview"
-        component={MessagesPreviewScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      {/* <Stack.Screen
-        name="ComposeMessage"
-        component={ComposeMessageScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      /> */}
-      <Stack.Screen
-        name="NewMessage"
-        component={NewMessageScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="MessageDetails"
-        component={MessageDetailsScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      <Stack.Screen
-        name="ManageParticipants"
-        component={ManageParticipantsScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-      {/* <Stack.Screen
-        name="Messages"
-        component={MessagesScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      /> */}
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-        initialParams={uid && { uid: uid }}
-      />
-    </Stack.Navigator>
-  );
-};
 const App = () => {
+
+  const HomeStack = () => {
+    return (
+      <Stack.Navigator options={{ headerShown: false }}>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Migos"
+          component={MigosScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooMigosView"
+          component={WooMigosView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooCommentsView"
+          component={WooCommentsView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooGalleryView"
+          component={WooGalleryView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooListView"
+          component={WooListView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MediaView"
+          component={MediaViewScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Woo"
+          component={WooScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+      </Stack.Navigator>
+    );
+  };
+  
+  const NotificationsStack = () => {
+    return (
+      <Stack.Navigator options={{ headerShown: false }}>
+        <Stack.Screen
+          name="Notifications"
+          component={NotificationsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+      </Stack.Navigator>
+    );
+  };
+  
+  const ProfileStack = () => {
+    return (
+      <Stack.Navigator options={{ headerShown: false }}>
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Migos"
+          component={MigosScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MigoGroups"
+          component={MigoGroupsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MigoRequests"
+          component={MigoRequestScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Menu"
+          component={MenuScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfileScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicyScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooCommentsView"
+          component={WooCommentsView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooGalleryView"
+          component={WooGalleryView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooListView"
+          component={WooListView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MediaView"
+          component={MediaViewScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+      </Stack.Navigator>
+    );
+  };
+  
+  const CameraStack = () => {
+    return (
+      <Stack.Navigator options={{ headerShown: false }}>
+        <Stack.Screen
+          name="Camera"
+          component={CameraScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="EditMedia"
+          component={EditMediaScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="AddMediaWooGallery"
+          component={AddMediaWooGalleryView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooDate"
+          component={WooDateScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooTime"
+          component={WooTimeScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooLocation"
+          component={WooLocationScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooMigos"
+          component={WooMigosScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooList"
+          component={WooListScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooPreviewEdit"
+          component={WooPreviewEditScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+      </Stack.Navigator>
+    );
+  };
+  
+  const SearchStack = () => {
+    return (
+      <Stack.Navigator options={{ headerShown: false }}>
+        <Stack.Screen
+          name="Search"
+          component={SearchScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+      </Stack.Navigator>
+    );
+  };
+  
+  const MessagesStack = () => {
+    return (
+      <Stack.Navigator options={{ headerShown: false }}>
+        <Stack.Screen
+          name="MessagesPreview"
+          component={MessagesPreviewScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        {/* <Stack.Screen
+          name="ComposeMessage"
+          component={ComposeMessageScreen}
+          options={{ headerShown: false }}
+      initialParams={{ user: user, token: token }}
+        /> */}
+        <Stack.Screen
+          name="NewMessage"
+          component={NewMessageScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MessageDetails"
+          component={MessageDetailsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="ManageParticipants"
+          component={ManageParticipantsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        {/* <Stack.Screen
+          name="Messages"
+          component={MessagesScreen}
+          options={{ headerShown: false }}
+      initialParams={{ user: user, token: token }}
+        /> */}
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
   console.log("APP");
   const [loading, setLoading] = useState(true);
   const [userState, setUserState] = useState({
@@ -363,6 +355,7 @@ const App = () => {
     const checkLogin = async () => {
       const token = await AsyncStorage.getItem("token");
       setToken(token);
+      console.log(`APP JS TOKEN ===s ${token}`);
       if (token) {
         try {
           const response = await fetch(`${localhost}/auth/me`, {
@@ -379,7 +372,8 @@ const App = () => {
               isProfileComplete: data.is_profile_complete,
             });
             setUser(data);
-            console.log(`DATA ===s ${JSON.stringify(data)}`);
+            userData = data;
+            // console.log(`DATA ===s ${JSON.stringify(data)}`);
           } else {
             setUserState({ isLoggedIn: false, isProfileComplete: false });
           }
@@ -406,34 +400,159 @@ const App = () => {
     ); // or a splash screen
 
   return (
-    <NavigationContainer>
-      {userState.isLoggedIn ? (
-        userState.isProfileComplete ? (
-          <AppStack.Navigator>
-            <AppStack.Screen name="Home" component={HomeScreen} />
-          </AppStack.Navigator>
+    <GestureHandlerRootView>
+      <NavigationContainer>
+        {userState.isLoggedIn ? (
+          userState.isProfileComplete ? (
+            <Tab.Navigator
+              screenOptions={{
+                tabBarShowLabel: false,
+                tabBarActiveTintColor: woo_orange,
+                tabBarInactiveTintColor: woo_gray,
+                headerShown: false,
+              }}
+            >
+              <Tab.Screen
+                name="HomeTab"
+                component={HomeStack}
+                options={{
+                  title: "home",
+                  tabBarIcon: ({ color }) => (
+                    <Icon
+                      name="home"
+                      type="font-awesome-5"
+                      color={color}
+                      size={25}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="ProfileTab"
+                component={ProfileStack}
+                options={{
+                  title: "profile",
+                  tabBarIcon: ({ color }) => (
+                    <Icon
+                      name="user"
+                      solid
+                      type="font-awesome-5"
+                      color={color}
+                      size={25}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="CameraTab"
+                component={CameraStack}
+                options={{
+                  title: "camera",
+                  tabBarIcon: ({ color }) => (
+                    <Icon
+                      name="camera"
+                      type="font-awesome-5"
+                      color={color}
+                      size={25}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="SearchTab"
+                component={SearchStack}
+                options={{
+                  title: "search",
+                  tabBarIcon: ({ color }) => (
+                    <Icon
+                      name="search"
+                      type="font-awesome-5"
+                      color={color}
+                      size={25}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="MessagesTab"
+                component={MessagesStack}
+                options={{
+                  title: "messages",
+                  // tabBarBadge:
+                  //   messagesNotificationCount > 0
+                  //     ? messagesNotificationCount
+                  //     : undefined,
+                  tabBarIcon: ({ color }) => (
+                    <Icon
+                      name="envelope"
+                      solid
+                      type="font-awesome-5"
+                      color={color}
+                      size={25}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="NotificationsTab"
+                component={NotificationsStack}
+                options={{
+                  title: "notifications",
+                  // tabBarBadge:
+                  //   notificationCount > 0 ? notificationCount : undefined,
+                  tabBarIcon: ({ color }) => (
+                    <Icon
+                      name="bell"
+                      solid
+                      type="font-awesome-5"
+                      color={color}
+                      size={25}
+                    />
+                  ),
+                }}
+              />
+            </Tab.Navigator>
+          ) : (
+            <OnboardingStack.Navigator>
+              <OnboardingStack.Screen
+                name="MoreInfo"
+                component={MoreInfoScreen}
+                options={{ headerShown: false }}
+                initialParams={{ user: user, token: token }}
+              />
+              <AppStack.Screen
+                name="Home"
+                component={HomeScreen}
+                initialParams={{ user: user, token: token }}
+              />
+            </OnboardingStack.Navigator>
+          )
         ) : (
-          <OnboardingStack.Navigator>
-            <OnboardingStack.Screen
+          <Stack.Navigator options={{ headerShown: false }}>
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPasswordScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
               name="MoreInfo"
               component={MoreInfoScreen}
-              initialParams={{ user: user, token: token }}
+              options={{ headerShown: false, gestureEnabled: false }}
             />
-            <AppStack.Screen name="Home" component={HomeScreen} initialParams={{ user: user, token: token }}
-             />
-          </OnboardingStack.Navigator>
-        )
-      ) : (
-        <AuthStack.Navigator>
-          <AuthStack.Screen name="Login" component={LoginScreen} />
-          <AuthStack.Screen
-            name="RegisterFullname"
-            component={RegisterFullnameScreen}
-          />
-          <OnboardingStack.Screen name="MoreInfo" component={MoreInfoScreen} />
-        </AuthStack.Navigator>
-      )}
-    </NavigationContainer>
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 
@@ -460,7 +579,8 @@ const App = () => {
 //   return (
 //     <GestureHandlerRootView>
 //       <NavigationContainer>
-//         {isSignedIn ? (
+//         {isSignedIn ?
+// (
 //           <Tab.Navigator
 //             screenOptions={{
 //               tabBarShowLabel: false,
@@ -569,7 +689,9 @@ const App = () => {
 //               }}
 //             />
 //           </Tab.Navigator>
-//         ) : (
+//         )
+// :
+// (
 //           <Stack.Navigator options={{ headerShown: false }}>
 //             <Stack.Screen
 //               name="Login"

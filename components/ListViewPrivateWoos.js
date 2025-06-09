@@ -6,8 +6,8 @@ import LayoutPrivateWoos from "./LayoutPrivateWoos";
 const ListViewPrivateWoos = ({ gallery, isVisible }) => {
   const [refreshing, setRefreshing] = useState(false);
 
-  const renderGallery = (image) => (
-    <LayoutPrivateWoos image={image.item.image} isVisible={isVisible} />
+  const renderGallery = (woo) => (
+    <LayoutPrivateWoos woo={woo} isRead={woo.item.seen} isVisible={isVisible} />
   );
 
   const wait = (timeout) => {
@@ -24,6 +24,7 @@ const ListViewPrivateWoos = ({ gallery, isVisible }) => {
       <FlatList
         horizontal
         key={(woo) => woo.id}
+        keyExtractor={(woo) => woo.id}
         showsHorizontalScrollIndicator={false}
         style={styles.wooGalleryPreviewList}
         backgroundColor={"#fff"}

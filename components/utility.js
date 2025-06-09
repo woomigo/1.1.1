@@ -1,33 +1,39 @@
 // UTILITY FUNCTIONS FOR DATE, TIME AND USERNAME
 
 export const getMonthAndDay = (dateString) => {
-  const months = [
-    "jan",
-    "feb",
-    "mar",
-    "apr",
-    "may",
-    "jun",
-    "jul",
-    "aug",
-    "sep",
-    "oct",
-    "nov",
-    "dec",
-  ];
+    const months = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec",
+    ];
+  
+    const date = new Date(dateString);
+  
+    if (isNaN(date)) return { month: "Invalid", day: "Invalid" };
+  
+    const monthIndex = date.getUTCMonth(); // getUTCMonth gives 0-based index
+    const day = date.getUTCDate(); // getUTCDate returns the day of the month (1-31)
+  
+    return { month: months[monthIndex], day };
+  };
 
-  const parts = dateString.split("/");
-  if (parts.length !== 3) return { month: "Invalid", day: "Invalid" };
+  export const getFormattedTime = (timeString) => {
+    if (timeString === null) return null;
+    if (!timeString || typeof timeString !== "string") return "Invalid time";
 
-  const monthIndex = parseInt(parts[0], 10) - 1; // Convert to zero-based index
-  const day = parseInt(parts[1], 10); // Extract day
-
-  if (monthIndex < 0 || monthIndex > 11 || isNaN(day))
-    return { month: "Invalid", day: "Invalid" };
-
-  return { month: months[monthIndex], day };
-};
-
+    const [hourStr, minuteStr] = timeString.split(":");
+    let hour = parseInt(hourStr, 10);
+    const minute = parseInt(minuteStr, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+  
+    hour = hour % 12;
+    hour = hour === 0 ? 12 : hour;
+  
+    const paddedMinute = minute < 10 ? `0${minute}` : minute;
+  
+    return `${hour}:${paddedMinute} ${ampm}`;
+  };
+  
+  
 export const getTimeAgo = (input) => {
     let past;
 

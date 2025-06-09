@@ -31,7 +31,7 @@ import MenuScreen from "./MenuScreen";
 import ListViewWoos from "./ListViewWoos";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import MapView, { Marker } from "react-native-maps";
-import { getMonthAndDay, getTimeAgo, truncUsername } from "./utility";
+import { getFormattedTime, getMonthAndDay, getTimeAgo, truncUsername } from "./utility";
 import LayoutWooGallery from "./LayoutWooGallery";
 import DraggableBottomSheet from "./DraggableBottomSheet";
 import ListViewComments from "./ListViewComments";
@@ -42,27 +42,30 @@ const WooScreen = ({ navigation, route }) => {
     wooID,
     wooDate,
     image,
-    wooLikes,
     wooMigos,
     wooType,
     uid,
     ownerUID,
+    ownerUsername,
+    ownerProfilePicture,
+    ownerFirstName,
+    ownerLastName,
+    wooLikes,
+    wooLikedByMe,
     wooTime,
     wooLocation,
     wooComments,
     wooGallery,
     wooList,
+    startTime, endTime
   } = route.params;
 
   const { month, day } = getMonthAndDay(wooDate);
+  const wooStartTime = getFormattedTime(startTime)
+  const wooEndTime = getFormattedTime(endTime)
 
   const scrollViewRef = useRef(null);
 
-  const [user, setUser] = useState();
-  const [username, setUsername] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [profilePicURL, setProfilePicURL] = useState();
   const [timeAgo, setTImeAgo] = useState("");
   const [isCommentBottomSheetVisible, setIsCommentBottomSheetVisible] =
     useState(false);
@@ -98,53 +101,57 @@ const WooScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    setTImeAgo(
-      wooComments.length > 0 && getTimeAgo(wooComments[0].timestamp.seconds)
-    );
-    const docRef = doc(db, "users", ownerUID);
-    const getWooOwnerProfileInfo = onSnapshot(
-      docRef,
-      (doc) => {
-        console.log("Document data:", doc.data());
-        setUser(doc.data());
-        setUsername(truncUsername(doc.data().username));
-        setFirstName(doc.data().first_name);
-        setLastName(doc.data().last_name);
-        setProfilePicURL(doc.data().profile_pic_url);
-      },
-      (error) => {},
-      []
-    );
+    console.log("WOO LIKES COUNT " + JSON.stringify(wooLocation));
+  });
 
-    return () => {
-      getWooOwnerProfileInfo();
-    };
-  }, [ownerUID]);
+  // useEffect(() => {
+  //   // setTImeAgo(
+  //   //  wooComments && wooComments.length > 0 && getTimeAgo(wooComments[0].timestamp.seconds)
+  //   // );
+  //   // const docRef = doc(db, "users", ownerUID);
+  //   // const getWooOwnerProfileInfo = onSnapshot(
+  //   //   docRef,
+  //   //   (doc) => {
+  //   //     console.log("Document data:", doc.data());
+  //   //     setUser(doc.data());
+  //   //     setUsername(truncUsername(doc.data().username));
+  //   //     setFirstName(doc.data().first_name);
+  //   //     setLastName(doc.data().last_name);
+  //   //     setProfilePicURL(doc.data().profile_pic_url);
+  //   //   },
+  //   //   (error) => {},
+  //   //   []
+  //   // );
 
-  const WooMigoImage = ({ userID }) => {
-    const [profilePicURL, setProfilePicURL] = useState();
+  //   // return () => {
+  //   //   getWooOwnerProfileInfo();
+  //   // };
+  // }, [ownerUID]);
 
-    useEffect(() => {
-      console.log(isCommentBottomSheetVisible);
-      const docRef = doc(db, "users", userID);
-      const getProfileInfo = onSnapshot(
-        docRef,
-        (doc) => {
-          // console.log("Document data:", doc.data());
-          setProfilePicURL(doc.data().profile_pic_url);
-        },
-        (error) => {}
-      );
+  // const WooMigoImage = ({ userID }) => {
+  //   const [profilePicURL, setProfilePicURL] = useState();
 
-      return () => {
-        getProfileInfo();
-      };
-    }, []);
+  //   useEffect(() => {
+  //     console.log(isCommentBottomSheetVisible);
+  //     const docRef = doc(db, "users", userID);
+  //     const getProfileInfo = onSnapshot(
+  //       docRef,
+  //       (doc) => {
+  //         // console.log("Document data:", doc.data());
+  //         setProfilePicURL(doc.data().profile_pic_url);
+  //       },
+  //       (error) => {}
+  //     );
 
-    return (
-      <Image style={styles.wooMigoImage} source={{ uri: profilePicURL }} />
-    );
-  };
+  //     return () => {
+  //       getProfileInfo();
+  //     };
+  //   }, []);
+
+  //   return (
+  //     <Image style={styles.wooMigoImage} source={{ uri: profilePicURL }} />
+  //   );
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -199,12 +206,12 @@ const WooScreen = ({ navigation, route }) => {
                   rounded
                   size="medium"
                   onPress={() => navigation.navigate("Profile")}
-                  source={{ uri: profilePicURL }}
+                  source={{ uri: ownerProfilePicture }}
                 />
                 <View style={{ marginStart: 5 }}>
-                  <Text>{firstName}</Text>
-                  <Text>{lastName}</Text>
-                  <Text style={{ fontSize: 12 }}>@{username}</Text>
+                  <Text>{ownerFirstName}</Text>
+                  <Text>{ownerLastName}</Text>
+                  <Text style={{ fontSize: 12 }}>@{ownerUsername}</Text>
                 </View>
               </View>
             </View>
@@ -232,12 +239,11 @@ const WooScreen = ({ navigation, route }) => {
                     name="heart"
                     style={{}}
                     size={30}
-                    color={woo_black}
+                    solid={wooLikedByMe ? true : false}
+                    color={wooLikedByMe ? woo_orange : woo_black}
                     onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 12 }}>
-                    {wooLikes.length}
-                  </Text>
+                  <Text style={{ marginTop: 3, fontSize: 12 }}>{wooLikes}</Text>
                 </View>
                 <View>
                   <FontAwesome6Icon
@@ -311,7 +317,7 @@ const WooScreen = ({ navigation, route }) => {
                   onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                 />
                 <View style={{ marginStart: 5 }}>
-                  <Text>{wooTime}</Text>
+                  <Text>{startTime && `${wooStartTime} ${endTime && "- " + wooEndTime}`}</Text>
                 </View>
               </View>
             </View>
@@ -320,7 +326,7 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1, marginStart: 5 }]}
               onPress={() => handleOpenWooMigosBottomSheet()}
             >
-              {wooMigos.length > 0 ? (
+              {wooMigos && wooMigos.length > 0 ? (
                 <View
                   style={{
                     flex: 1,
@@ -331,19 +337,19 @@ const WooScreen = ({ navigation, route }) => {
                   }}
                 >
                   <View style={styles.wooMigosImagesContainer}>
-                    {wooMigos.length > 0 && (
+                    {wooMigos && wooMigos.length > 0 && (
                       <WooMigoImage userID={wooMigos[0]} />
                     )}
-                    {wooMigos.length > 1 && (
+                    {wooMigos && wooMigos.length > 1 && (
                       <WooMigoImage userID={wooMigos[1]} />
                     )}
-                    {wooMigos.length > 2 && (
+                    {wooMigos && wooMigos.length > 2 && (
                       <WooMigoImage userID={wooMigos[2]} />
                     )}
-                    {wooMigos.length > 3 && (
+                    {wooMigos && wooMigos.length > 3 && (
                       <WooMigoImage userID={wooMigos[3]} />
                     )}
-                    {wooMigos.length > 4 && (
+                    {wooMigos && wooMigos.length > 4 && (
                       <View
                         style={[
                           styles.wooMigoImage,
@@ -355,7 +361,7 @@ const WooScreen = ({ navigation, route }) => {
                         ]}
                       >
                         <Text style={{ color: woo_white, fontSize: 12 }}>
-                          +{wooMigos.length - 4}
+                          +{wooMigos && wooMigos.length - 4}
                         </Text>
                       </View>
                     )}
@@ -425,7 +431,7 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenCommentBottomSheet()}
             >
-              {wooComments.length > 0 ? (
+              {wooComments && wooComments.length > 0 ? (
                 <>
                   <View style={styles.commentHeaderContainer}>
                     <View style={styles.commentHeaderUserContainer}>
@@ -464,7 +470,9 @@ const WooScreen = ({ navigation, route }) => {
                       }
                     >
                       <Text style={styles.seeMoreCommentsText}>
-                        {`see ${wooComments.length - 1} more comments...`}
+                        {`see ${
+                          wooComments && wooComments.length - 1
+                        } more comments...`}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -494,7 +502,7 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenWooGalleryBottomSheet()}
             >
-              {wooGallery.length > 0 ? (
+              {wooGallery && wooGallery.length > 0 ? (
                 <LayoutWooGallery gallery={wooGallery} />
               ) : (
                 <View
@@ -521,7 +529,7 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenWooListBottomSheet()}
             >
-              {wooList.length > 0 ? (
+              {wooList && wooList.length > 0 ? (
                 <ListViewWooList
                   view={"horizontal"}
                   wooList={wooList}
@@ -539,7 +547,7 @@ const WooScreen = ({ navigation, route }) => {
 
           {/* Bottom Sheets */}
 
-          <DraggableBottomSheet
+          {/* <DraggableBottomSheet
             profilePicURL={profilePicURL}
             title={"comments"}
             isVisible={isCommentBottomSheetVisible}
@@ -584,7 +592,7 @@ const WooScreen = ({ navigation, route }) => {
             onClose={() => setIsWooListBottomSheetVisible(false)}
           >
             <ListViewWooList view={"grid"} wooList={wooList} size="xl" />
-          </DraggableBottomSheet>
+          </DraggableBottomSheet> */}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -16,11 +16,18 @@ const LayoutWooImage = ({
   wooType,
   uid,
   ownerUID,
+  ownerUsername,
+  ownerProfilePicture,
+  ownerFirstName,
+  ownerLastName,
+  wooLikedByMe,
   wooTime,
   wooLocation,
   wooComments,
   wooGallery,
-  wooList
+  wooList,
+  startTime,
+  endTime,
 }) => {
   const navigation = useNavigation();
 
@@ -36,11 +43,18 @@ const LayoutWooImage = ({
           wooType,
           uid: uid,
           ownerUID,
+          ownerUsername,
+          ownerProfilePicture,
+          ownerFirstName,
+          ownerLastName,
+          wooLikedByMe,
           wooTime,
           wooLocation,
           wooComments,
           wooGallery,
-          wooList
+          wooList,
+          startTime,
+          endTime,
         })
       }
       style={styles.container}

@@ -44,13 +44,13 @@ const DraggableBottomSheet = ({
   const snapPoints = [780];
   const [comment, setComment] = useState("");
 
-  useEffect(() => {
-    if (isVisible) {
-      setTimeout(() => {
-        bottomSheetRef.current.snapToIndex(1); // Move to the first snap point
-      }, 100); // Small delay to ensure smooth scrolling
-    }
-  }, [isVisible]);
+  // useEffect(() => {
+  //   if (isVisible) {
+  //     setTimeout(() => {
+  //       bottomSheetRef.current.snapToIndex(1); // Move to the first snap point
+  //     }, 100); // Small delay to ensure smooth scrolling
+  //   }
+  // }, [isVisible]);
 
   // const handleClosePress = useCallback(() => {
   //   bottomSheetRef.current?.close();

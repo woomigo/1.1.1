@@ -9,8 +9,10 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { woo_orange } from "../assets/colors";
 
-const LayoutPrivateWoos = ({ image, isVisible, isRead = true }) => {
-  useEffect(() => {});
+const LayoutPrivateWoos = ({ woo, isVisible, isRead = true }) => {
+  useEffect(() => {
+    console.log(woo)
+  });
 
   const navigation = useNavigation();
 
@@ -23,7 +25,7 @@ const LayoutPrivateWoos = ({ image, isVisible, isRead = true }) => {
           ) : (
             <Image
               style={isRead ? styles.image : styles.imageUnread}
-              source={{ uri: image }}
+              source={{ uri: woo.item.media_url }}
             />
           )}
         </View>

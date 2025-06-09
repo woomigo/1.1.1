@@ -24,6 +24,7 @@ const ListViewStories = ({ gallery }) => {
       <FlatList
         horizontal
         key={(woo) => woo.id}
+        keyExtractor={(woo) => woo.id}
         showsHorizontalScrollIndicator={false}
         style={styles.wooGalleryPreviewList}
         backgroundColor={"#fff"}

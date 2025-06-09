@@ -7,21 +7,28 @@ const SECRET = "supersecretkey"; // 🔐 You’ll want to use an env variable la
 
 // authController.js
 
-exports.getMe = (req, res) => {
+exports.getMe = async (req, res) => {
   const userId = req.user.id;
 
-  db.query(
-    "SELECT id, email, first_name, last_name, dob, profile_pic_url,  username, is_profile_complete FROM users WHERE id = ?",
-    [userId],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: "Database error" });
-      if (results.length === 0)
-        return res.status(404).json({ error: "User not found" });
+  try {
+    const [results] = await db.query(
+      `SELECT id, email, first_name, last_name, dob, profile_pic_url, username, is_profile_complete
+       FROM users
+       WHERE id = ?`,
+      [userId]
+    );
 
-      res.json(results[0]);
+    if (results.length === 0) {
+      return res.status(404).json({ error: "User not found" });
     }
-  );
+
+    res.json(results[0]);
+  } catch (err) {
+    console.error("DB error in getMe:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
+
 
 exports.register = async (req, res) => {
   const { email, password, isProfileComplete } = req.body;
@@ -64,13 +71,18 @@ exports.login = (req, res) => {
         return res.status(401).json({ error: "Invalid credentials" });
 
       const user = results[0];
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch)
-        return res.status(401).json({ error: "Invalid credentials" });
+      try {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return res.status(401).json({ error: "Invalid credentials" });
+        }
+      } catch (compareErr) {
+        return res.status(500).json({ error: "Internal server error" });
+      }
+      
 
       const token = jwt.sign({ id: user.id, email: user.email }, SECRET, {
-        expiresIn: "1h",
+        // expiresIn: "1h",
       });
 
       res.json({ message: "Login successful", token });

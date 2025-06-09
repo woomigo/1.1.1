@@ -30,23 +30,23 @@ const WooListView = ({ navigation, route }) => {
 
   const [wooList, setWooList] = useState();
   useEffect(() => {
-    console.log(`WOOID WOOLIST ==== ${wooID}`);
+    // console.log(`WOOID WOOLIST ==== ${wooID}`);
+// 
+    // const docWooRef = doc(db, "woos", wooID);
+    // const getWooList = onSnapshot(
+    //   docWooRef,
+    //   (doc) => {
+    //     console.log("Document data:", doc.data().woo_list);
+    //     setWooList(doc.data().woo_list);
+    //   },
+    //   (error) => {}
+    // );
 
-    const docWooRef = doc(db, "woos", wooID);
-    const getWooList = onSnapshot(
-      docWooRef,
-      (doc) => {
-        console.log("Document data:", doc.data().woo_list);
-        setWooList(doc.data().woo_list);
-      },
-      (error) => {}
-    );
-
-    return () => {
-      if (wooID) {
-        getWooList();
-      }
-    };
+    // return () => {
+    //   if (wooID) {
+    //     getWooList();
+    //   }
+    // };
   }, [wooID]);
 
   return (

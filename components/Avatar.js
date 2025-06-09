@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { woo_black, woo_white } from "../assets/colors";
 
 const Avatar = ({
   onPress,
@@ -38,9 +40,7 @@ const Avatar = ({
           {initials}
         </Text>
       ) : (
-        <Text onPress={onPress} style={[styles.text]}>
-          {placeholder}
-        </Text>
+        <FontAwesome6Icon name="user" size={30} color={woo_white} />
       )}
     </View>
   );

@@ -27,54 +27,55 @@ import { db } from "../firebaseConfig";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 // import LayoutMigosItem from './LayoutMigosItem';
 
-
-
 const LayoutWooLike = ({
+  ownerUID,
+  ownerUsername,
+  ownerProfilePicture,
+  ownerFirstName,
+  ownerLastName,
   wooLikes,
-  wooMigos,
-  wooType,
+  wooLikedByMe,
   uid,
   wooID,
-  ownerUID,
 }) => {
   const navigation = useNavigation();
 
-  const [isLiked, setIsLiked] = useState(false);
-  const [isWooMigo, setIsWooMigo] = useState(false);
-  const [receivedUID, setReceiverUID] = useState([]);
+  // const [isLiked, setIsLiked] = useState(false);
+  // const [isWooMigo, setIsWooMigo] = useState(false);
+  // const [receivedUID, setReceiverUID] = useState([]);
 
-  useEffect(() => {
-    wooLikes.includes(uid) ? setIsLiked(true) : setIsLiked(false);
-    wooMigos.includes(uid) ? setIsWooMigo(true) : setIsWooMigo(false);
-  });
+  // useEffect(() => {
+  //   wooLikes.includes(uid) ? setIsLiked(true) : setIsLiked(false);
+  //   wooMigos.includes(uid) ? setIsWooMigo(true) : setIsWooMigo(false);
+  // });
 
-  const addUIDToWooLikes = async () => {
-    await updateDoc(doc(db, "woos", wooID), {
-      woo_likes: arrayUnion(uid),
-    });
-    console.log("ADD");
-  };
+  // const addUIDToWooLikes = async () => {
+  //   await updateDoc(doc(db, "woos", wooID), {
+  //     woo_likes: arrayUnion(uid),
+  //   });
+  //   console.log("ADD");
+  // };
 
-  const removeUIDFromWooLikes = async () => {
-    await updateDoc(doc(db, "woos", wooID), {
-      woo_likes: arrayRemove(uid),
-    });
-    console.log("REMOVE");
-  };
+  // const removeUIDFromWooLikes = async () => {
+  //   await updateDoc(doc(db, "woos", wooID), {
+  //     woo_likes: arrayRemove(uid),
+  //   });
+  //   console.log("REMOVE");
+  // };
 
-  const addWooToProfile = async () => {
-    await updateDoc(doc(db, "woos", wooID), {
-      woo_migos: arrayUnion(uid),
-      migo_woos: arrayRemove(uid),
-    });
-  };
+  // const addWooToProfile = async () => {
+  //   await updateDoc(doc(db, "woos", wooID), {
+  //     woo_migos: arrayUnion(uid),
+  //     migo_woos: arrayRemove(uid),
+  //   });
+  // };
 
-  const removeWooFromProfile = async () => {
-    await updateDoc(doc(db, "woos", wooID), {
-      woo_migos: arrayRemove(uid),
-      migo_woos: arrayUnion(uid),
-    });
-  };
+  // const removeWooFromProfile = async () => {
+  //   await updateDoc(doc(db, "woos", wooID), {
+  //     woo_migos: arrayRemove(uid),
+  //     migo_woos: arrayUnion(uid),
+  //   });
+  // };
 
   // const saveNotification = async () => {
   //     try {
@@ -87,35 +88,35 @@ const LayoutWooLike = ({
   //     }
   // }
 
-  const saveNotification = async () => {
-    const timestamp = serverTimestamp();
-    if (uid != ownerUID) {
-      // prevents sending notification to self for liking own woo
-      try {
-        const docRef = await addDoc(collection(db, "notifications"), {
-          is_read: false,
-          notification_message: "liked your woo!",
-          notification_type: "woo like",
-          owner_uid: uid,
-          timestamp: timestamp,
-          receiver_uid: arrayUnion(ownerUID),
-          woo_id: wooID,
-        });
-        console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef));
-      } catch (error) {
-        console.error("SAVE NOTIFICATION ERROR " + error);
-      }
-    }
-  };
+  // const saveNotification = async () => {
+  //   const timestamp = serverTimestamp();
+  //   if (uid != ownerUID) {
+  //     // prevents sending notification to self for liking own woo
+  //     try {
+  //       const docRef = await addDoc(collection(db, "notifications"), {
+  //         is_read: false,
+  //         notification_message: "liked your woo!",
+  //         notification_type: "woo like",
+  //         owner_uid: uid,
+  //         timestamp: timestamp,
+  //         receiver_uid: arrayUnion(ownerUID),
+  //         woo_id: wooID,
+  //       });
+  //       console.log("NOTIFICATION SAVED TO DB ", JSON.stringify(docRef));
+  //     } catch (error) {
+  //       console.error("SAVE NOTIFICATION ERROR " + error);
+  //     }
+  //   }
+  // };
 
-  const toggleIsLiked = () => {
-    isLiked ? removeUIDFromWooLikes() : addUIDToWooLikes();
-    saveNotification();
-  };
+  // const toggleIsLiked = () => {
+  //   isLiked ? removeUIDFromWooLikes() : addUIDToWooLikes();
+  //   saveNotification();
+  // };
 
-  const toggleAddWoo = () => {
-    isWooMigo ? removeWooFromProfile() : addWooToProfile();
-  };
+  // const toggleAddWoo = () => {
+  //   isWooMigo ? removeWooFromProfile() : addWooToProfile();
+  // };
 
   const confirmAddToWoo = () =>
     Alert.alert(
@@ -150,15 +151,15 @@ const LayoutWooLike = ({
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPressOut={toggleIsLiked}
+              // onPressOut={toggleIsLiked}
             >
               <Icon
                 name="heart"
                 type="font-awesome-5"
                 color={woo_orange}
-                solid={isLiked}
+                solid={wooLikedByMe ? true : false}
                 size={25}
-                onPress={toggleIsLiked}
+                // onPress={toggleIsLiked}
               />
             </Pressable>
             <Text style={{ fontSize: 12 }}>{wooLikes.length}</Text>
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 25,
     marginEnd: 5,
-    marginRight: -20
+    marginRight: -20,
   },
 });
 

@@ -473,7 +473,7 @@ const MoreInfoScreen = ({ navigation, route }) => {
             onPress={pickImage}
             size={100}
             fontSize={22}
-            placeholder={"add a profile picture"}
+            // placeholder={"profile picture"}
             name={
               firstName.length &&
               lastName.length > 0 &&
@@ -558,6 +558,8 @@ const MoreInfoScreen = ({ navigation, route }) => {
           disabled={loading}
         />
       </View>
+
+
     </KeyboardAvoidingView>
   );
 };

@@ -16,9 +16,9 @@ const LayoutGalleryItem = ({
   navParams,
   horizBorderRadius,
 }) => {
-  useEffect(() => {
-       console.log(`LGI === ${JSON.stringify(image)}`)
-  });
+  // useEffect(() => {
+  //      console.log(`LGI === ${JSON.stringify(image)}`)
+  // });
   const navigation = useNavigation();
 
   const setHorizontalSize = () => {

@@ -38,25 +38,25 @@ const LayoutCommentItem = ({ uid, comment, comments }) => {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    console.log(comment);
-    setTimestamp(getTimeAgo(comment.item.timestamp.seconds));
-    const docRef = doc(db, "users", comment.item.comment_owner_uid);
-    const getProfileInfo = onSnapshot(
-      docRef,
-      (doc) => {
-        // console.log("Document data:", doc.data());
-        setUser(doc.data());
-        setProfilePicURL(doc.data().profile_pic_url);
-        setUsername(doc.data().username);
-      },
-      (error) => {}
-    );
+  // useEffect(() => {
+  //   console.log(comment);
+  //   setTimestamp(getTimeAgo(comment.item.timestamp.seconds));
+  //   const docRef = doc(db, "users", comment.item.comment_owner_uid);
+  //   const getProfileInfo = onSnapshot(
+  //     docRef,
+  //     (doc) => {
+  //       // console.log("Document data:", doc.data());
+  //       setUser(doc.data());
+  //       setProfilePicURL(doc.data().profile_pic_url);
+  //       setUsername(doc.data().username);
+  //     },
+  //     (error) => {}
+  //   );
 
-    return () => {
-      getProfileInfo();
-    };
-  }, []);
+  //   return () => {
+  //     getProfileInfo();
+  //   };
+  // }, []);
 
   return (
     <View style={styles.container}>

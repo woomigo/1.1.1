@@ -12,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/auth', authRoutes); 
 app.use('/users', usersRoutes);
+app.use('/woos', wooRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {

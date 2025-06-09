@@ -8,53 +8,74 @@ import { woo_white } from "../assets/colors";
 
 const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
   useEffect(() => {
-    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo.item.id)}`);
+    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo)}`);
   });
 
   return (
     <View style={styles.container}>
-      {woo.item.data().woo_media_url != null ? (
+      {woo.item.media_url != null ? (
         <LayoutWooImage
           uid={uid}
-          wooDate={woo.item.data().woo_date}
+          wooDate={woo.item.start_date}
           wooID={woo.item.id}
-          image={woo.item.data().woo_media_url}
-          ownerUID={woo.item.data().owner_uid}
-          wooLikes={woo.item.data().woo_likes}
-          wooMigos={woo.item.data().woo_migos}
-          wooType={woo.item.data().woo_type}
-          wooTime={woo.item.data().woo_time}
-          startTime={woo.item.data().woo_start_time}
-          endTime={woo.item.data().woo_end_time}
-          wooLocation={woo.item.data().woo_location}
-          wooComments={woo.item.data().woo_comments}
-          wooGallery={woo.item.data().woo_gallery}
-          wooList={woo.item.data().woo_list}
+          image={woo.item.media_url}
+          ownerUID={woo.item.user_id}
+          ownerUsername= {woo.item.username}
+          ownerProfilePicture={woo.item.profile_pic_url}
+          ownerFirstName = {woo.item.first_name}
+          ownerLastName = {woo.item.last_name}
+          wooLikes={woo.item.like_count}
+          wooLikedByMe={woo.item.liked_by_me}
+          // wooMigos={woo.item.woo_migos}
+          wooType={woo.item.type}
+          // wooTime={woo.item.woo_time}
+          startTime={woo.item.start_time}
+          endTime={woo.item.end_time}
+          wooLocation={woo.item.location}
+          // wooComments={woo.item.woo_comments}
+          // wooGallery={woo.item.woo_gallery}
+          // wooList={woo.item.woo_list}
         />
       ) : (
         <LayoutWooVideo
-          video={woo.item.data().video}
+          video={woo.item.video}
           currentVisibleIndex={currentVisibleIndex}
           currentIndex={currentIndex}
         />
       )}
       <LayoutWooLike
+
+       ownerUID={woo.item.user_id}
+          ownerUsername= {woo.item.username}
+          ownerProfilePicture={woo.item.profile_pic_url}
+          ownerFirstName = {woo.item.first_name}
+          ownerLastName = {woo.item.last_name}
+          wooLikes={woo.item.like_count}
+          wooLikedByMe={woo.item.liked_by_me}
         uid={uid}
         wooID={woo.item.id}
-        ownerUID={woo.item.data().owner_uid}
-        wooLikes={woo.item.data().woo_likes}
-        wooMigos={woo.item.data().woo_migos}
-        wooType={woo.item.data().woo_type}
+        // ownerUID={woo.item.user_id}
+        // wooLikes={woo.item.woo_likes}
+        // wooMigos={woo.item.woo_migos}
+        // wooType={woo.item.type}
       />
       <LayoutWooInfo
         uid={uid}
-        wooType={woo.item.data().woo_type}
-        ownerUID={woo.item.data().owner_uid}
-        sharedProfilePic={woo.item.data().shared_by_profile_pic}
-        wooMigos={woo.item.data().woo_migos}
-        wooDate={woo.item.data().woo_date}
-        wooTime={woo.item.data().woo_time}
-        wooLocation={woo.item.data().woo_location}
+        wooType={woo.item.woo_type}
+        ownerUID={woo.item.user_id}
+        ownerUsername= {woo.item.username}
+        ownerProfilePicture={woo.item.profile_pic_url}
+        ownerFirstName = {woo.item.first_name}
+        ownerLastName = {woo.item.last_name}
+        wooLikes={woo.item.like_count}
+        wooLikedByMe={woo.item.liked_by_me}
+        sharedProfilePic={woo.item.shared_by_profile_pic}
+        wooMigos={woo.item.woo_migos}
+        wooDate={woo.item.start_date}
+        // wooTime={woo.item.woo_time}
+        startTime={woo.item.start_time}
+        endTime={woo.item.end_time}
+        wooLocation={woo.item.location}
       />
     </View>
   );

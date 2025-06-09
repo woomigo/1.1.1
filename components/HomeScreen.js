@@ -22,11 +22,12 @@ import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = ({ route, navigation }) => {
-  // const { user } = route.params;
+  const { user, token } = route.params;
 
   const localhost = "http://192.168.12.240:3000";
 
-  const [woos, setWoos] = useState([]);
+  const [publicWoos, setPublicWoos] = useState([]);
+  const [privateWoos, setPrivateWoos] = useState([]);
   const [isPrivateVisible, setIsPrivateVisible] = useState(false);
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null); // holds user being edited
@@ -108,35 +109,68 @@ const HomeScreen = ({ route, navigation }) => {
   //   }
   // };
 
-  // useEffect(() => {
-  //   const q = query(
-  //     collection(db, "woos"),
-  //     or(
-  //       where("woo_migos", "array-contains", uid),
-  //       where("migo_woos", "array-contains", uid),
-  //       where("owner_uid", "==", uid)
-  //     )
-  //   );
 
-  //   const togglePrivateVisible = () => {
-  //     setIsPrivateVisible(!isPrivateVisible);
-  //   };
+  // CODE FOR MARKING PRIVATE WOO SEEN
+  // await fetch(`/api/woos/${wooId}/seen`, {
+  //   method: 'POST',
+  //   headers: { Authorization: `Bearer ${token}` }
+  // });
+  
 
-  //   const getWoos = onSnapshot(
-  //     q,
-  //     (querySnapshot) => {
-  //       const homeWoos = [];
-  //       querySnapshot.forEach((doc) => {
-  //         homeWoos.push(doc);
-  //       });
-  //       setWoos(homeWoos);
-  //     },
-  //     (error) => {}
-  //   );
-  //   return () => {
-  //     getWoos();
-  //   };
-  // }, []);
+  async function fetchPublicFeed() {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await fetch(`${localhost}/woos/publicfeed`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch feed");
+
+      const data = await response.json();
+      setPublicWoos(data);
+      // console.log("public woos " + JSON.stringify(data)); // Array of woos
+    } catch (err) {
+      console.error("Error fetching feed:", err);
+    }
+  }
+
+  async function fetchPrivateFeed() {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await fetch(`${localhost}/woos/privatefeed`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch feed");
+
+      const data = await response.json();
+      setPrivateWoos(data);
+      console.log("private woos " + JSON.stringify(data)); // Array of woos
+    } catch (err) {
+      console.error("Error fetching feed:", err);
+    }
+    return data;
+  }
+
+  useEffect(() => {
+    console.log(`TOKEN IS ${token}`);
+    fetchPrivateFeed()
+    fetchPublicFeed();
+  }, [token]);
+
+
+
+  const togglePrivateVisible = () => {
+    setIsPrivateVisible(!isPrivateVisible);
+  };
 
   const logoutUser = async () => {
     // Remove the token from AsyncStorage
@@ -147,7 +181,7 @@ const HomeScreen = ({ route, navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Button title="Logout" onPress={logoutUser} />
-      <ScrollView>bvcxxb cscvv cz
+      <ScrollView>
         <View
           style={{
             marginTop: 20,
@@ -199,7 +233,6 @@ const HomeScreen = ({ route, navigation }) => {
         )}
       />
     </View> */}
-
         <View
           style={{
             flexDirection: "row",
@@ -233,7 +266,7 @@ const HomeScreen = ({ route, navigation }) => {
                 onPress={() => setIsPrivateVisible(!isPrivateVisible)}
               />
             )}
-            <Text style={styles.text}>1</Text>
+            <Text style={styles.text}>{privateWoos.length}</Text>
           </View>
           <View
             style={{
@@ -246,7 +279,7 @@ const HomeScreen = ({ route, navigation }) => {
             {/* <Text style={styles.smallText}>view all</Text> */}
           </View>
         </View>
-        <ListViewPrivateWoos gallery={Gallery} isVisible={isPrivateVisible} />
+        <ListViewPrivateWoos gallery={privateWoos} isVisible={isPrivateVisible} />
         <View
           style={{
             flexDirection: "row",
@@ -268,7 +301,7 @@ const HomeScreen = ({ route, navigation }) => {
           </View>
           {/* <Text style={styles.smallText}>view all</Text> */}
         </View>
-        {/* <ListViewWoos view={"list"} woos={woos} uid={uid} /> */}
+        <ListViewWoos view={"list"} woos={publicWoos} uid={user.uid} />
       </ScrollView>
     </SafeAreaView>
   );

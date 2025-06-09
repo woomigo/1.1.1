@@ -14,7 +14,7 @@ import { Icon, Avatar, Card } from "@rneui/themed";
 import { woo_gray, woo_black, woo_orange, woo_white } from "../assets/colors";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import { getMonthAndDay } from "./utility";
+import { getFormattedTime, getMonthAndDay } from "./utility";
 
 const LayoutWooInfo = ({
   uid,
@@ -25,61 +25,72 @@ const LayoutWooInfo = ({
   wooTime,
   wooLocation,
   sharedProfilePic,
+  ownerUsername,
+  ownerProfilePicture,
+  ownerFirstName,
+  ownerLastName,
+  wooLikes,
+  wooLikedByMe,
+  wooID,
+  startTime,
+  endTime,
 }) => {
   const navigation = useNavigation();
 
   const { month, day } = getMonthAndDay(wooDate);
+  const wooStartTime = getFormattedTime(startTime);
+  const wooEndTime = getFormattedTime(endTime);
 
-  const [user, setUser] = useState();
-  const [username, setUsername] = useState();
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [profilePicURL, setProfilePicURL] = useState();
+  // const [user, setUser] = useState();
+  // const [username, setUsername] = useState();
+  // const [firstName, setFirstName] = useState();
+  // const [lastName, setLastName] = useState();
+  // const [profilePicURL, setProfilePicURL] = useState();
 
   const WooMigoImage = ({ userID }) => {
     const [profilePicURL, setProfilePicURL] = useState();
 
-    useEffect(() => {
-      const docRef = doc(db, "users", userID);
-      const getProfileInfo = onSnapshot(
-        docRef,
-        (doc) => {
-          // console.log("Document data:", doc.data());
-          setProfilePicURL(doc.data().profile_pic_url);
-        },
-        (error) => {}
-      );
+    // useEffect(() => {
+    //   const docRef = doc(db, "users", userID);
+    //   const getProfileInfo = onSnapshot(
+    //     docRef,
+    //     (doc) => {
+    //       // console.log("Document data:", doc.data());
+    //       setProfilePicURL(doc.data().profile_pic_url);
+    //     },
+    //     (error) => {}
+    //   );
 
-      return () => {
-        getProfileInfo();
-      };
-    }, []);
+    //   return () => {
+    //     getProfileInfo();
+    //   };
+    // }, []);
 
     return (
       <Image style={styles.wooMigoImage} source={{ uri: profilePicURL }} />
     );
   };
 
-  useEffect(() => {
-    console.log();
-    const docRef = doc(db, "users", ownerUID);
-    const getProfileInfo = onSnapshot(
-      docRef,
-      (doc) => {
-        // console.log("Document data:", doc.data());
-        setUser(doc.data());
-        setUsername(doc.data().username);
-        setFirstName(doc.data().first_name);
-        setLastName(doc.data().last_name);
-        setProfilePicURL(doc.data().profile_pic_url);
-      },
-      (error) => {}
-    );
+  // useEffect(() => {
+  //   console.log();
+  //   const docRef = doc(db, "users", ownerUID);
+  //   const getProfileInfo = onSnapshot(
+  //     docRef,
+  //     (doc) => {
+  //       // console.log("Document data:", doc.data());
+  //       setUser(doc.data());
+  //       setUsername(doc.data().username);
+  //       setFirstName(doc.data().first_name);
+  //       setLastName(doc.data().last_name);
+  //       setProfilePicURL(doc.data().profile_pic_url);
+  //     },
+  //     (error) => {}
+  //   );
 
-    return () => {
-      getProfileInfo();
-    };
-  }, []);
+  //   return () => {
+  //     getProfileInfo();
+  //   };
+  // }, []);
 
   const openCal = () => {
     if (Platform.OS === "ios") {
@@ -94,18 +105,25 @@ const LayoutWooInfo = ({
       <View style={styles.nameDateContainer}>
         <View style={{ flex: 1, flexDirection: "row", alignItems: "flex-end" }}>
           <TouchableWithoutFeedback>
-            <Avatar rounded size="medium" source={{ uri: profilePicURL }} />
+            <Avatar
+              rounded
+              size="medium"
+              source={{ uri: ownerProfilePicture }}
+            />
           </TouchableWithoutFeedback>
           <View style={{ justifyContent: "flex-end" }}>
             <TouchableWithoutFeedback
               onPress={() => {
-                user.uid !== uid && navigation.push("Profile", { userUID: user.uid });
+                user.uid !== uid &&
+                  navigation.push("Profile", { userUID: user.uid });
               }}
             >
               <View style={{ marginStart: 5 }}>
-                <Text style={styles.wooOwnerText}>{firstName}</Text>
-                <Text style={styles.wooOwnerText}>{lastName}</Text>
-                <Text style={styles.wooOwnerUsernameText}>@{username}</Text>
+                <Text style={styles.wooOwnerText}>{ownerFirstName}</Text>
+                <Text style={styles.wooOwnerText}>{ownerLastName}</Text>
+                <Text style={styles.wooOwnerUsernameText}>
+                  @{ownerUsername}
+                </Text>
               </View>
             </TouchableWithoutFeedback>
           </View>
@@ -128,7 +146,9 @@ const LayoutWooInfo = ({
               color={woo_black}
               onPress={() => setIsPrivateVisible(!isPrivateVisible)}
             />
-            <Text style={styles.wooTimeLocationText}>{wooTime}</Text>
+            <Text style={styles.wooTimeLocationText}>
+              {startTime && `${wooStartTime} ${endTime && "- " + wooEndTime}`}
+            </Text>
           </View>
           <View style={styles.locationContainer}>
             <FontAwesome6Icon
@@ -137,17 +157,19 @@ const LayoutWooInfo = ({
               color={woo_black}
               onPress={() => setIsPrivateVisible(!isPrivateVisible)}
             />
-            <Text style={styles.wooTimeLocationText}>{wooLocation.address}</Text>
+            <Text style={styles.wooTimeLocationText}>
+              {wooLocation.address}
+            </Text>
           </View>
         </View>
         <View style={styles.migosContainer}>
-          <View style={styles.wooMigosImagesContainer}>
+          {/* <View style={styles.wooMigosImagesContainer}>
             {wooMigos.length > 0 && <WooMigoImage userID={wooMigos[0]} />}
             {wooMigos.length > 1 && <WooMigoImage userID={wooMigos[1]} />}
             {wooMigos.length > 2 && <WooMigoImage userID={wooMigos[2]} />}
             {wooMigos.length > 3 && <WooMigoImage userID={wooMigos[3]} />}
             {wooMigos.length > 4 && <View style={[styles.wooMigoImage, {backgroundColor: woo_orange, justifyContent: 'center', alignItems: 'center'}]}><Text style={{color: woo_white, fontSize: 12}}>+{wooMigos.length - 4}</Text></View>}
-          </View>
+          </View> */}
         </View>
       </View>
     </Card>
@@ -168,7 +190,7 @@ const styles = StyleSheet.create({
   timeLocationMigosContainer: {
     flex: 1,
     flexDirection: "row",
-    padding: 10
+    padding: 10,
   },
   wooOwnerText: {
     fontWeight: "bold",
@@ -197,19 +219,19 @@ const styles = StyleSheet.create({
   },
   timeLocationContainer: {
     flex: 1,
-    marginStart: 5
+    marginStart: 5,
   },
   timeContainer: {
     flexDirection: "row",
-    margin: 2
+    margin: 2,
   },
   locationContainer: {
     flexDirection: "row",
-    margin: 3
+    margin: 3,
   },
   wooTimeLocationText: {
     marginStart: 5,
-    fontSize: 12
+    fontSize: 12,
   },
   migosContainer: {
     flex: 1,
@@ -228,7 +250,7 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     borderRadius: 18,
-    marginEnd: -10
+    marginEnd: -10,
   },
 });
 

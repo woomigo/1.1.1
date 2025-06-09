@@ -11,7 +11,7 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
   const [itemsSlctd, setItemsSlctd] = useState(2);
 
   useEffect(() => {
-    console.log(`WOOLIST ==== ${wooList}`);
+    // console.log(`WOOLIST ==== ${wooList}`);
   });
 
   const handleListUpdate = (update) => {

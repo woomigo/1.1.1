@@ -1,5 +1,6 @@
 // db.js
 const mysql = require('mysql2');
+// import mysql from 'mysql2/promise'
 
 const db = mysql.createConnection({
   host: '127.0.0.1', // replace with your host
@@ -16,4 +17,4 @@ db.connect((err) => {
   console.log('Connected to MySQL DB');
 });
 
-module.exports = db;
+module.exports = db.promise();
