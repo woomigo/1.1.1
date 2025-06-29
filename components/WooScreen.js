@@ -82,7 +82,7 @@ const WooScreen = ({ navigation, route }) => {
       // CODE FOR MARKING PRIVATE WOO SEEN
       markPrivateWooSeen()
     }
-    
+    console.log("WOOOOOO " + JSON.stringify(woo))
   });
 
   const markPrivateWooSeen = async () => {
@@ -169,7 +169,7 @@ const WooScreen = ({ navigation, route }) => {
                 <Avatar
                   rounded
                   size="medium"
-                  onPress={() => navigation.navigate("Profile")}
+                  onPress={() => navigation.navigate("Profile", {userUID: woo.item.user_id})}
                   source={{ uri: woo.item.profile_pic_url }}
                 />
                 <View style={{ marginStart: 5 }}>
