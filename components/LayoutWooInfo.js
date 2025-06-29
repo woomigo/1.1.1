@@ -147,7 +147,7 @@ const LayoutWooInfo = ({
               onPress={() => setIsPrivateVisible(!isPrivateVisible)}
             />
             <Text style={styles.wooTimeLocationText}>
-              {startTime && `${wooStartTime} ${endTime && "- " + wooEndTime}`}
+              {startTime && `${wooStartTime} ${endTime != null && "- " + wooEndTime}`}
             </Text>
           </View>
           <View style={styles.locationContainer}>

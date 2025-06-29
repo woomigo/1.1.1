@@ -9,7 +9,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { woo_orange } from "../assets/colors";
 
-const LayoutPrivateWoos = ({ woo, isVisible, isRead = true }) => {
+const LayoutPrivateWoos = ({ woo, uid, isVisible, isRead = true }) => {
   useEffect(() => {
     console.log(woo)
   });
@@ -18,7 +18,12 @@ const LayoutPrivateWoos = ({ woo, isVisible, isRead = true }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={() => {}}>
+      <TouchableWithoutFeedback      onPress={() =>
+        navigation.navigate("Woo", {
+          uid: uid,
+          woo: woo,
+        })
+      }>
         <View>
           {isVisible ? (
             <View style={isRead ? styles.image : styles.imageUnread}></View>

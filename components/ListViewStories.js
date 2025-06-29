@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { woo_white } from "../assets/colors";
 import LayoutStoriesItem from "./LayoutStoriesItem";
@@ -6,8 +6,12 @@ import LayoutStoriesItem from "./LayoutStoriesItem";
 const ListViewStories = ({ gallery }) => {
   const [refreshing, setRefreshing] = useState(false);
 
-  const renderGallery = (image) => (
-    <LayoutStoriesItem image={image.item.image} />
+  useEffect(() => {
+    // console.log(`THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(gallery)}`)
+  })
+
+  const renderGallery = (story) => (
+    <LayoutStoriesItem story={story.item} />
   );
 
   const wait = (timeout) => {

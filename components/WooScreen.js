@@ -38,31 +38,33 @@ import ListViewComments from "./ListViewComments";
 import ListViewWooList from "./ListViewWooList";
 
 const WooScreen = ({ navigation, route }) => {
-  const {
-    wooID,
-    wooDate,
-    image,
-    wooMigos,
-    wooType,
+  const {    
     uid,
-    ownerUID,
-    ownerUsername,
-    ownerProfilePicture,
-    ownerFirstName,
-    ownerLastName,
-    wooLikes,
-    wooLikedByMe,
-    wooTime,
-    wooLocation,
-    wooComments,
-    wooGallery,
-    wooList,
-    startTime, endTime
+    woo,
+    // wooID,
+    // wooDate,
+    // image,
+    // wooMigos,
+    // wooType,
+
+    // ownerUID,
+    // ownerUsername,
+    // ownerProfilePicture,
+    // ownerFirstName,
+    // ownerLastName,
+    // wooLikes,
+    // wooLikedByMe,
+    // wooTime,
+    // wooLocation,
+    // wooComments,
+    // wooGallery,
+    // wooList,
+    // startTime, endTime
   } = route.params;
 
-  const { month, day } = getMonthAndDay(wooDate);
-  const wooStartTime = getFormattedTime(startTime)
-  const wooEndTime = getFormattedTime(endTime)
+  const { month, day } = getMonthAndDay(woo.item.start_date);
+  const wooStartTime = getFormattedTime(woo.item.start_time)
+  const wooEndTime = getFormattedTime(woo.item.end_time)
 
   const scrollViewRef = useRef(null);
 
@@ -101,7 +103,7 @@ const WooScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log("WOO LIKES COUNT " + JSON.stringify(wooLocation));
+    // console.log("WOO LIKES COUNT " + JSON.stringify(wooLocation));
   });
 
   // useEffect(() => {
@@ -182,7 +184,7 @@ const WooScreen = ({ navigation, route }) => {
               </View>
             </View>
           </View>
-          <Image style={styles.image} source={{ uri: image }} />
+          <Image style={styles.image} source={{ uri: woo.item.media_url }} />
           {/* FIRST 
         ROW */}
           <View
@@ -206,12 +208,12 @@ const WooScreen = ({ navigation, route }) => {
                   rounded
                   size="medium"
                   onPress={() => navigation.navigate("Profile")}
-                  source={{ uri: ownerProfilePicture }}
+                  source={{ uri: woo.item.profile_pic_url }}
                 />
                 <View style={{ marginStart: 5 }}>
-                  <Text>{ownerFirstName}</Text>
-                  <Text>{ownerLastName}</Text>
-                  <Text style={{ fontSize: 12 }}>@{ownerUsername}</Text>
+                  <Text>{woo.item.first_name}</Text>
+                  <Text>{woo.item.last_name}</Text>
+                  <Text style={{ fontSize: 12 }}>@{woo.item.username}</Text>
                 </View>
               </View>
             </View>
@@ -239,11 +241,11 @@ const WooScreen = ({ navigation, route }) => {
                     name="heart"
                     style={{}}
                     size={30}
-                    solid={wooLikedByMe ? true : false}
-                    color={wooLikedByMe ? woo_orange : woo_black}
+                    solid={woo.item.liked_by_me ? true : false}
+                    color={woo.item.liked_by_me ? woo_orange : woo_black}
                     onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 12 }}>{wooLikes}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 12 }}>{woo.item.like_count}</Text>
                 </View>
                 <View>
                   <FontAwesome6Icon
@@ -317,7 +319,7 @@ const WooScreen = ({ navigation, route }) => {
                   onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                 />
                 <View style={{ marginStart: 5 }}>
-                  <Text>{startTime && `${wooStartTime} ${endTime && "- " + wooEndTime}`}</Text>
+                  <Text>{woo.item.start_time && `${wooStartTime} ${woo.item.end_time == null ? "" : "- " + wooEndTime}`}</Text>
                 </View>
               </View>
             </View>
@@ -326,7 +328,7 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1, marginStart: 5 }]}
               onPress={() => handleOpenWooMigosBottomSheet()}
             >
-              {wooMigos && wooMigos.length > 0 ? (
+              {woo.item.woo_migos && woo.item.woo_migos.length > 0 ? (
                 <View
                   style={{
                     flex: 1,
@@ -337,19 +339,19 @@ const WooScreen = ({ navigation, route }) => {
                   }}
                 >
                   <View style={styles.wooMigosImagesContainer}>
-                    {wooMigos && wooMigos.length > 0 && (
-                      <WooMigoImage userID={wooMigos[0]} />
+                    {woo.item.woo_migos && woo.item.woo_migos.length > 0 && (
+                      <WooMigoImage userID={woo.item.woo_migos[0]} />
                     )}
-                    {wooMigos && wooMigos.length > 1 && (
-                      <WooMigoImage userID={wooMigos[1]} />
+                    {woo.item.woo_migos && woo.item.woo_migos.length > 1 && (
+                      <WooMigoImage userID={woo.item.woo_migos[1]} />
                     )}
-                    {wooMigos && wooMigos.length > 2 && (
-                      <WooMigoImage userID={wooMigos[2]} />
+                    {woo.item.woo_migos && woo.item.woo_migos.length > 2 && (
+                      <WooMigoImage userID={woo.item.woo_migos[2]} />
                     )}
-                    {wooMigos && wooMigos.length > 3 && (
-                      <WooMigoImage userID={wooMigos[3]} />
+                    {woo.item.woo_migos && woo.item.woo_migos.length > 3 && (
+                      <WooMigoImage userID={woo.item.woo_migos[3]} />
                     )}
-                    {wooMigos && wooMigos.length > 4 && (
+                    {woo.item.woo_migos && woo.item.woo_migos.length > 4 && (
                       <View
                         style={[
                           styles.wooMigoImage,
@@ -361,7 +363,7 @@ const WooScreen = ({ navigation, route }) => {
                         ]}
                       >
                         <Text style={{ color: woo_white, fontSize: 12 }}>
-                          +{wooMigos && wooMigos.length - 4}
+                          +{woo.item.woo_migos && woo.item.woo_migos.length - 4}
                         </Text>
                       </View>
                     )}
@@ -396,21 +398,21 @@ const WooScreen = ({ navigation, route }) => {
                   color={woo_black}
                   onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                 />
-                <Text style={styles.infoText}> {wooLocation.address}</Text>
+                <Text style={styles.infoText}> {woo.item.location.address}</Text>
               </View>
 
               <MapView
                 style={styles.map}
-                region={wooLocation.region}
-                initialRegion={wooLocation.region}
+                region={woo.item.location.region}
+                initialRegion={woo.item.location.region}
                 scrollEnabled={false}
                 zoomEnabled={false} // Disables pinch-to-zoom
                 pitchEnabled={false} // Disables 3D tilt gestures
                 rotateEnabled={false} // Disables map rotation
               >
                 <Marker
-                  coordinate={wooLocation.region}
-                  title={wooLocation.address}
+                  coordinate={woo.item.location.region}
+                  title={woo.item.location.address}
                 />
               </MapView>
             </View>
@@ -431,7 +433,7 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenCommentBottomSheet()}
             >
-              {wooComments && wooComments.length > 0 ? (
+              {woo.item.woo_comments && woo.item.woo_comments.length > 0 ? (
                 <>
                   <View style={styles.commentHeaderContainer}>
                     <View style={styles.commentHeaderUserContainer}>
@@ -453,7 +455,7 @@ const WooScreen = ({ navigation, route }) => {
                         </TouchableWithoutFeedback>
                         <View style={styles.commentContainer}>
                           <Text style={styles.comment}>
-                            {wooComments[0].comment}
+                            {woo.item.woo_comments[0].comment}
                           </Text>
 
                           <Text style={styles.commentTimeAgo}>{timeAgo}</Text>
@@ -471,7 +473,7 @@ const WooScreen = ({ navigation, route }) => {
                     >
                       <Text style={styles.seeMoreCommentsText}>
                         {`see ${
-                          wooComments && wooComments.length - 1
+                          woo.item.woo_comments && woo.item.woo_comments.length - 1
                         } more comments...`}
                       </Text>
                     </TouchableOpacity>
@@ -502,8 +504,8 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenWooGalleryBottomSheet()}
             >
-              {wooGallery && wooGallery.length > 0 ? (
-                <LayoutWooGallery gallery={wooGallery} />
+              {woo.item.woo_gallery && woo.item.woo_gallery.length > 0 ? (
+                <LayoutWooGallery gallery={woo.item.woo_gallery} />
               ) : (
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
@@ -529,10 +531,10 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1 }]}
               onPress={() => handleOpenWooListBottomSheet()}
             >
-              {wooList && wooList.length > 0 ? (
+              {woo.item.woo_list && woo.item.woo_list.length > 0 ? (
                 <ListViewWooList
                   view={"horizontal"}
-                  wooList={wooList}
+                  wooList={woo.item.woo_list}
                   size="xl"
                 />
               ) : (

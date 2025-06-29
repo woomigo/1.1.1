@@ -16,25 +16,26 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
       {woo.item.media_url != null ? (
         <LayoutWooImage
           uid={uid}
-          wooDate={woo.item.start_date}
-          wooID={woo.item.id}
-          image={woo.item.media_url}
-          ownerUID={woo.item.user_id}
-          ownerUsername= {woo.item.username}
-          ownerProfilePicture={woo.item.profile_pic_url}
-          ownerFirstName = {woo.item.first_name}
-          ownerLastName = {woo.item.last_name}
-          wooLikes={woo.item.like_count}
-          wooLikedByMe={woo.item.liked_by_me}
-          // wooMigos={woo.item.woo_migos}
-          wooType={woo.item.type}
-          // wooTime={woo.item.woo_time}
-          startTime={woo.item.start_time}
-          endTime={woo.item.end_time}
-          wooLocation={woo.item.location}
-          // wooComments={woo.item.woo_comments}
-          // wooGallery={woo.item.woo_gallery}
-          // wooList={woo.item.woo_list}
+          woo={woo}
+          // wooDate={woo.item.start_date}
+          // wooID={woo.item.id}
+          // image={woo.item.media_url}
+          // ownerUID={woo.item.user_id}
+          // ownerUsername= {woo.item.username}
+          // ownerProfilePicture={woo.item.profile_pic_url}
+          // ownerFirstName = {woo.item.first_name}
+          // ownerLastName = {woo.item.last_name}
+          // wooLikes={woo.item.like_count}
+          // wooLikedByMe={woo.item.liked_by_me}
+          // // wooMigos={woo.item.woo_migos}
+          // wooType={woo.item.type}
+          // // wooTime={woo.item.woo_time}
+          // startTime={woo.item.start_time}
+          // endTime={woo.item.end_time}
+          // wooLocation={woo.item.location}
+          // // wooComments={woo.item.woo_comments}
+          // // wooGallery={woo.item.woo_gallery}
+          // // wooList={woo.item.woo_list}
         />
       ) : (
         <LayoutWooVideo

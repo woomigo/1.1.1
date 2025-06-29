@@ -50,6 +50,7 @@ import NewMessageScreen from "./components/NewMessageScreen";
 import ManageParticipantsScreen from "./components/ManageParticipantsScreen";
 import MoreInfoScreen from "./components/MoreInfoScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import StoryViewerScreen from "./components/StoryViewerScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -59,10 +60,7 @@ const AuthStack = createNativeStackNavigator();
 const OnboardingStack = createNativeStackNavigator();
 const AppStack = createNativeStackNavigator();
 
-
-
 const App = () => {
-
   const HomeStack = () => {
     return (
       <Stack.Navigator options={{ headerShown: false }}>
@@ -120,10 +118,16 @@ const App = () => {
           options={{ headerShown: false }}
           initialParams={{ user: user, token: token }}
         />
+        <Stack.Screen
+          name="StoryViewer"
+          component={StoryViewerScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
       </Stack.Navigator>
     );
   };
-  
+
   const NotificationsStack = () => {
     return (
       <Stack.Navigator options={{ headerShown: false }}>
@@ -136,7 +140,7 @@ const App = () => {
       </Stack.Navigator>
     );
   };
-  
+
   const ProfileStack = () => {
     return (
       <Stack.Navigator options={{ headerShown: false }}>
@@ -215,7 +219,7 @@ const App = () => {
       </Stack.Navigator>
     );
   };
-  
+
   const CameraStack = () => {
     return (
       <Stack.Navigator options={{ headerShown: false }}>
@@ -276,7 +280,7 @@ const App = () => {
       </Stack.Navigator>
     );
   };
-  
+
   const SearchStack = () => {
     return (
       <Stack.Navigator options={{ headerShown: false }}>
@@ -289,7 +293,7 @@ const App = () => {
       </Stack.Navigator>
     );
   };
-  
+
   const MessagesStack = () => {
     return (
       <Stack.Navigator options={{ headerShown: false }}>

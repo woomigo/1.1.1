@@ -8,26 +8,27 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 const LayoutWooImage = ({
-  wooID,
-  wooDate,
-  image,
-  wooLikes,
-  wooMigos,
-  wooType,
   uid,
-  ownerUID,
-  ownerUsername,
-  ownerProfilePicture,
-  ownerFirstName,
-  ownerLastName,
-  wooLikedByMe,
-  wooTime,
-  wooLocation,
-  wooComments,
-  wooGallery,
-  wooList,
-  startTime,
-  endTime,
+  woo,
+  // wooID,
+  // wooDate,
+  // image,
+  // wooLikes,
+  // wooMigos,
+  // wooType,
+  // ownerUID,
+  // ownerUsername,
+  // ownerProfilePicture,
+  // ownerFirstName,
+  // ownerLastName,
+  // wooLikedByMe,
+  // wooTime,
+  // wooLocation,
+  // wooComments,
+  // wooGallery,
+  // wooList,
+  // startTime,
+  // endTime,
 }) => {
   const navigation = useNavigation();
 
@@ -35,31 +36,13 @@ const LayoutWooImage = ({
     <TouchableWithoutFeedback
       onPress={() =>
         navigation.navigate("Woo", {
-          wooDate,
-          wooID,
-          image,
-          wooLikes,
-          wooMigos,
-          wooType,
           uid: uid,
-          ownerUID,
-          ownerUsername,
-          ownerProfilePicture,
-          ownerFirstName,
-          ownerLastName,
-          wooLikedByMe,
-          wooTime,
-          wooLocation,
-          wooComments,
-          wooGallery,
-          wooList,
-          startTime,
-          endTime,
+          woo: woo,
         })
       }
       style={styles.container}
     >
-      <Image style={styles.image} source={{ uri: image }} />
+      <Image style={styles.image} source={{ uri: woo.item.media_url }} />
     </TouchableWithoutFeedback>
   );
 };

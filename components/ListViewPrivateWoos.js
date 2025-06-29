@@ -3,11 +3,11 @@ import { View, FlatList, StyleSheet } from "react-native";
 import { woo_white } from "../assets/colors";
 import LayoutPrivateWoos from "./LayoutPrivateWoos";
 
-const ListViewPrivateWoos = ({ gallery, isVisible }) => {
+const ListViewPrivateWoos = ({ gallery, isVisible, uid }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const renderGallery = (woo) => (
-    <LayoutPrivateWoos woo={woo} isRead={woo.item.seen} isVisible={isVisible} />
+    <LayoutPrivateWoos woo={woo} uid={uid} isRead={woo.item.seen} isVisible={isVisible} />
   );
 
   const wait = (timeout) => {

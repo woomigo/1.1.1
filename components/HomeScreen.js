@@ -28,6 +28,8 @@ const HomeScreen = ({ route, navigation }) => {
 
   const [publicWoos, setPublicWoos] = useState([]);
   const [privateWoos, setPrivateWoos] = useState([]);
+  const [storyFeed, setStoryFeed] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isPrivateVisible, setIsPrivateVisible] = useState(false);
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null); // holds user being edited
@@ -160,10 +162,31 @@ const HomeScreen = ({ route, navigation }) => {
     return data;
   }
 
+   const fetchStoryFeed = async () => {
+      try {
+        const response = await fetch(`${localhost}/stories/feed`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch story feed');
+
+        const data = await response.json();
+        setStoryFeed(data);
+      } catch (error) {
+        console.error('Error fetching story feed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
   useEffect(() => {
     console.log(`TOKEN IS ${token}`);
     fetchPrivateFeed()
-    fetchPublicFeed();
+    fetchPublicFeed();   
+    fetchStoryFeed();
   }, [token]);
 
 
@@ -187,7 +210,7 @@ const HomeScreen = ({ route, navigation }) => {
             marginTop: 20,
           }}
         >
-          <ListViewStories gallery={Gallery} />
+          <ListViewStories gallery={storyFeed} />
         </View>
         {/* <View style={styles.testContainer}>
       <Button title="Refresh Users" onPress={fetchUsers} />
@@ -279,7 +302,7 @@ const HomeScreen = ({ route, navigation }) => {
             {/* <Text style={styles.smallText}>view all</Text> */}
           </View>
         </View>
-        <ListViewPrivateWoos gallery={privateWoos} isVisible={isPrivateVisible} />
+        <ListViewPrivateWoos gallery={privateWoos} isVisible={isPrivateVisible} uid={user.uid} />
         <View
           style={{
             flexDirection: "row",
