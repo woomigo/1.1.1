@@ -305,7 +305,26 @@ exports.getStoryFeed = async (req, res) => {
       }
     }
 
-    res.json(Object.values(feedMap));
+    // Sort stories inside each group: unseen first, then by created_at DESC
+    Object.values(feedMap).forEach(group => {
+      group.stories.sort((a, b) => {
+        if (!a.seen && b.seen) return -1;
+        if (a.seen && !b.seen) return 1;
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+    });
+
+    // Sort groups: unseen groups first, then by latest story created_at DESC
+    const sortedGroups = Object.values(feedMap).sort((a, b) => {
+      if (a.unseen && !b.unseen) return -1;
+      if (!a.unseen && b.unseen) return 1;
+
+      const aLatest = new Date(a.stories[0]?.created_at || 0);
+      const bLatest = new Date(b.stories[0]?.created_at || 0);
+      return bLatest - aLatest;
+    });
+
+    res.json(sortedGroups);
   } catch (error) {
     console.error("Error fetching story feed:", error);
     res.status(500).json({ message: "Failed to load story feed" });
@@ -316,7 +335,7 @@ exports.getCombinedStoryFeed = async (req, res) => {
   const currentUserId = req.user.id;
 
   try {
-    // 1) Event stories (your existing woo_gallery query simplified)
+    // 1) Event stories
     const [eventStories] = await db.execute(
       `SELECT 
          wg.id AS story_id,
@@ -342,10 +361,10 @@ exports.getCombinedStoryFeed = async (req, res) => {
        )) OR (w.type = 'public' AND EXISTS (
          SELECT 1 FROM followers f WHERE f.follower_id = ? AND f.followee_id = w.owner_uid
        ))) AND wg.expires_at > NOW()`,
-       [currentUserId, currentUserId, currentUserId]
+      [currentUserId, currentUserId, currentUserId]
     );
 
-    // 2) User stories from followed users
+    // 2) User stories
     const [userStories] = await db.execute(
       `SELECT 
          s.id AS story_id,
@@ -364,16 +383,15 @@ exports.getCombinedStoryFeed = async (req, res) => {
          SELECT followee_id FROM followers WHERE follower_id = ?
        )
        AND s.expires_at > NOW()`,
-       [currentUserId, currentUserId]
+      [currentUserId, currentUserId]
     );
 
-    // 3) Merge and sort by created_at (desc)
+    // 3) Merge stories
     const combinedStories = [...eventStories, ...userStories].sort(
       (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
 
-    // 4) Group by woo_id or user story grouping (you can customize this)
-    // For user stories, woo_id is null, so group by story_user_id instead
+    // 4) Group stories by woo_id or user story owner
     const feedMap = {};
 
     for (const story of combinedStories) {
@@ -419,12 +437,32 @@ exports.getCombinedStoryFeed = async (req, res) => {
       if (!story.seen) feedMap[groupKey].unseen = true;
     }
 
-    res.json(Object.values(feedMap));
+    // Sort stories inside each group: unseen first, then by created_at DESC
+    Object.values(feedMap).forEach(group => {
+      group.stories.sort((a, b) => {
+        if (!a.seen && b.seen) return -1;
+        if (a.seen && !b.seen) return 1;
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+    });
+
+    // Sort groups: unseen groups first, then by latest story created_at DESC
+    const sortedGroups = Object.values(feedMap).sort((a, b) => {
+      if (a.unseen && !b.unseen) return -1;
+      if (!a.unseen && b.unseen) return 1;
+
+      const aLatest = new Date(a.stories[0]?.created_at || 0);
+      const bLatest = new Date(b.stories[0]?.created_at || 0);
+      return bLatest - aLatest;
+    });
+
+    res.json(sortedGroups);
   } catch (error) {
     console.error("Error fetching combined story feed:", error);
     res.status(500).json({ message: "Failed to load combined story feed" });
   }
 };
+
 
 
 // exports.markStorySeen = async (req, res) => {

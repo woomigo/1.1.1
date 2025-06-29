@@ -16,55 +16,30 @@ import {
 import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  onSnapshot,
-  and,
-  or,
-} from "firebase/firestore";
-import { db } from "../firebaseConfig";
 import { Drawer } from "react-native-drawer-layout";
 import MenuScreen from "./MenuScreen";
 import ListViewWoos from "./ListViewWoos";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import MapView, { Marker } from "react-native-maps";
-import { getFormattedTime, getMonthAndDay, getTimeAgo, truncUsername } from "./utility";
+import {
+  getFormattedTime,
+  getMonthAndDay,
+  getTimeAgo,
+  truncUsername,
+} from "./utility";
 import LayoutWooGallery from "./LayoutWooGallery";
 import DraggableBottomSheet from "./DraggableBottomSheet";
 import ListViewComments from "./ListViewComments";
 import ListViewWooList from "./ListViewWooList";
 
 const WooScreen = ({ navigation, route }) => {
-  const {    
-    uid,
-    woo,
-    // wooID,
-    // wooDate,
-    // image,
-    // wooMigos,
-    // wooType,
+  const { uid, woo, token } = route.params;
 
-    // ownerUID,
-    // ownerUsername,
-    // ownerProfilePicture,
-    // ownerFirstName,
-    // ownerLastName,
-    // wooLikes,
-    // wooLikedByMe,
-    // wooTime,
-    // wooLocation,
-    // wooComments,
-    // wooGallery,
-    // wooList,
-    // startTime, endTime
-  } = route.params;
+  const localhost = "http://192.168.12.240:3000";
 
   const { month, day } = getMonthAndDay(woo.item.start_date);
-  const wooStartTime = getFormattedTime(woo.item.start_time)
-  const wooEndTime = getFormattedTime(woo.item.end_time)
+  const wooStartTime = getFormattedTime(woo.item.start_time);
+  const wooEndTime = getFormattedTime(woo.item.end_time);
 
   const scrollViewRef = useRef(null);
 
@@ -103,32 +78,19 @@ const WooScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // console.log("WOO LIKES COUNT " + JSON.stringify(wooLocation));
+    if (woo.item.type === "private") {
+      // CODE FOR MARKING PRIVATE WOO SEEN
+      markPrivateWooSeen()
+    }
+    
   });
 
-  // useEffect(() => {
-  //   // setTImeAgo(
-  //   //  wooComments && wooComments.length > 0 && getTimeAgo(wooComments[0].timestamp.seconds)
-  //   // );
-  //   // const docRef = doc(db, "users", ownerUID);
-  //   // const getWooOwnerProfileInfo = onSnapshot(
-  //   //   docRef,
-  //   //   (doc) => {
-  //   //     console.log("Document data:", doc.data());
-  //   //     setUser(doc.data());
-  //   //     setUsername(truncUsername(doc.data().username));
-  //   //     setFirstName(doc.data().first_name);
-  //   //     setLastName(doc.data().last_name);
-  //   //     setProfilePicURL(doc.data().profile_pic_url);
-  //   //   },
-  //   //   (error) => {},
-  //   //   []
-  //   // );
-
-  //   // return () => {
-  //   //   getWooOwnerProfileInfo();
-  //   // };
-  // }, [ownerUID]);
+  const markPrivateWooSeen = async () => {
+    await fetch(`${localhost}/woos/${woo.item.woo_id}/seen`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  };
 
   // const WooMigoImage = ({ userID }) => {
   //   const [profilePicURL, setProfilePicURL] = useState();
@@ -245,7 +207,9 @@ const WooScreen = ({ navigation, route }) => {
                     color={woo.item.liked_by_me ? woo_orange : woo_black}
                     onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
-                  <Text style={{ marginTop: 3, fontSize: 12 }}>{woo.item.like_count}</Text>
+                  <Text style={{ marginTop: 3, fontSize: 12 }}>
+                    {woo.item.like_count}
+                  </Text>
                 </View>
                 <View>
                   <FontAwesome6Icon
@@ -319,7 +283,12 @@ const WooScreen = ({ navigation, route }) => {
                   onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                 />
                 <View style={{ marginStart: 5 }}>
-                  <Text>{woo.item.start_time && `${wooStartTime} ${woo.item.end_time == null ? "" : "- " + wooEndTime}`}</Text>
+                  <Text>
+                    {woo.item.start_time &&
+                      `${wooStartTime} ${
+                        woo.item.end_time == null ? "" : "- " + wooEndTime
+                      }`}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -398,7 +367,10 @@ const WooScreen = ({ navigation, route }) => {
                   color={woo_black}
                   onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                 />
-                <Text style={styles.infoText}> {woo.item.location.address}</Text>
+                <Text style={styles.infoText}>
+                  {" "}
+                  {woo.item.location.address}
+                </Text>
               </View>
 
               <MapView
@@ -473,7 +445,8 @@ const WooScreen = ({ navigation, route }) => {
                     >
                       <Text style={styles.seeMoreCommentsText}>
                         {`see ${
-                          woo.item.woo_comments && woo.item.woo_comments.length - 1
+                          woo.item.woo_comments &&
+                          woo.item.woo_comments.length - 1
                         } more comments...`}
                       </Text>
                     </TouchableOpacity>

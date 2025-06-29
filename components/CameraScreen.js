@@ -42,9 +42,7 @@ const CameraScreen = ({ navigation }) => {
   const topPosition = useSharedValue(-300); // Initial position off-screen
 
   useEffect(() => {
-    //   console.log(CameraType.front)
     topPosition.value = isVisible ? -650 : -350;
-    console.log(isFocused);
   }, [isFocused, isVisible]);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -62,7 +60,6 @@ const CameraScreen = ({ navigation }) => {
     });
 
     if (!result.canceled) {
-      console.log(result.assets[0].uri);
       setImage(result.assets[0].uri);
       navigation.navigate("EditMedia", {
         wooMedia: result.assets[0],
@@ -100,7 +97,6 @@ const CameraScreen = ({ navigation }) => {
         console.log(err);
       }
     }
-    console.log(image);
   };
 
   // const captureVideo = async () => {

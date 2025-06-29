@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 ("@rneui/themed");
 import {
   View,
@@ -7,19 +7,14 @@ import {
   SafeAreaView,
   ScrollView,
   Button,
-  FlatList,
-  TextInput,
 } from "react-native";
-import { db } from "../firebaseConfig";
 import ListViewWoos from "./ListViewWoos";
 import { woo_black, woo_white, woo_orange } from "../assets/colors";
-import { collection, query, where, onSnapshot, or } from "firebase/firestore";
-import { Gallery } from "./shared";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome6";
 import ListViewStories from "./ListViewStories";
 import ListViewPrivateWoos from "./ListViewPrivateWoos";
-import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 const HomeScreen = ({ route, navigation }) => {
   const { user, token } = route.params;
@@ -29,11 +24,9 @@ const HomeScreen = ({ route, navigation }) => {
   const [publicWoos, setPublicWoos] = useState([]);
   const [privateWoos, setPrivateWoos] = useState([]);
   const [storyFeed, setStoryFeed] = useState([]);
+  const [unseenCount, setUnseenCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isPrivateVisible, setIsPrivateVisible] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null); // holds user being edited
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   // const createUser = async () => {
   //   try {
@@ -111,14 +104,6 @@ const HomeScreen = ({ route, navigation }) => {
   //   }
   // };
 
-
-  // CODE FOR MARKING PRIVATE WOO SEEN
-  // await fetch(`/api/woos/${wooId}/seen`, {
-  //   method: 'POST',
-  //   headers: { Authorization: `Bearer ${token}` }
-  // });
-  
-
   async function fetchPublicFeed() {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -134,7 +119,6 @@ const HomeScreen = ({ route, navigation }) => {
 
       const data = await response.json();
       setPublicWoos(data);
-      // console.log("public woos " + JSON.stringify(data)); // Array of woos
     } catch (err) {
       console.error("Error fetching feed:", err);
     }
@@ -155,41 +139,47 @@ const HomeScreen = ({ route, navigation }) => {
 
       const data = await response.json();
       setPrivateWoos(data);
-      console.log("private woos " + JSON.stringify(data)); // Array of woos
+      // console.log("private woos " + JSON.stringify(data)); // Array of woos
+      // Count unseen
+      const unseenCount = data.reduce(
+        (count, story) => count + (story.seen === 0 ? 1 : 0),
+        0
+      );
+
+      setUnseenCount(unseenCount); // This could be state for a badge or something
     } catch (err) {
       console.error("Error fetching feed:", err);
     }
     return data;
   }
 
-   const fetchStoryFeed = async () => {
-      try {
-        const response = await fetch(`${localhost}/stories/feed`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+  const fetchStoryFeed = async () => {
+    try {
+      const response = await fetch(`${localhost}/stories/feed`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (!response.ok) throw new Error('Failed to fetch story feed');
+      if (!response.ok) throw new Error("Failed to fetch story feed");
 
-        const data = await response.json();
-        setStoryFeed(data);
-      } catch (error) {
-        console.error('Error fetching story feed:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const data = await response.json();
+      setStoryFeed(data);
+    } catch (error) {
+      console.error("Error fetching story feed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  useEffect(() => {
-    console.log(`TOKEN IS ${token}`);
-    fetchPrivateFeed()
-    fetchPublicFeed();   
-    fetchStoryFeed();
-  }, [token]);
-
-
+  useFocusEffect(
+    useCallback(() => {
+      fetchPrivateFeed();
+      fetchPublicFeed();
+      fetchStoryFeed();
+    }, [token])
+  );
 
   const togglePrivateVisible = () => {
     setIsPrivateVisible(!isPrivateVisible);
@@ -289,7 +279,7 @@ const HomeScreen = ({ route, navigation }) => {
                 onPress={() => setIsPrivateVisible(!isPrivateVisible)}
               />
             )}
-            <Text style={styles.text}>{privateWoos.length}</Text>
+            <Text style={styles.text}>{unseenCount}</Text>
           </View>
           <View
             style={{
@@ -302,7 +292,11 @@ const HomeScreen = ({ route, navigation }) => {
             {/* <Text style={styles.smallText}>view all</Text> */}
           </View>
         </View>
-        <ListViewPrivateWoos gallery={privateWoos} isVisible={isPrivateVisible} uid={user.uid} />
+        <ListViewPrivateWoos
+          gallery={privateWoos}
+          isVisible={isPrivateVisible}
+          uid={user.uid}
+        />
         <View
           style={{
             flexDirection: "row",

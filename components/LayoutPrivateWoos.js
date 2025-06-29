@@ -9,9 +9,9 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { woo_orange } from "../assets/colors";
 
-const LayoutPrivateWoos = ({ woo, uid, isVisible, isRead = true }) => {
+const LayoutPrivateWoos = ({ woo, uid, isVisible, isRead }) => {
   useEffect(() => {
-    console.log(woo)
+    // console.log("LPW -----> " + JSON.stringify(woo))
   });
 
   const navigation = useNavigation();

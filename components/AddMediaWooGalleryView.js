@@ -13,8 +13,6 @@ const AddMediaWooGalleryView = ({ navigation, route }) => {
     const [woos, setWoos] = useState()
 
     useEffect(() => {
-        console.log("UID " + uid)
-
         const q = query(collection(db, "woos"),
         or(where("woo_migos", "array-contains", uid),
         where("owner_uid", "==", uid)) 
@@ -22,10 +20,8 @@ const AddMediaWooGalleryView = ({ navigation, route }) => {
         const getOwnedWoos = onSnapshot(q, (querySnapshot) => {
             const ownedWoos = [];
             querySnapshot.forEach((doc) => {
-                // console.log(doc.id)
                 ownedWoos.push(doc.data());
             });
-            // console.log("Woos Owned by this USER: ", ownedWoos.join(", "));
             setWoos(ownedWoos)
         }, (error) => {
 

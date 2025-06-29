@@ -95,9 +95,16 @@ exports.getPrivateFeed = async (req, res) => {
          LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
          WHERE m.user_id = ? AND w.type = "private"
          GROUP BY w.id
-         ORDER BY w.created_at DESC`,
+      `,
       [user_id, user_id]
     );
+
+    // Sort: unseen (seen = 0 or false) first, then by created_at DESC
+    woos.sort((a, b) => {
+      if (!a.seen && b.seen) return -1;
+      if (a.seen && !b.seen) return 1;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
 
     res.json(woos);
   } catch (err) {
@@ -105,6 +112,49 @@ exports.getPrivateFeed = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+// exports.getPrivateFeed = async (req, res) => {
+//   const user_id = req.user.id;
+
+//   try {
+//     const [woos] = await db.query(
+//       `SELECT 
+//            w.id AS woo_id,
+//            w.media_url,
+//            w.start_date,
+//            w.end_date,
+//            w.start_time,
+//            w.end_time,
+//            w.location,
+//            w.type,
+//            w.created_at,
+//            w.updated_at,
+//            u.id AS user_id,
+//            u.first_name,
+//            u.last_name,
+//            u.username,
+//            u.profile_pic_url,
+//            m.seen AS seen,                                
+//            COUNT(wl_all.user_id) AS like_count,
+//            MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
+//          FROM migos m
+//          JOIN woos w ON w.id = m.woo_id                
+//          JOIN users u ON w.owner_uid = u.id
+//          LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+//          LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+//          WHERE m.user_id = ? AND w.type = "private"
+//          GROUP BY w.id
+//          ORDER BY w.created_at DESC`,
+//       [user_id, user_id]
+//     );
+
+//     res.json(woos);
+//   } catch (err) {
+//     console.error("Error in getInvitedWoos:", err);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 
 exports.getWooById = async (req, res) => {
   const { id } = req.params;
@@ -168,25 +218,25 @@ exports.removeInvitation = async (req, res) => {
   }
 };
 
-// GET /woos/:wooId/seen
-exports.hasSeenWoo = async (req, res) => {
-  const userId = req.user.id;
-  const wooId = req.params.wooId;
+// // GET /woos/:wooId/seen
+// exports.hasSeenWoo = async (req, res) => {
+//   const userId = req.user.id;
+//   const wooId = req.params.wooId;
 
-  try {
-    const [[status]] = await db.query(
-      "SELECT seen FROM migos WHERE woo_id = ? AND user_id = ?",
-      [wooId, userId]
-    );
+//   try {
+//     const [[status]] = await db.query(
+//       "SELECT seen FROM migos WHERE woo_id = ? AND user_id = ?",
+//       [wooId, userId]
+//     );
 
-    if (!status)
-      return res.status(404).json({ error: "No invitation found for this woo" });
+//     if (!status)
+//       return res.status(404).json({ error: "No invitation found for this woo" });
 
-    res.json({ seen: !!status.seen });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+//     res.json({ seen: !!status.seen });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 
 // POST /woos/:wooId/seen
 exports.markWooAsSeen = async (req, res) => {

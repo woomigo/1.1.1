@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { woo_white } from "../assets/colors";
 import LayoutPrivateWoos from "./LayoutPrivateWoos";
 
 const ListViewPrivateWoos = ({ gallery, isVisible, uid }) => {
   const [refreshing, setRefreshing] = useState(false);
+  
+
+  useEffect(() => {
+    
+  })
 
   const renderGallery = (woo) => (
     <LayoutPrivateWoos woo={woo} uid={uid} isRead={woo.item.seen} isVisible={isVisible} />
