@@ -343,7 +343,6 @@ const App = () => {
     );
   };
 
-  console.log("APP");
   const [loading, setLoading] = useState(true);
   const [userState, setUserState] = useState({
     isLoggedIn: false,
@@ -355,11 +354,9 @@ const App = () => {
   const localhost = "http://192.168.12.240:3000";
 
   useEffect(() => {
-    console.log("UE");
     const checkLogin = async () => {
       const token = await AsyncStorage.getItem("token");
       setToken(token);
-      console.log(`APP JS TOKEN ===s ${token}`);
       if (token) {
         try {
           const response = await fetch(`${localhost}/auth/me`, {
@@ -377,7 +374,6 @@ const App = () => {
             });
             setUser(data);
             userData = data;
-            // console.log(`DATA ===s ${JSON.stringify(data)}`);
           } else {
             setUserState({ isLoggedIn: false, isProfileComplete: false });
           }
@@ -387,7 +383,6 @@ const App = () => {
         }
       } else {
         setUserState({ isLoggedIn: false, isProfileComplete: false });
-        console.log("Actually HERE");
       }
 
       setLoading(false);
