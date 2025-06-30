@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Avatar, CheckBox } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
-import { db } from "../firebaseConfig";
-import { doc, docSnap, onSnapshot } from "firebase/firestore";
+// import { db } from "../firebaseConfig";
+// import { doc, docSnap, onSnapshot } from "firebase/firestore";
 
 const LayoutUserItem = ({
+  userItem,
   uid,
   onCheckBoxSelected,
   kind,
@@ -20,21 +21,12 @@ const LayoutUserItem = ({
   handleDoubleBtnTwoOnClick,
 }) => {
   const [selected, setSelected] = useState(false);
-  const [user, setUser] = useState();
+  // const [user, setUser] = useState();
 
   useEffect(() => {
-    // console.log(`LUI USER === ${JSON.stringify(uid.item)}`)
-    if (uid) {
-      const getUserInfo = onSnapshot(doc(db, "users", uid.item), (doc) => {
-        // console.log("Document data:", doc.data());
-        setUser(doc.data());
-      });
+    console.log(`LUI USER === ${JSON.stringify(userItem.item)}`)
 
-      return () => {
-        getUserInfo();
-      };
-    }
-  }, [uid]);
+  }, [userItem]);
 
   const navigation = useNavigation();
 
@@ -90,8 +82,8 @@ const LayoutUserItem = ({
 
   const handleClick = () => {
     setSelected(!selected);
-    onCheckBoxSelected(user.uid);
-    console.log("LUI HC === " + user.uid);
+    onCheckBoxSelected(userItem.item.id);
+    console.log("LUI HC === " + userItem.item.id);
   };
 
   // const handleCheck = (event) => {
@@ -107,30 +99,31 @@ const LayoutUserItem = ({
 
   return (
     <View>
-      {user && (
+      {userItem && (
         <View style={styles.container}>
           <TouchableOpacity
             style={styles.container}
             onPress={() => {
-              user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
+              console.log()
+              userItem.item.id !== uid && navigation.push("Profile", { userUID: userItem.item.id });
             }}
           >
             <View style={styles.imageContainer}>
               <Avatar
                 rounded
                 size="medium"
-                source={{ uri: `${user.profile_pic_url}` }}
+                source={{ uri: `${userItem.item.profile_pic_url}` }}
               />
             </View>
             <View style={styles.textContainer}>
               <Text style={{ fontWeight: "bold", fontSize: 14 }}>
-                {user.first_name + " " + user.last_name}
+                {userItem.item.first_name + " " + userItem.item.last_name}
               </Text>
-              <Text style={{ fontSize: 12 }}>@{user.username}</Text>
+              <Text style={{ fontSize: 12 }}>@{userItem.item.username}</Text>
             </View>
           </TouchableOpacity>
 
-          {renderBoxButton(user)}
+          {renderBoxButton(userItem)}
         </View>
       )}
     </View>

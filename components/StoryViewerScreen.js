@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   progressBarContainer: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 50 : 30,
+    top: Platform.OS === "ios" ? 55 : 35,
     left: 10,
     right: 10,
     flexDirection: "row",

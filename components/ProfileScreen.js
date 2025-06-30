@@ -44,7 +44,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const { width } = Dimensions.get("window");
 
-  const { uid, userUID, user, token } = route.params;
+  const { userUID, user, token } = route.params;
 
   const fetchUserFollowCounts = async (userId, token) => {
     const res = await fetch(`${localhost}/users/${userId}/follow-counts`, {
@@ -426,7 +426,7 @@ const ProfileScreen = ({ navigation, route }) => {
             {renderTabBar()}
 
             {activeTab === 0 && (
-              <ListViewWoos view={"list"} woos={woos} uid={uid} />
+              <ListViewWoos view={"list"} woos={woos} uid={user.id} />
             )}
             {activeTab === 1 && (
               <ListViewGallery
@@ -437,7 +437,7 @@ const ProfileScreen = ({ navigation, route }) => {
               />
             )}
             {activeTab === 2 && (
-              <ListViewWoos view={"list"} woos={woos} uid={uid} />
+              <ListViewWoos view={"list"} woos={woos} uid={user.id} />
             )}
           </ScrollView>
         )}
