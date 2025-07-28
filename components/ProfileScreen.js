@@ -20,6 +20,7 @@ import MenuScreen from "./MenuScreen";
 import ListViewWoos from "./ListViewWoos";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { Switch } from "react-native";
+import { truncNumber } from "./utility";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
@@ -46,8 +47,13 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const { userUID, user, token } = route.params;
 
+  const canPress = isProfileOwnedByUser || isFollowing || !isProfilePrivate;
+
   const fetchUserFollowCounts = async (userId, token) => {
-    const res = await fetch(`${localhost}/users/${userId}/follow-counts`, {
+    if (!token) throw new Error("Auth token is missing");
+    if (!userId) throw new Error("User ID is required");
+
+    const res = await fetch(`${localhost}/followers/${userId}/follow-counts`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -55,15 +61,84 @@ const ProfileScreen = ({ navigation, route }) => {
       },
     });
 
+    if (!res.ok) throw new Error("Failed to fetch follow counts");
+
     const data = await res.json();
-    console.log("FOLLOWER COUNT IS ======= " + JSON.stringify(data));
+    console.log("FOLLOW COUNT IS ======= " + JSON.stringify(data));
     setFollowing(data.followee_count);
     setFollowers(data.follower_count);
     setUsername(data.user.username);
     setFirstName(data.user.first_name);
     setLastName(data.user.last_name);
     setProfilePicURL(data.user.profile_pic_url);
-    if (!res.ok) throw new Error("Failed to fetch follow counts");
+    setIsPofilePrivate(data.user.is_private);
+
+    return res.json();
+  };
+
+  const fetchUserFollowers = async (userId, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!userId) throw new Error("User ID is required");
+
+    const res = await fetch(`${localhost}/followers/${userId}/followers`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch followings");
+
+    const data = await res.json();
+    console.log("FOLLOWERS OBJECT IS ======= " + JSON.stringify(data));
+
+    setIsFollowing(data.some((f) => f.follower_id === user.id));
+
+    return res.json();
+  };
+
+  const fetchWoos = async (userId, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!userId) throw new Error("User ID is required");
+
+    const res = await fetch(`${localhost}/woos/mine`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch woos");
+
+    const data = await res.json();
+    console.log("WOOS OBJECT IS ======= " + JSON.stringify(data));
+
+    setWoos(data);
+
+    return res.json();
+  };
+
+  const fetchGallery = async (userId, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!userId) throw new Error("User ID is required");
+
+    const res = await fetch(`${localhost}/woos/mine`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch woos");
+
+    const data = await res.json();
+    console.log("WOOS OBJECT IS ======= " + JSON.stringify(data));
+
+    setGallery(data);
+
     return res.json();
   };
 
@@ -71,6 +146,7 @@ const ProfileScreen = ({ navigation, route }) => {
     console.log("PROFILE " + JSON.stringify(user));
     console.log(`USERUID ======s ${userUID}`);
     setIsProfileOwnedByUser(!userUID);
+    console.log(isProfileOwnedByUser, isFollowing);
 
     Animated.spring(indicatorAnim, {
       toValue: activeTab * (width / 3),
@@ -78,10 +154,12 @@ const ProfileScreen = ({ navigation, route }) => {
     }).start();
 
     fetchUserFollowCounts(userUID ? userUID : user.id, token);
-  });
+    fetchUserFollowers(userUID ? userUID : user.id, token);
+    fetchWoos(userUID ? userUID : user.id, token);
+    // fetchGallery(userUID ? userUID : user.id, token);
+  }, [isProfileOwnedByUser, isFollowing]);
 
   // useEffect(() => {
-
   //   const docRef = doc(db, "users", userUID ? userUID : uid);
   //   const getProfileInfo = onSnapshot(
   //     docRef,
@@ -158,6 +236,8 @@ const ProfileScreen = ({ navigation, route }) => {
       </View>
     </View>
   );
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -284,11 +364,14 @@ const ProfileScreen = ({ navigation, route }) => {
             <View style={{ alignItems: "center" }}>
               <Pressable
                 style={{ alignItems: "center" }}
-                onPress={() =>
-                  navigation.push("Migos", {
-                    indexParam: 0,
-                    userUID: userUID,
-                  })
+                onPress={
+                  canPress
+                    ? () =>
+                        navigation.push("Migos", {
+                          indexParam: 0,
+                          userUID: userUID,
+                        })
+                    : null
                 }
               >
                 <Text
@@ -297,7 +380,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     fontSize: 12,
                   }}
                 >
-                  {followers}
+                  {truncNumber(followers)}
                 </Text>
                 <Text
                   style={{
@@ -312,11 +395,14 @@ const ProfileScreen = ({ navigation, route }) => {
             <View>
               <Pressable
                 style={{ alignItems: "center" }}
-                onPress={() =>
-                  navigation.push("Migos", {
-                    indexParam: 1,
-                    userUID: userUID,
-                  })
+                onPress={
+                  canPress
+                    ? () =>
+                        navigation.push("Migos", {
+                          indexParam: 1,
+                          userUID: userUID,
+                        })
+                    : null
                 }
               >
                 <Text
@@ -325,7 +411,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     fontSize: 12,
                   }}
                 >
-                  {following}
+                  {truncNumber(following)}
                 </Text>
                 <Text
                   style={{
@@ -371,11 +457,12 @@ const ProfileScreen = ({ navigation, route }) => {
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={toggleSwitch}
                 value={isEnabled}
+                disabled={!canPress}
               />
             </View>
           </View>
         </Card>
-        {!isProfileOwnedByUser && !isFollowing && isProfilePrivate ? (
+        {!canPress ? (
           // locked profile ui
           <View
             style={{

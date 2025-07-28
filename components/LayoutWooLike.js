@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { truncNumber } from "./utility";
 // import LayoutMigosItem from './LayoutMigosItem';
 
 const LayoutWooLike = ({
@@ -143,7 +144,13 @@ const LayoutWooLike = ({
     <View style={styles.container}>
       <View style={styles.likesWooMigosContainer}>
         <View style={styles.likesContainer}>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "row",
+            }}
+          >
             <Pressable
               style={{
                 width: 40,
@@ -162,7 +169,7 @@ const LayoutWooLike = ({
                 // onPress={toggleIsLiked}
               />
             </Pressable>
-            <Text style={{ fontSize: 12 }}>{wooLikes.length}</Text>
+            <Text style={{ fontSize: 12 }}>{truncNumber(wooLikes)}</Text>
           </View>
 
           <FontAwesome6Icon

@@ -19,13 +19,6 @@ router.get("/:id", authenticateToken, userController.getUserById);
 // Update user - protected and checks ownership
 router.put("/:id", authenticateToken, userController.updateUser);
 
-// Get user and follower & followee info
-router.get('/:id/network', authenticateToken, userController.getUserWithFollowersAndFollowingInfo);
-
-// Get user and follower & followee count
-router.get('/:id/follow-counts', authenticateToken,  userController.getUserFollowCounts);
-
-
 // Update user - protected and checks ownership
 router.put("/more-info/:id", authenticateToken, (req, res) => {
     const { id } = req.params;

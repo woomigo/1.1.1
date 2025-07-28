@@ -90,3 +90,17 @@ export const truncUsername = (username, maxLength = 20) => {
     return username.length > maxLength ? username.slice(0, maxLength-3) + "..." : username;
 };
 
+export function truncNumber(n) {
+    if (n < 1000) return n.toString();
+  
+    const units = ["k", "M", "B", "T"];
+    const order = Math.floor(Math.log10(n) / 3);
+    const unit = units[order - 1];
+    const num = n / Math.pow(1000, order);
+  
+    // Keep it to max 3 significant digits
+    const formatted = num % 1 === 0 ? num.toFixed(0) : num.toFixed(1);
+  
+    return `${formatted}${unit}`;
+  }
+  

@@ -114,47 +114,7 @@ exports.getPrivateFeed = async (req, res) => {
 };
 
 
-// exports.getPrivateFeed = async (req, res) => {
-//   const user_id = req.user.id;
 
-//   try {
-//     const [woos] = await db.query(
-//       `SELECT 
-//            w.id AS woo_id,
-//            w.media_url,
-//            w.start_date,
-//            w.end_date,
-//            w.start_time,
-//            w.end_time,
-//            w.location,
-//            w.type,
-//            w.created_at,
-//            w.updated_at,
-//            u.id AS user_id,
-//            u.first_name,
-//            u.last_name,
-//            u.username,
-//            u.profile_pic_url,
-//            m.seen AS seen,                                
-//            COUNT(wl_all.user_id) AS like_count,
-//            MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
-//          FROM migos m
-//          JOIN woos w ON w.id = m.woo_id                
-//          JOIN users u ON w.owner_uid = u.id
-//          LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
-//          LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
-//          WHERE m.user_id = ? AND w.type = "private"
-//          GROUP BY w.id
-//          ORDER BY w.created_at DESC`,
-//       [user_id, user_id]
-//     );
-
-//     res.json(woos);
-//   } catch (err) {
-//     console.error("Error in getInvitedWoos:", err);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 
 exports.getWooById = async (req, res) => {
   const { id } = req.params;
@@ -182,10 +142,42 @@ exports.getWooById = async (req, res) => {
 
 exports.getMyWoos = async (req, res) => {
   const userId = req.user.id;
-  const [woos] = await db.query(`SELECT * FROM woos WHERE owner_uid = ?`, [
-    userId,
-  ]);
-  res.json(woos);
+
+  try {
+    const [woos] = await db.query(
+      `SELECT 
+         w.id AS woo_id,
+         w.media_url,
+         w.start_date,
+         w.end_date,
+         w.start_time,
+         w.end_time,
+         w.location,
+         w.type,
+         w.created_at,
+         w.updated_at,
+         u.id AS user_id,
+         u.first_name,
+         u.last_name,
+         u.username,
+         u.profile_pic_url,
+         COUNT(wl_all.user_id) AS like_count,
+         MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
+       FROM woos w
+       JOIN users u ON w.owner_uid = u.id
+       LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+       LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+       WHERE w.owner_uid = ?
+       GROUP BY w.id
+       ORDER BY w.created_at DESC`,
+      [userId, userId]
+    );
+
+    res.json(woos);
+  } catch (err) {
+    console.error("Error fetching my woos:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 exports.removeInvitation = async (req, res) => {

@@ -5,9 +5,11 @@ const authenticateToken = require("../../middleware/authMiddleware");
 
 // Protect followers routes with authenticateToken middleware
 router.get('/:id/followers', authenticateToken, followerController.getFollowers);
-router.get('/:id/followees', authenticateToken, followerController.getFollowees);
+router.get('/:id/followings', authenticateToken, followerController.getFollowings);
 router.post('/follow', authenticateToken, followerController.followUser);
 router.delete('/unfollow', authenticateToken, followerController.unfollowUser);
 router.get('/mutual', authenticateToken, followerController.getMutualFollows);
+router.get('/:id/network', authenticateToken, followerController.getUserWithFollowersAndFollowingInfo);
+router.get('/:id/follow-counts', authenticateToken,  followerController.getUserFollowCounts);
 
 module.exports = router;

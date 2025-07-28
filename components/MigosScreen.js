@@ -34,7 +34,7 @@ const MigosScreen = ({ navigation, route }) => {
   const [username, setUsername] = useState();
 
   const fetchUserFollow = async (userId, token) => {
-    const res = await fetch(`${localhost}/users/${userId}/network`, {
+    const res = await fetch(`${localhost}/followers/${userId}/network`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

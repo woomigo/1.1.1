@@ -5,17 +5,33 @@ const app = express();
 
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users')
+const followersRoutes = require('./routes/followers')
 const wooRoutes = require('./routes/woos')
 const migoRoutes = require('./routes/migos')
 const storiesRoutes = require('./routes/stories')
+const followerRequestRoutes = require('./routes/followRequests')
+const galleriesRoutes = require('./routes/galleries')
+const groupRoutes = require('./routes/groups')
+const groupManagerRoutes = require('./routes/groupManagers')
+const groupMemberRoutes = require('./routes/groupMemberRoutes')
+const subScriptionRoutes = require('./routes/subscriptions')
+const likeRoutes = require('./routes/likes')
 
 app.use(cors());
 app.use(express.json());
 app.use('/auth', authRoutes); 
 app.use('/users', usersRoutes);
+app.use('/followers', followersRoutes);
 app.use('/woos', wooRoutes);
 app.use('/migos', migoRoutes)
 app.use('/stories', storiesRoutes)
+app.use('./follower-requests', followerRequestRoutes)
+app.use('/galleries', galleriesRoutes); 
+app.use('/groups', groupRoutes);
+app.use('/group-managers', groupManagerRoutes);
+app.use('/group-members', groupMemberRoutes);
+app.use('/subscriptions', subScriptionRoutes)
+app.use('/woo-likes', likeRoutes)
 
 const PORT = 3000;
 app.listen(PORT, () => {
