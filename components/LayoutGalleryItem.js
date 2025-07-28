@@ -16,9 +16,9 @@ const LayoutGalleryItem = ({
   navParams,
   horizBorderRadius,
 }) => {
-  // useEffect(() => {
-  //      console.log(`LGI === ${JSON.stringify(image)}`)
-  // });
+  useEffect(() => {
+       console.log(`LGI === ${JSON.stringify(image)}`)
+  });
   const navigation = useNavigation();
 
   const setHorizontalSize = () => {
@@ -42,7 +42,7 @@ const LayoutGalleryItem = ({
       <TouchableWithoutFeedback
         onPress={() => {
           nav == "MediaView"
-            ? navigation.navigate(`${nav}`, { mediaURL: `${image}` })
+            ? navigation.navigate(`${nav}`, { media: image })
             : navigation.navigate(`${nav}`, { wooGallery: navParams });
         }}
       >
@@ -62,7 +62,7 @@ const LayoutGalleryItem = ({
               ? styles.gridImage
               : styles.listImage
           }
-          source={{ uri: image }}
+          source={{ uri: image.media_url }}
         />
       </TouchableWithoutFeedback>
     </View>

@@ -38,7 +38,7 @@ import DraggableBottomSheet from "./DraggableBottomSheet";
 import ListViewComments from "./ListViewComments";
 
 const MediaViewScreen = ({ navigation, route }) => {
-  const { mediaObject, mediaURL } = route.params;
+  const { mediaObject, media } = route.params;
 
   //   const { month, day } = getMonthAndDay(wooDate);
 
@@ -57,28 +57,29 @@ const MediaViewScreen = ({ navigation, route }) => {
     setIsCommentBottomSheetVisible(true);
   };
 
-  //   useEffect(() => {
+    useEffect(() => {
 
-  //     const docRef = doc(db, "users", ownerUID);
-  //     const getMediaOwnerProfileInfo = onSnapshot(
-  //       docRef,
-  //       (doc) => {
-  //         console.log("Document data:", doc.data());
-  //         setUser(doc.data());
-  //         setUsername(truncUsername(doc.data().username));
-  //         setFirstName(doc.data().first_name);
-  //         setLastName(doc.data().last_name);
-  //         setProfilePicURL(doc.data().profile_pic_url);
-  //         // setTImeAgo(getTimeAgo(wooMediaComments[0].timestamp.seconds));
-  //       },
-  //       (error) => {},
-  //       []
-  //     );
+      // const docRef = doc(db, "users", ownerUID);
+      // const getMediaOwnerProfileInfo = onSnapshot(
+      //   docRef,
+      //   (doc) => {
+      //     console.log("Document data:", doc.data());
+      //     setUser(doc.data());
+      //     setUsername(truncUsername(doc.data().username));
+      //     setFirstName(doc.data().first_name);
+      //     setLastName(doc.data().last_name);
+      //     setProfilePicURL(doc.data().profile_pic_url);
+      //     // setTImeAgo(getTimeAgo(wooMediaComments[0].timestamp.seconds));
+      //   },
+      //   (error) => {},
+      //   []
+      // );
 
-  //     return () => {
-  //         getMediaOwnerProfileInfo();
-  //     };
-  //   }, [ownerUID]);
+      // return () => {
+      //     getMediaOwnerProfileInfo();
+      // };
+      console.log("MEDIA VIEW " + JSON.stringify(media.media_url))
+    }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -100,7 +101,7 @@ const MediaViewScreen = ({ navigation, route }) => {
               </View>
             </View>
           </View>
-          <Image style={styles.image} source={{ uri: mediaURL }} />
+          <Image style={styles.image} source={{ uri: media.media_url }} />
           {/* FIRST 
         ROW */}
 

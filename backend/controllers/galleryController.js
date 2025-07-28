@@ -22,7 +22,7 @@ exports.getUserGallery = async (req, res) => {
 
   try {
     const [media] = await db.query(
-      `SELECT * FROM user_gallery WHERE user_id = ? ORDER BY created_at DESC`,
+      `SELECT * FROM profile_gallery WHERE user_id = ? ORDER BY created_at DESC`,
       [user_id]
     );
 

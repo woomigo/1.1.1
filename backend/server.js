@@ -16,6 +16,7 @@ const groupManagerRoutes = require('./routes/groupManagers')
 const groupMemberRoutes = require('./routes/groupMemberRoutes')
 const subScriptionRoutes = require('./routes/subscriptions')
 const likeRoutes = require('./routes/likes')
+const commentsRoutes = require('./routes/comments');
 
 app.use(cors());
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use('/group-managers', groupManagerRoutes);
 app.use('/group-members', groupMemberRoutes);
 app.use('/subscriptions', subScriptionRoutes)
 app.use('/woo-likes', likeRoutes)
+app.use('/comments', commentsRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {

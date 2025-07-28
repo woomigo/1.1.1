@@ -124,7 +124,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!token) throw new Error("Auth token is missing");
     if (!userId) throw new Error("User ID is required");
 
-    const res = await fetch(`${localhost}/woos/mine`, {
+    const res = await fetch(`${localhost}/galleries/user/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -135,7 +135,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    console.log("WOOS OBJECT IS ======= " + JSON.stringify(data));
+    console.log("Gallery OBJECT IS ======= " + JSON.stringify(data));
 
     setGallery(data);
 
@@ -156,7 +156,7 @@ const ProfileScreen = ({ navigation, route }) => {
     fetchUserFollowCounts(userUID ? userUID : user.id, token);
     fetchUserFollowers(userUID ? userUID : user.id, token);
     fetchWoos(userUID ? userUID : user.id, token);
-    // fetchGallery(userUID ? userUID : user.id, token);
+    fetchGallery(userUID ? userUID : user.id, token);
   }, [isProfileOwnedByUser, isFollowing]);
 
   // useEffect(() => {
