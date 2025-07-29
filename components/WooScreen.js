@@ -31,6 +31,7 @@ import LayoutWooGallery from "./LayoutWooGallery";
 import DraggableBottomSheet from "./DraggableBottomSheet";
 import ListViewComments from "./ListViewComments";
 import ListViewWooList from "./ListViewWooList";
+import MigosAvatarGroup from "./MigosAvatarGroup";
 
 const WooScreen = ({ navigation, route }) => {
   const { uid, woo, token } = route.params;
@@ -80,9 +81,9 @@ const WooScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (woo.item.type === "private") {
       // CODE FOR MARKING PRIVATE WOO SEEN
-      markPrivateWooSeen()
+      markPrivateWooSeen();
     }
-    console.log("WOOOOOO " + JSON.stringify(woo))
+    console.log("WOOOOOO " + JSON.stringify(woo));
   });
 
   const markPrivateWooSeen = async () => {
@@ -91,31 +92,6 @@ const WooScreen = ({ navigation, route }) => {
       headers: { Authorization: `Bearer ${token}` },
     });
   };
-
-  // const WooMigoImage = ({ userID }) => {
-  //   const [profilePicURL, setProfilePicURL] = useState();
-
-  //   useEffect(() => {
-  //     console.log(isCommentBottomSheetVisible);
-  //     const docRef = doc(db, "users", userID);
-  //     const getProfileInfo = onSnapshot(
-  //       docRef,
-  //       (doc) => {
-  //         // console.log("Document data:", doc.data());
-  //         setProfilePicURL(doc.data().profile_pic_url);
-  //       },
-  //       (error) => {}
-  //     );
-
-  //     return () => {
-  //       getProfileInfo();
-  //     };
-  //   }, []);
-
-  //   return (
-  //     <Image style={styles.wooMigoImage} source={{ uri: profilePicURL }} />
-  //   );
-  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -135,15 +111,17 @@ const WooScreen = ({ navigation, route }) => {
                   onPress={() => navigation.goBack()}
                 />
               </View>
-              <View style={styles.topButtonBackground}>
-                <FontAwesome6Icon
-                  name="bookmark"
-                  style={{}}
-                  size={30}
-                  color={woo_white}
-                  onPress={() => subscribeToWoo()}
-                />
-              </View>
+              {woo.item.type === "public" ? (
+                <View style={styles.topButtonBackground}>
+                  <FontAwesome6Icon
+                    name="bookmark"
+                    style={{}}
+                    size={30}
+                    color={woo_white}
+                    onPress={() => subscribeToWoo()}
+                  />
+                </View>
+              ) : null}
             </View>
           </View>
           <Image style={styles.image} source={{ uri: woo.item.media_url }} />
@@ -169,7 +147,11 @@ const WooScreen = ({ navigation, route }) => {
                 <Avatar
                   rounded
                   size="medium"
-                  onPress={() => navigation.navigate("Profile", {userUID: woo.item.user_id})}
+                  onPress={() =>
+                    navigation.navigate("Profile", {
+                      userUID: woo.item.user_id,
+                    })
+                  }
                   source={{ uri: woo.item.profile_pic_url }}
                 />
                 <View style={{ marginStart: 5 }}>
@@ -297,52 +279,31 @@ const WooScreen = ({ navigation, route }) => {
               style={[styles.card, { flex: 1, marginStart: 5 }]}
               onPress={() => handleOpenWooMigosBottomSheet()}
             >
-              {woo.item.woo_migos && woo.item.woo_migos.length > 0 ? (
+              {(woo.item.sub_profile_pics &&
+                woo.item.sub_profile_pics.length > 0) ||
+              (woo.item.migo_profile_pics &&
+                woo.item.migo_profile_pics.length > 0) ? (
                 <View
                   style={{
                     flex: 1,
-                    // flexDirection: "row",
                     justifyContent: "space-around",
                     alignItems: "center",
-                    // backgroundColor: "orange",
                   }}
                 >
-                  <View style={styles.wooMigosImagesContainer}>
-                    {woo.item.woo_migos && woo.item.woo_migos.length > 0 && (
-                      <WooMigoImage userID={woo.item.woo_migos[0]} />
-                    )}
-                    {woo.item.woo_migos && woo.item.woo_migos.length > 1 && (
-                      <WooMigoImage userID={woo.item.woo_migos[1]} />
-                    )}
-                    {woo.item.woo_migos && woo.item.woo_migos.length > 2 && (
-                      <WooMigoImage userID={woo.item.woo_migos[2]} />
-                    )}
-                    {woo.item.woo_migos && woo.item.woo_migos.length > 3 && (
-                      <WooMigoImage userID={woo.item.woo_migos[3]} />
-                    )}
-                    {woo.item.woo_migos && woo.item.woo_migos.length > 4 && (
-                      <View
-                        style={[
-                          styles.wooMigoImage,
-                          {
-                            backgroundColor: woo_orange,
-                            justifyContent: "center",
-                            alignItems: "center",
-                          },
-                        ]}
-                      >
-                        <Text style={{ color: woo_white, fontSize: 12 }}>
-                          +{woo.item.woo_migos && woo.item.woo_migos.length - 4}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
+                  <MigosAvatarGroup
+                    alignRow="center"
+                    migos={
+                      woo.item.type == "public"
+                        ? woo.item.sub_profile_pics
+                        : woo.item.migo_profile_pics
+                    }
+                  />
                 </View>
               ) : (
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
                 >
-                  <Text>no migos</Text>
+                  <Text>no {woo.item.type == "public" ? "subs" : "migos"}</Text>
                 </View>
               )}
             </Pressable>

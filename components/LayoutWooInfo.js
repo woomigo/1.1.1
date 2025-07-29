@@ -15,6 +15,7 @@ import { woo_gray, woo_black, woo_orange, woo_white } from "../assets/colors";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { getFormattedTime, getMonthAndDay } from "./utility";
+import MigosAvatarGroup from "./MigosAvatarGroup";
 
 const LayoutWooInfo = ({
   uid,
@@ -71,26 +72,10 @@ const LayoutWooInfo = ({
     );
   };
 
-  // useEffect(() => {
-  //   console.log();
-  //   const docRef = doc(db, "users", ownerUID);
-  //   const getProfileInfo = onSnapshot(
-  //     docRef,
-  //     (doc) => {
-  //       // console.log("Document data:", doc.data());
-  //       setUser(doc.data());
-  //       setUsername(doc.data().username);
-  //       setFirstName(doc.data().first_name);
-  //       setLastName(doc.data().last_name);
-  //       setProfilePicURL(doc.data().profile_pic_url);
-  //     },
-  //     (error) => {}
-  //   );
+  useEffect(() => {
+    console.log(`LWI &&&&&& ${wooType}`);
 
-  //   return () => {
-  //     getProfileInfo();
-  //   };
-  // }, []);
+  }, [wooType]);
 
   const openCal = () => {
     if (Platform.OS === "ios") {
@@ -147,7 +132,8 @@ const LayoutWooInfo = ({
               onPress={() => setIsPrivateVisible(!isPrivateVisible)}
             />
             <Text style={styles.wooTimeLocationText}>
-              {startTime && `${wooStartTime} ${endTime != null && "- " + wooEndTime}`}
+              {startTime &&
+                `${wooStartTime} ${endTime != null && "- " + wooEndTime}`}
             </Text>
           </View>
           <View style={styles.locationContainer}>
@@ -163,13 +149,7 @@ const LayoutWooInfo = ({
           </View>
         </View>
         <View style={styles.migosContainer}>
-          {/* <View style={styles.wooMigosImagesContainer}>
-            {wooMigos.length > 0 && <WooMigoImage userID={wooMigos[0]} />}
-            {wooMigos.length > 1 && <WooMigoImage userID={wooMigos[1]} />}
-            {wooMigos.length > 2 && <WooMigoImage userID={wooMigos[2]} />}
-            {wooMigos.length > 3 && <WooMigoImage userID={wooMigos[3]} />}
-            {wooMigos.length > 4 && <View style={[styles.wooMigoImage, {backgroundColor: woo_orange, justifyContent: 'center', alignItems: 'center'}]}><Text style={{color: woo_white, fontSize: 12}}>+{wooMigos.length - 4}</Text></View>}
-          </View> */}
+          <MigosAvatarGroup migos={wooMigos}/>
         </View>
       </View>
     </Card>
@@ -227,7 +207,7 @@ const styles = StyleSheet.create({
   },
   locationContainer: {
     flexDirection: "row",
-    margin: 3,
+    margin: 3
   },
   wooTimeLocationText: {
     marginStart: 5,
@@ -235,12 +215,9 @@ const styles = StyleSheet.create({
   },
   migosContainer: {
     flex: 1,
-  },
-  migosContainer: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
   wooMigosImagesContainer: {
     flexDirection: "row",

@@ -35,7 +35,7 @@ const LayoutGroupItem = ({ item }) => {
       <Text style={{ fontSize: 12, marginTop: 5, textAlign: "center" }}>
         {item.description}
       </Text>
-      <MigosAvatarGroup migos={item.member_profile_pics} />
+      <MigosAvatarGroup maxAvatars={3} migos={item.member_profile_pics}/>
       <Text style={{ fontSize: 12, marginTop: 15 }}>
         users: {item.member_count}
       </Text>

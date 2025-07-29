@@ -8,7 +8,7 @@ import { woo_white } from "../assets/colors";
 
 const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
   useEffect(() => {
-    // console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo)}`);
+    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo)}`);
   });
 
   return (
@@ -62,7 +62,7 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
       />
       <LayoutWooInfo
         uid={uid}
-        wooType={woo.item.woo_type}
+        wooType={woo.item.type}
         ownerUID={woo.item.user_id}
         ownerUsername= {woo.item.username}
         ownerProfilePicture={woo.item.profile_pic_url}
@@ -71,7 +71,7 @@ const LayoutWooItem = ({ woo, uid, currentVisibleIndex, currentIndex }) => {
         wooLikes={woo.item.like_count}
         wooLikedByMe={woo.item.liked_by_me}
         sharedProfilePic={woo.item.shared_by_profile_pic}
-        wooMigos={woo.item.woo_migos}
+        wooMigos={woo.item.type === "public" ? woo.item.sub_profile_pics : woo.item.migo_profile_pics}
         wooDate={woo.item.start_date}
         // wooTime={woo.item.woo_time}
         startTime={woo.item.start_time}
