@@ -9,23 +9,38 @@ exports.createGroup = async (req, res) => {
   }
 
   try {
+    // Start transaction to ensure atomicity
+    await db.query('START TRANSACTION');
+
     const [result] = await db.query(
       `INSERT INTO follower_groups (name, description, owner_id, profile_pic_url) VALUES (?, ?, ?, ?)`,
       [name, description || null, owner_id, profile_pic_url || null]
     );
 
+    const newGroupId = result.insertId;
+
+    // Insert owner as member too
+    await db.query(
+      `INSERT INTO group_members (group_id, user_id, joined_at) VALUES (?, ?, NOW())`,
+      [newGroupId, owner_id]
+    );
+
+    await db.query('COMMIT');
+
     res.status(201).json({
-      id: result.insertId,
+      id: newGroupId,
       name,
       description,
       owner_id,
       profile_pic_url
     });
   } catch (err) {
+    await db.query('ROLLBACK');
     console.error("Error creating group:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 // READ all follower groups
 exports.getAllGroups = async (req, res) => {
@@ -37,6 +52,48 @@ exports.getAllGroups = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+exports.getGroupsByUserId = async (req, res) => {
+  const userId = req.params.userId;
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required." });
+  }
+
+  try {
+    const [groups] = await db.query(
+      `SELECT 
+         fg.*, 
+         (fg.owner_id = ?) AS isOwner,
+         EXISTS (
+           SELECT 1 FROM group_managers gm 
+           WHERE gm.group_id = fg.id AND gm.user_id = ?
+         ) AS isManager,
+         (
+           SELECT COUNT(*) 
+           FROM group_members gm_count 
+           WHERE gm_count.group_id = fg.id
+         ) AS member_count,
+         (
+           SELECT JSON_ARRAYAGG(u.profile_pic_url)
+           FROM group_members gm_pics
+           JOIN users u ON gm_pics.user_id = u.id
+           WHERE gm_pics.group_id = fg.id
+         ) AS member_profile_pics
+       FROM follower_groups fg
+       JOIN group_members gm ON fg.id = gm.group_id
+       WHERE gm.user_id = ?`,
+      [userId, userId, userId]
+    );
+
+    res.json(groups);
+  } catch (err) {
+    console.error("Error fetching user's groups with details:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 // UPDATE a follower group
 exports.updateGroup = async (req, res) => {

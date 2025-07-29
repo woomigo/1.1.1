@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  arrayUnion,
-  doc,
-  arrayRemove,
-  onSnapshot,
-} from "firebase/firestore";
-import { db } from "../firebaseConfig";
+// import {
+//   collection,
+//   query,
+//   where,
+//   getDocs,
+//   updateDoc,
+//   arrayUnion,
+//   doc,
+//   arrayRemove,
+//   onSnapshot,
+// } from "firebase/firestore";
+// import { db } from "../firebaseConfig";
 import ListViewUsers from "./ListViewUsers";
 import { woo_black, woo_orange, woo_red } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
@@ -26,131 +26,131 @@ const MigoRequestScreen = ({ navigation, route }) => {
   const [receivedRequests, setReceivedRequests] = useState();
   const [user, setUser] = useState();
 
-  useEffect(() => {
-    const docRef = doc(db, "users", uid);
-    const getMigoRequests = onSnapshot(
-      docRef,
-      (doc) => {
-        // console.log("Document data:", doc.data());
-        setUser(doc.data());
-        setSentRequests(doc.data().sent_migo_requests);
-        setReceivedRequests(doc.data().received_migo_requests);
-      },
-      (error) => {}
-    );
+  // useEffect(() => {
+  //   const docRef = doc(db, "users", uid);
+  //   const getMigoRequests = onSnapshot(
+  //     docRef,
+  //     (doc) => {
+  //       // console.log("Document data:", doc.data());
+  //       setUser(doc.data());
+  //       setSentRequests(doc.data().sent_migo_requests);
+  //       setReceivedRequests(doc.data().received_migo_requests);
+  //     },
+  //     (error) => {}
+  //   );
 
-    return () => {
-      getMigoRequests();
-    };
-  }, []);
+  //   return () => {
+  //     getMigoRequests();
+  //   };
+  // }, []);
 
-  const removeUIDFromOwnerSent = async (userUID) => {
-    await updateDoc(userRef, {
-      sent_migo_requests: arrayRemove(userUID),
-    });
-  };
+  // const removeUIDFromOwnerSent = async (userUID) => {
+  //   await updateDoc(userRef, {
+  //     sent_migo_requests: arrayRemove(userUID),
+  //   });
+  // };
 
-  const removeUIDFromUserSent = async (userUID) => {
-    await updateDoc(doc(db, "users", userUID), {
-      sent_migo_requests: arrayRemove(uid),
-    });
-    // setView("migoRequestSuccess")
-  };
+  // const removeUIDFromUserSent = async (userUID) => {
+  //   await updateDoc(doc(db, "users", userUID), {
+  //     sent_migo_requests: arrayRemove(uid),
+  //   });
+  //   // setView("migoRequestSuccess")
+  // };
 
-  const removeUIDFromOwnerReceived = async (userUID) => {
-    await updateDoc(userRef, {
-      received_migo_requests: arrayRemove(userUID),
-    });
-  };
+  // const removeUIDFromOwnerReceived = async (userUID) => {
+  //   await updateDoc(userRef, {
+  //     received_migo_requests: arrayRemove(userUID),
+  //   });
+  // };
 
-  const removeUIDFromUserReceived = async (userUID) => {
-    await updateDoc(doc(db, "users", userUID), {
-      received_migo_requests: arrayRemove(uid),
-    });
-    // setView("migoRequestSuccess")
-  };
+  // const removeUIDFromUserReceived = async (userUID) => {
+  //   await updateDoc(doc(db, "users", userUID), {
+  //     received_migo_requests: arrayRemove(uid),
+  //   });
+  //   // setView("migoRequestSuccess")
+  // };
 
-  const handleFollowUser = (user) => {
-    console.log(`FOLLOW!!!! ${user.username}`);
-    // setView("loading")
-    addUIDToOwnerFollowers(user.uid);
-    addUIDToUserFollowing(user.uid);
-  };
+  // const handleFollowUser = (user) => {
+  //   console.log(`FOLLOW!!!! ${user.username}`);
+  //   // setView("loading")
+  //   addUIDToOwnerFollowers(user.uid);
+  //   addUIDToUserFollowing(user.uid);
+  // };
 
-  const handleAddMigo = (user) => {
-    // setView("loading")
-    addUIDToOwnerMigos(user.uid);
-    addUIDToUserMigos(user.uid);
-    removeUIDFromUserFollowing(user.uid);
-    removeUIDFromOwnerFollowers(user.uid);
-  };
+  // const handleAddMigo = (user) => {
+  //   // setView("loading")
+  //   addUIDToOwnerMigos(user.uid);
+  //   addUIDToUserMigos(user.uid);
+  //   removeUIDFromUserFollowing(user.uid);
+  //   removeUIDFromOwnerFollowers(user.uid);
+  // };
 
-  const addUIDToOwnerFollowers = async (userUID) => {
-    await updateDoc(userRef, {
-      followers: arrayUnion(userUID),
-    });
-  };
+  // const addUIDToOwnerFollowers = async (userUID) => {
+  //   await updateDoc(userRef, {
+  //     followers: arrayUnion(userUID),
+  //   });
+  // };
 
-  const addUIDToUserFollowing = async (userUID) => {
-    await updateDoc(doc(db, "users", userUID), {
-      following: arrayUnion(uid),
-    });
-    // setView("success")
-  };
+  // const addUIDToUserFollowing = async (userUID) => {
+  //   await updateDoc(doc(db, "users", userUID), {
+  //     following: arrayUnion(uid),
+  //   });
+  //   // setView("success")
+  // };
 
-  const addUIDToOwnerMigos = async (userUID) => {
-    console.log("ADD UID TO OWNER MIGOS");
-    await updateDoc(userRef, {
-      migos: arrayUnion(userUID),
-    });
-  };
+  // const addUIDToOwnerMigos = async (userUID) => {
+  //   console.log("ADD UID TO OWNER MIGOS");
+  //   await updateDoc(userRef, {
+  //     migos: arrayUnion(userUID),
+  //   });
+  // };
 
-  const addUIDToUserMigos = async (userUID) => {
-    console.log("ADD UID TO USER MIGOS");
-    await updateDoc(doc(db, "users", userUID), {
-      migos: arrayUnion(uid),
-    });
-    // setView("migoRequestSuccess")
-  };
+  // const addUIDToUserMigos = async (userUID) => {
+  //   console.log("ADD UID TO USER MIGOS");
+  //   await updateDoc(doc(db, "users", userUID), {
+  //     migos: arrayUnion(uid),
+  //   });
+  //   // setView("migoRequestSuccess")
+  // };
 
-  const removeUIDFromUserFollowing = async (userUID) => {
-    console.log("REMOVE UID FROM USER FOLLOWING");
-    await updateDoc(doc(db, "users", userUID), {
-      following: arrayRemove(uid),
-    });
-  };
+  // const removeUIDFromUserFollowing = async (userUID) => {
+  //   console.log("REMOVE UID FROM USER FOLLOWING");
+  //   await updateDoc(doc(db, "users", userUID), {
+  //     following: arrayRemove(uid),
+  //   });
+  // };
 
-  const removeUIDFromOwnerFollowers = async (userUID) => {
-    console.log("REMOVE UID FROM OWNER FOLLOWERS");
-    await updateDoc(userRef, {
-      followers: arrayRemove(userUID),
-    });
-  };
+  // const removeUIDFromOwnerFollowers = async (userUID) => {
+  //   console.log("REMOVE UID FROM OWNER FOLLOWERS");
+  //   await updateDoc(userRef, {
+  //     followers: arrayRemove(userUID),
+  //   });
+  // };
 
-  const handleDelete = (user) => {
-    removeUIDFromOwnerSent(user.uid);
-    removeUIDFromUserReceived(user.uid);
-    console.log("DELETE " + user);
-  };
+  // const handleDelete = (user) => {
+  //   removeUIDFromOwnerSent(user.uid);
+  //   removeUIDFromUserReceived(user.uid);
+  //   console.log("DELETE " + user);
+  // };
 
-  const handleAccept = (user) => {
-    if (user.following.includes(uid)) {
-      handleAddMigo(user);
-      console.log("MIGOS MIGO REQUESTS");
-    } else {
-      handleFollowUser(user);
-      console.log("ACCEPT CLICKED");
-    }
-    removeUIDFromUserSent(user.uid);
-    removeUIDFromOwnerReceived(user.uid);
-    console.log("Accept " + user.uid);
-  };
+  // const handleAccept = (user) => {
+  //   if (user.following.includes(uid)) {
+  //     handleAddMigo(user);
+  //     console.log("MIGOS MIGO REQUESTS");
+  //   } else {
+  //     handleFollowUser(user);
+  //     console.log("ACCEPT CLICKED");
+  //   }
+  //   removeUIDFromUserSent(user.uid);
+  //   removeUIDFromOwnerReceived(user.uid);
+  //   console.log("Accept " + user.uid);
+  // };
 
-  const handleIgnore = (user) => {
-    removeUIDFromUserSent(user.uid);
-    removeUIDFromOwnerReceived(user.uid);
-    console.log("IGNORE " + user.uid);
-  };
+  // const handleIgnore = (user) => {
+  //   removeUIDFromUserSent(user.uid);
+  //   removeUIDFromOwnerReceived(user.uid);
+  //   console.log("IGNORE " + user.uid);
+  // };
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const commentController = require('../controllers/commentController');
+const authenticateToken = require("../../middleware/authMiddleware");
 
 router.post('/', authenticateToken, commentController.createComment);
 router.get('/', authenticateToken, commentController.getComments);        // top-level with reply count

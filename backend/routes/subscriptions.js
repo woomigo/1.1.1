@@ -6,6 +6,6 @@ const authenticateToken = require("../../middleware/authMiddleware");
 
 router.post('/', authenticateToken, subscriptionController.subscribe);
 router.get('/', authenticateToken, subscriptionController.getMySubscriptions);
-router.delete('/:postId', authenticateToken, subscriptionController.unsubscribe);
+router.delete('/:wooId', authenticateToken, subscriptionController.unsubscribe);
 
 module.exports = router;

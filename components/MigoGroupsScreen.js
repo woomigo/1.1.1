@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
-import { woo_black } from "../assets/colors";
+import { woo_black, woo_white } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { Avatar } from "@rneui/themed";
+import GroupListView from "./GroupListView";
 
-const MigoGroupsScreen = ({ navigation }) => {
+const MigoGroupsScreen = ({ navigation, route }) => {
+  const { user, token } = route.params;
+
+  useEffect(() => {}, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -21,7 +27,7 @@ const MigoGroupsScreen = ({ navigation }) => {
         </View>
         <View
           style={{
-            flex: 3,
+            flex: 5,
             flexDirection: "row",
           }}
         >
@@ -29,7 +35,7 @@ const MigoGroupsScreen = ({ navigation }) => {
             style={{
               fontSize: 18,
               color: woo_black,
-              textAlign: "center",
+              paddingBottom: 3,
               fontWeight: "bold",
             }}
           >
@@ -37,6 +43,8 @@ const MigoGroupsScreen = ({ navigation }) => {
           </Text>
         </View>
       </View>
+
+      <GroupListView userId={user.id} token />
     </SafeAreaView>
   );
 };
@@ -44,7 +52,7 @@ const MigoGroupsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: woo_white,
   },
   header: {
     height: 50,

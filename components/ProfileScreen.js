@@ -102,7 +102,9 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!token) throw new Error("Auth token is missing");
     if (!userId) throw new Error("User ID is required");
 
-    const res = await fetch(`${localhost}/woos/mine`, {
+    console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`)
+
+    const res = await fetch(`${localhost}/woos/user/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -157,7 +159,7 @@ const ProfileScreen = ({ navigation, route }) => {
     fetchUserFollowers(userUID ? userUID : user.id, token);
     fetchWoos(userUID ? userUID : user.id, token);
     fetchGallery(userUID ? userUID : user.id, token);
-  }, [isProfileOwnedByUser, isFollowing]);
+  }, [isProfileOwnedByUser, isFollowing, activeTab]);
 
   // useEffect(() => {
   //   const docRef = doc(db, "users", userUID ? userUID : uid);

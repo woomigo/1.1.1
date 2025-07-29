@@ -7,6 +7,7 @@ router.post('/', authenticateToken, wooController.createWoo);
 router.get('/privatefeed', authenticateToken, wooController.getPrivateFeed);
 router.get('/publicfeed', authenticateToken, wooController.getPublicFeed);
 router.get('/mine', authenticateToken, wooController.getMyWoos);
+router.get('/user/:userId', authenticateToken, wooController.getWoosByUserId);
 router.get('/:id', authenticateToken, wooController.getWooById);
 router.delete('/:wooId/:userId', authenticateToken, wooController.removeInvitation);
 router.post('/:wooId/seen', authenticateToken, wooController.markWooAsSeen);

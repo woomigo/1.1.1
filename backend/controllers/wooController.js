@@ -24,39 +24,89 @@ exports.createWoo = async (req, res) => {
   }
 };
 
+// Helper to fetch profile pics of subscribers for a set of woo IDs
+async function getSubscriberPics(wooIds) {
+  if (wooIds.length === 0) return {};
+
+  const [rows] = await db.query(
+    `SELECT s.woo_id, u.profile_pic_url
+     FROM subscriptions s
+     JOIN users u ON s.user_id = u.id
+     WHERE s.woo_id IN (?)`,
+    [wooIds]
+  );
+
+  // Group profile pics by woo_id
+  return rows.reduce((acc, { woo_id, profile_pic_url }) => {
+    if (!acc[woo_id]) acc[woo_id] = [];
+    acc[woo_id].push(profile_pic_url);
+    return acc;
+  }, {});
+}
+
+// Helper to fetch profile pics of migos for a set of woo IDs
+async function getMigoPics(wooIds) {
+  if (wooIds.length === 0) return {};
+
+  const [rows] = await db.query(
+    `SELECT m.woo_id, u.profile_pic_url
+     FROM migos m
+     JOIN users u ON m.user_id = u.id
+     WHERE m.woo_id IN (?)`,
+    [wooIds]
+  );
+
+  // Group profile pics by woo_id
+  return rows.reduce((acc, { woo_id, profile_pic_url }) => {
+    if (!acc[woo_id]) acc[woo_id] = [];
+    acc[woo_id].push(profile_pic_url);
+    return acc;
+  }, {});
+}
+
+
+// For HOME FEED - Public Woos + subscriber pics
 exports.getPublicFeed = async (req, res) => {
   const user_id = req.user.id;
 
   try {
     const [woos] = await db.query(
       `SELECT 
-           w.id AS woo_id,
-           w.media_url,
-           w.start_date,
-           w.end_date,
-           w.start_time,
-           w.end_time,
-           w.location,
-           w.type,
-           w.created_at,
-           w.updated_at,
-           u.id AS user_id,
-           u.first_name,
-           u.last_name,
-           u.username,
-           u.profile_pic_url,
-           COUNT(wl_all.user_id) AS like_count,
-           MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
-         FROM woos w
-         JOIN followers f ON w.owner_uid = f.followee_id
-         JOIN users u ON w.owner_uid = u.id
-         LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
-         LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
-         WHERE f.follower_id = ? AND w.type = "public"
-         GROUP BY w.id
-         ORDER BY w.created_at DESC`,
+         w.id AS woo_id,
+         w.media_url,
+         w.start_date,
+         w.end_date,
+         w.start_time,
+         w.end_time,
+         w.location,
+         w.type,
+         w.created_at,
+         w.updated_at,
+         u.id AS user_id,
+         u.first_name,
+         u.last_name,
+         u.username,
+         u.profile_pic_url,
+         COUNT(wl_all.user_id) AS like_count,
+         MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
+       FROM woos w
+       JOIN followers f ON w.owner_uid = f.followee_id
+       JOIN users u ON w.owner_uid = u.id
+       LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+       LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+       WHERE f.follower_id = ? AND w.type = "public"
+       GROUP BY w.id
+       ORDER BY w.created_at DESC`,
       [user_id, user_id]
     );
+
+    const wooIds = woos.map(w => w.woo_id);
+    const subscriberPics = await getSubscriberPics(wooIds);
+
+    // Add sub_profile_pics array to each woo
+    woos.forEach(w => {
+      w.sub_profile_pics = subscriberPics[w.woo_id] || [];
+    });
 
     res.json(woos);
   } catch (err) {
@@ -64,38 +114,38 @@ exports.getPublicFeed = async (req, res) => {
   }
 };
 
+// For HOME FEED - Private Woos + migo pics
 exports.getPrivateFeed = async (req, res) => {
   const user_id = req.user.id;
 
   try {
     const [woos] = await db.query(
       `SELECT 
-           w.id AS woo_id,
-           w.media_url,
-           w.start_date,
-           w.end_date,
-           w.start_time,
-           w.end_time,
-           w.location,
-           w.type,
-           w.created_at,
-           w.updated_at,
-           u.id AS user_id,
-           u.first_name,
-           u.last_name,
-           u.username,
-           u.profile_pic_url,
-           m.seen AS seen,                                
-           COUNT(wl_all.user_id) AS like_count,
-           MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
-         FROM migos m
-         JOIN woos w ON w.id = m.woo_id                
-         JOIN users u ON w.owner_uid = u.id
-         LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
-         LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
-         WHERE m.user_id = ? AND w.type = "private"
-         GROUP BY w.id
-      `,
+         w.id AS woo_id,
+         w.media_url,
+         w.start_date,
+         w.end_date,
+         w.start_time,
+         w.end_time,
+         w.location,
+         w.type,
+         w.created_at,
+         w.updated_at,
+         u.id AS user_id,
+         u.first_name,
+         u.last_name,
+         u.username,
+         u.profile_pic_url,
+         m.seen AS seen,                                 
+         COUNT(wl_all.user_id) AS like_count,
+         MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
+       FROM migos m
+       JOIN woos w ON w.id = m.woo_id                
+       JOIN users u ON w.owner_uid = u.id
+       LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+       LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+       WHERE m.user_id = ? AND w.type = "private"
+       GROUP BY w.id`,
       [user_id, user_id]
     );
 
@@ -106,13 +156,91 @@ exports.getPrivateFeed = async (req, res) => {
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
+    const wooIds = woos.map(w => w.woo_id);
+    const migoPics = await getMigoPics(wooIds);
+
+    // Add migo_profile_pics array to each woo
+    woos.forEach(w => {
+      w.migo_profile_pics = migoPics[w.woo_id] || [];
+    });
+
     res.json(woos);
   } catch (err) {
-    console.error("Error in getInvitedWoos:", err);
+    console.error("Error in getPrivateFeed:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+// For PROFILE FEED - Woos by User ID, add subscriber or migo pics accordingly
+exports.getWoosByUserId = async (req, res) => {
+  const userId = parseInt(req.params.userId); // whose woos are being viewed
+  const viewerId = req.user.id; // who is viewing
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required." });
+  }
+
+  try {
+    const [woos] = await db.query(
+      `SELECT 
+         w.id AS woo_id,
+         w.media_url,
+         w.start_date,
+         w.end_date,
+         w.start_time,
+         w.end_time,
+         w.location,
+         w.type,
+         w.created_at,
+         w.updated_at,
+         u.id AS user_id,
+         u.first_name,
+         u.last_name,
+         u.username,
+         u.profile_pic_url,
+         COUNT(wl_all.user_id) AS like_count,
+         MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
+       FROM woos w
+       JOIN users u ON w.owner_uid = u.id
+       LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+       LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+       WHERE w.owner_uid = ?
+         AND (
+           w.type = 'public'
+           OR ? = ?
+           OR EXISTS (
+             SELECT 1 FROM migos m
+             WHERE m.woo_id = w.id AND m.user_id = ?
+           )
+         )
+       GROUP BY w.id
+       ORDER BY w.created_at DESC`,
+      [viewerId, userId, viewerId, userId, viewerId]
+    );
+
+    const wooIds = woos.map(w => w.woo_id);
+
+    // For public woos, get subscriber pics; for private, get migo pics
+    const publicWoos = woos.filter(w => w.type === "public");
+    const privateWoos = woos.filter(w => w.type === "private");
+
+    const subscriberPics = await getSubscriberPics(publicWoos.map(w => w.woo_id));
+    const migoPics = await getMigoPics(privateWoos.map(w => w.woo_id));
+
+    woos.forEach(w => {
+      if (w.type === "public") {
+        w.sub_profile_pics = subscriberPics[w.woo_id] || [];
+      } else {
+        w.migo_profile_pics = migoPics[w.woo_id] || [];
+      }
+    });
+
+    res.json(woos);
+  } catch (err) {
+    console.error("Error fetching user's woos:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 
 

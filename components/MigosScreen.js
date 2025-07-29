@@ -213,9 +213,9 @@ const MigosScreen = ({ navigation, route }) => {
         <View
           style={{
             // backgroundColor: "blue",
-            flex: 1,
+            flex: 4,
             flexDirection: "row",
-            // justifyContent: 'center',
+            justifyContent: "flex-start",
           }}
         >
           <Text
@@ -231,7 +231,7 @@ const MigosScreen = ({ navigation, route }) => {
         </View>
         <View
           style={{
-            flex: 1,
+            flex: 2,
             // backgroundColor: "red",
             flexDirection: "row",
             justifyContent: "space-around",

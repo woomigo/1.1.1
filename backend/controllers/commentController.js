@@ -1,4 +1,4 @@
-const db = require('../db'); // or your DB connection logic
+const db = require("../db"); // or your DB connection logic
 
 exports.getComments = async (req, res) => {
   const { type, id } = req.query;
@@ -29,8 +29,8 @@ exports.getComments = async (req, res) => {
 
     res.json(comments);
   } catch (err) {
-    console.error('Error in getComments:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error in getComments:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -55,8 +55,8 @@ exports.getReplies = async (req, res) => {
 
     res.json(replies);
   } catch (err) {
-    console.error('Error in getReplies:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error in getReplies:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -70,9 +70,9 @@ exports.createComment = async (req, res) => {
       [user_id, content, commentableType, commentableId, parent_comment_id]
     );
 
-    const [newComment] = await db.query(
-      `SELECT * FROM comments WHERE id = ?`, [result.insertId]
-    );
+    const [newComment] = await db.query(`SELECT * FROM comments WHERE id = ?`, [
+      result.insertId,
+    ]);
 
     res.status(201).json(newComment[0]);
   } catch (err) {
@@ -85,9 +85,15 @@ exports.updateComment = async (req, res) => {
   const { content } = req.body;
 
   try {
-    await db.query(`UPDATE comments SET content = ? WHERE id = ?`, [content, id]);
+    await db.query(`UPDATE comments SET content = ? WHERE id = ?`, [
+      content,
+      id,
+    ]);
 
-    const [updatedComment] = await db.query(`SELECT * FROM comments WHERE id = ?`, [id]);
+    const [updatedComment] = await db.query(
+      `SELECT * FROM comments WHERE id = ?`,
+      [id]
+    );
 
     res.json(updatedComment[0]);
   } catch (err) {
@@ -95,23 +101,25 @@ exports.updateComment = async (req, res) => {
   }
 };
 
-const deleteComment = async (req, res) => {
+exports.deleteComment = async (req, res) => {
   const { id } = req.params;
   const userId = req.user.id; // from auth middleware
 
   try {
     // Check if the comment exists and belongs to the user
     const [rows] = await db.query(`SELECT * FROM comments WHERE id = ?`, [id]);
-    if (rows.length === 0) return res.status(404).json({ message: 'Comment not found' });
+    if (rows.length === 0)
+      return res.status(404).json({ message: "Comment not found" });
 
     const comment = rows[0];
-    if (comment.user_id !== userId) return res.status(403).json({ message: 'Unauthorized' });
+    if (comment.user_id !== userId)
+      return res.status(403).json({ message: "Unauthorized" });
 
     // Soft-delete by setting is_visible to false
     await db.query(`UPDATE comments SET is_visible = FALSE WHERE id = ?`, [id]);
 
-    res.json({ message: 'Comment deleted (soft)' });
+    res.json({ message: "Comment deleted (soft)" });
   } catch (err) {
-    res.status(500).json({ message: 'Error deleting comment' });
+    res.status(500).json({ message: "Error deleting comment" });
   }
 };
