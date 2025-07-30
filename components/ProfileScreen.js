@@ -26,6 +26,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
   const [isProfileOwnedByUser, setIsProfileOwnedByUser] = useState(false);
   const [woos, setWoos] = useState([]);
+  const [subWoos, setSubWoos] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState();
@@ -104,7 +105,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
     console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`)
 
-    const res = await fetch(`${localhost}/woos/user/${userId}`, {
+    const res = await fetch(`${localhost}/woos/${userUID ? `user/${userId}` : "mine"}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -115,7 +116,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    console.log("WOOS OBJECT IS ======= " + JSON.stringify(data));
+    console.log("PROFILE WOOS OBJECT IS ======= " + JSON.stringify(data));
 
     setWoos(data);
 
@@ -144,6 +145,30 @@ const ProfileScreen = ({ navigation, route }) => {
     return res.json();
   };
 
+  const fetchSubs = async (userId, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!userId) throw new Error("User ID is required");
+
+    console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`)
+
+    const res = await fetch(`${localhost}/subscriptions/${userUID ? `user/${userId}` : ""}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch woos");
+
+    const data = await res.json();
+    console.log("SUBS OBJECT IS ======= " + JSON.stringify(data));
+
+    setSubWoos(data);
+
+    return res.json();
+  };
+
   useEffect(() => {
     console.log("PROFILE " + JSON.stringify(user));
     console.log(`USERUID ======s ${userUID}`);
@@ -158,86 +183,49 @@ const ProfileScreen = ({ navigation, route }) => {
     fetchUserFollowCounts(userUID ? userUID : user.id, token);
     fetchUserFollowers(userUID ? userUID : user.id, token);
     fetchWoos(userUID ? userUID : user.id, token);
+    fetchSubs(user.id, token);
     fetchGallery(userUID ? userUID : user.id, token);
   }, [isProfileOwnedByUser, isFollowing, activeTab]);
 
-  // useEffect(() => {
-  //   const docRef = doc(db, "users", userUID ? userUID : uid);
-  //   const getProfileInfo = onSnapshot(
-  //     docRef,
-  //     (doc) => {
-  //       // console.log("Document data:", doc.data());
-  //       setUser(doc.data());
-  //       setGallery(doc.data().gallery);
-  //       setUsername(doc.data().username);
-  //       setFirstName(doc.data().first_name);
-  //       setLastName(doc.data().last_name);
-  //       setProfilePicURL(doc.data().profile_pic_url);
-  //       setFollowing(doc.data().following);
-  //       setFollowers(doc.data().followers);
-  //       setIsPofilePrivate(doc.data().is_private_profile);
-  //       setIsFollowing(doc.data().followers.includes(uid));
-  //     },
-  //     (error) => {},
-  //     []
-  //   );
 
-  //   const q = query(
-  //     collection(db, "woos"),
-  //     or(
-  //       where("owner_uid", "==", uid),
-  //       where("woo_migos", "array-contains", uid)
-  //     )
-  //   );
-  //   const getOwnedWoos = onSnapshot(
-  //     q,
-  //     (querySnapshot) => {
-  //       const ownedWoos = [];
-  //       querySnapshot.forEach((doc) => {
-  //         ownedWoos.push(doc);
-  //       });
-  //       setWoos(ownedWoos);
-  //     },
-  //     (error) => {}
-  //   );
-
-  //   return () => {
-  //     getProfileInfo();
-  //     getOwnedWoos();
-  //   };
-  // }, [uid, activeTab]);
-
-  const renderTabBar = () => (
-    <View style={styles.tabBarContainer}>
-      <View style={styles.tabBar}>
-        {["woos", "gallery", "subscribed"].map((label, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.tab, { width: width / 3 }]}
-            onPress={() => setActiveTab(index)}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === index && styles.activeTabText,
-              ]}
+  const renderTabBar = () => {
+    const tabs = isProfileOwnedByUser
+      ? ["woos", "gallery", "subscribed"]
+      : ["woos", "gallery"]; // omit "subscribed" tab if not user's profile
+  
+    return (
+      <View style={styles.tabBarContainer}>
+        <View style={styles.tabBar}>
+          {tabs.map((label, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.tab, { width: width / tabs.length }]}
+              onPress={() => setActiveTab(index)}
             >
-              {label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-        <Animated.View
-          style={[
-            styles.indicator,
-            {
-              transform: [{ translateX: indicatorAnim }],
-              width: width / 3,
-            },
-          ]}
-        />
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === index && styles.activeTabText,
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+          <Animated.View
+            style={[
+              styles.indicator,
+              {
+                transform: [{ translateX: indicatorAnim }],
+                width: width / tabs.length,
+              },
+            ]}
+          />
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
+  
 
 
 
@@ -525,8 +513,8 @@ const ProfileScreen = ({ navigation, route }) => {
                 nav={"MediaView"}
               />
             )}
-            {activeTab === 2 && (
-              <ListViewWoos view={"list"} woos={woos} uid={user.id} />
+            {isProfileOwnedByUser && activeTab === 2 && (
+              <ListViewWoos view={"list"} woos={subWoos} uid={user.id} />
             )}
           </ScrollView>
         )}

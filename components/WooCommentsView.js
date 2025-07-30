@@ -14,7 +14,7 @@ import { doc, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 const WooCommentsView = ({ navigation, route }) => {
-  const { uid, wooID } = route.params;
+  const { uid, wooID, comments, token } = route.params;
 
   const [comment, setComment] = useState();
   const [wooComments, setWooComments] = useState();
@@ -26,33 +26,8 @@ const WooCommentsView = ({ navigation, route }) => {
   const [profilePicURL, setProfilePicURL] = useState();
 
   useEffect(() => {
-    const docRef = doc(db, "users", uid);
-    const getProfileInfo = onSnapshot(
-      docRef,
-      (doc) => {
-        setProfilePicURL(doc.data().profile_pic_url);
-      },
-      (error) => {}
-    );
-
-    const docWooRef = doc(db, "woos", wooID);
-    const getWooComments = onSnapshot(
-      docWooRef,
-      (doc) => {
-        setWooComments(doc.data().woo_comments);
-      },
-      (error) => {}
-    );
-
-    return () => {
-      if (uid) {
-        getProfileInfo();
-      }
-      if (wooID) {
-        getWooComments();
-      }
-    };
-  }, [uid, wooID]);
+    console.log(`COMMENT SCREEN ${JSON.stringify(comments)}`)
+  }, []);
 
   const addCommentToWoo = async () => {
     console.log("FUCK");
@@ -119,7 +94,7 @@ const WooCommentsView = ({ navigation, route }) => {
           leftContainerStyle={styles.leftComponent}
           centerContainerStyle={styles.centerComponent}
         />
-        <ListViewComments uid={uid} comments={wooComments} />
+        <ListViewComments uid={uid} comments={comments} token={token} />
         <KeyboardAvoidingView behavior="position">
           <Input
             value={comment}

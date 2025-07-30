@@ -301,12 +301,30 @@ exports.getMyWoos = async (req, res) => {
       [userId, userId]
     );
 
+    const wooIds = woos.map(w => w.woo_id);
+    const publicWooIds = woos.filter(w => w.type === 'public').map(w => w.woo_id);
+    const privateWooIds = woos.filter(w => w.type === 'private').map(w => w.woo_id);
+
+    const [subscriberPics, migoPics] = await Promise.all([
+      getSubscriberPics(publicWooIds),
+      getMigoPics(privateWooIds),
+    ]);
+
+    woos.forEach(w => {
+      if (w.type === 'public') {
+        w.sub_profile_pics = subscriberPics[w.woo_id] || [];
+      } else if (w.type === 'private') {
+        w.migo_profile_pics = migoPics[w.woo_id] || [];
+      }
+    });
+
     res.json(woos);
   } catch (err) {
     console.error("Error fetching my woos:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 exports.removeInvitation = async (req, res) => {
   const requesterId = req.user.id;

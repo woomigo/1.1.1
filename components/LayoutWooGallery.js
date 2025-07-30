@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, StyleSheet, Text } from 'react-native';
 import { Card } from '@rneui/themed';
 import ListViewGallery from './ListViewGallery';
 
 const LayoutWooGallery = ({ gallery, nav }) => {
+
+    useEffect(() => {
+        console.log("LWG")
+    })
 
     return (
         <View>

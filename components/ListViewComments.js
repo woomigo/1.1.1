@@ -3,13 +3,13 @@ import { View, StyleSheet, FlatList } from "react-native";
 import LayoutCommentItem from "./LayoutCommentItem";
 import LayoutRepliesItem from "./LayoutRepliesItem";
 
-const ListViewComments = ({ uid, comments, isReplies }) => {
+const ListViewComments = ({ uid, comments, isReplies, token }) => {
   const renderComments = (comment) => (
-    <LayoutCommentItem uid={uid} comment={comment} comments={comments} />
+    <LayoutCommentItem uid={uid} token={token} comment={comment} comments={comments} />
   );
 
   const renderReplies = (comment) => (
-    <LayoutRepliesItem uid={uid} comment={comment} comments={comments} />
+    <LayoutRepliesItem uid={uid} comment={comment} comments={comments} token={token} />
   );
 
   return (

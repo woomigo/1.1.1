@@ -39,45 +39,56 @@ const LayoutRepliesItem = ({ uid, comment, comments }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    console.log(comment);
-    setTimestamp(getTimeAgo(comment.item.timestamp.seconds));
-    const docRef = doc(db, "users", comment.item.comment_owner_uid);
-    const getProfileInfo = onSnapshot(
-      docRef,
-      (doc) => {
-        // console.log("Document data:", doc.data());
-        setUser(doc.data());
-        setProfilePicURL(doc.data().profile_pic_url);
-        setUsername(doc.data().username);
-      },
-      (error) => {}
-    );
-
-    return () => {
-      getProfileInfo();
-    };
+    // console.log(comment);
+    // setTimestamp(getTimeAgo(comment.item.timestamp.seconds));
+    // const docRef = doc(db, "users", comment.item.comment_owner_uid);
+    // const getProfileInfo = onSnapshot(
+    //   docRef,
+    //   (doc) => {
+    //     // console.log("Document data:", doc.data());
+    //     setUser(doc.data());
+    //     setProfilePicURL(doc.data().profile_pic_url);
+    //     setUsername(doc.data().username);
+    //   },
+    //   (error) => {}
+    // );
+    // return () => {
+    //   getProfileInfo();
+    // };
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.commentHeaderContainer}>
         <TouchableWithoutFeedback>
-          <Avatar rounded size="small" source={{ uri: profilePicURL }} />
+          <Avatar
+            rounded
+            size="small"
+            source={{ uri: comment.item.profile_pic_url }}
+          />
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.commentHeaderUserContainer}>
         <TouchableWithoutFeedback
           onPress={() => {
-            user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
+            comment.item.user_id !== uid &&
+              navigation.navigate("Profile", { userUID: comment.item.user_id });
           }}
         >
-          <Text style={styles.commentUsername}>{username}</Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.commentOwnerName}>
+              {comment.item.first_name} {comment.item.last_name} {""}
+            </Text>
+            <Text style={styles.commentUsername}>@{comment.item.username}</Text>
+          </View>
         </TouchableWithoutFeedback>
         <View style={styles.commentContainer}>
-          <Text style={styles.comment}>{comment.item.comment}</Text>
+          <Text style={styles.comment}>{comment.item.content}</Text>
         </View>
         <View style={styles.commentTimeReplyContainer}>
-          <Text style={styles.commentTimeAgo}>{timestamp}</Text>
+          <Text style={styles.commentTimeAgo}>
+            {getTimeAgo(comment.item.created_at)}
+          </Text>
         </View>
       </View>
 
@@ -115,8 +126,12 @@ const styles = StyleSheet.create({
 
     // backgroundColor: "green",
   },
-
   commentUsername: {
+    // backgroundColor: "aqua",
+    marginBottom: 3,
+    fontSize: 12,
+  },
+  commentOwnerName: {
     // backgroundColor: "aqua",
     marginBottom: 3,
     fontWeight: "bold",

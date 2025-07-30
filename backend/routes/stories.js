@@ -6,11 +6,13 @@ const authenticateToken = require("../../middleware/authMiddleware");
 // Get stories by a specific woo (event)
 router.get("/woos/:wooId/stories", authenticateToken, storyController.getStoriesByWoo);
 
-// Get the story feed for the logged-in user
+// Get the combined story feed for the logged-in user
 router.get("/feed", authenticateToken, storyController.getCombinedStoryFeed);
 
-// Mark story as seen when user views
-router.post("/:storyId/seen", authenticateToken, storyController.markStorySeen);
+// Get the woo gallery feed (for image/video gallery by woo)
+router.get("/woos/gallery-feed", authenticateToken, storyController.getWooGalleryFeed);
 
+// Mark story as seen when user views it
+router.post("/:storyId/seen", authenticateToken, storyController.markStorySeen);
 
 module.exports = router;

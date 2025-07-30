@@ -1,5 +1,25 @@
 const db = require('../db');
 
+// Helper to fetch profile pics of subscribers for a set of woo IDs
+async function getSubscriberPics(wooIds) {
+  if (wooIds.length === 0) return {};
+
+  const [rows] = await db.query(
+    `SELECT s.woo_id, u.profile_pic_url
+     FROM subscriptions s
+     JOIN users u ON s.user_id = u.id
+     WHERE s.woo_id IN (?)`,
+    [wooIds]
+  );
+
+  // Group profile pics by woo_id
+  return rows.reduce((acc, { woo_id, profile_pic_url }) => {
+    if (!acc[woo_id]) acc[woo_id] = [];
+    acc[woo_id].push(profile_pic_url);
+    return acc;
+  }, {});
+}
+
 // Subscribe to a public woo (only if following the owner)
 exports.subscribe = async (req, res) => {
   const userId = req.user.id;
@@ -38,15 +58,92 @@ exports.getMySubscriptions = async (req, res) => {
 
   try {
     const [woos] = await db.query(
-      `SELECT w.*
+      `SELECT 
+         w.id AS woo_id,
+         w.media_url,
+         w.start_date,
+         w.end_date,
+         w.start_time,
+         w.end_time,
+         w.location,
+         w.type,
+         w.created_at,
+         w.updated_at,
+         u.id AS user_id,
+         u.first_name,
+         u.last_name,
+         u.username,
+         u.profile_pic_url,
+         COUNT(wl_all.user_id) AS like_count,
+         MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
        FROM woos w
        JOIN subscriptions s ON w.id = s.woo_id
-       WHERE s.user_id = ?`,
-      [userId]
+       JOIN users u ON w.owner_uid = u.id
+       LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+       LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+       WHERE s.user_id = ?
+       GROUP BY w.id
+       ORDER BY w.created_at DESC`,
+      [userId, userId]
     );
+
+    // Get woo IDs to fetch subscriber profile pics
+    const wooIds = woos.map(w => w.woo_id);
+
+    // Get subscriber pics grouped by woo_id
+    const subscriberPics = await getSubscriberPics(wooIds);
+
+    // Attach subscriber profile pics to each woo
+    woos.forEach(w => {
+      w.sub_profile_pics = subscriberPics[w.woo_id] || [];
+    });
+
     res.json(woos);
   } catch (err) {
     console.error('Get subscriptions error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+exports.getSubscriptionsByUserId = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const [woos] = await db.query(
+      `SELECT 
+         w.id AS woo_id,
+         w.media_url,
+         w.start_date,
+         w.end_date,
+         w.start_time,
+         w.end_time,
+         w.location,
+         w.type,
+         w.created_at,
+         w.updated_at,
+         u.id AS user_id,
+         u.first_name,
+         u.last_name,
+         u.username,
+         u.profile_pic_url,
+         COUNT(wl_all.user_id) AS like_count,
+         MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
+       FROM woos w
+       JOIN subscriptions s ON w.id = s.woo_id
+       JOIN users u ON w.owner_uid = u.id
+       LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
+       LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
+       WHERE s.user_id = ?
+       GROUP BY w.id
+       ORDER BY w.created_at DESC`,
+      [userId, userId]
+    );
+
+    res.json(woos);
+  } catch (err) {
+    console.error('Get subscriptions by user ID error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

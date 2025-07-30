@@ -51,6 +51,7 @@ import ManageParticipantsScreen from "./components/ManageParticipantsScreen";
 import MoreInfoScreen from "./components/MoreInfoScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StoryViewerScreen from "./components/StoryViewerScreen";
+import MediaGalleryWithPreview from "./components/MediaGalleryWithPreview";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -115,6 +116,12 @@ const App = () => {
         <Stack.Screen
           name="Woo"
           component={WooScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MediaGallery"
+          component={MediaGalleryWithPreview}
           options={{ headerShown: false }}
           initialParams={{ user: user, token: token }}
         />
@@ -213,6 +220,18 @@ const App = () => {
         <Stack.Screen
           name="MediaView"
           component={MediaViewScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Woo"
+          component={WooScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MediaGallery"
+          component={MediaGalleryWithPreview}
           options={{ headerShown: false }}
           initialParams={{ user: user, token: token }}
         />

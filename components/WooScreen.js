@@ -45,6 +45,8 @@ const WooScreen = ({ navigation, route }) => {
   const scrollViewRef = useRef(null);
 
   const [timeAgo, setTImeAgo] = useState("");
+  const [gallery, setGallery] = useState([]);
+  const [comments, setComments] = useState([]);
   const [isCommentBottomSheetVisible, setIsCommentBottomSheetVisible] =
     useState(false);
   const [isWooMigosBottomSheetVisible, setIsWooMigosBottomSheetVisible] =
@@ -74,6 +76,52 @@ const WooScreen = ({ navigation, route }) => {
     setIsWooListBottomSheetVisible(true);
   };
 
+  const fetchWooGallery = async (wooId, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!wooId) throw new Error("Woo ID is required");
+
+    const res = await fetch(`${localhost}/galleries/woo/${wooId}/user`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch Woo Gallery");
+
+    const data = await res.json();
+    console.log("GALLERY OBJECT IS ======= " + JSON.stringify(data));
+
+    setGallery(data.gallery);
+
+    return res.json();
+  };
+
+  const fetchWooComments = async (wooId, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!wooId) throw new Error("Woo ID is required");
+
+    const query = new URLSearchParams({ type: "woo", id: wooId }).toString();
+
+    const res = await fetch(`${localhost}/comments?${query}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch Woo Comments");
+
+    const data = await res.json();
+    console.log("COMMENTS OBJECT IS ======= ", JSON.stringify(data));
+
+    setComments(data); // assuming you're using a useState setter
+
+    return data; // ✅ this avoids calling res.json() twice
+  };
+
   const subscribeToWoo = () => {
     console.log("SUBSCRIBED!!!");
   };
@@ -84,7 +132,10 @@ const WooScreen = ({ navigation, route }) => {
       markPrivateWooSeen();
     }
     console.log("WOOOOOO " + JSON.stringify(woo));
-  });
+
+    fetchWooGallery(woo.item.woo_id, token);
+    fetchWooComments(woo.item.woo_id, token);
+  }, [woo]);
 
   const markPrivateWooSeen = async () => {
     await fetch(`${localhost}/woos/${woo.item.woo_id}/seen`, {
@@ -364,9 +415,11 @@ const WooScreen = ({ navigation, route }) => {
           >
             <Pressable
               style={[styles.card, { flex: 1 }]}
-              onPress={() => handleOpenCommentBottomSheet()}
+              onPress={() =>
+                navigation.navigate("WooCommentsView", { comments })
+              }
             >
-              {woo.item.woo_comments && woo.item.woo_comments.length > 0 ? (
+              {comments && comments.length > 0 ? (
                 <>
                   <View style={styles.commentHeaderContainer}>
                     <View style={styles.commentHeaderUserContainer}>
@@ -376,22 +429,24 @@ const WooScreen = ({ navigation, route }) => {
                           size="small"
                           onPress={() => navigation.navigate("Profile")}
                           source={{
-                            uri: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80",
+                            uri: comments[0].profile_pic_url,
                           }}
                         />
                       </TouchableWithoutFeedback>
                       <View>
                         <TouchableWithoutFeedback>
                           <Text style={styles.commentUsername}>
-                            {"boston_girl"}
+                            {comments[0].username}
                           </Text>
                         </TouchableWithoutFeedback>
                         <View style={styles.commentContainer}>
                           <Text style={styles.comment}>
-                            {woo.item.woo_comments[0].comment}
+                            {comments[0].content}
                           </Text>
 
-                          <Text style={styles.commentTimeAgo}>{timeAgo}</Text>
+                          <Text style={styles.commentTimeAgo}>
+                            {getTimeAgo(comments[0].created_at)}
+                          </Text>
                         </View>{" "}
                       </View>
                     </View>
@@ -399,16 +454,15 @@ const WooScreen = ({ navigation, route }) => {
                   <View style={styles.seeMoreCommentsContainer}>
                     <TouchableOpacity
                       onPress={() =>
-                        navigation.navigate("CommentsComponent", {
-                          wooID: wooID,
-                        })
+                        navigation.navigate("WooCommentsView", { comments })
                       }
                     >
                       <Text style={styles.seeMoreCommentsText}>
                         {`see ${
-                          woo.item.woo_comments &&
-                          woo.item.woo_comments.length - 1
-                        } more comments...`}
+                          comments && comments.length > 1
+                            ? comments.length - 1 + " "
+                            : ""
+                        }more comment${comments.length > 2 ? "s" : ""}...`}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -436,10 +490,12 @@ const WooScreen = ({ navigation, route }) => {
           >
             <Pressable
               style={[styles.card, { flex: 1 }]}
-              onPress={() => handleOpenWooGalleryBottomSheet()}
+              onPress={() =>
+                navigation.navigate("MediaGallery", { media: gallery })
+              }
             >
-              {woo.item.woo_gallery && woo.item.woo_gallery.length > 0 ? (
-                <LayoutWooGallery gallery={woo.item.woo_gallery} />
+              {gallery && gallery.length > 0 ? (
+                <LayoutWooGallery gallery={gallery} />
               ) : (
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}
@@ -484,7 +540,7 @@ const WooScreen = ({ navigation, route }) => {
           {/* Bottom Sheets */}
 
           {/* <DraggableBottomSheet
-            profilePicURL={profilePicURL}
+            // profilePicURL={profilePicURL}
             title={"comments"}
             isVisible={isCommentBottomSheetVisible}
             onClose={() => setIsCommentBottomSheetVisible(false)}
@@ -495,10 +551,10 @@ const WooScreen = ({ navigation, route }) => {
             renderData={(comment) => (
               <LayoutCommentItem uid={uid} comment={comment} />
             )}
-          ></DraggableBottomSheet>
-
+          ></DraggableBottomSheet> */}
+          {/* 
           <DraggableBottomSheet
-            profilePicURL={profilePicURL}
+            // profilePicURL={profilePicURL}
             title={"migos"}
             isVisible={isWooMigosBottomSheetVisible}
             onClose={() => setIsWooMigosBottomSheetVisible(false)}
@@ -507,10 +563,10 @@ const WooScreen = ({ navigation, route }) => {
             <Text style={styles.sheetText}>
               You can drag this sheet up or down!
             </Text>
-          </DraggableBottomSheet>
-
+          </DraggableBottomSheet> */}
+          {/* 
           <DraggableBottomSheet
-            profilePicURL={profilePicURL}
+            // profilePicURL={profilePicURL}
             title={"gallery"}
             isVisible={isWooGalleryBottomSheetVisible}
             onClose={() => setIsWooGalleryBottomSheetVisible(false)}
@@ -519,9 +575,9 @@ const WooScreen = ({ navigation, route }) => {
             <Text style={styles.sheetText}>
               You can drag this sheet up or down!
             </Text>
-          </DraggableBottomSheet>
+          </DraggableBottomSheet> */}
 
-          <DraggableBottomSheet
+          {/* <DraggableBottomSheet
             profilePicURL={profilePicURL}
             title={"list"}
             isVisible={isWooListBottomSheetVisible}

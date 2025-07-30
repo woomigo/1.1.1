@@ -171,7 +171,9 @@ export default function StoryViewerScreen({ route, navigation }) {
     <TouchableWithoutFeedback onPress={handleTap}>
       <View style={styles.container}>
         {renderMedia()}
-        {!isUserStory && renderUserInfo()}
+        {
+        // !isUserStory && 
+        renderUserInfo()}
         {renderProgressBars()}
       </View>
     </TouchableWithoutFeedback>

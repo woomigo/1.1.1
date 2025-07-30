@@ -27,36 +27,47 @@ import { woo_black } from "../assets/colors";
 import { getTimeAgo } from "./utility";
 import { Comments } from "./shared";
 import ListViewComments from "./ListViewComments";
+import ListViewReplies from "./ListViewReplies";
 
-const LayoutCommentItem = ({ uid, comment, comments }) => {
-  const [profilePicURL, setProfilePicURL] = useState();
-  const [username, setUsername] = useState();
-  const [user, setUser] = useState();
-  const [timestamp, setTimestamp] = useState();
+const LayoutCommentItem = ({ uid, comment, comments, token }) => {
+  const [replies, setReplies] = useState();
+  const [repliesCount, setRepliesCount] = useState();
   const [isReplies, setIsReplies] = useState(true);
   const [isRepliesExpanded, setIsRepliesExpaned] = useState(false);
 
   const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   console.log(comment);
-  //   setTimestamp(getTimeAgo(comment.item.timestamp.seconds));
-  //   const docRef = doc(db, "users", comment.item.comment_owner_uid);
-  //   const getProfileInfo = onSnapshot(
-  //     docRef,
-  //     (doc) => {
-  //       // console.log("Document data:", doc.data());
-  //       setUser(doc.data());
-  //       setProfilePicURL(doc.data().profile_pic_url);
-  //       setUsername(doc.data().username);
-  //     },
-  //     (error) => {}
-  //   );
+  const localhost = "http://192.168.12.240:3000";
 
-  //   return () => {
-  //     getProfileInfo();
-  //   };
-  // }, []);
+  const fetchReplies = async (commentId, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!commentId) throw new Error("Parent Comment ID is required");
+  
+    const res = await fetch(`${localhost}/comments/replies/${commentId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch Woo Comment Replies");
+  
+    const data = await res.json();
+    console.log("REPLIES OBJECT IS ======= ", JSON.stringify(data));
+  
+    setReplies(data); // assuming you're using a useState setter
+    setIsReplies(data.length > 0)
+    setRepliesCount(data.length)
+  
+    return data; // ✅ this avoids calling res.json() twice
+  };
+
+  useEffect(() => {
+    console.log("LCI " + JSON.stringify(comment.item.id));
+
+    fetchReplies(comment.item.id, token)
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -64,7 +75,11 @@ const LayoutCommentItem = ({ uid, comment, comments }) => {
         <View style={styles.commentHeaderContainer}>
           <View style={styles.avatarContainer}>
             <TouchableWithoutFeedback>
-              <Avatar rounded size="small" source={{ uri: profilePicURL }} />
+              <Avatar
+                rounded
+                size="small"
+                source={{ uri: comment.item.profile_pic_url }}
+              />
             </TouchableWithoutFeedback>
           </View>
           <View style={styles.replyLineContainer}>
@@ -74,17 +89,27 @@ const LayoutCommentItem = ({ uid, comment, comments }) => {
         <View style={styles.commentHeaderUserContainer}>
           <TouchableWithoutFeedback
             onPress={() => {
-              user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
+              user.uid !== uid &&
+                navigation.navigate("Profile", { userUID: user.uid });
             }}
           >
-            <Text style={styles.commentUsername}>{username}</Text>
+            <View style={{ flexDirection: "row" }}>
+              <Text style={styles.commentOwnerName}>
+                {comment.item.first_name} {comment.item.last_name} {""}
+              </Text>
+              <Text style={styles.commentUsername}>
+                @{comment.item.username}
+              </Text>
+            </View>
           </TouchableWithoutFeedback>
 
           <View style={styles.commentContainer}>
-            <Text style={styles.comment}>{comment.item.comment}</Text>
+            <Text style={styles.comment}>{comment.item.content}</Text>
           </View>
           <View style={styles.commentTimeReplyContainer}>
-            <Text style={styles.commentTimeAgo}>{timestamp}</Text>
+            <Text style={styles.commentTimeAgo}>
+              {getTimeAgo(comment.item.created_at)}
+            </Text>
             <Text style={styles.replyText}>reply</Text>
           </View>
 
@@ -94,7 +119,7 @@ const LayoutCommentItem = ({ uid, comment, comments }) => {
               onPress={() => setIsRepliesExpaned(!isRepliesExpanded)}
             >
               <Text style={styles.moreRepliesText}>
-                more replies ({Comments.length})
+                more replies ({repliesCount})
               </Text>
               <FontAwesome6Icon
                 name={isRepliesExpanded ? "caret-up" : "caret-down"}
@@ -114,7 +139,7 @@ const LayoutCommentItem = ({ uid, comment, comments }) => {
       </View>
 
       {isRepliesExpanded && (
-        <ListViewComments uid={uid} comments={comments} isReplies />
+        <ListViewReplies uid={uid} comments={replies} isReplies />
       )}
     </View>
   );
@@ -126,8 +151,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginHorizontal: 10,
     // flexDirection: "row",
-    borderTopWidth: 1,
-    borderTopColor: "#d9d9d9",
+    borderBottomWidth: 1,
+    borderBottomColor: "#d9d9d9",
     // backgroundColor: "red",
   },
   commentsContainer: {
@@ -167,6 +192,11 @@ const styles = StyleSheet.create({
   commentUsername: {
     // backgroundColor: "aqua",
     marginBottom: 3,
+    fontSize: 12,
+  },
+  commentOwnerName: {
+    // backgroundColor: "aqua",
+    marginBottom: 3,
     fontWeight: "bold",
     fontSize: 12,
   },
@@ -178,7 +208,7 @@ const styles = StyleSheet.create({
   moreRepliesContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10
+    marginBottom: 10,
   },
   moreRepliesText: {
     fontSize: 11,
