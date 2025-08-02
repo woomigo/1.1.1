@@ -106,7 +106,6 @@ const HomeScreen = ({ route, navigation }) => {
 
   async function fetchPublicFeed() {
     try {
-      const token = await AsyncStorage.getItem("token");
       const response = await fetch(`${localhost}/woos/publicfeed`, {
         method: "GET",
         headers: {
@@ -126,7 +125,6 @@ const HomeScreen = ({ route, navigation }) => {
 
   async function fetchPrivateFeed() {
     try {
-      const token = await AsyncStorage.getItem("token");
       const response = await fetch(`${localhost}/woos/privatefeed`, {
         method: "GET",
         headers: {
@@ -193,7 +191,18 @@ const HomeScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title="Logout" onPress={logoutUser} />
+      {/* <Button title="Logout" onPress={logoutUser} /> */}
+      <Text
+        style={{
+          textAlign: "center",
+          fontWeight: "bold",
+          color: woo_orange,
+          fontSize: 22,
+          margin: 10,
+        }}
+      >
+        woomigo
+      </Text>
       <ScrollView>
         <View
           style={{

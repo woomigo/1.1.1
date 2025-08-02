@@ -13,13 +13,13 @@ const LayoutWooGallery = ({ gallery, nav }) => {
         <View>
             {
                 gallery.length > 0 ?
-                    < Card containerStyle={styles.container}>
+                    // < Card containerStyle={styles.container}>
                         <ListViewGallery nav={nav} gallery={gallery} view="horizontal" size="xlrg" horizBorderRadius={5} />
-                    </Card >
+                    // </Card >
                     :
-                    < Card containerStyle={styles.textContainer}>
+                    // < Card containerStyle={styles.textContainer}>
                         <Text style={styles.text}>no woo gallery</Text>
-                    </Card >
+                    // </Card >
             }
         </View>
     )
@@ -27,6 +27,7 @@ const LayoutWooGallery = ({ gallery, nav }) => {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: 'red',
         width: '100%',
         borderRadius: 5,
         margin: 0,

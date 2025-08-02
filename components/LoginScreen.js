@@ -67,6 +67,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
+    console.log("LOGIN PUSHED")
     try {
       const res = await fetch(`${localhost}/auth/login`, {
         method: "POST",
@@ -75,6 +76,8 @@ const LoginScreen = ({ navigation }) => {
       });
 
       const data = await res.json();
+
+      console.log(`LOGIN INFO ${JSON.stringify(data)}`)
 
       if (!res.ok) {
         Alert.alert("Login Failed", data.error || "Invalid credentials");

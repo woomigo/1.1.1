@@ -231,7 +231,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Drawer
+      <Drawer
         drawerPosition="right"
         open={open}
         onOpen={() => setOpen(true)}
@@ -239,7 +239,7 @@ const ProfileScreen = ({ navigation, route }) => {
         renderDrawerContent={() => {
           return <MenuScreen user={user} />;
         }}
-      > */}
+      >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.topButtonsContainer}>
           <View
@@ -519,7 +519,7 @@ const ProfileScreen = ({ navigation, route }) => {
           </ScrollView>
         )}
       </ScrollView>
-      {/* </Drawer> */}
+      </Drawer>
     </SafeAreaView>
   );
 };

@@ -8,7 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
-
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RegisterScreen from "./components/RegisterScreen";
 import RegisterFullnameScreen from "./components/RegisterFullnameScreen";
 import RegisterDOBScreen from "./components/RegisterDOBScreens";
@@ -44,7 +44,7 @@ import EditProfileScreen from "./components/EditProfileScreen";
 import PrivacyPolicyScreen from "./components/PrivacyPolicyScreen";
 import WooScreen from "./components/WooScreen";
 import MigoGroupsScreen from "./components/MigoGroupsScreen";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import MessageDetailsScreen from "./components/MessagesDetails";
 import NewMessageScreen from "./components/NewMessageScreen";
 import ManageParticipantsScreen from "./components/ManageParticipantsScreen";
@@ -52,6 +52,7 @@ import MoreInfoScreen from "./components/MoreInfoScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StoryViewerScreen from "./components/StoryViewerScreen";
 import MediaGalleryWithPreview from "./components/MediaGalleryWithPreview";
+import WooListItems from "./components/WooListItems";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -104,6 +105,12 @@ const App = () => {
         <Stack.Screen
           name="WooListView"
           component={WooListView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooList"
+          component={WooListItems}
           options={{ headerShown: false }}
           initialParams={{ user: user, token: token }}
         />
@@ -214,6 +221,12 @@ const App = () => {
         <Stack.Screen
           name="WooListView"
           component={WooListView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooList"
+          component={WooListItems}
           options={{ headerShown: false }}
           initialParams={{ user: user, token: token }}
         />
@@ -367,15 +380,15 @@ const App = () => {
     isLoggedIn: false,
     isProfileComplete: false,
   });
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTQwMTY0OH0._VcyMy1wuATMypfOeP8KoCdYyHm3EUMvyL5aiEeys8E");
   const [user, setUser] = useState(null);
 
   const localhost = "http://192.168.12.240:3000";
 
   useEffect(() => {
     const checkLogin = async () => {
-      const token = await AsyncStorage.getItem("token");
-      setToken(token);
+      // const token = await AsyncStorage.getItem("token");
+      // setToken(token);
       if (token) {
         try {
           const response = await fetch(`${localhost}/auth/me`, {

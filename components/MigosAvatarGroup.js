@@ -1,8 +1,6 @@
 import React from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
-
-const woo_orange = "#FF6F00"; // Replace with your actual color
-const woo_white = "#FFFFFF";
+import { woo_orange, woo_white } from "../assets/colors";
 
 const MigosAvatarGroup = ({
   migos,
@@ -59,7 +57,7 @@ const MigosAvatarGroup = ({
 const styles = StyleSheet.create({
   migosContainer: {
     flex: 1,
-    marginTop: 5,
+    // marginTop: 5,
     flexDirection: "row",
     alignItems: "center",
   },

@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   View,
-  SafeAreaView,
   FlatList,
   TouchableOpacity,
 } from "react-native";
@@ -11,22 +10,27 @@ import { Header, Icon, Avatar } from "@rneui/themed";
 import { MenuItems } from "./shared";
 import LayoutMenuItem from "./LayoutMenuItem";
 import { woo_black } from "../assets/colors";
-import { getAuth, signOut } from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MenuScreen = ({ navigation, route, user }) => {
-  const auth = getAuth();
 
   const renderMenuItems = (menuItem) => <LayoutMenuItem menuItem={menuItem} />;
 
-  const logout = () => {
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-      })
-      .catch((error) => {
-        // An error happened.
-      });
-  };
+  // const logout = () => {
+  //   signOut(auth)
+  //     .then(() => {
+  //       // Sign-out successful.
+  //     })
+  //     .catch((error) => {
+  //       // An error happened.
+  //     });
+  // };
+
+    const logout = async () => {
+      // Remove the token from AsyncStorage
+      await AsyncStorage.removeItem("token");
+      // navigation.navigate('Login');
+    };
 
   return (
     <View style={styles.container}>
@@ -72,7 +76,7 @@ const MenuScreen = ({ navigation, route, user }) => {
             {user.first_name} {user.last_name}
           </Text>
           <Text style={styles.usernameText}>@{user.username}</Text>
-          <Text style={styles.numOfMigosText}>migos: {user.migos.length}</Text>
+          {/* <Text style={styles.numOfMigosText}>migos: {user.migos.length}</Text> */}
         </View>
       )}
 

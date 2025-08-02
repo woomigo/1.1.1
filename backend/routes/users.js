@@ -16,6 +16,9 @@ router.get('/check-username', userController.checkUsernameAvailability);
 // Read one user
 router.get("/:id", authenticateToken, userController.getUserById);
 
+// Get user by username
+router.get('/:username', authenticateToken, userController.getUserByUsername);
+
 // Update user - protected and checks ownership
 router.put("/:id", authenticateToken, userController.updateUser);
 

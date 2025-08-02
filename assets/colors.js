@@ -13,3 +13,5 @@ export const woo_white = "#FFFFFF"
 export const woo_green = "#008000"
 
 export const woo_red = "#df2c14"
+
+export const woo_medium_gray = "#1e1e1e25";

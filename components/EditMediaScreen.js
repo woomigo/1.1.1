@@ -33,7 +33,7 @@ const EditMediaScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
-  const userRef = doc(db, "users", uid);
+  // const userRef = doc(db, "users", uid);
 
   const topPosition = useSharedValue(-300); // Initial position off-screen
 
@@ -74,21 +74,21 @@ const EditMediaScreen = ({ navigation, route }) => {
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
             console.log(url);
-            addMediaToProfile(url);
+            // addMediaToProfile(url);
           });
         }
       );
     }
   };
 
-  const addMediaToProfile = async (url) => {
-    await updateDoc(userRef, {
-      gallery: arrayUnion(url),
-    });
-    setLoading(false);
-    navigation.popToTop();
-    navigation.navigate("Profile");
-  };
+  // const addMediaToProfile = async (url) => {
+  //   await updateDoc(userRef, {
+  //     gallery: arrayUnion(url),
+  //   });
+  //   setLoading(false);
+  //   navigation.popToTop();
+  //   navigation.navigate("Profile");
+  // };
 
   useEffect(() => {
     topPosition.value = isVisible ? -650 : -350;

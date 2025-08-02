@@ -29,7 +29,6 @@ exports.getMe = async (req, res) => {
   }
 };
 
-
 exports.register = async (req, res) => {
   const { email, password, isProfileComplete } = req.body;
 
@@ -79,8 +78,8 @@ exports.login = (req, res) => {
       } catch (compareErr) {
         return res.status(500).json({ error: "Internal server error" });
       }
-      
 
+      console.log("LOGIN BACKGROUND ", user);
       const token = jwt.sign({ id: user.id, email: user.email }, SECRET, {
         // expiresIn: "1h",
       });

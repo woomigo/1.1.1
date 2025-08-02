@@ -15,7 +15,12 @@ import {
 } from "react-native";
 import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
-import { woo_black, woo_orange, woo_white } from "../assets/colors";
+import {
+  woo_black,
+  woo_medium_gray,
+  woo_orange,
+  woo_white,
+} from "../assets/colors";
 import { Drawer } from "react-native-drawer-layout";
 import MenuScreen from "./MenuScreen";
 import ListViewWoos from "./ListViewWoos";
@@ -27,11 +32,9 @@ import {
   getTimeAgo,
   truncUsername,
 } from "./utility";
-import LayoutWooGallery from "./LayoutWooGallery";
-import DraggableBottomSheet from "./DraggableBottomSheet";
-import ListViewComments from "./ListViewComments";
-import ListViewWooList from "./ListViewWooList";
 import MigosAvatarGroup from "./MigosAvatarGroup";
+import WooListItems from "./WooListItems";
+import GalleryPreviewGroup from "./GalleryPreviewGroup";
 
 const WooScreen = ({ navigation, route }) => {
   const { uid, woo, token } = route.params;
@@ -47,34 +50,7 @@ const WooScreen = ({ navigation, route }) => {
   const [timeAgo, setTImeAgo] = useState("");
   const [gallery, setGallery] = useState([]);
   const [comments, setComments] = useState([]);
-  const [isCommentBottomSheetVisible, setIsCommentBottomSheetVisible] =
-    useState(false);
-  const [isWooMigosBottomSheetVisible, setIsWooMigosBottomSheetVisible] =
-    useState(false);
-  const [isWooGalleryBottomSheetVisible, setIsWooGalleryBottomSheetVisible] =
-    useState(false);
-  const [isWooListBottomSheetVisible, setIsWooListBottomSheetVisible] =
-    useState(false);
-
-  const handleOpenCommentBottomSheet = () => {
-    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
-    setIsCommentBottomSheetVisible(true);
-  };
-
-  const handleOpenWooMigosBottomSheet = () => {
-    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
-    setIsWooMigosBottomSheetVisible(true);
-  };
-
-  const handleOpenWooGalleryBottomSheet = () => {
-    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
-    setIsWooGalleryBottomSheetVisible(true);
-  };
-
-  const handleOpenWooListBottomSheet = () => {
-    scrollViewRef.current?.scrollToEnd({ animated: true }); // Scroll to bottom
-    setIsWooListBottomSheetVisible(true);
-  };
+  const [list, setList] = useState([]);
 
   const fetchWooGallery = async (wooId, token) => {
     if (!token) throw new Error("Auth token is missing");
@@ -122,6 +98,20 @@ const WooScreen = ({ navigation, route }) => {
     return data; // ✅ this avoids calling res.json() twice
   };
 
+  const fetchWooList = async (wooId, token) => {
+    try {
+      const res = await fetch(`${localhost}/lists/${wooId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setList(data);
+      console.log(`WOO LIST ITEMS ${JSON.stringify(data.items)}`);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Failed to load items.");
+    }
+  };
+
   const subscribeToWoo = () => {
     console.log("SUBSCRIBED!!!");
   };
@@ -135,6 +125,7 @@ const WooScreen = ({ navigation, route }) => {
 
     fetchWooGallery(woo.item.woo_id, token);
     fetchWooComments(woo.item.woo_id, token);
+    fetchWooList(woo.item.woo_id, token);
   }, [woo]);
 
   const markPrivateWooSeen = async () => {
@@ -295,26 +286,21 @@ const WooScreen = ({ navigation, route }) => {
               marginTop: 0,
             }}
           >
-            <View
-              style={[
-                styles.card,
-                { flex: 1, alignItems: "center", justifyContent: "center" },
-              ]}
-            >
+            <View style={[styles.card, { flex: 1 }]}>
+              <FontAwesome6Icon
+                name="clock"
+                solid
+                style={{}}
+                size={16}
+                color={woo_black}
+              />
               <View
                 style={{
                   flexDirection: "row",
-                  alignItems: "center",
+                  marginTop: 8,
                   justifyContent: "center",
                 }}
               >
-                <FontAwesome6Icon
-                  name="clock"
-                  style={{}}
-                  size={16}
-                  color={woo_black}
-                  onPress={() => setIsPrivateVisible(!isPrivateVisible)}
-                />
                 <View style={{ marginStart: 5 }}>
                   <Text>
                     {woo.item.start_time &&
@@ -326,10 +312,13 @@ const WooScreen = ({ navigation, route }) => {
               </View>
             </View>
 
-            <Pressable
-              style={[styles.card, { flex: 1, marginStart: 5 }]}
-              onPress={() => handleOpenWooMigosBottomSheet()}
-            >
+            <Pressable style={[styles.card, { flex: 1, marginStart: 5 }]}>
+              <FontAwesome6Icon
+                name="users"
+                solid
+                size={16}
+                color={woo_black}
+              />
               {(woo.item.sub_profile_pics &&
                 woo.item.sub_profile_pics.length > 0) ||
               (woo.item.migo_profile_pics &&
@@ -338,7 +327,7 @@ const WooScreen = ({ navigation, route }) => {
                   style={{
                     flex: 1,
                     justifyContent: "space-around",
-                    alignItems: "center",
+                    // alignItems: "center",
                   }}
                 >
                   <MigosAvatarGroup
@@ -373,7 +362,7 @@ const WooScreen = ({ navigation, route }) => {
             <View style={[styles.card, { flex: 1 }]}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <FontAwesome6Icon
-                  name="location-dot"
+                  name="map-location"
                   style={{}}
                   size={16}
                   color={woo_black}
@@ -419,6 +408,13 @@ const WooScreen = ({ navigation, route }) => {
                 navigation.navigate("WooCommentsView", { comments })
               }
             >
+              <FontAwesome6Icon
+                name="comments"
+                solid
+                style={{ marginBottom: 5 }}
+                size={16}
+                color={woo_black}
+              />
               {comments && comments.length > 0 ? (
                 <>
                   <View style={styles.commentHeaderContainer}>
@@ -450,6 +446,16 @@ const WooScreen = ({ navigation, route }) => {
                         </View>{" "}
                       </View>
                     </View>
+                    <View style={styles.likeContainer}>
+                      <TouchableOpacity style={styles.likeButton}>
+                        <FontAwesome6Icon
+                          name="heart"
+                          size={20}
+                          color={woo_black}
+                        />
+                        <Text style={styles.likeText}>{0}</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                   <View style={styles.seeMoreCommentsContainer}>
                     <TouchableOpacity
@@ -458,20 +464,26 @@ const WooScreen = ({ navigation, route }) => {
                       }
                     >
                       <Text style={styles.seeMoreCommentsText}>
-                        {`see ${
-                          comments && comments.length > 1
-                            ? comments.length - 1 + " "
-                            : ""
-                        }more comment${comments.length > 2 ? "s" : ""}...`}
+                        {comments && comments.length > 1
+                          ? `see ${
+                              comments && comments.length > 1
+                                ? comments.length - 1 + " "
+                                : ""
+                            }more comment${comments.length > 2 ? "s" : ""}...`
+                          : "add a comment..."}
                       </Text>
                     </TouchableOpacity>
                   </View>
                 </>
               ) : (
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 20,
+                  }}
                 >
-                  <Text>no comments</Text>
+                  <Text>be the first to comment</Text>
                 </View>
               )}
             </Pressable>
@@ -494,11 +506,23 @@ const WooScreen = ({ navigation, route }) => {
                 navigation.navigate("MediaGallery", { media: gallery })
               }
             >
+              <FontAwesome6Icon
+                name="images"
+                style={{ marginBottom: 5 }}
+                solid
+                size={16}
+                color={woo_black}
+              />
               {gallery && gallery.length > 0 ? (
-                <LayoutWooGallery gallery={gallery} />
+                <GalleryPreviewGroup gallery={gallery} alignRow="flex-start" />
               ) : (
+                // <LayoutWooGallery gallery={gallery} />
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 20,
+                  }}
                 >
                   <Text>no gallery</Text>
                 </View>
@@ -519,19 +543,27 @@ const WooScreen = ({ navigation, route }) => {
           >
             <Pressable
               style={[styles.card, { flex: 1 }]}
-              onPress={() => handleOpenWooListBottomSheet()}
+              onPress={() =>
+                navigation.navigate("WooList", { items: list.items })
+              }
             >
-              {woo.item.woo_list && woo.item.woo_list.length > 0 ? (
-                <ListViewWooList
-                  view={"horizontal"}
-                  wooList={woo.item.woo_list}
-                  size="xl"
-                />
+              <FontAwesome6Icon
+                name="list-check"
+                solid
+                size={16}
+                color={woo_black}
+              />
+              {list.items && list.items.length > 0 ? (
+                <WooListItems user items={list.items} token showPreviewOnly />
               ) : (
                 <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 20,
+                  }}
                 >
-                  <Text>no list</Text>
+                  <Text>all we need is you!</Text>
                 </View>
               )}
             </Pressable>
@@ -626,8 +658,8 @@ const styles = StyleSheet.create({
     height: 600,
   },
   card: {
-    backgroundColor: "#1e1e1e25",
-    padding: 15,
+    backgroundColor: woo_medium_gray,
+    padding: 10,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -668,14 +700,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   commentHeaderContainer: {
-    // flexDirection: "row",
-    marginStart: 5,
-    marginEnd: 5,
-    // backgroundColor: "blue",
+    flexDirection: "row",
+    marginStart: 15,
   },
   commentHeaderUserContainer: {
     flexDirection: "row",
-    // alignItems: "center",
+    flex: 5,
     marginStart: 5,
   },
   commentUserImage: {
@@ -712,6 +742,21 @@ const styles = StyleSheet.create({
   seeMoreCommentsText: {
     textDecorationLine: "underline",
     fontSize: 12,
+  },
+  likeContainer: {
+    flex: 1,
+
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  likeButton: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  likeText: {
+    marginStart: 3,
+    fontSize: 10,
   },
 });
 

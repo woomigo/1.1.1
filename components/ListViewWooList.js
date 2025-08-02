@@ -11,7 +11,7 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
   const [itemsSlctd, setItemsSlctd] = useState(2);
 
   useEffect(() => {
-    // console.log(`WOOLIST ==== ${wooList}`);
+    console.log(`WOOLIST ==== ${JSON.stringify(wooList)}`);
   });
 
   const handleListUpdate = (update) => {
@@ -22,7 +22,7 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
     <LayoutWooListItem
       size={size}
       view={"horizontal"}
-      item={item.item}
+      item={item}
       wooID={wooID}
     />
   );
@@ -128,7 +128,14 @@ const ListViewWooList = ({ wooList, view, size, wooID }) => {
         />
       )}
 
-      {renderView(view)}
+      {/* {renderView(view)} */}
+      <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            backgroundColor={"#fff"}
+            data={wooList}
+            renderItem={renderHorizontal}
+          />
       {view == "grid" && (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <Button

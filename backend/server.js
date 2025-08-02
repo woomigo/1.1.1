@@ -17,6 +17,7 @@ const groupMemberRoutes = require('./routes/groupMemberRoutes')
 const subScriptionRoutes = require('./routes/subscriptions')
 const likeRoutes = require('./routes/likes')
 const commentsRoutes = require('./routes/comments');
+const listRoutes = require('./routes/lists');
 
 app.use(cors());
 app.use(express.json());
@@ -27,7 +28,8 @@ app.use('/woos', wooRoutes);
 app.use('/migos', migoRoutes)
 app.use('/stories', storiesRoutes)
 app.use('./follower-requests', followerRequestRoutes)
-app.use('/galleries', galleriesRoutes); 
+app.use('/galleries', galleriesRoutes);
+app.use('/lists', listRoutes);
 app.use('/groups', groupRoutes);
 app.use('/group-managers', groupManagerRoutes);
 app.use('/group-members', groupMemberRoutes);
