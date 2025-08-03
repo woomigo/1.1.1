@@ -206,7 +206,7 @@ const HomeScreen = ({ route, navigation }) => {
       <ScrollView>
         <View
           style={{
-            marginTop: 20,
+            marginTop: 5,
           }}
         >
           <ListViewStories gallery={storyFeed} />
@@ -259,7 +259,7 @@ const HomeScreen = ({ route, navigation }) => {
           style={{
             flexDirection: "row",
             margin: 10,
-            marginTop: 30,
+            marginTop: 10,
           }}
         >
           <View

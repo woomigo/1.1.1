@@ -148,6 +148,79 @@ exports.getSubscriptionsByUserId = async (req, res) => {
   }
 };
 
+// Get all subs for a woo
+exports.getSubscriptionsByWooId = async (req, res) => {
+  const wooId = req.params.wooId;
+
+  try {
+    const [users] = await db.query(
+      `SELECT 
+         u.id AS user_id,
+         u.first_name,
+         u.last_name,
+         u.username,
+         u.profile_pic_url,
+         s.subscribed_at AS subscription_date
+       FROM subscriptions s
+       JOIN users u ON s.user_id = u.id
+       WHERE s.woo_id = ?
+       ORDER BY s.subscribed_at DESC`,
+      [wooId]
+    );
+
+    res.json(users);
+  } catch (err) {
+    console.error('Get subscriptions by woo ID error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+// exports.getSubscriptionsByWooId = async (req, res) => {
+//   const wooId = parseInt(req.params.wooId);
+//   const requesterId = req.user.id;
+
+//   if (!wooId) {
+//     return res.status(400).json({ error: "Woo ID is required." });
+//   }
+
+//   try {
+//     const [[woo]] = await db.query(`SELECT * FROM woos WHERE id = ?`, [wooId]);
+//     if (!woo) return res.status(404).json({ error: "Woo not found." });
+
+//     if (woo.owner_uid !== requesterId) {
+//       const [[isSub]] = await db.query(
+//         `SELECT 1 FROM subscriptions WHERE woo_id = ? AND user_id = ?`,
+//         [wooId, requesterId]
+//       );
+//       if (!isSub) {
+//         return res.status(403).json({ error: "Not authorized to view migos." });
+//       }
+//     }
+
+//     const [subs] = await db.query(
+//       `SELECT 
+//          m.user_id, 
+//          u.first_name, 
+//          u.last_name, 
+//          u.username, 
+//          u.profile_pic_url, 
+//          m.created_at,
+//          m.seen
+//        FROM subscriptions m
+//        JOIN users u ON m.user_id = u.id
+//        WHERE m.woo_id = ?`,
+//       [wooId]
+//     );
+
+//     res.json(subs);
+//   } catch (err) {
+//     console.error("Error fetching subs for woo:", err);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 // Unsubscribe from a woo
 exports.unsubscribe = async (req, res) => {
   const userId = req.user.id;

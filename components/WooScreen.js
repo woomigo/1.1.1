@@ -37,7 +37,7 @@ import WooListItems from "./WooListItems";
 import GalleryPreviewGroup from "./GalleryPreviewGroup";
 
 const WooScreen = ({ navigation, route }) => {
-  const { uid, woo, token } = route.params;
+  const { user, woo, token } = route.params;
 
   const localhost = "http://192.168.12.240:3000";
 
@@ -47,10 +47,29 @@ const WooScreen = ({ navigation, route }) => {
 
   const scrollViewRef = useRef(null);
 
-  const [timeAgo, setTImeAgo] = useState("");
+  const [migosSubs, setMigosSubs] = useState("");
   const [gallery, setGallery] = useState([]);
   const [comments, setComments] = useState([]);
   const [list, setList] = useState([]);
+
+  const fetchWooMigosSub = async (wooId, type, token) => {
+    try {
+      const res = await fetch(
+        `${localhost}/${
+          type === "public" ? "subscriptions" : "migos"
+        }/${wooId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      setMigosSubs(data);
+      console.log(`WOO SUB/MIGOS ${JSON.stringify(data)}`);
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Failed to load items.");
+    }
+  };
 
   const fetchWooGallery = async (wooId, token) => {
     if (!token) throw new Error("Auth token is missing");
@@ -123,6 +142,7 @@ const WooScreen = ({ navigation, route }) => {
     }
     console.log("WOOOOOO " + JSON.stringify(woo));
 
+    fetchWooMigosSub(woo.item.woo_id, woo.item.type, token);
     fetchWooGallery(woo.item.woo_id, token);
     fetchWooComments(woo.item.woo_id, token);
     fetchWooList(woo.item.woo_id, token);
@@ -229,7 +249,6 @@ const WooScreen = ({ navigation, route }) => {
                     size={30}
                     solid={woo.item.liked_by_me ? true : false}
                     color={woo.item.liked_by_me ? woo_orange : woo_black}
-                    onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
                   <Text style={{ marginTop: 3, fontSize: 12 }}>
                     {woo.item.like_count}
@@ -241,7 +260,6 @@ const WooScreen = ({ navigation, route }) => {
                     style={{}}
                     size={30}
                     color={woo_black}
-                    onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                   />
                   <Text style={{ marginTop: 3 }}>{}</Text>
                 </View>
@@ -312,7 +330,10 @@ const WooScreen = ({ navigation, route }) => {
               </View>
             </View>
 
-            <Pressable style={[styles.card, { flex: 1, marginStart: 5 }]}>
+            <Pressable
+              style={[styles.card, { flex: 1, marginStart: 5 }]}
+              onPress={() => navigation.navigate("WooMigosView", { migos: migosSubs, uid: user.id, wooType: woo.item.type })}
+            >
               <FontAwesome6Icon
                 name="users"
                 solid
@@ -366,7 +387,6 @@ const WooScreen = ({ navigation, route }) => {
                   style={{}}
                   size={16}
                   color={woo_black}
-                  onPress={() => setIsPrivateVisible(!isPrivateVisible)}
                 />
                 <Text style={styles.infoText}>
                   {" "}

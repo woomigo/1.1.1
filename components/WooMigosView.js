@@ -7,7 +7,7 @@ import { woo_black, woo_orange } from '../assets/colors';
 
 const WooMigosView = ({ navigation, route }) => {
 
-    const { uid, migos } = route.params;
+    const { uid, migos, wooType } = route.params;
 
     const [index, setIndex] = useState(0);
 
@@ -28,7 +28,7 @@ const WooMigosView = ({ navigation, route }) => {
                     />}
                     centerComponent={
                         <View >
-                            <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo migos</Text>
+                            <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>woo {wooType === "public" ? "subs" : "migos"}</Text>
                         </View>
                     }
                 // rightComponent={

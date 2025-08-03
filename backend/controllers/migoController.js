@@ -104,7 +104,7 @@ exports.getMigosByWooId = async (req, res) => {
          u.last_name, 
          u.username, 
          u.profile_pic_url, 
-         m.created_at,
+         m.invited_at,
          m.seen
        FROM migos m
        JOIN users u ON m.user_id = u.id

@@ -269,7 +269,7 @@ const SearchScreen = ({ navigation, route }) => {
         placeholder="search woo list"
       /> */}
 
-      {/* <Input
+      <Input
         value={searchValue}
         ref={searchRef}
         onChangeText={(text) => handleSearchOnChange(text)}
@@ -302,7 +302,7 @@ const SearchScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           )
         }
-      /> */}
+      />
 
       {user && user ? (
         user.uid === uid ? (

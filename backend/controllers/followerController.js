@@ -1,7 +1,7 @@
 const db = require('../db');
 
 // Get followers of a user
-exports.getFollowerIds = async (req, res) => {
+exports.getFollowers = async (req, res) => {
   const [rows] = await db.query(
     'SELECT follower_id FROM followers WHERE followee_id = ?', [req.params.id]
   );
@@ -9,7 +9,7 @@ exports.getFollowerIds = async (req, res) => {
 };
 
 // Get following of a user
-exports.getFollowingIds = async (req, res) => {
+exports.getFollowings = async (req, res) => {
   const [rows] = await db.query(
     'SELECT followee_id FROM followers WHERE follower_id = ?', [req.params.id]
   );
@@ -139,7 +139,7 @@ exports.getUserWithFollowersAndFollowingInfo = async (req, res) => {
   }
 };
 
-exports.getFollowers = async (req, res) => {
+exports.getFollowersInfo = async (req, res) => {
   const userId = req.params.id;
   if (!userId) {
     return res.status(400).json({ error: "User ID is required in the URL." });
@@ -184,7 +184,7 @@ exports.getFollowers = async (req, res) => {
   }
 };
 
-exports.getFollowings = async (req, res) => {
+exports.getFollowingsInfo = async (req, res) => {
   const userId = req.params.id;
   if (!userId) {
     return res.status(400).json({ error: "User ID is required in the URL." });
