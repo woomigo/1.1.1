@@ -121,7 +121,7 @@ exports.declineFollowRequest = async (req, res) => {
 };
 
 exports.getIncomingFollowRequests = async (req, res) => {
-  const receiverId = req.params.id;
+  const receiverId = req.user.id;
 
   try {
     const [requests] = await db.query(
@@ -149,7 +149,7 @@ exports.getIncomingFollowRequests = async (req, res) => {
 };
 
 exports.getOutgoingFollowRequests = async (req, res) => {
-  const senderId = req.params.id;
+  const senderId = req.user.id;
 
   try {
     const [requests] = await db.query(

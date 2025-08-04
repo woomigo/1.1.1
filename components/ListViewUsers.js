@@ -6,7 +6,7 @@ import { woo_black, woo_gray, woo_green, woo_orange, woo_red, woo_white } from "
 import { list } from "firebase/storage";
 
 
-const ListViewUsers = ({ uid, returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = woo_orange, doubleBtn1Color = woo_orange, doubleBtn2Color = woo_gray, handleSingleBtnOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
+const ListViewUsers = ({ uid, returnUsers, users, kind, searchBoxPlaceholder = "search by @username", hideSearchBar, singleBtnText = "single", doubleBtn1Text = "double 1", doubleBtn2Text = "double 2", singleBtnColor = woo_orange, doubleBtn1Color = woo_orange, doubleBtn2Color = woo_gray, handleSingleBtnOnClick, handleXOnClick, handleDoubleBtnOneOnClick, handleDoubleBtnTwoOnClick }) => {
 
     const [usersSelected, setUsersSelected] = useState([]);
     const [searchValue, setSearchValue] = useState([])
@@ -16,7 +16,7 @@ const ListViewUsers = ({ uid, returnUsers, users, kind, searchBoxPlaceholder = "
     const searchRef = useRef()
 
     useEffect(() => {
-        // console.log(`LVU USERS === ${JSON.stringify(users)}`)
+        console.log(`LVU USERS === ${JSON.stringify(users)}`)
     })
 
     const handleSearch = () => {
@@ -40,7 +40,7 @@ const ListViewUsers = ({ uid, returnUsers, users, kind, searchBoxPlaceholder = "
     }
 
     const renderUsers = (user) => (
-        <LayoutUserItem uid={uid} kind={kind} onCheckBoxSelected={onCheckBoxSelected} userItem={user} singleBtnText={singleBtnText} doubleBtn1Text={doubleBtn1Text} doubleBtn2Text={doubleBtn2Text} singleBtnColor={singleBtnColor} doubleBtn1Color={doubleBtn1Color} doubleBtn2Color={doubleBtn2Color} handleSingleBtnOnClick={handleSingleBtnOnClick} handleDoubleBtnOneOnClick={handleDoubleBtnOneOnClick} handleDoubleBtnTwoOnClick={handleDoubleBtnTwoOnClick} />
+        <LayoutUserItem uid={uid} kind={kind} onCheckBoxSelected={onCheckBoxSelected} userItem={user} singleBtnText={singleBtnText} doubleBtn1Text={doubleBtn1Text} doubleBtn2Text={doubleBtn2Text} singleBtnColor={singleBtnColor} doubleBtn1Color={doubleBtn1Color} doubleBtn2Color={doubleBtn2Color} handleSingleBtnOnClick={handleSingleBtnOnClick} handleXOnClick={handleXOnClick} handleDoubleBtnOneOnClick={handleDoubleBtnOneOnClick} handleDoubleBtnTwoOnClick={handleDoubleBtnTwoOnClick} />
     )
 
     let listOfSelectedUsers = [];

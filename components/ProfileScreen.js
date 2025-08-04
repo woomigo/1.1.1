@@ -11,9 +11,8 @@ import {
   Pressable,
   TouchableOpacity,
   Animated,
-  Alert,
 } from "react-native";
-import { Avatar, Tab, TabView, Card, Button, Icon } from "@rneui/themed";
+import { Avatar, Card, Button, Icon } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
 import { Drawer } from "react-native-drawer-layout";

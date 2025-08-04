@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Pressable } from "react-native";
 import { Avatar, CheckBox } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { woo_black } from "../assets/colors";
 // import { db } from "../firebaseConfig";
 // import { doc, docSnap, onSnapshot } from "firebase/firestore";
 
@@ -17,6 +19,7 @@ const LayoutUserItem = ({
   doubleBtn1Color,
   doubleBtn2Color,
   handleSingleBtnOnClick,
+  handleXOnClick,
   handleDoubleBtnOneOnClick,
   handleDoubleBtnTwoOnClick,
 }) => {
@@ -24,8 +27,7 @@ const LayoutUserItem = ({
   // const [user, setUser] = useState();
 
   useEffect(() => {
-    console.log(`LUI USER === ${JSON.stringify(userItem.item)}`)
-
+    console.log(`LUI USER === ${JSON.stringify(userItem.item)}`);
   }, [userItem]);
 
   const navigation = useNavigation();
@@ -43,12 +45,18 @@ const LayoutUserItem = ({
             />
           </View>
         );
+      case "x":
+        return (
+          <Pressable style={{marginEnd: 30}} onPress={() => handleXOnClick(userItem.item)}>
+            <FontAwesome6Icon name="xmark" solid size={20} color={woo_black}  />
+          </Pressable>
+        );
       case "single":
         return (
           <View style={styles.requestButtonContainer}>
             <TouchableOpacity
               style={[styles.addButton, { backgroundColor: singleBtnColor }]}
-              onPress={() => handleSingleBtnOnClick(user)}
+              onPress={() => handleSingleBtnOnClick(userItem.item)}
             >
               <Text style={styles.buttonText}>{singleBtnText}</Text>
             </TouchableOpacity>
@@ -62,13 +70,13 @@ const LayoutUserItem = ({
                 styles.acceptButton,
                 { backgroundColor: doubleBtn1Color },
               ]}
-              onPress={() => handleDoubleBtnOneOnClick(user)}
+              onPress={() => handleDoubleBtnOneOnClick(userItem.item)}
             >
               <Text style={styles.buttonText}>{doubleBtn1Text}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.denyButton, { backgroundColor: doubleBtn2Color }]}
-              onPress={() => handleDoubleBtnTwoOnClick(user)}
+              onPress={() => handleDoubleBtnTwoOnClick(userItem.item)}
             >
               <Text style={styles.buttonText}>{doubleBtn2Text}</Text>
             </TouchableOpacity>
@@ -104,8 +112,9 @@ const LayoutUserItem = ({
           <TouchableOpacity
             style={styles.container}
             onPress={() => {
-              console.log()
-              userItem.item.user_id !== uid && navigation.push("Profile", { userUID: userItem.item.user_id });
+              console.log();
+              userItem.item.user_id !== uid &&
+                navigation.push("Profile", { userUID: userItem.item.user_id });
             }}
           >
             <View style={styles.imageContainer}>

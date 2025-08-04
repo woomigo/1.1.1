@@ -17,173 +17,168 @@ import ListViewUsers from "./ListViewUsers";
 import { woo_black, woo_orange, woo_red } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
+const localhost = "http://192.168.12.240:3000";
+
 const MigoRequestScreen = ({ navigation, route }) => {
-  const { uid } = route.params;
-  const userRef = doc(db, "users", uid);
+  const { user, token } = route.params;
 
   const [index, setIndex] = useState(0);
+  const [newFRAction, setNewFRAction] = useState(false);
   const [sentRequests, setSentRequests] = useState();
   const [receivedRequests, setReceivedRequests] = useState();
-  const [user, setUser] = useState();
 
-  // useEffect(() => {
-  //   const docRef = doc(db, "users", uid);
-  //   const getMigoRequests = onSnapshot(
-  //     docRef,
-  //     (doc) => {
-  //       // console.log("Document data:", doc.data());
-  //       setUser(doc.data());
-  //       setSentRequests(doc.data().sent_migo_requests);
-  //       setReceivedRequests(doc.data().received_migo_requests);
-  //     },
-  //     (error) => {}
-  //   );
+  const fetchSentFollowRequests = async (token) => {
+    if (!token) throw new Error("Auth token is missing");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/outgoing`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+      });
 
-  //   return () => {
-  //     getMigoRequests();
-  //   };
-  // }, []);
+      if (!res.ok) throw new Error("Failed to fetch followings");
 
-  // const removeUIDFromOwnerSent = async (userUID) => {
-  //   await updateDoc(userRef, {
-  //     sent_migo_requests: arrayRemove(userUID),
-  //   });
-  // };
+      const data = await res.json();
+      console.log(
+        "Sent Follow Requests OBJECT IS ======= " + JSON.stringify(data)
+      );
+      setSentRequests(data.outgoing_requests);
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // const removeUIDFromUserSent = async (userUID) => {
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     sent_migo_requests: arrayRemove(uid),
-  //   });
-  //   // setView("migoRequestSuccess")
-  // };
+  const fetchReceivedFollowRequests = async (token) => {
+    if (!token) throw new Error("Auth token is missing");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/incoming`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+      });
 
-  // const removeUIDFromOwnerReceived = async (userUID) => {
-  //   await updateDoc(userRef, {
-  //     received_migo_requests: arrayRemove(userUID),
-  //   });
-  // };
+      if (!res.ok) throw new Error("Failed to fetch followings");
 
-  // const removeUIDFromUserReceived = async (userUID) => {
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     received_migo_requests: arrayRemove(uid),
-  //   });
-  //   // setView("migoRequestSuccess")
-  // };
+      const data = await res.json();
+      console.log(
+        "Received Follow Requests OBJECT IS ======= " + JSON.stringify(data)
+      );
+      setReceivedRequests(data.incoming_requests);
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // const handleFollowUser = (user) => {
-  //   console.log(`FOLLOW!!!! ${user.username}`);
-  //   // setView("loading")
-  //   addUIDToOwnerFollowers(user.uid);
-  //   addUIDToUserFollowing(user.uid);
-  // };
+  useEffect(() => {
+    console.log("MRS ", token);
+    fetchReceivedFollowRequests(token);
+    fetchSentFollowRequests(token);
+  }, [token, newFRAction]);
 
-  // const handleAddMigo = (user) => {
-  //   // setView("loading")
-  //   addUIDToOwnerMigos(user.uid);
-  //   addUIDToUserMigos(user.uid);
-  //   removeUIDFromUserFollowing(user.uid);
-  //   removeUIDFromOwnerFollowers(user.uid);
-  // };
+  const fetchCancelFollowRequest = async (sender_id, receiver_id, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!sender_id) throw new Error("Sender ID is required");
+    if (!receiver_id) throw new Error("Receiver ID is required");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+        body: JSON.stringify({ sender_id, receiver_id }),
+      });
 
-  // const addUIDToOwnerFollowers = async (userUID) => {
-  //   await updateDoc(userRef, {
-  //     followers: arrayUnion(userUID),
-  //   });
-  // };
+      if (!res.ok) throw new Error("Failed to fetch followings");
 
-  // const addUIDToUserFollowing = async (userUID) => {
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     following: arrayUnion(uid),
-  //   });
-  //   // setView("success")
-  // };
+      const data = await res.json();
+      console.log(
+        "CANCEL FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
+      );
+      setNewFRAction(true);
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // const addUIDToOwnerMigos = async (userUID) => {
-  //   console.log("ADD UID TO OWNER MIGOS");
-  //   await updateDoc(userRef, {
-  //     migos: arrayUnion(userUID),
-  //   });
-  // };
+  const fetchIgnoreFollowRequest = async (request_id, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!request_id) throw new Error("Request ID is required");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/${request_id}/decline`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+      });
 
-  // const addUIDToUserMigos = async (userUID) => {
-  //   console.log("ADD UID TO USER MIGOS");
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     migos: arrayUnion(uid),
-  //   });
-  //   // setView("migoRequestSuccess")
-  // };
+      if (!res.ok) throw new Error("Failed to ignore request");
 
-  // const removeUIDFromUserFollowing = async (userUID) => {
-  //   console.log("REMOVE UID FROM USER FOLLOWING");
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     following: arrayRemove(uid),
-  //   });
-  // };
+      const data = await res.json();
+      console.log(
+        "Ignore FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
+      );
+      setNewFRAction(true);
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // const removeUIDFromOwnerFollowers = async (userUID) => {
-  //   console.log("REMOVE UID FROM OWNER FOLLOWERS");
-  //   await updateDoc(userRef, {
-  //     followers: arrayRemove(userUID),
-  //   });
-  // };
+  const fetchAcceptFollowRequest = async (request_id, token) => {
+    if (!token) throw new Error("Auth token is missing");
+    if (!request_id) throw new Error("Request ID is required");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/${request_id}/accept`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+      });
 
-  // const handleDelete = (user) => {
-  //   removeUIDFromOwnerSent(user.uid);
-  //   removeUIDFromUserReceived(user.uid);
-  //   console.log("DELETE " + user);
-  // };
+      if (!res.ok) throw new Error("Failed to accept request");
 
-  // const handleAccept = (user) => {
-  //   if (user.following.includes(uid)) {
-  //     handleAddMigo(user);
-  //     console.log("MIGOS MIGO REQUESTS");
-  //   } else {
-  //     handleFollowUser(user);
-  //     console.log("ACCEPT CLICKED");
-  //   }
-  //   removeUIDFromUserSent(user.uid);
-  //   removeUIDFromOwnerReceived(user.uid);
-  //   console.log("Accept " + user.uid);
-  // };
+      const data = await res.json();
+      console.log(
+        "Accept FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
+      );
+      setNewFRAction(true);
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // const handleIgnore = (user) => {
-  //   removeUIDFromUserSent(user.uid);
-  //   removeUIDFromOwnerReceived(user.uid);
-  //   console.log("IGNORE " + user.uid);
-  // };
+  const handleDelete = async (request) => {
+    console.log("DELETE " + JSON.stringify(request));
+    await fetchCancelFollowRequest(user.id, request.receiver_id, token);
+  };
+
+  const handleAccept = async (request) => {
+    await fetchAcceptFollowRequest(request.request_id, token);
+    console.log("MIGOS MIGO REQUESTS");
+    console.log("Accept " + JSON.stringify(request));
+  };
+
+  const handleIgnore = async (request) => {
+    await fetchIgnoreFollowRequest(request.request_id, token);
+    console.log("IGNORE " + JSON.stringify(request));
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Header
-                style={styles.header}
-                backgroundColor={'#fff'}
-                leftComponent={
-                    <Icon
-                        name="chevron-left"
-                        type='font-awesome-5'
-                        color={woo_black}
-                        size={25}
-                        onPress={() =>
-                            navigation.navigate('Migos')
-                        }
-                    />}
-                centerComponent={
-                    <View >
-                        <Text style={{ fontSize: 25, color: woo_black, textAlign: 'center', fontWeight: 'bold' }}>migo requests</Text>
-                    </View>
-                }
-                // rightComponent={
-
-                // }
-                rightContainerStyle={styles.rightComponent}
-                leftContainerStyle={styles.leftComponent}
-                centerContainerStyle={styles.centerComponent}
-            /> */}
-
       <View style={styles.header}>
         <View
           style={{
-            // backgroundColor: "blue",
             flex: 1,
             flexDirection: "row",
             justifyContent: "flex-start",
@@ -195,10 +190,8 @@ const MigoRequestScreen = ({ navigation, route }) => {
         </View>
         <View
           style={{
-            // backgroundColor: "blue",
             flex: 3,
             flexDirection: "row",
-            // justifyContent: 'center',
           }}
         >
           <Text
@@ -227,12 +220,12 @@ const MigoRequestScreen = ({ navigation, route }) => {
         }}
       >
         <Tab.Item
-          title="received requests"
-          titleStyle={{ fontSize: 12, color: woo_black }}
+          title="received"
+          titleStyle={{ fontSize: 14, color: woo_black }}
         />
         <Tab.Item
-          title="sent requests"
-          titleStyle={{ fontSize: 12, color: woo_black }}
+          title="sent"
+          titleStyle={{ fontSize: 14, color: woo_black }}
         />
       </Tab>
       <TabView value={index} onChange={setIndex} animationType="spring">
@@ -244,8 +237,8 @@ const MigoRequestScreen = ({ navigation, route }) => {
               hideSearchBar
               doubleBtn1Text="accept"
               doubleBtn2Text="ignore"
-              handleDoubleBtnOneOnClick={(uid) => handleAccept(uid)}
-              handleDoubleBtnTwoOnClick={(uid) => handleIgnore(uid)}
+              handleDoubleBtnOneOnClick={(fr) => handleAccept(fr)}
+              handleDoubleBtnTwoOnClick={(fr) => handleIgnore(fr)}
             />
           </View>
         </TabView.Item>
@@ -257,7 +250,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
               hideSearchBar
               singleBtnText="delete"
               singleBtnColor={woo_red}
-              handleSingleBtnOnClick={(uid) => handleDelete(uid)}
+              handleSingleBtnOnClick={(fr) => handleDelete(fr)}
             />
           </View>
         </TabView.Item>
@@ -295,7 +288,6 @@ const styles = StyleSheet.create({
   tabHeader: {
     marginTop: 10,
     padding: 5,
-    // alignItems: 'center'
   },
   tabText: {
     fontSize: 18,
