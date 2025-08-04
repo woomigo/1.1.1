@@ -34,6 +34,7 @@ const LayoutWooLike = ({
   ownerProfilePicture,
   ownerFirstName,
   ownerLastName,
+  token,
   wooLikes,
   wooLikedByMe,
   uid,
@@ -41,42 +42,68 @@ const LayoutWooLike = ({
 }) => {
   const navigation = useNavigation();
 
-  // const [isLiked, setIsLiked] = useState(false);
+  const localhost = "http://192.168.12.240:3000";
+
+  const [isLiked, setIsLiked] = useState(wooLikedByMe);
+  const [wooLikeCount, setWooLikeCount] = useState(wooLikes)
   // const [isWooMigo, setIsWooMigo] = useState(false);
   // const [receivedUID, setReceiverUID] = useState([]);
 
-  // useEffect(() => {
-  //   wooLikes.includes(uid) ? setIsLiked(true) : setIsLiked(false);
-  //   wooMigos.includes(uid) ? setIsWooMigo(true) : setIsWooMigo(false);
-  // });
+  useEffect(() => {
+console.log(` LWL ${wooID} ${wooLikes}`)
+  }, [wooID, wooLikes]);
 
-  // const addUIDToWooLikes = async () => {
-  //   await updateDoc(doc(db, "woos", wooID), {
-  //     woo_likes: arrayUnion(uid),
-  //   });
-  //   console.log("ADD");
-  // };
+  const fetchLikeWoo = async (woo_id) => {
+    try {
+      const response = await fetch(`${localhost}/woo-likes/like`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ woo_id }),
+      });
 
-  // const removeUIDFromWooLikes = async () => {
-  //   await updateDoc(doc(db, "woos", wooID), {
-  //     woo_likes: arrayRemove(uid),
-  //   });
-  //   console.log("REMOVE");
-  // };
+      if (!response.ok) throw new Error("Failed to like woo");
 
-  // const addWooToProfile = async () => {
-  //   await updateDoc(doc(db, "woos", wooID), {
-  //     woo_migos: arrayUnion(uid),
-  //     migo_woos: arrayRemove(uid),
-  //   });
-  // };
+      const data = await response.json();
+      setIsLiked(!isLiked);
+      setWooLikeCount(prev => prev + 1)
+    } catch (error) {
+      console.error("Error liking story:", error);
+    }
+  };
 
-  // const removeWooFromProfile = async () => {
-  //   await updateDoc(doc(db, "woos", wooID), {
-  //     woo_migos: arrayRemove(uid),
-  //     migo_woos: arrayUnion(uid),
-  //   });
-  // };
+  const fetchUnLikeWoo = async (woo_id) => {
+    try {
+      const response = await fetch(`${localhost}/woo-likes/unlike`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ woo_id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to unlike woo");
+
+      const data = await response.json();
+      setIsLiked(!isLiked);
+      setWooLikeCount(prev => prev - 1)
+    } catch (error) {
+      console.error("Error unliking story:", error);
+    }
+  };
+
+  const addWooLike = async (wooId) => {
+    console.log("ADD ", wooId);
+    await fetchLikeWoo(wooId)
+  };
+
+  const removeWooLike = async (wooId) => {
+    console.log("REMOVE ", wooId);
+    await fetchUnLikeWoo(wooId)
+  };
 
   // const saveNotification = async () => {
   //     try {
@@ -110,10 +137,11 @@ const LayoutWooLike = ({
   //   }
   // };
 
-  // const toggleIsLiked = () => {
-  //   isLiked ? removeUIDFromWooLikes() : addUIDToWooLikes();
-  //   saveNotification();
-  // };
+  const toggleIsLiked = () => {
+    isLiked ? removeWooLike(wooID) : addWooLike(wooID);
+    // setIsLiked(!isLiked)
+    // saveNotification();
+  };
 
   // const toggleAddWoo = () => {
   //   isWooMigo ? removeWooFromProfile() : addWooToProfile();
@@ -158,18 +186,18 @@ const LayoutWooLike = ({
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              // onPressOut={toggleIsLiked}
+              onPressOut={toggleIsLiked}
             >
               <Icon
                 name="heart"
                 type="font-awesome-5"
                 color={woo_orange}
-                solid={wooLikedByMe ? true : false}
+                solid={isLiked ? true : false}
                 size={25}
-                // onPress={toggleIsLiked}
+                onPress={toggleIsLiked}
               />
             </Pressable>
-            <Text style={{ fontSize: 12 }}>{truncNumber(wooLikes)}</Text>
+            <Text style={{ fontSize: 12 }}>{truncNumber(wooLikeCount)}</Text>
           </View>
 
           <FontAwesome6Icon

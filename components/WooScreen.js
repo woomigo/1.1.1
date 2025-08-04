@@ -51,6 +51,65 @@ const WooScreen = ({ navigation, route }) => {
   const [gallery, setGallery] = useState([]);
   const [comments, setComments] = useState([]);
   const [list, setList] = useState([]);
+  const [isLiked, setIsLiked] = useState(woo.item.liked_by_me);
+  const [wooLikeCount, setWooLikeCount] = useState(woo.item.like_count);
+
+  const fetchLikeWoo = async (woo_id) => {
+    try {
+      const response = await fetch(`${localhost}/woo-likes/like`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ woo_id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to like woo");
+
+      const data = await response.json();
+      setIsLiked(!isLiked);
+      setWooLikeCount((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error liking story:", error);
+    }
+  };
+
+  const fetchUnLikeWoo = async (woo_id) => {
+    try {
+      const response = await fetch(`${localhost}/woo-likes/unlike`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ woo_id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to unlike woo");
+
+      const data = await response.json();
+      setIsLiked(!isLiked);
+      setWooLikeCount((prev) => prev - 1);
+    } catch (error) {
+      console.error("Error unliking story:", error);
+    }
+  };
+
+  const addWooLike = async (wooId) => {
+    console.log("ADD ", wooId);
+    await fetchLikeWoo(wooId);
+  };
+
+  const removeWooLike = async (wooId) => {
+    console.log("REMOVE ", wooId);
+    await fetchUnLikeWoo(wooId);
+  };
+
+  const toggleIsLiked = () => {
+    isLiked ? removeWooLike(woo.item.woo_id) : addWooLike(woo.item.woo_id);
+    // saveNotification();
+  };
 
   const fetchWooMigosSub = async (wooId, type, token) => {
     try {
@@ -243,15 +302,25 @@ const WooScreen = ({ navigation, route }) => {
                     alignItems: "center",
                   }}
                 >
-                  <FontAwesome6Icon
-                    name="heart"
-                    style={{}}
-                    size={30}
-                    solid={woo.item.liked_by_me ? true : false}
-                    color={woo.item.liked_by_me ? woo_orange : woo_black}
-                  />
+                  <Pressable
+                    style={{
+                      width: 40,
+                      height: 40,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onPressOut={toggleIsLiked}
+                  >
+                    <FontAwesome6Icon
+                      name="heart"
+                      style={{}}
+                      size={30}
+                      solid={isLiked ? true : false}
+                      color={isLiked ? woo_orange : woo_black}
+                    />
+                  </Pressable>
                   <Text style={{ marginTop: 3, fontSize: 12 }}>
-                    {woo.item.like_count}
+                    {wooLikeCount}
                   </Text>
                 </View>
                 <View>
@@ -332,7 +401,13 @@ const WooScreen = ({ navigation, route }) => {
 
             <Pressable
               style={[styles.card, { flex: 1, marginStart: 5 }]}
-              onPress={() => navigation.navigate("WooMigosView", { migos: migosSubs, uid: user.id, wooType: woo.item.type })}
+              onPress={() =>
+                navigation.navigate("WooMigosView", {
+                  migos: migosSubs,
+                  uid: user.id,
+                  wooType: woo.item.type,
+                })
+              }
             >
               <FontAwesome6Icon
                 name="users"

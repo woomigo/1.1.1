@@ -3,18 +3,29 @@ const db = require("../db");
 // Like a post
 exports.likeWoo = async (req, res) => {
   const userId = req.user.id;
-  const { post_id } = req.body;
+  const { woo_id } = req.body;
 
   try {
-    await db.query(
-      `INSERT IGNORE INTO woo_likes (woo_id, user_id) VALUES (?, ?)`,
+    const [existing] = await db.query(
+      `SELECT 1 FROM woo_likes WHERE woo_id = ? AND user_id = ?`,
       [woo_id, userId]
     );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ message: "woo already liked" });
+    }
+
+    await db.query(
+      `INSERT INTO woo_likes (woo_id, user_id) VALUES (?, ?)`,
+      [woo_id, userId]
+    );
+
     res.json({ message: "woo liked" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // Unlike a post
 exports.unlikeWoo = async (req, res) => {
@@ -22,15 +33,26 @@ exports.unlikeWoo = async (req, res) => {
   const { woo_id } = req.body;
 
   try {
-    await db.query(`DELETE FROM woo_likes WHERE woo_id = ? AND user_id = ?`, [
-      woo_id,
-      userId,
-    ]);
+    const [existing] = await db.query(
+      `SELECT 1 FROM woo_likes WHERE woo_id = ? AND user_id = ?`,
+      [woo_id, userId]
+    );
+
+    if (existing.length === 0) {
+      return res.status(400).json({ message: "woo not liked yet" });
+    }
+
+    await db.query(
+      `DELETE FROM woo_likes WHERE woo_id = ? AND user_id = ?`,
+      [woo_id, userId]
+    );
+
     res.json({ message: "woo unliked" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // get list of likers (owner only)
 exports.getLikersForWooOwnerOnly = async (req, res) => {

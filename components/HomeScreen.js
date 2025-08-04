@@ -25,6 +25,7 @@ const HomeScreen = ({ route, navigation }) => {
   const [privateWoos, setPrivateWoos] = useState([]);
   const [storyFeed, setStoryFeed] = useState([]);
   const [unseenCount, setUnseenCount] = useState(0);
+
   const [loading, setLoading] = useState(true);
   const [isPrivateVisible, setIsPrivateVisible] = useState(false);
 
@@ -327,7 +328,7 @@ const HomeScreen = ({ route, navigation }) => {
           </View>
           {/* <Text style={styles.smallText}>view all</Text> */}
         </View>
-        <ListViewWoos view={"list"} woos={publicWoos} uid={user.uid} />
+        <ListViewWoos view={"list"} woos={publicWoos} uid={user.uid} token={token} />
       </ScrollView>
     </SafeAreaView>
   );

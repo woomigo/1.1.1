@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 const LayoutWooImage = ({
   uid,
   woo,
+  token,
   // wooID,
   // wooDate,
   // image,
