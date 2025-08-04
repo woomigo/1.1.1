@@ -207,52 +207,67 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const fetchSendFollowRequest = async (sender_id, receiver_id, token) => {
     if (!token) throw new Error("Auth token is missing");
-    if (!userId) throw new Error("User ID is required");
+    if (!sender_id) throw new Error("Sender ID is required");
+    if (!receiver_id) throw new Error("Receiver ID is required");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+        body: JSON.stringify({ sender_id, receiver_id }),
+      });
 
-    const res = await fetch(`${localhost}/follow-requests/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
-      },
-      body: JSON.stringify({ sender_id, receiver_id }),
-    });
+      if (!res.ok) throw new Error("Failed to fetch followings");
 
-    if (!res.ok) throw new Error("Failed to fetch followings");
-
-    const data = await res.json();
-    console.log(
-      "SEND FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
-    );
-
-    setIsFollowingRequest(data);
-
-    return res.json();
+      const data = await res.json();
+      console.log(
+        "SEND FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
+      );
+      setIsFollowingRequest({
+        exists: true,
+        request: {
+          status: "pending",
+        },
+      });
+      showTemporaryFollowMessage("request sent!");
+      return data;
+    } catch (err) {
+      console.error(err);
+      showTemporaryFollowMessage("Error following");
+    }
   };
 
   const fetchCancelFollowRequest = async (sender_id, receiver_id, token) => {
     if (!token) throw new Error("Auth token is missing");
-    if (!userId) throw new Error("User ID is required");
+    if (!sender_id) throw new Error("Sender ID is required");
+    if (!receiver_id) throw new Error("Receiver ID is required");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+        body: JSON.stringify({ sender_id, receiver_id }),
+      });
 
-    const res = await fetch(`${localhost}/follow-requests/`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
-      },
-      body: JSON.stringify({ sender_id, receiver_id }),
-    });
+      if (!res.ok) throw new Error("Failed to fetch followings");
 
-    if (!res.ok) throw new Error("Failed to fetch followings");
-
-    const data = await res.json();
-    console.log(
-      "CANCEL FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
-    );
-
-    setIsFollowingRequest(data);
-
-    return res.json();
+      const data = await res.json();
+      console.log(
+        "CANCEL FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
+      );
+      setIsFollowingRequest({
+        exists: false,
+      });
+      showTemporaryFollowMessage("request cancelled!");
+      return data;
+    } catch (err) {
+      console.error(err);
+      showTemporaryFollowMessage("Error canceling");
+    }
   };
 
   const fetchFollowUser = async (follower_id, followee_id, token) => {
@@ -284,23 +299,29 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const fetchUnfollowUser = async (follower_id, followee_id, token) => {
     if (!token) throw new Error("Auth token is missing");
-    if (!userId) throw new Error("User ID is required");
+    if (!follower_id) throw new Error("Follower ID is required");
+    if (!followee_id) throw new Error("Followee ID is required");
+    try {
+      const res = await fetch(`${localhost}/followers/unfollow`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        },
+        body: JSON.stringify({ follower_id, followee_id }),
+      });
 
-    const res = await fetch(`${localhost}/followers/unfollow`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
-      },
-      body: JSON.stringify({ follower_id, followee_id }),
-    });
+      if (!res.ok) throw new Error("Failed to fetch un follow user");
 
-    if (!res.ok) throw new Error("Failed to fetch un follow user");
-
-    const data = await res.json();
-    console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
-
-    return res.json();
+      const data = await res.json();
+      console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
+      setIsFollowing(false);
+      showTemporaryFollowMessage("unfollowed!");
+      return data;
+    } catch (err) {
+      console.error(err);
+      showTemporaryFollowMessage("Error unfollowing user");
+    }
   };
 
   useEffect(() => {
@@ -363,57 +384,21 @@ const ProfileScreen = ({ navigation, route }) => {
     setTimeout(() => setFollowMessage(null), 3000); // Clear after 3 seconds
   };
 
-  const handleCancelFollowRequest = (targetUsername, userId) => {
-    Alert.alert(
-      "Cancel Follow Request",
-      `Do you want to cancel your follow request to @${targetUsername}?`,
-      [
-        {
-          text: "No",
-          style: "cancel",
-        },
-        {
-          text: "Yes, cancel it",
-          onPress: () => {
-            // TODO: Call cancel follow request API here
-            console.log(
-              `Follow request canceled for ${targetUsername} - ${userId}`
-            );
-          },
-          style: "destructive",
-        },
-      ]
-    );
+  const handleCancelFollowRequest = async (userId) => {
+    console.log(`Follow request canceled clicked for ${userId}`);
+    await fetchCancelFollowRequest(user.id, userId, token);
   };
 
-  const handleSendFollowRequest = (targetUsername, userId) => {
-    Alert.alert(
-      "Send Follow Request",
-      `Do you want to send a follow request to @${targetUsername}?`,
-      [
-        {
-          text: "No",
-          style: "cancel",
-        },
-        {
-          text: "Yes, send it",
-          onPress: () => {
-            // TODO: Call send follow request API here
-            console.log(
-              `Follow request sent for ${targetUsername} - ${userId}`
-            );
-          },
-          style: "default",
-        },
-      ]
-    );
+  const handleSendFollowRequest = async (userId) => {
+    console.log(`Follow request sent clicked for ${userId}`);
+    await fetchSendFollowRequest(user.id, userId, token);
   };
 
-  const handleUnfollow = (userId) => {
+  const handleUnfollow = async (userId) => {
     console.log(`UNFOLLOW Clicked for userId - ${userId}`);
+    await fetchUnfollowUser(user.id, userUID, token);
   };
 
-  //Example of handle with temp message and fetch
   const handleFollow = async (userUID) => {
     console.log(`FOLLOW Clicked for userId - ${userUID}`);
     await fetchFollowUser(user.id, userUID, token);
@@ -440,7 +425,7 @@ const ProfileScreen = ({ navigation, route }) => {
     ) {
       return {
         title: "request pending",
-        onPress: () => handleCancelFollowRequest(username, userUID), // maybe disable or show toast
+        onPress: () => handleCancelFollowRequest(userUID), // maybe disable or show toast
       };
     }
 
@@ -448,7 +433,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!isFollowing && isFollower && isProfilePrivate) {
       return {
         title: "follow back",
-        onPress: () => handleSendFollowRequest(username, userUID),
+        onPress: () => handleSendFollowRequest(userUID),
       };
     }
 
@@ -460,20 +445,13 @@ const ProfileScreen = ({ navigation, route }) => {
       };
     }
 
-    // 🔹 Regular follow for private profile
+    // Regular follow for private profile
     if (!isFollowing && isProfilePrivate) {
       return {
         title: "follow",
-        onPress: () => handleSendFollowRequest(username, userUID),
+        onPress: () => handleSendFollowRequest(userUID),
       };
     }
-
-    // if (!isFollowing && isProfilePrivate) {
-    //   return {
-    //     title: "follow",
-    //     onPress: () => handleSendFollowRequest(username, userUID),
-    //   };
-    // }
 
     return {
       title: "follow",
