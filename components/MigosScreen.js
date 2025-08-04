@@ -19,9 +19,14 @@ import { woo_black, woo_gray, woo_orange, woo_red } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 const MigosScreen = ({ navigation, route }) => {
-  const { indexParam = 0, user, token, userUID } = route.params;
+  const {
+    indexParam = 0,
+    user,
+    token,
+    userUID,
+    isProfileOwnedByUser,
+  } = route.params;
 
-  
   const localhost = "http://192.168.12.240:3000";
 
   // const userRef = doc(db, "users", uid);
@@ -55,9 +60,8 @@ const MigosScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-        setIndex(indexParam);
-    console.log("MIGOS " + JSON.stringify(user));
-    // console.log(`USERUID ======s ${userUID}`);
+    setIndex(indexParam);
+
     // setIsProfileOwnedByUser(!userUID);
 
     // Animated.spring(indicatorAnim, {
@@ -65,8 +69,11 @@ const MigosScreen = ({ navigation, route }) => {
     //   useNativeDriver: true,
     // }).start();
 
+    console.log("MIGOS " + JSON.stringify(user));
+    console.log(`USERUID ======s ${userUID}`);
+    console.log(`isProfileOwnedByUser ======s ${isProfileOwnedByUser}`);
     fetchUserFollow(userUID ? userUID : user.id, token);
-  }, []);
+  }, [user, token]);
 
   // useEffect(() => {
 
@@ -308,7 +315,7 @@ const MigosScreen = ({ navigation, route }) => {
               uid={user.id}
               hideSearchBar
               searchBoxPlaceholder="search followers by @username"
-              kind="single"
+              kind={!userUID && "single"}
               singleBtnColor={woo_gray}
               singleBtnText="remove"
               handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}
@@ -322,7 +329,7 @@ const MigosScreen = ({ navigation, route }) => {
               uid={user.id}
               hideSearchBar
               searchBoxPlaceholder="search following by @username"
-              kind="single"
+              kind={!userUID && "single"}
               singleBtnColor={woo_gray}
               singleBtnText="unfollow"
               handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)}

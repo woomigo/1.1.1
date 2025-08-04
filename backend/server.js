@@ -9,7 +9,7 @@ const followersRoutes = require('./routes/followers')
 const wooRoutes = require('./routes/woos')
 const migoRoutes = require('./routes/migos')
 const storiesRoutes = require('./routes/stories')
-const followerRequestRoutes = require('./routes/followRequests')
+const followRequestRoutes = require('./routes/followRequests')
 const galleriesRoutes = require('./routes/galleries')
 const groupRoutes = require('./routes/groups')
 const groupManagerRoutes = require('./routes/groupManagers')
@@ -27,7 +27,7 @@ app.use('/followers', followersRoutes);
 app.use('/woos', wooRoutes);
 app.use('/migos', migoRoutes)
 app.use('/stories', storiesRoutes)
-app.use('./follower-requests', followerRequestRoutes)
+app.use('/follow-requests', followRequestRoutes)
 app.use('/galleries', galleriesRoutes);
 app.use('/lists', listRoutes);
 app.use('/groups', groupRoutes);

@@ -82,8 +82,8 @@ const LayoutUserItem = ({
 
   const handleClick = () => {
     setSelected(!selected);
-    onCheckBoxSelected(userItem.item.id);
-    console.log("LUI HC === " + userItem.item.id);
+    onCheckBoxSelected(userItem.item.user_id);
+    console.log("LUI HC === " + userItem.item.user_id);
   };
 
   // const handleCheck = (event) => {
@@ -105,7 +105,7 @@ const LayoutUserItem = ({
             style={styles.container}
             onPress={() => {
               console.log()
-              userItem.item.id !== uid && navigation.push("Profile", { userUID: userItem.item.id });
+              userItem.item.user_id !== uid && navigation.push("Profile", { userUID: userItem.item.user_id });
             }}
           >
             <View style={styles.imageContainer}>
