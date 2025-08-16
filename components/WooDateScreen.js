@@ -5,7 +5,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { woo_black, woo_orange } from "../assets/colors";
 
 const WooDateScreen = ({ route, navigation }) => {
-  const { wooMedia, wooType, wooMigos, migoWoos } = route.params;
+  const { wooMedia, wooType, wooMigos, wooTags } = route.params;
 
   const [date, setDate] = useState(new Date());
 
@@ -95,14 +95,14 @@ const WooDateScreen = ({ route, navigation }) => {
         {/* Navigation Buttons */}
         <View style={styles.navButtons}>
           <TouchableOpacity
-            onPress={() => {
-              wooType === "private"
-                ? navigation.navigate("WooMigos", {
-                    wooMedia: wooMedia,
-                    wooType: wooType,
-                  })
-                : navigation.navigate("WooTags", { wooMedia: wooMedia });
-            }}
+            onPress={() =>
+              navigation.navigate("WooTags", {
+                wooMedia: wooMedia,
+                wooType: wooType,
+                wooMigos: wooMigos,
+                wooTags: wooTags,
+              })
+            }
             style={styles.button}
           >
             <Icon name="arrow-left" size={24} color="white" />
@@ -116,7 +116,7 @@ const WooDateScreen = ({ route, navigation }) => {
                 wooMedia: wooMedia,
                 wooType: wooType,
                 wooMigos: wooMigos,
-                migoWoos: migoWoos,
+                wooTags: wooTags,
                 wooDate: date.toLocaleDateString("en-us"),
               })
             }

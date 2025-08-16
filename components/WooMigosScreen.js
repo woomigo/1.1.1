@@ -132,7 +132,6 @@ const WooMigosScreen = ({ route, navigation }) => {
               wooMedia: wooMedia,
               wooType: wooType,
               wooMigos: selectedUsers,
-              migoWoos: followers,
             })
           }
           style={styles.button}

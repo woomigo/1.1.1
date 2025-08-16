@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import { Header, Icon } from "@rneui/themed";
 import { woo_black, woo_white } from "../assets/colors";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 const WooListItems = (props) => {
   const { navigation } = props;
@@ -174,10 +175,20 @@ const WooListItems = (props) => {
       >
         {items.map((item) => (
           <View key={item.id} style={styles.previewItem}>
-            <Image
-              source={{ uri: item.media_url }}
-              style={styles.previewImage}
-            />
+            {item.media_url ? (
+              <FontAwesome6Icon
+                name="circle-check"
+                solid
+                size={16}
+                color={woo_black}
+              />
+            ) : (
+              <Image
+                source={{ uri: item.media_url }}
+                style={styles.previewImage}
+              />
+            )}
+
             <Text style={styles.previewName} numberOfLines={1}>
               {item.name}
             </Text>
@@ -281,9 +292,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginBottom: 5,
   },
-  previewScroll: {
-
-  },
+  previewScroll: {},
   previewItem: {
     marginHorizontal: 5,
     alignItems: "center",

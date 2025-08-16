@@ -30,7 +30,7 @@ const MAX_TAG_LENGTH = 25;
 const localhost = "http://192.168.12.240:3000";
 
 const WooTagScreen = ({ navigation, route }) => {
-  const { wooMedia, wooType, user, token } = route.params;
+  const { wooMedia, wooType, wooMigos, user, token } = route.params;
 
   const [selectedTags, setSelectedTags] = useState([]);
   const [customTag, setCustomTag] = useState("");
@@ -319,12 +319,26 @@ const WooTagScreen = ({ navigation, route }) => {
       {/* Navigation Buttons */}
       <View style={styles.navButtons}>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            wooType === "private"
+              ? navigation.navigate("WooMigos", {
+                  wooMedia: wooMedia,
+                  wooType: wooType,
+                })
+              : navigation.navigate("EditMedia", { wooMedia: wooMedia });
+          }}
           style={styles.button}
         >
           <Icon name="arrow-left" size={24} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleContinue} style={styles.button}>
+        <TouchableOpacity onPress={() =>
+            navigation.navigate("WooDate", {
+              wooMedia: wooMedia,
+              wooType: wooType,
+              wooMigos: wooMigos,
+              wooTags: selectedTags
+            })
+          } style={styles.button}>
           <Icon name="arrow-right" size={24} color="white" />
         </TouchableOpacity>
       </View>

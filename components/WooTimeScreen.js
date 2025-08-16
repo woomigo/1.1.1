@@ -5,7 +5,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { woo_black, woo_orange } from "../assets/colors";
 
 const WooTimeScreen = ({ route, navigation }) => {
-  const { wooMedia, wooType, wooMigos, migoWoos, wooDate } = route.params;
+  const { wooMedia, wooType, wooMigos, wooTags, wooDate } = route.params;
 
   const [time, setTime] = useState(new Date());
 
@@ -60,7 +60,7 @@ const WooTimeScreen = ({ route, navigation }) => {
                 wooMedia: wooMedia,
                 wooType: wooType,
                 wooMigos: wooMigos,
-                migoWoos: migoWoos,
+                wooTags: wooTags,
               })
             }
             style={styles.button}
@@ -76,7 +76,7 @@ const WooTimeScreen = ({ route, navigation }) => {
                 wooMedia: wooMedia,
                 wooType: wooType,
                 wooMigos: wooMigos,
-                migoWoos: migoWoos,
+                wooTags: wooTags,
                 wooDate: wooDate,
                 wooTime: time.toLocaleTimeString("en-us", {
                   timeStyle: "short",

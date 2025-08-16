@@ -18,7 +18,7 @@ import { GOOGLE_API_KEY } from "@env";
 const API_KEY = GOOGLE_API_KEY;
 
 const WooLocationScreen = ({ route, navigation }) => {
-  const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime } =
+  const { wooMedia, wooType, wooMigos, wooTags, wooDate, wooTime } =
     route.params;
 
   const [region, setRegion] = useState(null); // Stores user location
@@ -179,7 +179,16 @@ const WooLocationScreen = ({ route, navigation }) => {
       {/* Navigation Buttons */}
       <View style={styles.navButtons}>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+            onPress={() =>
+              navigation.navigate("WooLocation", {
+                wooMedia: wooMedia,
+                wooType: wooType,
+                wooMigos: wooMigos,
+                wooTags: wooTags,
+                wooDate: wooDate,
+                wooTime: wooTime,
+              })
+            }
           style={styles.button}
         >
           <Icon name="arrow-left" size={24} color="white" />
@@ -190,7 +199,7 @@ const WooLocationScreen = ({ route, navigation }) => {
               wooMedia: wooMedia,
               wooType: wooType,
               wooMigos: wooMigos,
-              migoWoos: migoWoos,
+              wooTags: wooTags,
               wooDate: wooDate,
               wooTime: wooTime,
               wooLocation: { address: address, region: region },
@@ -281,7 +290,7 @@ export default WooLocationScreen;
 //     // API Key
 //     const API_KEY = 'AIzaSyBkyLliKkjhFTeZkMD1rKZpNQWIyhGWwug';
 
-//     const { wooMedia, wooType, wooMigos, migoWoos, wooDate, wooTime } = route.params;
+//     const { wooMedia, wooType, wooMigos, wooTags, wooDate, wooTime } = route.params;
 
 //     const [searchValue, setSearchValue] = useState([])
 //     const [searchResults, setSearchResults] = useState()
@@ -374,7 +383,7 @@ export default WooLocationScreen;
 //                         color={woo_black}
 //                         size={25}
 //                         onPress={() =>
-//                             navigation.navigate('WooTime', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, migoWoos: migoWoos, wooDate: wooDate })
+//                             navigation.navigate('WooTime', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooTags: wooTags, wooDate: wooDate })
 //                         }
 //                     />}
 //                 centerComponent={
@@ -389,7 +398,7 @@ export default WooLocationScreen;
 //                         color={woo_black}
 //                         size={25}
 //                         onPress={() =>
-//                             navigation.navigate('WooList', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, migoWoos: migoWoos, wooDate: wooDate, wooTime: wooTime, wooLocation: searchValue })
+//                             navigation.navigate('WooList', { wooMedia: wooMedia, wooType: wooType, wooMigos: wooMigos, wooTags: wooTags, wooDate: wooDate, wooTime: wooTime, wooLocation: searchValue })
 //                         }
 //                     />
 //                 }

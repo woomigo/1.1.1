@@ -690,55 +690,6 @@ const WooScreen = ({ navigation, route }) => {
               )}
             </Pressable>
           </View>
-
-          {/* Bottom Sheets */}
-
-          {/* <DraggableBottomSheet
-            // profilePicURL={profilePicURL}
-            title={"comments"}
-            isVisible={isCommentBottomSheetVisible}
-            onClose={() => setIsCommentBottomSheetVisible(false)}
-            showInput
-            placeholderText={"add a comment..."}
-            isFlatlist
-            flatlistData={wooComments}
-            renderData={(comment) => (
-              <LayoutCommentItem uid={uid} comment={comment} />
-            )}
-          ></DraggableBottomSheet> */}
-          {/* 
-          <DraggableBottomSheet
-            // profilePicURL={profilePicURL}
-            title={"migos"}
-            isVisible={isWooMigosBottomSheetVisible}
-            onClose={() => setIsWooMigosBottomSheetVisible(false)}
-          >
-            <Text style={styles.sheetTitle}>Draggable Content</Text>
-            <Text style={styles.sheetText}>
-              You can drag this sheet up or down!
-            </Text>
-          </DraggableBottomSheet> */}
-          {/* 
-          <DraggableBottomSheet
-            // profilePicURL={profilePicURL}
-            title={"gallery"}
-            isVisible={isWooGalleryBottomSheetVisible}
-            onClose={() => setIsWooGalleryBottomSheetVisible(false)}
-          >
-            <Text style={styles.sheetTitle}>Draggable Content</Text>
-            <Text style={styles.sheetText}>
-              You can drag this sheet up or down!
-            </Text>
-          </DraggableBottomSheet> */}
-
-          {/* <DraggableBottomSheet
-            profilePicURL={profilePicURL}
-            title={"list"}
-            isVisible={isWooListBottomSheetVisible}
-            onClose={() => setIsWooListBottomSheetVisible(false)}
-          >
-            <ListViewWooList view={"grid"} wooList={wooList} size="xl" />
-          </DraggableBottomSheet> */}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -793,7 +744,6 @@ const styles = StyleSheet.create({
   tagPill: {
     backgroundColor: hexToRgba(woo_gray, 0.7), // blue with 70% opacity
     paddingHorizontal: 20,
-
     borderRadius: 20,
     marginRight: 8,
     justifyContent: "center",
