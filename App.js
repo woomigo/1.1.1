@@ -53,6 +53,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import StoryViewerScreen from "./components/StoryViewerScreen";
 import MediaGalleryWithPreview from "./components/MediaGalleryWithPreview";
 import WooListItems from "./components/WooListItems";
+import WooTagsScreen from "./components/WooTagsScreen";
+
+// import * as Location from "expo-location";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -63,6 +66,39 @@ const OnboardingStack = createNativeStackNavigator();
 const AppStack = createNativeStackNavigator();
 
 const App = () => {
+  // const updateUserLocation = async () => {
+  //   let { status } = await Location.requestForegroundPermissionsAsync();
+  //   if (status !== "granted") return;
+
+  //   let loc = await Location.getCurrentPositionAsync({});
+  //   const { latitude, longitude } = loc.coords;
+
+  //   // Compare to stored user location (if any), then decide to update
+  //   const lastLat = currentUser?.latitude;
+  //   const lastLon = currentUser?.longitude;
+
+  //   const changed = hasMovedSignificantly(
+  //     lastLat,
+  //     lastLon,
+  //     latitude,
+  //     longitude
+  //   );
+  //   if (changed) {
+  //     await fetch(`http://your-api.com/api/update-location`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ latitude, longitude, userId: currentUser.id }),
+  //     });
+  //   }
+  // };
+
+  // function hasMovedSignificantly(lat1, lon1, lat2, lon2, threshold = 0.1) {
+  //   if (lat1 == null || lon1 == null) return true; // no location yet
+
+  //   const distance = getDistanceFromLatLonInMiles(lat1, lon1, lat2, lon2);
+  //   return distance >= threshold; // e.g. moved more than 0.1 miles
+  // }
+
   const HomeStack = () => {
     return (
       <Stack.Navigator options={{ headerShown: false }}>
@@ -274,6 +310,12 @@ const App = () => {
           initialParams={{ user: user, token: token }}
         />
         <Stack.Screen
+          name="WooTags"
+          component={WooTagsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
           name="WooDate"
           component={WooDateScreen}
           options={{ headerShown: false }}
@@ -380,7 +422,9 @@ const App = () => {
     isLoggedIn: false,
     isProfileComplete: false,
   });
-  const [token, setToken] = useState("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTQwMTY0OH0._VcyMy1wuATMypfOeP8KoCdYyHm3EUMvyL5aiEeys8E");
+  const [token, setToken] = useState(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTQwMTY0OH0._VcyMy1wuATMypfOeP8KoCdYyHm3EUMvyL5aiEeys8E"
+  );
   const [user, setUser] = useState(null);
 
   const localhost = "http://192.168.12.240:3000";

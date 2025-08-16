@@ -37,8 +37,9 @@ import { SelfIdentity } from "./shared";
 import { render } from "react-native-web";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import SearchInput from "./SearchInput";
+import { filter } from "lodash";
 
-const SearchScreen = ({ navigation, route }) => {
+const SearchScreen = ({ navigation, route, list = [] }) => {
   const { uid } = route.params;
 
   useEffect(() => {
@@ -48,6 +49,7 @@ const SearchScreen = ({ navigation, route }) => {
   // const keyboardVerticalOffset = Platform.OS === 'ios' ? 180 : 0
 
   const [searchValue, setSearchValue] = useState([]);
+  const [filteredResults, setFilteredResults] = useState(list);
   const [user, setUser] = useState();
   const [isSearchError, setIsSearchError] = useState();
   const [isSearchIconHidden, setSearchIconHidden] = useState(true);
@@ -263,13 +265,13 @@ const SearchScreen = ({ navigation, route }) => {
       </View>
 
       {/* <SearchInput
-        data={wooList}
+        data={filteredResults}
         onResultsChange={setFilteredResults}
         showEmptyMessage={true}
-        placeholder="search woo list"
+        placeholder="search users by @username"
       /> */}
 
-      <Input
+      {/* <Input
         value={searchValue}
         ref={searchRef}
         onChangeText={(text) => handleSearchOnChange(text)}
@@ -302,7 +304,7 @@ const SearchScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           )
         }
-      />
+      /> */}
 
       {user && user ? (
         user.uid === uid ? (

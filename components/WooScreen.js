@@ -17,6 +17,7 @@ import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";
 import {
   woo_black,
+  woo_gray,
   woo_medium_gray,
   woo_orange,
   woo_white,
@@ -30,6 +31,7 @@ import {
   getFormattedTime,
   getMonthAndDay,
   getTimeAgo,
+  hexToRgba,
   truncUsername,
 } from "./utility";
 import MigosAvatarGroup from "./MigosAvatarGroup";
@@ -245,7 +247,32 @@ const WooScreen = ({ navigation, route }) => {
               ) : null}
             </View>
           </View>
-          <Image style={styles.image} source={{ uri: woo.item.media_url }} />
+          <View style={styles.imageContainer}>
+            <Image style={styles.image} source={{ uri: woo.item.media_url }} />
+
+            {/* Tags overlay */}
+            {woo.item.tags && woo.item.tags.length > 0 && (
+              <ScrollView
+                horizontal
+                style={styles.tagsContainer}
+                showsHorizontalScrollIndicator={false}
+              >
+                {woo.item.tags.map((tag, idx) => (
+                  <View
+                    key={idx}
+                    style={[
+                      styles.tagPill,
+                      tag.pending ? styles.pendingTag : null,
+                    ]}
+                  >
+                    <Text style={styles.tagText}>
+                      {tag.name} {tag.pending ? "(Pending)" : ""}
+                    </Text>
+                  </View>
+                ))}
+              </ScrollView>
+            )}
+          </View>
           {/* FIRST 
         ROW */}
           <View
@@ -748,9 +775,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 23,
   },
-  image: {
-    backgroundColor: "#d9d9d9",
+  imageContainer: {
+    position: "relative",
     height: 600,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  tagsContainer: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    right: 10,
+    height: 40,
+  },
+  tagPill: {
+    backgroundColor: hexToRgba(woo_gray, 0.7), // blue with 70% opacity
+    paddingHorizontal: 20,
+
+    borderRadius: 20,
+    marginRight: 8,
+    justifyContent: "center",
+  },
+
+  pendingTag: {
+    backgroundColor: "#FF9500",
+  },
+  tagText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "600",
   },
   card: {
     backgroundColor: woo_medium_gray,

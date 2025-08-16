@@ -56,71 +56,105 @@ exports.checkUsernameAvailability = (req, res) => {
 };
 
 // Get user by ID
-exports.getUserById = (req, res) => {
+exports.getUserById = async (req, res) => {
   const { id } = req.params;
-  db.query("SELECT * FROM users WHERE id = ?", [id], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    if (results.length === 0)
+
+  try {
+    const [results] = await db.execute(`SELECT * FROM users WHERE id = ?`, [
+      id,
+    ]);
+
+    if (results.length === 0) {
       return res.status(404).json({ message: "User not found" });
+    }
+
     res.json(results[0]);
-  });
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 };
 
 // Get user by username
 exports.getUserByUsername = (req, res) => {
   const { username } = req.params;
-  db.query("SELECT * FROM users WHERE username = ?", [username], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    if (results.length === 0)
-      return res.status(404).json({ message: "User not found" });
-    res.json(results[0]);
-  });
+  db.query(
+    "SELECT * FROM users WHERE username = ?",
+    [username],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      if (results.length === 0)
+        return res.status(404).json({ message: "User not found" });
+      res.json(results[0]);
+    }
+  );
 };
 
 // Update user
 exports.updateUser = async (req, res) => {
-    console.log('req.params:', req.params);
-    console.log('req.params:', req.body);
+  console.log("req.params:", req.params);
+  console.log("req.params:", req.body);
 
-    const { id } = req.params;
-    let fields = { ...req.body };
+  const { id } = req.params;
+  let fields = { ...req.body };
 
-    // Handle password separately
-    if (fields.password) {
-      try {
-        fields.password = bcrypt.hashSync(fields.password, 10);
-      } catch (err) {
-        console.error('Password hashing failed:', err);
-        return res.status(500).json({ error: 'Internal error while hashing password' });
-      }
+  // Handle password separately
+  if (fields.password) {
+    try {
+      fields.password = bcrypt.hashSync(fields.password, 10);
+    } catch (err) {
+      console.error("Password hashing failed:", err);
+      return res
+        .status(500)
+        .json({ error: "Internal error while hashing password" });
+    }
+  }
+
+  // If no fields to update, exit early
+  if (Object.keys(fields).length === 0) {
+    return res.status(400).json({ error: "No fields provided for update" });
+  }
+
+  // Build dynamic SQL query
+  const setClause = Object.keys(fields)
+    .map((field) => `${field} = ?`)
+    .join(", ");
+  const values = Object.values(fields);
+  values.push(id); // Add user ID for WHERE clause
+
+  const query = `UPDATE users SET ${setClause} WHERE id = ?`;
+
+  console.log("Updating user with fields:", fields);
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("Error updating user:", err);
+      return res.status(500).json({ error: err });
     }
 
-    // If no fields to update, exit early
-    if (Object.keys(fields).length === 0) {
-      return res.status(400).json({ error: 'No fields provided for update' });
-    }
+    res.json({ message: "User updated successfully" });
+  });
+};
 
-    // Build dynamic SQL query
-    const setClause = Object.keys(fields)
-      .map((field) => `${field} = ?`)
-      .join(', ');
-    const values = Object.values(fields);
-    values.push(id); // Add user ID for WHERE clause
+exports.updateUserLocation = async (req, res) => {
+  const { userId, latitude, longitude } = req.body;
 
-    const query = `UPDATE users SET ${setClause} WHERE id = ?`;
+  if (!userId || !latitude || !longitude) {
+    return res.status(400).json({ error: "Missing data" });
+  }
 
-    console.log('Updating user with fields:', fields);
+  try {
+    await db.execute(
+      `UPDATE users SET latitude = ?, longitude = ? WHERE id = ?`,
+      [latitude, longitude, userId]
+    );
 
-    db.query(query, values, (err, result) => {
-      if (err) {
-        console.error('Error updating user:', err);
-        return res.status(500).json({ error: err });
-      }
-
-      res.json({ message: 'User updated successfully' });
-    });
-  };
-  
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 
 // exports.completeProfile = (userId, updatedData, callback) => {
 //   console.log("UPDATED DATA: " + JSON.stringify(updatedData));

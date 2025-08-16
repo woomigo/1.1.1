@@ -218,7 +218,7 @@ const EditMediaScreen = ({ navigation, route }) => {
           title="post a public woo"
           onPress={() => {
             toggleOverlay();
-            navigation.navigate("WooDate", {
+            navigation.navigate("WooTags", {
               wooMedia: wooMedia,
               wooType: "public",
             });

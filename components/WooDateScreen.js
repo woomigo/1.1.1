@@ -101,7 +101,7 @@ const WooDateScreen = ({ route, navigation }) => {
                     wooMedia: wooMedia,
                     wooType: wooType,
                   })
-                : navigation.navigate("EditMedia", { wooMedia: wooMedia });
+                : navigation.navigate("WooTags", { wooMedia: wooMedia });
             }}
             style={styles.button}
           >

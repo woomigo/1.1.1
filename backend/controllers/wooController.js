@@ -64,6 +64,32 @@ async function getMigoPics(wooIds) {
   }, {});
 }
 
+// Helper to fetch tags for a set of woo IDs
+async function getTagsForWoos(wooIds) {
+  if (!wooIds.length) return {};
+
+  const [rows] = await db.query(
+    `SELECT 
+       wt.woo_id,
+       COALESCE(t.name, wt.tag_name) AS tag_name,
+       wt.pending_approval
+     FROM woo_tags wt
+     LEFT JOIN tags t ON wt.tag_id = t.id
+     WHERE wt.woo_id IN (?)
+     ORDER BY wt.created_at ASC`,
+    [wooIds]
+  );
+
+  // Group tags by woo_id
+  return rows.reduce((acc, row) => {
+    if (!acc[row.woo_id]) acc[row.woo_id] = [];
+    acc[row.woo_id].push({
+      name: row.tag_name,
+      pending: row.pending_approval,
+    });
+    return acc;
+  }, {});
+}
 
 // For HOME FEED - Public Woos + subscriber pics
 exports.getPublicFeed = async (req, res) => {
@@ -100,12 +126,14 @@ exports.getPublicFeed = async (req, res) => {
       [user_id, user_id]
     );
 
-    const wooIds = woos.map(w => w.woo_id);
+    const wooIds = woos.map((w) => w.woo_id);
     const subscriberPics = await getSubscriberPics(wooIds);
+    const tagsByWoo = await getTagsForWoos(wooIds);
 
     // Add sub_profile_pics array to each woo
-    woos.forEach(w => {
+    woos.forEach((w) => {
       w.sub_profile_pics = subscriberPics[w.woo_id] || [];
+      w.tags = tagsByWoo[w.woo_id] || [];
     });
 
     res.json(woos);
@@ -156,12 +184,14 @@ exports.getPrivateFeed = async (req, res) => {
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
-    const wooIds = woos.map(w => w.woo_id);
+    const wooIds = woos.map((w) => w.woo_id);
     const migoPics = await getMigoPics(wooIds);
+    const tagsByWoo = await getTagsForWoos(wooIds);
 
     // Add migo_profile_pics array to each woo
-    woos.forEach(w => {
+    woos.forEach((w) => {
       w.migo_profile_pics = migoPics[w.woo_id] || [];
+      w.tags = tagsByWoo[w.woo_id] || [];
     });
 
     res.json(woos);
@@ -218,21 +248,25 @@ exports.getWoosByUserId = async (req, res) => {
       [viewerId, userId, viewerId, userId, viewerId]
     );
 
-    const wooIds = woos.map(w => w.woo_id);
+    const wooIds = woos.map((w) => w.woo_id);
 
     // For public woos, get subscriber pics; for private, get migo pics
-    const publicWoos = woos.filter(w => w.type === "public");
-    const privateWoos = woos.filter(w => w.type === "private");
+    const publicWoos = woos.filter((w) => w.type === "public");
+    const privateWoos = woos.filter((w) => w.type === "private");
 
-    const subscriberPics = await getSubscriberPics(publicWoos.map(w => w.woo_id));
-    const migoPics = await getMigoPics(privateWoos.map(w => w.woo_id));
+    const subscriberPics = await getSubscriberPics(
+      publicWoos.map((w) => w.woo_id)
+    );
+    const migoPics = await getMigoPics(privateWoos.map((w) => w.woo_id));
+    const tagsByWoo = await getTagsForWoos(wooIds);
 
-    woos.forEach(w => {
+    woos.forEach((w) => {
       if (w.type === "public") {
         w.sub_profile_pics = subscriberPics[w.woo_id] || [];
       } else {
         w.migo_profile_pics = migoPics[w.woo_id] || [];
       }
+      w.tags = tagsByWoo[w.woo_id] || [];
     });
 
     res.json(woos);
@@ -241,8 +275,6 @@ exports.getWoosByUserId = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
 
 exports.getWooById = async (req, res) => {
   const { id } = req.params;
@@ -301,21 +333,27 @@ exports.getMyWoos = async (req, res) => {
       [userId, userId]
     );
 
-    const wooIds = woos.map(w => w.woo_id);
-    const publicWooIds = woos.filter(w => w.type === 'public').map(w => w.woo_id);
-    const privateWooIds = woos.filter(w => w.type === 'private').map(w => w.woo_id);
+    const wooIds = woos.map((w) => w.woo_id);
+    const publicWooIds = woos
+      .filter((w) => w.type === "public")
+      .map((w) => w.woo_id);
+    const privateWooIds = woos
+      .filter((w) => w.type === "private")
+      .map((w) => w.woo_id);
+    const tagsByWoo = await getTagsForWoos(wooIds);
 
     const [subscriberPics, migoPics] = await Promise.all([
       getSubscriberPics(publicWooIds),
       getMigoPics(privateWooIds),
     ]);
 
-    woos.forEach(w => {
-      if (w.type === 'public') {
+    woos.forEach((w) => {
+      if (w.type === "public") {
         w.sub_profile_pics = subscriberPics[w.woo_id] || [];
-      } else if (w.type === 'private') {
+      } else if (w.type === "private") {
         w.migo_profile_pics = migoPics[w.woo_id] || [];
       }
+      w.tags = tagsByWoo[w.woo_id] || [];
     });
 
     res.json(woos);
@@ -324,7 +362,6 @@ exports.getMyWoos = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 exports.removeInvitation = async (req, res) => {
   const requesterId = req.user.id;
@@ -388,7 +425,9 @@ exports.markWooAsSeen = async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "No invitation found for this woo" });
+      return res
+        .status(404)
+        .json({ error: "No invitation found for this woo" });
     }
 
     res.json({ message: "Woo marked as seen" });

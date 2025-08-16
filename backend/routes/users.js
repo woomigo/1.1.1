@@ -16,6 +16,8 @@ router.get('/check-username', userController.checkUsernameAvailability);
 // Read one user
 router.get("/:id", authenticateToken, userController.getUserById);
 
+router.post('/update-location', authenticateToken, userController.updateUserLocation);
+
 // Get user by username
 router.get('/:username', authenticateToken, userController.getUserByUsername);
 

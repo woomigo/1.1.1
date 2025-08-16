@@ -18,6 +18,7 @@ const subScriptionRoutes = require('./routes/subscriptions')
 const likeRoutes = require('./routes/likes')
 const commentsRoutes = require('./routes/comments');
 const listRoutes = require('./routes/lists');
+const tagRoutes = require('./routes/tags')
 
 app.use(cors());
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use('/group-members', groupMemberRoutes);
 app.use('/subscriptions', subScriptionRoutes)
 app.use('/woo-likes', likeRoutes)
 app.use('/comments', commentsRoutes);
+app.use('/tags', tagRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {

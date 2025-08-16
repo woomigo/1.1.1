@@ -113,6 +113,8 @@ const WooLocationScreen = ({ route, navigation }) => {
         keyboardShouldPersistTaps="handled"
         onBlur={() => handleBlur}
         fetchDetails={true}
+          predefinedPlaces={[]}
+            predefinedPlacesAlwaysVisible={false}
         onFail={(error) => console.error("Autocomplete Error:", error)}
         textInputProps={{
           onBlur: handleBlur,

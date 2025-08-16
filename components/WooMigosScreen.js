@@ -15,347 +15,132 @@ import {
 // import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Avatar from "../components/Avatar"; // Your avatar component
-import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { woo_black, woo_white } from "../assets/colors";
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  getDocs,
-  getDoc,
-  query,
-  where,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
-import { db, auth } from "../firebaseConfig";
 import { Header, Icon } from "@rneui/themed";
+import SelectableUserListView from "./SelectableUserListView";
 
 const WooMigosScreen = ({ route, navigation }) => {
-  const { wooMedia, wooType, uid } = route.params;
+  const { wooMedia, wooType, user, token } = route.params;
 
-  const [search, setSearch] = useState("");
+  const localhost = "http://192.168.12.240:3000";
+
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [message, setMessage] = useState("");
-  const [showAllUsers, setShowAllUsers] = useState(false);
   const [followers, setFollowers] = useState([]);
-  const [followerProfiles, setFollowerProfiles] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  const isGroupChat = selectedUsers.length > 1;
+  const fetchUserFollow = async (userId, token) => {
+    const res = await fetch(`${localhost}/followers/${userId}/followers-info`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+      },
+    });
 
-  const listenToFollowers = (onUpdate) => {
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        console.warn("No authenticated user found.");
-        onUpdate([]);
-        return () => {};
-      }
-
-      const userRef = doc(db, "users", user.uid);
-
-      const unsubscribe = onSnapshot(
-        userRef,
-        (docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            const followers = data.followers || [];
-            setFollowers(followers)
-
-            console.log("🔄 Fetched live followers:", followers);
-            onUpdate(followers);
-          } else {
-            console.warn("User document does not exist.");
-            onUpdate([]);
-          }
-        },
-        (error) => {
-          console.error("❌ Error listening to followers:", error);
-          onUpdate([]);
-        }
-      );
-
-      return unsubscribe;
-    } catch (error) {
-      console.error("❌ Exception in listenToFollowers:", error);
-      return () => {};
-    }
+    const data = await res.json();
+    console.log("WMS FOLLOWERS ARE ======= " + JSON.stringify(data));
+    setFollowers(data.followers);
+    setUsername(data.user.username);
+    setFirstName(data.user.first_name);
+    setLastName(data.user.last_name);
+    setProfilePicURL(data.user.profile_pic_url);
+    if (!res.ok) throw new Error("Failed to fetch follow counts");
+    return res.json();
   };
 
-  const listenToUserProfiles = (userIds, onUpdate) => {
-    const unsubscribers = [];
-    const profiles = {};
-
-    try {
-      userIds.forEach((uid) => {
-        const userRef = doc(db, "users", uid);
-
-        const unsubscribe = onSnapshot(
-          userRef,
-          (docSnap) => {
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-              profiles[uid] = {
-                id: uid,
-                name: data.first_name + " " + data.last_name || "",
-                profilePicUrl: data.profile_pic_url || "",
-              };
-
-              const result = Object.values(profiles);
-              console.log(`👤 Updated profiles (${result.length}):`, result);
-              onUpdate(result);
-            } else {
-              console.warn(`Follower user document not found: ${uid}`);
-            }
-          },
-          (error) => {
-            console.error(`❌ Error listening to user profile ${uid}:`, error);
-          }
-        );
-
-        unsubscribers.push(unsubscribe);
-      });
-    } catch (error) {
-      console.error("❌ Exception in listenToUserProfiles:", error);
-    }
-
-    return () => {
-      unsubscribers.forEach((unsub) => unsub());
-    };
+  const handleSelectedUsers = (users) => {
+    setSelectedUsers(users);
+    console.log("Selected users:", users); // Optional: debug
   };
 
   useEffect(() => {
-    let unsubscribeProfiles = null;
-
-    const unsubscribeFollowers = listenToFollowers((followerUids) => {
-      if (unsubscribeProfiles) unsubscribeProfiles();
-
-      if (followerUids.length > 0) {
-        unsubscribeProfiles = listenToUserProfiles(followerUids, (profiles) => {
-          setFollowerProfiles(profiles);
-          setLoading(false);
-        });
-      } else {
-        setFollowerProfiles([]);
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      unsubscribeFollowers();
-      if (unsubscribeProfiles) unsubscribeProfiles();
-    };
-  }, []);
-
-  const filteredUsers = followerProfiles.filter(
-    (user) =>
-      user.name.toLowerCase().includes(search.toLowerCase()) &&
-      !selectedUsers.some((u) => u.id === user.id)
-  );
-
-  const toggleUserSelect = (user) => {
-    setSelectedUsers((prev) =>
-      prev.find((u) => u.id === user.id)
-        ? prev.filter((u) => u.id !== user.id)
-        : [...prev, user]
-    );
-  };
-
-  const handleRemoveUser = (id) => {
-    const updated = selectedUsers.filter((u) => u.id !== id);
-    setSelectedUsers(updated);
-    if (updated.length === 0) setShowAllUsers(false);
-  };
+    fetchUserFollow(user.id, token);
+  }, [user]);
 
   return (
     <View style={{ flex: 1, backgroundColor: woo_white }}>
-    <KeyboardAvoidingView
-      behavior={Platform.select({ ios: "padding", android: undefined })}
-      style={styles.container}
-      keyboardVerticalOffset={80}
-    >
-      <Header
-        style={styles.header}
-        backgroundColor={"#fff"}
-        // leftComponent={
-        //   <Icon
-        //     name="chevron-left"
-        //     type="font-awesome-5"
-        //     color={woo_black}
-        //     size={25}
-        //     onPress={() =>
-        //       navigation.navigate("EditMedia", { wooMedia: wooMedia })
-        //     }
-        //   />
-        // }
-        centerComponent={
-          <View>
-            <Text
-              style={{
-                fontSize: 25,
-                color: woo_black,
-                textAlign: "center",
-                fontWeight: "bold",
-              }}
-            >
-              woo migos
-            </Text>
-          </View>
-        }
-        // rightComponent={
-        //   <Icon
-        //     name="chevron-right"
-        //     type="font-awesome-5"
-        //     color={woo_black}
-        //     size={25}
-        //     onPress={() =>
-        //       navigation.navigate("WooDate", {
-        //         wooMedia: wooMedia,
-        //         wooType: wooType,
-        //         wooMigos: selectedMigos,
-        //         migoWoos: migos,
-        //       })
-        //     }
-        //   />
-        // }
-        rightContainerStyle={styles.rightComponent}
-        leftContainerStyle={styles.leftComponent}
-        centerContainerStyle={styles.centerComponent}
-      />
-      <View style={styles.subHeader}>
-        <View
-          style={{
-            //   backgroundColor: "blue",
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-          }}
-        >
-          {/* Selected users */}
-          <View style={styles.avatarRow}>
-            {selectedUsers.slice(0, 5).map((user, index) => (
-              <View
-                key={user.id}
-                style={[styles.avatarWrapper, index !== 0 && styles.overlap]}
-              >
-                <Avatar name={user.name} image={user.profilePicUrl} size={36} />
-              </View>
-            ))}
-
-            {selectedUsers.length > 5 && (
-              <View style={[styles.avatarWrapper, styles.overlap]}>
-                <View style={styles.extraAvatar}>
-                  <Text style={styles.extraText}>
-                    +{selectedUsers.length - 5}
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            {selectedUsers.length > 0 && (
-              <TouchableOpacity
-                onPress={() => setShowAllUsers(true)}
-                style={styles.managePill}
-              >
-                <Ionicons name="people-outline" size={14} color="#007BFF" />
-                <Text style={styles.manageText}>Manage</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </View>
-
-      <TextInput
-        placeholder="Search users..."
-        style={styles.input}
-        value={search}
-        onChangeText={setSearch}
-      />
-
-      <FlatList
-        data={filteredUsers}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.userItem}
-            onPress={() => toggleUserSelect(item)}
-          >
-            <Avatar name={item.name} image={item.profilePicUrl} size={36} />
-            <Text style={styles.userName}>{item.name}</Text>
-            <Ionicons
-              name="add-circle-outline"
-              size={20}
-              color="#007BFF"
-              style={{ marginLeft: "auto" }}
-            />
-          </TouchableOpacity>
-        )}
-        //   style={{ maxHeight: 150 }}
-      />
-      <Modal
-        visible={showAllUsers}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowAllUsers(false)}
+      <KeyboardAvoidingView
+        behavior={Platform.select({ ios: "padding", android: undefined })}
+        style={styles.container}
+        keyboardVerticalOffset={80}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>manage woo migos</Text>
-            <FlatList
-              data={selectedUsers}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.modalUserRow}>
-                  <Avatar
-                    name={item.name}
-                    image={item.profilePicUrl}
-                    size={36}
-                  />
-                  <Text style={{ marginLeft: 10, flex: 1 }}>{item.name}</Text>
-                  <TouchableOpacity onPress={() => handleRemoveUser(item.id)}>
-                    <Ionicons name="remove-circle" size={22} color="#FF4C4C" />
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-            <TouchableOpacity
-              onPress={() => setShowAllUsers(false)}
-              style={styles.modalClose}
-            >
-              <Text style={{ color: "#007BFF", fontWeight: "600" }}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </KeyboardAvoidingView>
-          {/* Navigation Buttons */}
-          <View style={styles.navButtons}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("EditMedia", { wooMedia: wooMedia })
-            }
-            style={styles.button}
-          >
-            <Icon name="arrow-left" size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("WooDate", {
-                wooMedia: wooMedia,
-                wooType: wooType,
-                wooMigos: selectedUsers,
-                migoWoos: followers,
-              })
-            }
-            style={styles.button}
-          >
-            <Icon name="arrow-right" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-
-     </View>
+        <Header
+          style={styles.header}
+          backgroundColor={"#fff"}
+          // leftComponent={
+          //   <Icon
+          //     name="chevron-left"
+          //     type="font-awesome-5"
+          //     color={woo_black}
+          //     size={25}
+          //     onPress={() =>
+          //       navigation.navigate("EditMedia", { wooMedia: wooMedia })
+          //     }
+          //   />
+          // }
+          centerComponent={
+            <View>
+              <Text
+                style={{
+                  fontSize: 25,
+                  color: woo_black,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                woo migos
+              </Text>
+            </View>
+          }
+          // rightComponent={
+          //   <Icon
+          //     name="chevron-right"
+          //     type="font-awesome-5"
+          //     color={woo_black}
+          //     size={25}
+          //     onPress={() =>
+          //       navigation.navigate("WooDate", {
+          //         wooMedia: wooMedia,
+          //         wooType: wooType,
+          //         wooMigos: selectedMigos,
+          //         migoWoos: migos,
+          //       })
+          //     }
+          //   />
+          // }
+          rightContainerStyle={styles.rightComponent}
+          leftContainerStyle={styles.leftComponent}
+          centerContainerStyle={styles.centerComponent}
+        />
+        <SelectableUserListView
+          users={followers}
+          returnSelectedUsers={handleSelectedUsers}
+        />
+      </KeyboardAvoidingView>
+      {/* Navigation Buttons */}
+      <View style={styles.navButtons}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("EditMedia", { wooMedia: wooMedia })
+          }
+          style={styles.button}
+        >
+          <Icon name="arrow-left" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("WooTags", {
+              wooMedia: wooMedia,
+              wooType: wooType,
+              wooMigos: selectedUsers,
+              migoWoos: followers,
+            })
+          }
+          style={styles.button}
+        >
+          <Icon name="arrow-right" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
