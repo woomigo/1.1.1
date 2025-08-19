@@ -56,6 +56,7 @@ import WooListItems from "./components/WooListItems";
 import WooTagsScreen from "./components/WooTagsScreen";
 
 // import * as Location from "expo-location";
+LogBox.ignoreAllLogs();
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -361,6 +362,12 @@ const App = () => {
         <Stack.Screen
           name="Search"
           component={SearchScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
           options={{ headerShown: false }}
           initialParams={{ user: user, token: token }}
         />
