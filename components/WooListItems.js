@@ -175,7 +175,7 @@ const WooListItems = (props) => {
       >
         {items.map((item) => (
           <View key={item.id} style={styles.previewItem}>
-            {item.media_url ? (
+            {!item.media_url ? (
               <FontAwesome6Icon
                 name="circle-check"
                 solid

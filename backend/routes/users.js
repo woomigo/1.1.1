@@ -13,13 +13,15 @@ router.get("/", authenticateToken, userController.getAllUsers);
 // Check if a username is available
 router.get('/check-username', userController.checkUsernameAvailability);
 
+// Get user by username
+router.get('/search', authenticateToken, userController.getUserByUsername);
+
 // Read one user
 router.get("/:id", authenticateToken, userController.getUserById);
 
 router.post('/update-location', authenticateToken, userController.updateUserLocation);
 
-// Get user by username
-router.get('/:username', authenticateToken, userController.getUserByUsername);
+
 
 // Update user - protected and checks ownership
 router.put("/:id", authenticateToken, userController.updateUser);

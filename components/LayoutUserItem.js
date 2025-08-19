@@ -112,7 +112,7 @@ const LayoutUserItem = ({
           <TouchableOpacity
             style={styles.container}
             onPress={() => {
-              console.log();
+              console.log("THIS " + userItem.item.user_id);
               userItem.item.user_id !== uid &&
                 navigation.push("Profile", { userUID: userItem.item.user_id });
             }}

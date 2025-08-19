@@ -22,11 +22,14 @@ exports.createUser = async (req, res) => {
 };
 
 // Get all users
-exports.getAllUsers = (req, res) => {
-  db.query("SELECT * FROM users", (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+exports.getAllUsers = async (req, res) => {
+  try {
+    const [results] = await db.query("SELECT * FROM users");
     res.json(results);
-  });
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 };
 
 // Get username availability
@@ -60,9 +63,7 @@ exports.getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [results] = await db.execute(`SELECT * FROM users WHERE id = ?`, [
-      id,
-    ]);
+    const [results] = await db.query(`SELECT * FROM users WHERE id = ?`, [id]);
 
     if (results.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -76,19 +77,39 @@ exports.getUserById = async (req, res) => {
 };
 
 // Get user by username
-exports.getUserByUsername = (req, res) => {
-  const { username } = req.params;
-  db.query(
-    "SELECT * FROM users WHERE username = ?",
-    [username],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err });
-      if (results.length === 0)
-        return res.status(404).json({ message: "User not found" });
-      res.json(results[0]);
+exports.getUserByUsername = async (req, res) => {
+  let { username } = req.query;
+
+  if (!username || typeof username !== "string") {
+    return res.status(400).json({ error: "Username query is required" });
+  }
+
+  // Clean the username input
+  username = username.trim().replace(/\s+/g, "");
+
+  const searchTerm = `%${username}%`;
+
+  console.log("Cleaned Search term:", JSON.stringify(searchTerm));
+
+  try {
+    const [results] = await db.query(
+      "SELECT id AS user_id, username, email, first_name, last_name, profile_pic_url, dob, is_profile_complete, created_at, updated_at, is_private, latitude, longitude FROM users WHERE username LIKE ?",
+      [searchTerm]
+    );
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No users found" });
     }
-  );
+
+    res.json(results);
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 };
+
+
+
 
 // Update user
 exports.updateUser = async (req, res) => {

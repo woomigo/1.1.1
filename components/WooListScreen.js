@@ -28,7 +28,6 @@ const WooListScreen = ({ route, navigation }) => {
   const [itemName, setItemName] = useState("");
 
   useEffect(() => {
-    console.log("ITEMS: ==== " + JSON.stringify(items));
   });
 
   // Add a new item to the list

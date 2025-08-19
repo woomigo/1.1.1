@@ -51,7 +51,7 @@ const WooPreviewEditScreen = ({ navigation, route }) => {
   const [timeAgo, setTImeAgo] = useState("");
 
   useEffect(() => {
-    console.log(" WPES WOODATE " + JSON.stringify(wooMigos));
+    // console.log(" WPES WOODATE " + JSON.stringify(wooDate));
 
     // setMonth(({ month } = getMonthAndDay(wooDate)));
     // setDay(({ day } = getMonthAndDay(wooDate)));

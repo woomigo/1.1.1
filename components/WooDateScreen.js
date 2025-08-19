@@ -117,7 +117,7 @@ const WooDateScreen = ({ route, navigation }) => {
                 wooType: wooType,
                 wooMigos: wooMigos,
                 wooTags: wooTags,
-                wooDate: date.toLocaleDateString("en-us"),
+                wooDate: date,
               })
             }
             style={styles.button}

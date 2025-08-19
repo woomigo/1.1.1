@@ -10,208 +10,74 @@ import {
   TouchableWithoutFeedback,
   SafeAreaView,
   Dimensions,
+  FlatList,
+  Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Header, Icon, Input, Avatar, Skeleton } from "@rneui/themed";
-import {
-  woo_black,
-  woo_gray,
-  woo_green,
-  woo_white,
-  woo_orange,
-} from "../assets/colors";
-import LayoutUserItem from "./LayoutUserItem";
-import { db } from "../firebaseConfig";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  arrayUnion,
-  doc,
-  arrayRemove,
-} from "firebase/firestore";
-import { FlatList } from "react-native";
-import ListViewUsers from "./ListViewUsers";
+import { woo_black } from "../assets/colors";
+import debounce from "lodash.debounce";
 import { SelfIdentity } from "./shared";
 import { render } from "react-native-web";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import SearchInput from "./SearchInput";
 import { filter } from "lodash";
+import ListViewUsers from "./ListViewUsers";
 
-const SearchScreen = ({ navigation, route, list = [] }) => {
-  const { uid } = route.params;
+const localhost = "http://192.168.12.240:3000";
 
+const SearchScreen = ({ navigation, route }) => {
+  const { user, token } = route.params;
+
+  const [searchText, setSearchText] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+
+  // Define function first, do NOT call it here
+  const fetchFilteredUsers = async (query) => {
+    if (!query) {
+      setFilteredUsers([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${localhost}/users/search?username=${query.trim()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) {
+        setFilteredUsers([]);
+        return;
+      }
+
+      const data = await res.json();
+      console.log(`SEARCH DATA JSON ${JSON.stringify(data)}`);
+      setFilteredUsers(data);
+    } catch (error) {
+      setFilteredUsers([]);
+    }
+  };
+
+  // Now create debounced function — pass function reference, NOT call
+  const debouncedFetchUsers = useRef(debounce(fetchFilteredUsers, 300)).current;
+
+  const handleSearch = (text) => {
+    setSearchText(text);
+    debouncedFetchUsers(text.trim());
+  };
+
+  // Cancel debounce on unmount
   useEffect(() => {
-    console.log(" UID === " + uid);
+    return () => {
+      debouncedFetchUsers.cancel();
+    };
   }, []);
 
-  // const keyboardVerticalOffset = Platform.OS === 'ios' ? 180 : 0
-
-  const [searchValue, setSearchValue] = useState([]);
-  const [filteredResults, setFilteredResults] = useState(list);
-  const [user, setUser] = useState();
-  const [isSearchError, setIsSearchError] = useState();
-  const [isSearchIconHidden, setSearchIconHidden] = useState(true);
-  const [isUserExists, setIsUserExists] = useState();
-  const [view, setView] = useState("migoSuccess");
-
-  const searchRef = useRef();
-
-  const handleSearchOnFocus = () => {
-    setSearchValue();
-    setUser();
-    setView();
-    console.log("FOCUS");
-  };
-
-  const handleSearch = async () => {
-    console.log("SEARCH");
-    setView("none");
-    const q = query(
-      collection(db, "users"),
-      where("username", "==", searchValue.toLowerCase().trim())
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(
-      (doc) => {
-        setView("follow");
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data().followers);
-        setUser(doc.data());
-        if (doc.data().followers.includes(uid)) {
-          setView("following");
-        } else if (doc.data().following.includes(uid)) {
-          setView("migoFollow");
-        } else if (doc.data().received_migo_requests.includes(uid)) {
-          setView("requestSent");
-        } else if (doc.data().migos.includes(uid)) {
-          setView("migos");
-        } else {
-          setView("follow");
-        }
-        console.log("This");
-      },
-      (error) => {}
-    );
-    console.log("view is " + view);
-    console.log(`user === ${user}`);
-    searchRef.current.clear();
-    searchRef.current.blur();
-  };
-
-  const handleSearchOnChange = (input) => {
-    if (input.length > 0) {
-      setSearchIconHidden(false);
-    } else {
-      setSearchIconHidden(true);
-    }
-    setIsSearchError(false);
-    setSearchValue(input);
-  };
-
-  const handleOnBlur = () => {
-    console.log("BLUR!");
-    searchRef.current.blur();
-    Keyboard.dismiss();
-  };
-
-  const handleSearchEndEditing = () => {
-    console.log("END EDITING!!!");
-    setSearchIconHidden(true);
-  };
-
-  const renderView = (view) => {
-    switch (view) {
-      case "follow":
-        return (
-          <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: woo_orange }]}
-            onPress={() => handleFollowUser()}
-          >
-            <Text style={styles.buttonText}>follow</Text>
-          </TouchableOpacity>
-        );
-
-      case "migoFollow":
-        return (
-          <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: woo_orange }]}
-            onPress={() => handleAddMigo()}
-          >
-            <Text style={styles.buttonText}>follow</Text>
-          </TouchableOpacity>
-        );
-      case "following":
-        return (
-          <TouchableOpacity
-            disabled
-            style={[styles.addButton, { backgroundColor: woo_gray }]}
-          >
-            <Text style={styles.buttonText}>following</Text>
-          </TouchableOpacity>
-        );
-      case "requestSent":
-        return (
-          <TouchableOpacity
-            disabled
-            style={[styles.addButton, { backgroundColor: woo_gray }]}
-          >
-            <Text style={styles.buttonText}>request sent</Text>
-          </TouchableOpacity>
-        );
-      case "migos":
-        return (
-          <TouchableOpacity
-            disabled
-            style={[styles.addButton, { backgroundColor: woo_gray }]}
-          >
-            <Text style={styles.buttonText}>migos</Text>
-          </TouchableOpacity>
-        );
-      case "loading":
-        return (
-          <Skeleton
-            // LinearGradientComponent={LinearGradient}
-            animation="wave"
-            width={80}
-            height={30}
-            borderRadius={10}
-          />
-        );
-      case "success":
-        return (
-          <TouchableOpacity
-            disabled
-            style={[styles.addButton, { backgroundColor: woo_green }]}
-            onPress={() => handleUserFollowed()}
-          >
-            <Text style={styles.buttonText}>following!</Text>
-          </TouchableOpacity>
-        );
-      case "migoSuccess":
-        return (
-          <TouchableOpacity
-            disabled
-            style={[styles.addButton, { backgroundColor: woo_green }]}
-            onPress={() => handleUserFollowed()}
-          >
-            <Text style={styles.buttonText}>migos!</Text>
-          </TouchableOpacity>
-        );
-      case "successMigoRequest":
-        return (
-          <TouchableOpacity
-            disabled
-            style={[styles.addButton, { backgroundColor: woo_green }]}
-            onPress={() => handleUserFollowed()}
-          >
-            <Text style={styles.buttonText}>request sent!</Text>
-          </TouchableOpacity>
-        );
-      default:
-        return "";
-    }
+  const clearSearch = () => {
+    setSearchText("");
+    setFilteredUsers([])
   };
 
   return (
@@ -264,116 +130,38 @@ const SearchScreen = ({ navigation, route, list = [] }) => {
         />
       </View>
 
-      {/* <SearchInput
-        data={filteredResults}
-        onResultsChange={setFilteredResults}
-        showEmptyMessage={true}
-        placeholder="search users by @username"
-      /> */}
-
-      {/* <Input
-        value={searchValue}
-        ref={searchRef}
-        onChangeText={(text) => handleSearchOnChange(text)}
-        placeholder="search users by @username"
-        fontSize={14}
-        backgroundColor={woo_white}
-        leftIcon={
-          <Icon
-            style={{ paddingEnd: 5 }}
-            type="font-awesome-5"
-            name="search"
-            size={18}
-          />
-        }
-        // errorStyle={{ color: 'red' }}
-        // errorMessage={isSearchError && "sorry we couldn't find that Search"}
-        autoCapitalize="none"
-        onFocus={() => handleSearchOnFocus()}
-        onBlur={() => handleOnBlur()}
-        onEndEditing={() => handleSearchEndEditing()}
-        rightIcon={
-          !isSearchIconHidden && (
-            <TouchableOpacity style={{ width: 18, height: 18 }}>
+      <View style={styles.wrapper}>
+        <View style={styles.inputWrapper}>
+          <Input
+            fontSize={14}
+            value={searchText}
+            onChangeText={handleSearch}
+            // ref={listRef}
+            placeholder={"search by @username"}
+            leftIcon={
               <Icon
-                name="play"
+                style={{ paddingEnd: 5 }}
                 type="font-awesome-5"
+                name={"search"}
                 size={18}
-                onPress={() => handleSearch()}
               />
+            }
+            //   errorStyle={{ color: 'red' }}
+            //   errorMessage={showEmptyMessage && searchText.length > 0 && filtered.length === 0 && emptyMessage}
+            autoCapitalize="none"
+          />
+          {searchText.length > 0 && (
+            <TouchableOpacity onPress={clearSearch} style={styles.clearIcon}>
+              <Ionicons name="close-circle" size={20} color="#aaa" />
             </TouchableOpacity>
-          )
-        }
-      /> */}
-
-      {user && user ? (
-        user.uid === uid ? (
-          // searching for self
-          <View style={styles.userInfoContainer}>
-            <View style={styles.imageContainer}>
-              <Avatar
-                rounded
-                size="medium"
-                source={{ uri: `${user.profile_pic_url}` }}
-              />
-            </View>
-            <View style={styles.textContainer}>
-              <Text style={{ fontWeight: "bold", fontSize: 14 }}>
-                {
-                  SelfIdentity[Math.floor(Math.random() * SelfIdentity.length)]
-                    .header
-                }
-              </Text>
-              <Text style={{ fontSize: 12 }}>
-                {
-                  SelfIdentity[Math.floor(Math.random() * SelfIdentity.length)]
-                    .message
-                }
-              </Text>
-            </View>
-            {/* <View style={styles.requestButtonContainer}>
-                            <TouchableOpacity
-                                style={[styles.addButton, { backgroundColor: woo_gray }]}
-                                onPress={() => handleFollowUser()}
-                            ><Text style={styles.buttonText}>follow</Text>
-                            </TouchableOpacity>
-                        </View> */}
-          </View>
-        ) : (
-          // searching for user with no error
-          <TouchableOpacity
-            style={styles.container}
-            onPress={() => {
-              user.uid !== uid &&
-                navigation.navigate("Profile", { userUID: user.uid });
-            }}
-          >
-            <View style={styles.userInfoContainer}>
-              <View style={styles.imageContainer}>
-                <Avatar
-                  rounded
-                  size="medium"
-                  source={{ uri: `${user.profile_pic_url}` }}
-                />
-              </View>
-              <View style={styles.textContainer}>
-                <Text style={{ fontWeight: "bold", fontSize: 14 }}>
-                  {user.first_name + " " + user.last_name}
-                </Text>
-                <Text style={{ fontSize: 12 }}>@{user.username}</Text>
-              </View>
-              <View style={styles.requestButtonContainer}>
-                {renderView(view)}
-              </View>
-            </View>
-          </TouchableOpacity>
-        )
-      ) : view === "none" ? (
-        <View style={{ alignItems: "center" }}>
-          <Text> no user found </Text>
+          )}
         </View>
-      ) : null}
-      {/* </TouchableWithoutFeedback> */}
+
+        {/* {showEmptyMessage && searchText.length > 0 && filtered.length === 0 && (
+          <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+        )} */}
+      </View>
+      <ListViewUsers users={filteredUsers} hideSearchBar />
     </SafeAreaView>
   );
 };
@@ -404,38 +192,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  userInfoContainer: {
-    // flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    flexDirection: "row",
-    padding: 20,
+  wrapper: {
+    marginTop: 10,
+    paddingHorizontal: 16,
+    width: "100%",
   },
-  imageContainer: {
-    flex: 0.4,
-    // backgroundColor: 'red'
+  inputWrapper: {
+    position: "relative",
+    justifyContent: "center",
   },
-  textContainer: {
-    flex: 1,
-    // backgroundColor: 'blue'
-  },
-  addButton: {
-    // backgroundColor: '#f37320',
-    padding: 5,
-    borderRadius: 10,
-    width: 100,
+  input: {
     height: 40,
-    alignItems: "center",
-    justifyContent: "center",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingRight: 35,
   },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-  requestButtonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
+  clearIcon: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
 });
 

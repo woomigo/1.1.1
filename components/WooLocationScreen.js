@@ -99,7 +99,6 @@ const WooLocationScreen = ({ route, navigation }) => {
 
   // Fetch user location on mount
   useEffect(() => {
-    // console.log(`GGGAAAPPPKKK ${JSON.stringify(region)}`);
     getUserLocation();
   }, []);
 
@@ -180,7 +179,7 @@ const WooLocationScreen = ({ route, navigation }) => {
       <View style={styles.navButtons}>
         <TouchableOpacity
             onPress={() =>
-              navigation.navigate("WooLocation", {
+              navigation.navigate("WooTime", {
                 wooMedia: wooMedia,
                 wooType: wooType,
                 wooMigos: wooMigos,
