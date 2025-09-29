@@ -112,18 +112,18 @@ exports.getUserWithFollowersAndFollowingInfo = async (req, res) => {
 
     // 2. Get followers (users who follow this user)
     const [followers] = await db.query(
-      `SELECT u.id AS user_id, u.username, u.first_name, u.last_name, u.profile_pic_url
+      `SELECT u.uuid AS user_id, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f
-       JOIN users u ON f.follower_id = u.id
+       JOIN users u ON f.follower_id = u.uuid
        WHERE f.followee_id = ?`,
       [userId]
     );
 
     // 3. Get followees (users this user is following)
     const [followees] = await db.query(
-      `SELECT u.id AS user_id, u.username, u.first_name, u.last_name, u.profile_pic_url
+      `SELECT u.uuid AS user_id, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f
-       JOIN users u ON f.followee_id = u.id
+       JOIN users u ON f.followee_id = u.uuid
        WHERE f.follower_id = ?`,
       [userId]
     );
@@ -157,18 +157,18 @@ exports.getFollowersInfo = async (req, res) => {
 
     // 2. Get followers (users who follow this user)
     const [followers] = await db.query(
-      `SELECT u.id, u.username, u.first_name, u.last_name, u.profile_pic_url
+      `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f
-       JOIN users u ON f.follower_id = u.id
+       JOIN users u ON f.follower_id = u.uuid
        WHERE f.followee_id = ?`,
       [userId]
     );
 
     // // 3. Get followees (users this user is following)
     // const [followees] = await db.query(
-    //   `SELECT u.id, u.username, u.first_name, u.last_name, u.profile_pic_url
+    //   `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
     //    FROM followers f
-    //    JOIN users u ON f.followee_id = u.id
+    //    JOIN users u ON f.followee_id = u.uuid
     //    WHERE f.follower_id = ?`,
     //   [userId]
     // );
@@ -202,18 +202,18 @@ exports.getFollowingsInfo = async (req, res) => {
 
     // // 2. Get followers (users who follow this user)
     // const [followers] = await db.query(
-    //   `SELECT u.id, u.username, u.first_name, u.last_name, u.profile_pic_url
+    //   `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
     //    FROM followers f
-    //    JOIN users u ON f.follower_id = u.id
+    //    JOIN users u ON f.follower_id = u.uuid
     //    WHERE f.followee_id = ?`,
     //   [userId]
     // );
 
     // 3. Get followees (users this user is following)
     const [followees] = await db.query(
-      `SELECT u.id, u.username, u.first_name, u.last_name, u.profile_pic_url
+      `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f
-       JOIN users u ON f.followee_id = u.id
+       JOIN users u ON f.followee_id = u.uuid
        WHERE f.follower_id = ?`,
       [userId]
     );

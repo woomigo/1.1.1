@@ -130,7 +130,7 @@ exports.getWooList = async (req, res) => {
       `
             SELECT c.item_id, c.user_id, c.quantity, u.first_name, u.last_name, u.username, u.profile_pic_url
             FROM woo_list_item_claims c
-            JOIN users u ON c.user_id = u.id
+            JOIN users u ON c.user_id = u.uuid
             WHERE c.item_id IN (?)
           `,
       [items.map((i) => i.id)]

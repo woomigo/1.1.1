@@ -32,7 +32,7 @@ const SearchScreen = ({ navigation, route }) => {
   const [searchText, setSearchText] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
 
-  // Define function first, do NOT call it here
+ 
   const fetchFilteredUsers = async (query) => {
     if (!query) {
       setFilteredUsers([]);

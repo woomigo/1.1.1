@@ -23,19 +23,19 @@ const SelectableUserListView = ({ users, returnSelectedUsers }) => {
   const filteredUsers = users.filter(
     (user) =>
       user.username.toLowerCase().includes(search.toLowerCase()) &&
-      !selectedUsers.some((u) => u.id === user.id)
+      !selectedUsers.some((u) => u.uuid === user.id)
   );
 
   const toggleUserSelect = (user) => {
     setSelectedUsers((prev) =>
-      prev.find((u) => u.id === user.id)
-        ? prev.filter((u) => u.id !== user.id)
+      prev.find((u) => u.uuid === user.id)
+        ? prev.filter((u) => u.uuid !== user.id)
         : [...prev, user]
     );
   };
 
   const handleRemoveUser = (id) => {
-    const updated = selectedUsers.filter((u) => u.id !== id);
+    const updated = selectedUsers.filter((u) => u.uuid !== id);
     setSelectedUsers(updated);
     if (updated.length === 0) setShowAllUsers(false);
   };

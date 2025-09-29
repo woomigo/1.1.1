@@ -7,7 +7,7 @@ async function getSubscriberPics(wooIds) {
   const [rows] = await db.query(
     `SELECT s.woo_id, u.profile_pic_url
      FROM subscriptions s
-     JOIN users u ON s.user_id = u.id
+     JOIN users u ON s.user_id = u.uuid
      WHERE s.woo_id IN (?)`,
     [wooIds]
   );
@@ -69,7 +69,7 @@ exports.getMySubscriptions = async (req, res) => {
          w.type,
          w.created_at,
          w.updated_at,
-         u.id AS user_id,
+         u.uuid AS user_id,
          u.first_name,
          u.last_name,
          u.username,
@@ -78,7 +78,7 @@ exports.getMySubscriptions = async (req, res) => {
          MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
        FROM woos w
        JOIN subscriptions s ON w.id = s.woo_id
-       JOIN users u ON w.owner_uid = u.id
+       JOIN users u ON w.owner_uid = u.uuid
        LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
        LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
        WHERE s.user_id = ?
@@ -123,7 +123,7 @@ exports.getSubscriptionsByUserId = async (req, res) => {
          w.type,
          w.created_at,
          w.updated_at,
-         u.id AS user_id,
+         u.uuid AS user_id,
          u.first_name,
          u.last_name,
          u.username,
@@ -132,7 +132,7 @@ exports.getSubscriptionsByUserId = async (req, res) => {
          MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
        FROM woos w
        JOIN subscriptions s ON w.id = s.woo_id
-       JOIN users u ON w.owner_uid = u.id
+       JOIN users u ON w.owner_uid = u.uuid
        LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
        LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
        WHERE s.user_id = ?
@@ -155,14 +155,14 @@ exports.getSubscriptionsByWooId = async (req, res) => {
   try {
     const [users] = await db.query(
       `SELECT 
-         u.id AS user_id,
+         u.uuid AS user_id,
          u.first_name,
          u.last_name,
          u.username,
          u.profile_pic_url,
          s.subscribed_at AS subscription_date
        FROM subscriptions s
-       JOIN users u ON s.user_id = u.id
+       JOIN users u ON s.user_id = u.uuid
        WHERE s.woo_id = ?
        ORDER BY s.subscribed_at DESC`,
       [wooId]
@@ -209,7 +209,7 @@ exports.getSubscriptionsByWooId = async (req, res) => {
 //          m.created_at,
 //          m.seen
 //        FROM subscriptions m
-//        JOIN users u ON m.user_id = u.id
+//        JOIN users u ON m.user_id = u.uuid
 //        WHERE m.woo_id = ?`,
 //       [wooId]
 //     );

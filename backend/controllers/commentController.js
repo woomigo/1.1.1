@@ -18,7 +18,7 @@ exports.getComments = async (req, res) => {
            WHERE parent_comment_id = c.id AND is_visible = TRUE
          ) AS reply_count
        FROM comments c
-       JOIN users u ON c.user_id = u.id
+       JOIN users u ON c.user_id = u.uuid
        WHERE c.commentable_type = ? 
          AND c.commentable_id = ? 
          AND c.parent_comment_id IS NULL 
@@ -46,7 +46,7 @@ exports.getReplies = async (req, res) => {
          u.last_name,
          u.profile_pic_url
        FROM comments c
-       JOIN users u ON c.user_id = u.id
+       JOIN users u ON c.user_id = u.uuid
        WHERE c.parent_comment_id = ? 
          AND c.is_visible = TRUE
        ORDER BY c.created_at ASC`,

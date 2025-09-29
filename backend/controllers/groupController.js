@@ -77,7 +77,7 @@ exports.getGroupsByUserId = async (req, res) => {
          (
            SELECT JSON_ARRAYAGG(u.profile_pic_url)
            FROM group_members gm_pics
-           JOIN users u ON gm_pics.user_id = u.id
+           JOIN users u ON gm_pics.user_id = u.uuid
            WHERE gm_pics.group_id = fg.id
          ) AS member_profile_pics
        FROM follower_groups fg

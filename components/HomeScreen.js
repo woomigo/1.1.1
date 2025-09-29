@@ -305,7 +305,7 @@ const HomeScreen = ({ route, navigation }) => {
         <ListViewPrivateWoos
           gallery={privateWoos}
           isVisible={isPrivateVisible}
-          uid={user.uid}
+          uid={user.id}
         />
         <View
           style={{
@@ -328,7 +328,7 @@ const HomeScreen = ({ route, navigation }) => {
           </View>
           {/* <Text style={styles.smallText}>view all</Text> */}
         </View>
-        <ListViewWoos view={"list"} woos={publicWoos} uid={user.uid} token={token} />
+        <ListViewWoos view={"list"} woos={publicWoos} uid={user.id} token={token} />
       </ScrollView>
     </SafeAreaView>
   );

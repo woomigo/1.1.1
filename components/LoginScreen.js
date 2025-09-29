@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     console.log("LOGIN PUSHED")
-    try {
+
       const res = await fetch(`${localhost}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -86,35 +86,32 @@ const LoginScreen = ({ navigation }) => {
 
       await AsyncStorage.setItem("token", data.token);
       console.log(`DATA AT LOGIN SUBMIT IS ${JSON.stringify(data)}`);
-      navigation.navigate("MoreInfo", { user: { id: 23 }, token: data.token }); // Or 'Home' if user already completed more info
-    } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Something went wrong. Try again.");
-    }
+      navigation.navigate("MoreInfo", { user: { id: '1fb34a99-9bd3-11f0-907e-a841f4a444ea' }, token: data.token }); // Or 'Home' if user already completed more info
+ 
   };
 
-  const onSubmitHandler = () => {
-    signInWithEmailAndPassword(auth, emailAddress, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error(
-          `ERROR CODE === ${errorCode} AND ERROR MESSAGE === ${errorMessage}`
-        );
-        if (errorCode == "auth/user-not-found") {
-          setIsEmailError(true);
-        }
-        if (errorCode == "auth/wrong-password") {
-          setIsPasswordError(true);
-        }
-        if (errorCode == "auth/too-many-requests") {
-          setIsTooManyRequestsError(true);
-        }
-      });
-  };
+  // const onSubmitHandler = () => {
+  //   signInWithEmailAndPassword(auth, emailAddress, password)
+  //     .then((userCredential) => {
+  //       const user = userCredential.user;
+  //     })
+  //     .catch((error) => {
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       console.error(
+  //         `ERROR CODE === ${errorCode} AND ERROR MESSAGE === ${errorMessage}`
+  //       );
+  //       if (errorCode == "auth/user-not-found") {
+  //         setIsEmailError(true);
+  //       }
+  //       if (errorCode == "auth/wrong-password") {
+  //         setIsPasswordError(true);
+  //       }
+  //       if (errorCode == "auth/too-many-requests") {
+  //         setIsTooManyRequestsError(true);
+  //       }
+  //     });
+  // };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

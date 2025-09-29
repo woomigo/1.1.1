@@ -70,9 +70,9 @@ exports.getLikersForWooOwnerOnly = async (req, res) => {
 
     // Get users who liked the post
     const [likers] = await db.query(
-      `SELECT u.id, u.first_name, u.last_name, u.username, u.profile_pic_url
+      `SELECT u.uuid, u.first_name, u.last_name, u.username, u.profile_pic_url
          FROM woo_likes wl
-         JOIN users u ON wl.user_id = u.id
+         JOIN users u ON wl.user_id = u.uuid
          WHERE wl.woo_id = ?`,
       [wooId]
     );
@@ -89,9 +89,9 @@ exports.getLikersForWooPublic = async (req, res) => {
 
   try {
     const [likers] = await db.query(
-      `SELECT u.id, u.first_name, u.last_name, u.username, u.profile_pic_url
+      `SELECT u.uuid, u.first_name, u.last_name, u.username, u.profile_pic_url
          FROM woo_likes wl
-         JOIN users u ON wl.user_id = u.id
+         JOIN users u ON wl.user_id = u.uuid
          WHERE wl.woo_id = ?`,
       [wooId]
     );

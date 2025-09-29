@@ -54,9 +54,9 @@ exports.getGroupManagers = async (req, res) => {
 
   try {
     const [managers] = await db.query(
-      `SELECT u.id, u.username, u.first_name, u.last_name, u.profile_pic_url
+      `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM group_managers gm
-       JOIN users u ON gm.user_id = u.id
+       JOIN users u ON gm.user_id = u.uuid
        WHERE gm.group_id = ?`,
       [groupId]
     );

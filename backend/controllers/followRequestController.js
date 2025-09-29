@@ -129,13 +129,13 @@ exports.getIncomingFollowRequests = async (req, res) => {
          fr.id AS request_id,
          fr.status,
          fr.created_at,
-         u.id AS sender_id,
+         u.uuid AS sender_id,
          u.username,
          u.first_name,
          u.last_name,
          u.profile_pic_url
        FROM follow_requests fr
-       JOIN users u ON fr.sender_id = u.id
+       JOIN users u ON fr.sender_id = u.uuid
        WHERE fr.receiver_id = ? AND fr.status = 'pending'
        ORDER BY fr.created_at DESC`,
       [receiverId]
@@ -157,13 +157,13 @@ exports.getOutgoingFollowRequests = async (req, res) => {
          fr.id AS request_id,
          fr.status,
          fr.created_at,
-         u.id AS receiver_id,
+         u.uuid AS receiver_id,
          u.username,
          u.first_name,
          u.last_name,
          u.profile_pic_url
        FROM follow_requests fr
-       JOIN users u ON fr.receiver_id = u.id
+       JOIN users u ON fr.receiver_id = u.uuid
        WHERE fr.sender_id = ? AND fr.status = 'pending'
        ORDER BY fr.created_at DESC`,
       [senderId]

@@ -348,7 +348,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
-            const user = followerProfiles.find((u) => u.id === item.sender_id);
+            const user = followerProfiles.find((u) => u.uuid === item.sender_id);
             const profilePic = user.profilePicUrl;
             const name = user.name;
             console.log("USER IN DETAILS " + JSON.stringify(user));

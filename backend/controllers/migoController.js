@@ -107,7 +107,7 @@ exports.getMigosByWooId = async (req, res) => {
          m.invited_at,
          m.seen
        FROM migos m
-       JOIN users u ON m.user_id = u.id
+       JOIN users u ON m.user_id = u.uuid
        WHERE m.woo_id = ?`,
       [wooId]
     );

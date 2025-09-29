@@ -31,7 +31,7 @@ async function getSubscriberPics(wooIds) {
   const [rows] = await db.query(
     `SELECT s.woo_id, u.profile_pic_url
      FROM subscriptions s
-     JOIN users u ON s.user_id = u.id
+     JOIN users u ON s.user_id = u.uuid
      WHERE s.woo_id IN (?)`,
     [wooIds]
   );
@@ -51,7 +51,7 @@ async function getMigoPics(wooIds) {
   const [rows] = await db.query(
     `SELECT m.woo_id, u.profile_pic_url
      FROM migos m
-     JOIN users u ON m.user_id = u.id
+     JOIN users u ON m.user_id = u.uuid
      WHERE m.woo_id IN (?)`,
     [wooIds]
   );
@@ -94,6 +94,7 @@ async function getTagsForWoos(wooIds) {
 // For HOME FEED - Public Woos + subscriber pics
 exports.getPublicFeed = async (req, res) => {
   const user_id = req.user.id;
+  console.log(`GETPUBLICFEED --- ${req.user.id}`);
 
   try {
     const [woos] = await db.query(
@@ -108,7 +109,7 @@ exports.getPublicFeed = async (req, res) => {
          w.type,
          w.created_at,
          w.updated_at,
-         u.id AS user_id,
+         u.uuid AS user_id,
          u.first_name,
          u.last_name,
          u.username,
@@ -117,7 +118,7 @@ exports.getPublicFeed = async (req, res) => {
          MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
        FROM woos w
        JOIN followers f ON w.owner_uid = f.followee_id
-       JOIN users u ON w.owner_uid = u.id
+       JOIN users u ON w.owner_uid = u.uuid
        LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
        LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
        WHERE f.follower_id = ? AND w.type = "public"
@@ -159,7 +160,7 @@ exports.getPrivateFeed = async (req, res) => {
          w.type,
          w.created_at,
          w.updated_at,
-         u.id AS user_id,
+         u.uuid AS user_id,
          u.first_name,
          u.last_name,
          u.username,
@@ -169,7 +170,7 @@ exports.getPrivateFeed = async (req, res) => {
          MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
        FROM migos m
        JOIN woos w ON w.id = m.woo_id                
-       JOIN users u ON w.owner_uid = u.id
+       JOIN users u ON w.owner_uid = u.uuid
        LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
        LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
        WHERE m.user_id = ? AND w.type = "private"
@@ -203,7 +204,7 @@ exports.getPrivateFeed = async (req, res) => {
 
 // For PROFILE FEED - Woos by User ID, add subscriber or migo pics accordingly
 exports.getWoosByUserId = async (req, res) => {
-  const userId = parseInt(req.params.userId); // whose woos are being viewed
+  const userId = req.params.userId; // whose woos are being viewed
   const viewerId = req.user.id; // who is viewing
 
   if (!userId) {
@@ -223,7 +224,7 @@ exports.getWoosByUserId = async (req, res) => {
          w.type,
          w.created_at,
          w.updated_at,
-         u.id AS user_id,
+         u.uuid AS user_id,
          u.first_name,
          u.last_name,
          u.username,
@@ -231,7 +232,7 @@ exports.getWoosByUserId = async (req, res) => {
          COUNT(wl_all.user_id) AS like_count,
          MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
        FROM woos w
-       JOIN users u ON w.owner_uid = u.id
+       JOIN users u ON w.owner_uid = u.uuid
        LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
        LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
        WHERE w.owner_uid = ?
@@ -316,7 +317,7 @@ exports.getMyWoos = async (req, res) => {
          w.type,
          w.created_at,
          w.updated_at,
-         u.id AS user_id,
+         u.uuid AS user_id,
          u.first_name,
          u.last_name,
          u.username,
@@ -324,7 +325,7 @@ exports.getMyWoos = async (req, res) => {
          COUNT(wl_all.user_id) AS like_count,
          MAX(wl_me.user_id IS NOT NULL) AS liked_by_me
        FROM woos w
-       JOIN users u ON w.owner_uid = u.id
+       JOIN users u ON w.owner_uid = u.uuid
        LEFT JOIN woo_likes wl_all ON wl_all.woo_id = w.id
        LEFT JOIN woo_likes wl_me ON wl_me.woo_id = w.id AND wl_me.user_id = ?
        WHERE w.owner_uid = ?
@@ -369,13 +370,13 @@ exports.removeInvitation = async (req, res) => {
 
   try {
     // Check if requester is either the event owner OR the invitee
-    const [[woo]] = await db.query(`SELECT user_id FROM woos WHERE id = ?`, [
+    const [[woo]] = await db.query(`SELECT owner_uid FROM woos WHERE id = ?`, [
       wooID,
     ]);
     if (!woo) return res.status(404).json({ error: "Woo not found" });
 
-    const isOwner = woo.user_id === requesterId;
-    const isInvitee = parseInt(userId) === requesterId;
+    const isOwner = woo.owner_uid === requesterId;
+    const isInvitee = userId === requesterId;
 
     if (!isOwner && !isInvitee) {
       return res

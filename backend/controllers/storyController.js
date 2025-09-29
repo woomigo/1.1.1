@@ -49,7 +49,7 @@ exports.getStoriesByWoo = async (req, res) => {
            u.profile_pic_url,
            wgv.viewer_id IS NOT NULL AS seen
          FROM woo_gallery wg
-         JOIN users u ON wg.user_id = u.id
+         JOIN users u ON wg.user_id = u.uuid
          LEFT JOIN woo_gallery_views wgv
            ON wg.id = wgv.gallery_id AND wgv.viewer_id = ?
          WHERE wg.woo_id = ? AND wg.expires_at > NOW()
@@ -166,14 +166,14 @@ exports.getProfileGalleryFeed = async (req, res) => {
         pg.media_type,
         pg.created_at,
 
-        u.id AS user_id,
+        u.uuid AS user_id,
         u.username,
         u.profile_pic_url,
 
         pgv.viewer_id IS NOT NULL AS seen
 
       FROM profile_gallery pg
-      JOIN users u ON pg.user_id = u.id
+      JOIN users u ON pg.user_id = u.uuid
       LEFT JOIN profile_gallery_views pgv 
         ON pg.id = pgv.gallery_id AND pgv.viewer_id = ?
 
@@ -372,12 +372,12 @@ exports.getCombinedStoryFeed = async (req, res) => {
          s.media_type,
          s.created_at,
          s.expires_at,
-         u.id AS story_user_id,
+         u.uuid AS story_user_id,
          u.username AS story_user_username,
          u.profile_pic_url AS story_user_avatar,
          sv.viewer_id IS NOT NULL AS seen
        FROM stories s
-       JOIN users u ON s.user_id = u.id
+       JOIN users u ON s.user_id = u.uuid
        LEFT JOIN story_views sv ON s.id = sv.story_id AND sv.viewer_id = ?
        WHERE s.user_id IN (
          SELECT followee_id FROM followers WHERE follower_id = ?

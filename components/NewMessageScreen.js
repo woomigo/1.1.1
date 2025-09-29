@@ -63,118 +63,119 @@ const NewMessageScreen = ({ route, navigation }) => {
 
   const isGroupChat = selectedUsers.length > 1;
 
-const listenToFollowers = (onUpdate) => {
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        console.warn('No authenticated user found.');
-        onUpdate([]);
-        return () => {};
-      }
+// const listenToFollowers = (onUpdate) => {
+//     try {
+//       const user = auth.currentUser;
+//       if (!user) {
+//         console.warn('No authenticated user found.');
+//         onUpdate([]);
+//         return () => {};
+//       }
   
-      const userRef = doc(db, 'users', user.uid);
+//       const userRef = doc(db, 'users', user.uid);
   
-      const unsubscribe = onSnapshot(userRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const followers = data.followers || [];
+//       const unsubscribe = onSnapshot(userRef, (docSnap) => {
+//         if (docSnap.exists()) {
+//           const data = docSnap.data();
+//           const followers = data.followers || [];
   
-          console.log('🔄 Fetched live followers:', followers);
-          onUpdate(followers);
-        } else {
-          console.warn('User document does not exist.');
-          onUpdate([]);
-        }
-      }, (error) => {
-        console.error('❌ Error listening to followers:', error);
-        onUpdate([]);
-      });
+//           console.log('🔄 Fetched live followers:', followers);
+//           onUpdate(followers);
+//         } else {
+//           console.warn('User document does not exist.');
+//           onUpdate([]);
+//         }
+//       }, (error) => {
+//         console.error('❌ Error listening to followers:', error);
+//         onUpdate([]);
+//       });
   
-      return unsubscribe;
-    } catch (error) {
-      console.error('❌ Exception in listenToFollowers:', error);
-      return () => {};
-    }
-  };
+//       return unsubscribe;
+//     } catch (error) {
+//       console.error('❌ Exception in listenToFollowers:', error);
+//       return () => {};
+//     }
+//   };
 
-  const listenToUserProfiles = (userIds, onUpdate) => {
-    const unsubscribers = [];
-    const profiles = {};
+//   const listenToUserProfiles = (userIds, onUpdate) => {
+//     const unsubscribers = [];
+//     const profiles = {};
   
-    try {
-      userIds.forEach((uid) => {
-        const userRef = doc(db, 'users', uid);
+//     try {
+//       userIds.forEach((uid) => {
+//         const userRef = doc(db, 'users', uid);
   
-        const unsubscribe = onSnapshot(userRef, (docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            profiles[uid] = {
-              id: uid,
-              name: data.first_name + " " + data.last_name || '',
-              profilePicUrl: data.profile_pic_url || '',
-            };
+//         const unsubscribe = onSnapshot(userRef, (docSnap) => {
+//           if (docSnap.exists()) {
+//             const data = docSnap.data();
+//             profiles[uid] = {
+//               id: uid,
+//               name: data.first_name + " " + data.last_name || '',
+//               profilePicUrl: data.profile_pic_url || '',
+//             };
   
-            const result = Object.values(profiles);
-            console.log(`👤 Updated profiles (${result.length}):`, result);
-            onUpdate(result);
-          } else {
-            console.warn(`Follower user document not found: ${uid}`);
-          }
-        }, (error) => {
-          console.error(`❌ Error listening to user profile ${uid}:`, error);
-        });
+//             const result = Object.values(profiles);
+//             console.log(`👤 Updated profiles (${result.length}):`, result);
+//             onUpdate(result);
+//           } else {
+//             console.warn(`Follower user document not found: ${uid}`);
+//           }
+//         }, (error) => {
+//           console.error(`❌ Error listening to user profile ${uid}:`, error);
+//         });
   
-        unsubscribers.push(unsubscribe);
-      });
-    } catch (error) {
-      console.error('❌ Exception in listenToUserProfiles:', error);
-    }
+//         unsubscribers.push(unsubscribe);
+//       });
+//     } catch (error) {
+//       console.error('❌ Exception in listenToUserProfiles:', error);
+//     }
   
-    return () => {
-      unsubscribers.forEach((unsub) => unsub());
-    };
-  };
+//     return () => {
+//       unsubscribers.forEach((unsub) => unsub());
+//     };
+//   };
 
-  useEffect(() => {
-    let unsubscribeProfiles = null;
 
-    const unsubscribeFollowers = listenToFollowers((followerUids) => {
-      if (unsubscribeProfiles) unsubscribeProfiles();
+  // useEffect(() => {
+  //   let unsubscribeProfiles = null;
 
-      if (followerUids.length > 0) {
-        unsubscribeProfiles = listenToUserProfiles(followerUids, (profiles) => {
-          setFollowerProfiles(profiles);
-          setLoading(false);
-        });
-      } else {
-        setFollowerProfiles([]);
-        setLoading(false);
-      }
-    });
+  //   const unsubscribeFollowers = listenToFollowers((followerUids) => {
+  //     if (unsubscribeProfiles) unsubscribeProfiles();
 
-    return () => {
-      unsubscribeFollowers();
-      if (unsubscribeProfiles) unsubscribeProfiles();
-    };
-  }, []);
+  //     if (followerUids.length > 0) {
+  //       unsubscribeProfiles = listenToUserProfiles(followerUids, (profiles) => {
+  //         setFollowerProfiles(profiles);
+  //         setLoading(false);
+  //       });
+  //     } else {
+  //       setFollowerProfiles([]);
+  //       setLoading(false);
+  //     }
+  //   });
+
+  //   return () => {
+  //     unsubscribeFollowers();
+  //     if (unsubscribeProfiles) unsubscribeProfiles();
+  //   };
+  // }, []);
 
   const filteredUsers =
     followerProfiles.filter(
       (user) =>
         user.name.toLowerCase().includes(search.toLowerCase()) &&
-        !selectedUsers.some((u) => u.id === user.id)
+        !selectedUsers.some((u) => u.uuid === user.id)
     );
 
   const toggleUserSelect = (user) => {
     setSelectedUsers((prev) =>
-      prev.find((u) => u.id === user.id)
-        ? prev.filter((u) => u.id !== user.id)
+      prev.find((u) => u.uuid === user.id)
+        ? prev.filter((u) => u.uuid !== user.id)
         : [...prev, user]
     );
   };
 
   const handleRemoveUser = (id) => {
-    const updated = selectedUsers.filter((u) => u.id !== id);
+    const updated = selectedUsers.filter((u) => u.uuid !== id);
     setSelectedUsers(updated);
     if (updated.length === 0) setShowAllUsers(false);
   };
@@ -185,7 +186,7 @@ const listenToFollowers = (onUpdate) => {
     const payload = {
       type: isGroupChat ? "group" : "direct",
       name: isGroupChat ? groupName || "New Group" : null,
-      participants: [...selectedUsers.map((u) => u.id), uid],
+      participants: [...selectedUsers.map((u) => u.uuid), uid],
       owner_id: uid,
       created_at: serverTimestamp(),
       last_message: null,

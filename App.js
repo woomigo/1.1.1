@@ -371,6 +371,90 @@ const App = () => {
           options={{ headerShown: false }}
           initialParams={{ user: user, token: token }}
         />
+          <Stack.Screen
+          name="Migos"
+          component={MigosScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MigoGroups"
+          component={MigoGroupsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MigoRequests"
+          component={MigoRequestScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Menu"
+          component={MenuScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfileScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicyScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooCommentsView"
+          component={WooCommentsView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooGalleryView"
+          component={WooGalleryView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooListView"
+          component={WooListView}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="WooList"
+          component={WooListItems}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MediaView"
+          component={MediaViewScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="Woo"
+          component={WooScreen}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
+        <Stack.Screen
+          name="MediaGallery"
+          component={MediaGalleryWithPreview}
+          options={{ headerShown: false }}
+          initialParams={{ user: user, token: token }}
+        />
       </Stack.Navigator>
     );
   };
@@ -429,17 +513,15 @@ const App = () => {
     isLoggedIn: false,
     isProfileComplete: false,
   });
-  const [token, setToken] = useState(
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTQwMTY0OH0._VcyMy1wuATMypfOeP8KoCdYyHm3EUMvyL5aiEeys8E"
-  );
+  const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
 
   const localhost = "http://192.168.12.240:3000";
 
   useEffect(() => {
     const checkLogin = async () => {
-      // const token = await AsyncStorage.getItem("token");
-      // setToken(token);
+      const token = await AsyncStorage.getItem("token");
+      setToken(token);
       if (token) {
         try {
           const response = await fetch(`${localhost}/auth/me`, {
@@ -456,6 +538,7 @@ const App = () => {
               isProfileComplete: data.is_profile_complete,
             });
             setUser(data);
+            console.log("APP COMPONENT DATA IS ________________-------->" + JSON.stringify(data))
             userData = data;
           } else {
             setUserState({ isLoggedIn: false, isProfileComplete: false });
@@ -627,8 +710,8 @@ const App = () => {
               options={{ headerShown: false, gestureEnabled: false }}
             />
             <Stack.Screen
-              name="Register"
-              component={RegisterScreen}
+              name="RegisterFullname"
+              component={RegisterFullnameScreen}
               options={{ headerShown: false, gestureEnabled: false }}
             />
           </Stack.Navigator>

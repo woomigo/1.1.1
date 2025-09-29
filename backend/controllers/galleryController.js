@@ -27,11 +27,11 @@ exports.getWooGalleryUserInfoByWooId = async (req, res) => {
         wg.media_url,
         wg.media_type,
         wg.created_at,
-        u.id AS user_id,
+        u.uuid AS user_id,
         u.username AS username,
         u.profile_pic_url
       FROM woo_gallery wg
-      JOIN users u ON wg.user_id = u.id
+      JOIN users u ON wg.user_id = u.uuid
       WHERE wg.woo_id = ?
       ORDER BY wg.created_at DESC
       `,

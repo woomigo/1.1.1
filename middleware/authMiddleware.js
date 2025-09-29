@@ -12,6 +12,7 @@ const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, secret, (err, user) => {
     if (err) return res.sendStatus(403); // Forbidden
+    console.log("Decoded JWT payload:", user); // <--- Add this
     req.user = user; // Add user payload to request
     next();
   });
