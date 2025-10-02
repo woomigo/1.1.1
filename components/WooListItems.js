@@ -246,7 +246,7 @@ const WooListItems = (props) => {
         backgroundColor={woo_white}
         leftComponent={
           <Icon
-            name="chevron-left"
+            name="chevron-down"
             type="font-awesome-5"
             color={woo_black}
             size={20}
@@ -291,6 +291,18 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4,
     marginBottom: 5,
+  },
+  leftComponent: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centerComponent: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  rightComponent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   previewScroll: {},
   previewItem: {

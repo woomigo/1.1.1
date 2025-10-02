@@ -170,7 +170,7 @@
 
 // export default MoreInfoScreen;
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -191,12 +191,13 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Avatar from "./Avatar";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import uuid from 'react-native-uuid';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import uuid from "react-native-uuid";
 import { storage } from "../firebaseConfig";
+import { AuthContext } from "../context/AuthContext";
 
 const MoreInfoScreen = ({ navigation, route }) => {
-  const { user, token, isFromLogin = false } = route.params;
+  const { user, token, updateUser } = useContext(AuthContext);
 
   const localhost = "http://192.168.12.240:3000";
 
@@ -247,7 +248,7 @@ const MoreInfoScreen = ({ navigation, route }) => {
   }, 500);
 
   useEffect(() => {
-    console.log(`USER is ${JSON.stringify(user)}`);
+    // console.log(`USER is ${JSON.stringify(user)}`);
     const checkLoginStatus = async () => {
       const asToken = await AsyncStorage.getItem("token");
       if (!token || !asToken) {
@@ -287,100 +288,106 @@ const MoreInfoScreen = ({ navigation, route }) => {
     getUserId();
   }, [navigation, username]);
 
-    const handleSave = async () => {
-      const token = await AsyncStorage.getItem("token");
+  const handleSave = async () => {
+    const token = await AsyncStorage.getItem("token");
 
-      if (!username || !firstName || !lastName || !dob) {
-        return Alert.alert("Validation Error", "All fields are required.");
-      }
-  
-      if (!isAtLeast13(dob)) {
-        return Alert.alert(
-          "Validation Error",
-          "You must be at least 13 years old."
-        );
-      }
-  
-      if (!isLowercaseValid || !isLengthValid || !isAvailable) {
-        return Alert.alert("Validation Error", "Please fix the username.");
-      }
-  
-      setLoading(true);
-  
-      let profilePicUrl = null;
-      if (profilePicture) {
-        try {
-          profilePicUrl = await uploadImageAsync(profilePicture);
-        } catch (error) {
-          console.error('Upload error:', error);
-          Alert.alert('Upload Error', 'Could not upload profile picture.');
-          setLoading(false);
-          return;
-        }
-      }
-  
+    if (!username || !firstName || !lastName || !dob) {
+      return Alert.alert("Validation Error", "All fields are required.");
+    }
 
-      if (!token) {
-        Alert.alert("Error", "You must be logged in to update your info.");
+    if (!isAtLeast13(dob)) {
+      return Alert.alert(
+        "Validation Error",
+        "You must be at least 13 years old."
+      );
+    }
+
+    setLoading(true);
+
+    let profilePicUrl = null;
+    if (profilePicture) {
+      try {
+        profilePicUrl = await uploadImageAsync(profilePicture);
+      } catch (error) {
+        console.error("Upload error:", error);
+        Alert.alert("Upload Error", "Could not upload profile picture.");
+        setLoading(false);
         return;
       }
-      console.log("userId:", userId);
+    }
+
+    if (!token) {
+      Alert.alert("Error", "You must be logged in to update your info.");
+      return;
+    }
+    console.log("token:", token);
+    console.log("userId:", userId);
+    console.log("Sending data to server:", {
+      username,
+      first_name: firstName,
+      last_name: lastName,
+      dob: moment(dob).format("YYYY-MM-DD"),
+      is_profile_complete: true,
+      profile_pic_url: profilePicUrl || null,
+    });
+
+    try {
+      const res = await fetch(`${localhost}/users/complete-profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username,
+          first_name: firstName,
+          last_name: lastName,
+          dob: moment(dob).format("YYYY-MM-DD"),
+          is_profile_complete: true,
+          profile_pic_url: profilePicUrl || null,
+        }),
+      });
+
+      let data;
+
       try {
-        const res = await fetch(`${localhost}/users/more-info/${userId}/`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            username,
-            first_name: firstName,
-            last_name: lastName,
-            dob: moment(dob).format("YYYY-MM-DD"),
-            is_profile_complete: true,
-            profile_pic_url: profilePicUrl || null,
-          }),
-        });
-
-        const text = await res.text(); // Read the response as text
-        console.log("Raw response:", text); // Log the raw HTML or error message
-
-        try {
-          const data = JSON.parse(text); // Try parsing it as JSON
-          console.log("Parsed response:", data);
-        } catch (err) {
-          console.error("Error parsing JSON:", err);
-        }
-
-          const data = await res.json();
-
-          console.log(`DATA ====s ${JSON.stringify(data)}`);
-
-          if (res.ok) {
-            Alert.alert("Success", "Your information has been updated.");
-            // Navigate to home or wherever you want after updating the user info
-            navigation.navigate("Home");
-          } else {
-            Alert.alert("Error", data.error || "Failed to update information.");
-          }
-      } catch (error) {
-        console.error("ERROR :" + error);
-        Alert.alert("Error", "Something went wrong. Please try again.");
+        data = await res.json(); // Read and parse once
+        console.log("Parsed response:", data);
+      } catch (err) {
+        console.error("Failed to parse JSON (maybe HTML error):", err);
+        const text = await res.text(); // fallback for debugging
+        console.error("Raw response:", text);
+        throw new Error("Invalid server response");
       }
-    };
 
-    const uploadImageAsync = async (uri) => {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        const filename = `profile_pics/${uuid.v4()}.jpg`;
-        const imageRef = ref(storage, filename);
-        await uploadBytes(imageRef, blob);
-        return await getDownloadURL(imageRef);
-      };
+      if (res.ok) {
+        Alert.alert("Success", "Your information has been updated.");
+        updateUser(data);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "HomeTab" }],
+        });
+      } else {
+        Alert.alert("Error", data.error || "Failed to update information.");
+      }
+    } catch (error) {
+      console.error("ERROR:", error.message || error);
+      Alert.alert("Error", "Something went wrong. Please try again.");
+    }
+  };
+
+  const uploadImageAsync = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const filename = `profile_pics/${uuid.v4()}.jpg`;
+    const imageRef = ref(storage, filename);
+    await uploadBytes(imageRef, blob);
+    return await getDownloadURL(imageRef);
+  };
 
   const handleSubmit = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(`ID from user is ${user.id}`);
+    console.log(`ID from user is ${user.uuid}`);
     console.log(`ID from userID is ${userId}`);
     if (!username || !firstName || !lastName || !dob) {
       return Alert.alert("Validation Error", "All fields are required.");
@@ -393,9 +400,9 @@ const MoreInfoScreen = ({ navigation, route }) => {
       );
     }
 
-    if (!isLowercaseValid || !isLengthValid || !isAvailable) {
-      return Alert.alert("Validation Error", "Please fix the username.");
-    }
+    // if (!isLowercaseValid || !isLengthValid || !isAvailable) {
+    //   return Alert.alert("Validation Error", "Please fix the username.");
+    // }
 
     setLoading(true);
 
@@ -404,8 +411,8 @@ const MoreInfoScreen = ({ navigation, route }) => {
       try {
         profilePicUrl = await uploadImageAsync(profilePicture);
       } catch (error) {
-        console.error('Upload error:', error);
-        Alert.alert('Upload Error', 'Could not upload profile picture.');
+        console.error("Upload error:", error);
+        Alert.alert("Upload Error", "Could not upload profile picture.");
         setLoading(false);
         return;
       }
@@ -440,6 +447,7 @@ const MoreInfoScreen = ({ navigation, route }) => {
   };
 
   const pickImage = async () => {
+    console.log("IMAGE CLICKED");
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -461,7 +469,10 @@ const MoreInfoScreen = ({ navigation, route }) => {
 
       {/* Profile Picture */}
       <Text style={styles.dobText}>select your profile picture:</Text>
-      <View style={styles.profilePictureContainer} onPress={pickImage}>
+      <TouchableOpacity
+        style={styles.profilePictureContainer}
+        onPress={pickImage}
+      >
         {profilePicture ? (
           <Avatar size={100} image={profilePicture} onPress={pickImage} />
         ) : (
@@ -481,7 +492,7 @@ const MoreInfoScreen = ({ navigation, route }) => {
             }
           />
         )}
-      </View>
+      </TouchableOpacity>
 
       {/* Username */}
       <Text style={styles.label}>
@@ -558,8 +569,6 @@ const MoreInfoScreen = ({ navigation, route }) => {
           disabled={loading}
         />
       </View>
-
-
     </KeyboardAvoidingView>
   );
 };

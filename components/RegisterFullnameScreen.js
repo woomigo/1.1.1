@@ -1,9 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { AuthContext } from "../context/AuthContext";
 
 const RegisterScreen = ({ navigation }) => {
-  const localhost = "http://192.168.12.240:3000";
+  const { register } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,34 +14,10 @@ const RegisterScreen = ({ navigation }) => {
       Alert.alert("Error", "Passwords do not match");
       return;
     }
-
     try {
-      // Call the backend API to register
-      const response = await fetch(`${localhost}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, isProfileComplete: false }),
-      });
-
-      const data = await response.json();
-
-      console.log(`DATA TOKEN === ${JSON.stringify(data)}`);
-
-      if (data.token) {
-        // Save the token in AsyncStorage
-        await AsyncStorage.setItem("token", data.token);
-
-        // Navigate to the MoreInfoScreen
-        navigation.navigate("MoreInfo");
-      } else {
-        // Handle registration errors
-        Alert.alert("Error", data.error || "Registration failed");
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "Something went wrong");
+      await register(email, password);
+    } catch (err) {
+      Alert.alert("Registration Failed", err.message);
     }
   };
 

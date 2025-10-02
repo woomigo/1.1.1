@@ -7,7 +7,7 @@ const ListViewStories = ({ gallery }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    // console.log(`THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(gallery)}`)
+    console.log(`THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(gallery)}`)
   })
 
   const renderGallery = (story) => (

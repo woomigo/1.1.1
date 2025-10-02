@@ -13,7 +13,7 @@ const LayoutStoriesItem = ({ story }) => {
 
   useEffect(() => {
     console.log(
-      // `THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(story.stories)}`
+      `THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(story.stories)}`
     );
   });
 

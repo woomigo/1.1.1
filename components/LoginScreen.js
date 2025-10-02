@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { Icon, Input } from "@rneui/themed";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmailAddress] = useState("");
@@ -24,6 +25,7 @@ const LoginScreen = ({ navigation }) => {
   const [isEmailIconHidden, setEmailIconHidden] = useState(true);
   const [isPasswordIconHidden, setPasswordIconHidden] = useState(true);
 
+  const { login } = useContext(AuthContext);
   const emailRef = useRef();
   const passwordRef = useRef();
   const localhost = "http://192.168.12.240:3000";
@@ -67,28 +69,37 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    console.log("LOGIN PUSHED")
-
-      const res = await fetch(`${localhost}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      console.log(`LOGIN INFO ${JSON.stringify(data)}`)
-
-      if (!res.ok) {
-        Alert.alert("Login Failed", data.error || "Invalid credentials");
-        return;
-      }
-
-      await AsyncStorage.setItem("token", data.token);
-      console.log(`DATA AT LOGIN SUBMIT IS ${JSON.stringify(data)}`);
-      navigation.navigate("MoreInfo", { user: { id: '1fb34a99-9bd3-11f0-907e-a841f4a444ea' }, token: data.token }); // Or 'Home' if user already completed more info
- 
+    try {
+      await login(email, password);
+    } catch (err) {
+      Alert.alert("Login Failed", err.message);
+    }
   };
+
+  // const handleLogin = async () => {
+  //   console.log("LOGIN PUSHED")
+
+  //     const res = await fetch(`${localhost}/auth/login`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     const data = await res.json();
+
+  //     console.log(`LOGIN INFO ${JSON.stringify(data)}`)
+
+  //     if (!res.ok) {
+  //       Alert.alert("Login Failed", data.error || "Invalid credentials");
+  //       return;
+  //     }
+
+  //     await AsyncStorage.setItem("token", data.token);
+  //     console.log(`DATA AT LOGIN SUBMIT IS ${JSON.stringify(data)}`);
+  //     data.user.is_profile_complete ? navigation.navigate("Home"):
+  //     navigation.navigate("MoreInfo", { user: data.user, token: data.token }); // Or 'Home' if user already completed more info
+ 
+  // };
 
   // const onSubmitHandler = () => {
   //   signInWithEmailAndPassword(auth, emailAddress, password)

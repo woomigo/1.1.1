@@ -70,7 +70,7 @@ const WooCommentsView = ({ navigation, route }) => {
           backgroundColor={woo_white}
           leftComponent={
             <Icon
-              name="chevron-left"
+              name="chevron-down"
               type="font-awesome-5"
               color={woo_black}
               size={20}

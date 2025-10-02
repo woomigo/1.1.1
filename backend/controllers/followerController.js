@@ -67,7 +67,7 @@ exports.getUserFollowCounts = async (req, res) => {
   try {
     // 1. Get user's basic info
     const [userResult] = await db.query(
-      `SELECT id, username, first_name, last_name, profile_pic_url, is_private FROM users WHERE id = ?`,
+      `SELECT uuid, username, first_name, last_name, profile_pic_url, is_private FROM users WHERE uuid = ?`,
       [userId]
     );
     if (userResult.length === 0) {
@@ -102,7 +102,7 @@ exports.getUserWithFollowersAndFollowingInfo = async (req, res) => {
   try {
     // 1. Get user's basic info
     const [userResult] = await db.query(
-      `SELECT id, username, first_name, last_name, profile_pic_url FROM users WHERE id = ?`,
+      `SELECT uuid, username, first_name, last_name, profile_pic_url FROM users WHERE uuid = ?`,
       [userId]
     );
     if (userResult.length === 0) {
@@ -147,7 +147,7 @@ exports.getFollowersInfo = async (req, res) => {
   try {
     // 1. Get user's basic info
     const [userResult] = await db.query(
-      `SELECT id, username, first_name, last_name, profile_pic_url FROM users WHERE id = ?`,
+      `SELECT uuid, username, first_name, last_name, profile_pic_url FROM users WHERE uuid = ?`,
       [userId]
     );
     if (userResult.length === 0) {
@@ -192,7 +192,7 @@ exports.getFollowingsInfo = async (req, res) => {
   try {
     // 1. Get user's basic info
     const [userResult] = await db.query(
-      `SELECT id, username, first_name, last_name, profile_pic_url FROM users WHERE id = ?`,
+      `SELECT uuid, username, first_name, last_name, profile_pic_url FROM users WHERE uuid = ?`,
       [userId]
     );
     if (userResult.length === 0) {

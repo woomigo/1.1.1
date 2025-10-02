@@ -23,29 +23,44 @@ export default function ImageGalleryWithPreview({ route, navigation }) {
   const flatListRef = useRef(null);
   const pan = useRef(new Animated.ValueXY()).current;
 
-  // PanResponder to detect swipe down
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        return Math.abs(gestureState.dy) > 20; // start responding if vertical swipe > 20px
-      },
-      onPanResponderMove: Animated.event([null, { dy: pan.y }], { useNativeDriver: false }),
-      onPanResponderRelease: (_, gesture) => {
-        if (gesture.dy > 100) {
-          // swipe down enough to close
-          navigation.goBack();
-        } else {
-          // reset position
-          Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
-        }
-      },
-    })
-  ).current;
+  // // PanResponder to detect swipe down
+  // const panResponder = useRef(
+  //   PanResponder.create({
+  //     onMoveShouldSetPanResponder: (_, gestureState) => {
+  //       return Math.abs(gestureState.dy) > 20; // start responding if vertical swipe > 20px
+  //     },
+  //     onPanResponderMove: Animated.event([null, { dy: pan.y }], {
+  //       useNativeDriver: false,
+  //     }),
+  //     onPanResponderRelease: (_, gesture) => {
+  //       if (gesture.dy > 100) {
+  //         // Animate full slide down before closing
+  //         Animated.timing(pan, {
+  //           toValue: { x: 0, y: SCREEN_HEIGHT },
+  //           duration: 250,
+  //           useNativeDriver: false,
+  //         }).start(() => {
+  //           navigation.goBack();
+  //           pan.setValue({ x: 0, y: 0 }); // reset for next time
+  //         });
+  //       } else {
+  //         // reset position
+  //         Animated.spring(pan, {
+  //           toValue: { x: 0, y: 0 },
+  //           useNativeDriver: false,
+  //         }).start();
+  //       }
+  //     },
+  //   })
+  // ).current;
 
   useEffect(() => {
     // Scroll to initial index on mount
     if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({ index: initialIndex, animated: false });
+      flatListRef.current.scrollToIndex({
+        index: initialIndex,
+        animated: false,
+      });
     }
   }, [initialIndex]);
 
@@ -64,26 +79,35 @@ export default function ImageGalleryWithPreview({ route, navigation }) {
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
 
   return (
-    <Animated.View
-      style={[styles.container, { transform: [{ translateY: pan.y }] }]}
-      {...panResponder.panHandlers}
-    >
+    // <Animated.View
+    //   style={[styles.container, { transform: [{ translateY: pan.y }] }]}
+    //   {...panResponder.panHandlers}
+    // >
+    <View style={styles.container}>
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-             <FontAwesome6Icon
-                          name="angle-left"
-                          style={{}}
-                          size={30}
-                          color={woo_white}
-                          onPress={() => navigation.goBack()}
-                        />
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <FontAwesome6Icon
+          name="angle-down"
+          style={{}}
+          size={30}
+          color={woo_white}
+          onPress={() => navigation.goBack()}
+        />
       </TouchableOpacity>
 
       {/* User Info */}
       {media[currentIndex]?.user && (
         <View style={styles.userInfo}>
-          <Image source={{ uri: media[currentIndex].user.profile_pic_url }} style={styles.avatar} />
-          <Text style={styles.username}>{media[currentIndex].user.username}</Text>
+          <Image
+            source={{ uri: media[currentIndex].user.profile_pic_url }}
+            style={styles.avatar}
+          />
+          <Text style={styles.username}>
+            {media[currentIndex].user.username}
+          </Text>
         </View>
       )}
 
@@ -111,11 +135,15 @@ export default function ImageGalleryWithPreview({ route, navigation }) {
               currentIndex === index && styles.previewImageWrapperActive,
             ]}
           >
-            <Image source={{ uri: item.media_url }} style={styles.previewImage} />
+            <Image
+              source={{ uri: item.media_url }}
+              style={styles.previewImage}
+            />
           </TouchableOpacity>
         ))}
       </View>
-    </Animated.View>
+    {/* </Animated.View> */}
+    </View>
   );
 }
 
@@ -126,14 +154,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 55,
-    left: 20,
+    top: 65,
+    left: 40,
     zIndex: 10,
   },
   userInfo: {
     position: "absolute",
-    top: 45,
-    right: 15,
+    top: 55,
+    right: 20,
     zIndex: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -187,4 +215,3 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
-

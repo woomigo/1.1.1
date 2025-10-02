@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Text,
   StyleSheet,
@@ -11,6 +11,7 @@ import { MenuItems } from "./shared";
 import LayoutMenuItem from "./LayoutMenuItem";
 import { woo_black } from "../assets/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../context/AuthContext";
 
 const MenuScreen = ({ navigation, route, user }) => {
 
@@ -26,11 +27,13 @@ const MenuScreen = ({ navigation, route, user }) => {
   //     });
   // };
 
-    const logout = async () => {
-      // Remove the token from AsyncStorage
-      await AsyncStorage.removeItem("token");
-      // navigation.navigate('Login');
-    };
+    // const logout = async () => {
+    //   // Remove the token from AsyncStorage
+    //   await AsyncStorage.removeItem("token");
+    //   // navigation.navigate('Login');
+    // };
+
+    const { logout } = useContext(AuthContext);
 
   return (
     <View style={styles.container}>

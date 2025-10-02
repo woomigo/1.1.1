@@ -36,6 +36,51 @@ const SettingsScreen = ({ route, navigation }) => {
     };
   }, [uid]);
 
+          {/* <View style={styles.testContainer}>
+        <Button title="Refresh Users" onPress={fetchUsers} />
+        
+        {editingUser && (
+          <View style={styles.form}>
+            <Text style={styles.editTitle}>Editing User ID {editingUser}</Text>
+            <TextInput
+              placeholder="Name"
+              value={form.name}
+              onChangeText={(text) => setForm({ ...form, name: text })}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Email"
+              value={form.email}
+              onChangeText={(text) => setForm({ ...form, email: text })}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Password"
+              value={form.password}
+              secureTextEntry
+              onChangeText={(text) => setForm({ ...form, password: text })}
+              style={styles.input}
+            />
+            <Button title="Save" onPress={updateUser} />
+          </View>
+        )}
+  
+        <FlatList
+          data={users}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.userCard}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text>{item.email}</Text>
+              <View style={styles.buttons}>
+                <Button title="Edit" onPress={() => startEditing(item)} />
+                <Button title="Delete" color="red" onPress={() => deleteUser(item.id)} />
+              </View>
+            </View>
+          )}
+        />
+      </View> */}
+
   return (
     <View style={styles.container}>
       <Header

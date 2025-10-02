@@ -7,7 +7,8 @@ import {
   Dimensions,
   Animated,
   Platform,
-  Text
+  Text,
+  PanResponder,
 } from "react-native";
 // import Video from "expo-video";
 import { getTimeAgo } from "./utility";
@@ -24,6 +25,37 @@ export default function StoryViewerScreen({ route, navigation }) {
   const [videoRef, setVideoRef] = useState(null);
   const progress = useRef(new Animated.Value(0)).current;
 
+  const pan = useRef(new Animated.ValueXY()).current;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gesture) => {
+        return Math.abs(gesture.dy) > 20;
+      },
+      onPanResponderMove: Animated.event([null, { dy: pan.y }], {
+        useNativeDriver: false,
+      }),
+      onPanResponderRelease: (_, gesture) => {
+        if (gesture.dy > 100) {
+          // Animate full slide down before closing
+          Animated.timing(pan, {
+            toValue: { x: 0, y: SCREEN_HEIGHT },
+            duration: 250,
+            useNativeDriver: false,
+          }).start(() => {
+            navigation.goBack();
+            pan.setValue({ x: 0, y: 0 }); // reset for next time
+          });
+        } else {
+          Animated.spring(pan, {
+            toValue: { x: 0, y: 0 },
+            useNativeDriver: false,
+          }).start();
+        }
+      },
+    })
+  ).current;
+
   const currentStory = stories[currentIndex];
 
   useEffect(() => {
@@ -38,13 +70,18 @@ export default function StoryViewerScreen({ route, navigation }) {
 
   const markStorySeen = async (storyId) => {
     try {
-      await fetch(`${localhost}/stories/${storyId}/seen?type=${!isUserStory ? "event" : "user"}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      await fetch(
+        `${localhost}/stories/${storyId}/seen?type=${
+          !isUserStory ? "event" : "user"
+        }`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
     } catch (err) {
       console.error("Failed to mark story as seen:", err);
     }
@@ -116,18 +153,15 @@ export default function StoryViewerScreen({ route, navigation }) {
       <View style={styles.progressBarContainer}>
         {stories.map((_, index) => {
           if (index === currentIndex) {
-            // Animate width from 0% to 100%
             const width = progress.interpolate({
               inputRange: [0, 1],
-              outputRange: ['0%', '100%'],
-              extrapolate: 'clamp',
+              outputRange: ["0%", "100%"],
+              extrapolate: "clamp",
             });
-  
+
             return (
               <View key={index} style={styles.progressBackground}>
-                <Animated.View
-                  style={[styles.progressForeground, { width }]}
-                />
+                <Animated.View style={[styles.progressForeground, { width }]} />
               </View>
             );
           } else {
@@ -136,7 +170,7 @@ export default function StoryViewerScreen({ route, navigation }) {
                 <View
                   style={[
                     styles.progressForeground,
-                    { width: index < currentIndex ? '100%' : '0%' },
+                    { width: index < currentIndex ? "100%" : "0%" },
                   ]}
                 />
               </View>
@@ -146,7 +180,6 @@ export default function StoryViewerScreen({ route, navigation }) {
       </View>
     );
   };
-  
 
   const renderUserInfo = () => {
     return (
@@ -165,18 +198,27 @@ export default function StoryViewerScreen({ route, navigation }) {
     );
   };
 
-  console.log("Current Story:", isUserStory);
-
   return (
-    <TouchableWithoutFeedback onPress={handleTap}>
-      <View style={styles.container}>
+    <Animated.View
+      style={[styles.container, { transform: [{ translateY: pan.y }] }]}
+      {...panResponder.panHandlers}
+    >
+      <View
+        style={{ flex: 1 }}
+        onTouchEnd={(e) => {
+          const touchX = e.nativeEvent.locationX;
+          if (touchX < SCREEN_WIDTH / 2) {
+            goToPrev();
+          } else {
+            goToNext();
+          }
+        }}
+      >
         {renderMedia()}
-        {
-        // !isUserStory && 
-        renderUserInfo()}
+        {renderUserInfo()}
         {renderProgressBars()}
       </View>
-    </TouchableWithoutFeedback>
+    </Animated.View>
   );
 }
 
@@ -218,7 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
     padding: 8,
     borderRadius: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   avatar: {
     width: 35,

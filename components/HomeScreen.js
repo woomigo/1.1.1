@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 ("@rneui/themed");
 import {
   View,
@@ -15,15 +15,17 @@ import ListViewStories from "./ListViewStories";
 import ListViewPrivateWoos from "./ListViewPrivateWoos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { AuthContext } from "../context/AuthContext";
 
 const HomeScreen = ({ route, navigation }) => {
-  const { user, token } = route.params;
+  const { user, token } = useContext(AuthContext);
 
   const localhost = "http://192.168.12.240:3000";
 
   const [publicWoos, setPublicWoos] = useState([]);
   const [privateWoos, setPrivateWoos] = useState([]);
-  const [storyFeed, setStoryFeed] = useState([]);
+  const [wooStoryFeed, setWooStoryFeed] = useState([]);
+  const [userStoryFeed, setUserStoryFeed] = useState([]);
   const [unseenCount, setUnseenCount] = useState(0);
 
   const [loading, setLoading] = useState(true);
@@ -152,9 +154,9 @@ const HomeScreen = ({ route, navigation }) => {
     return data;
   }
 
-  const fetchStoryFeed = async () => {
+  const fetchWooStoryFeed = async () => {
     try {
-      const response = await fetch(`${localhost}/stories/feed`, {
+      const response = await fetch(`${localhost}/stories/woo-story-feed`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -164,7 +166,27 @@ const HomeScreen = ({ route, navigation }) => {
       if (!response.ok) throw new Error("Failed to fetch story feed");
 
       const data = await response.json();
-      setStoryFeed(data);
+      setWooStoryFeed(data);
+    } catch (error) {
+      console.error("Error fetching story feed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserStoryFeed = async () => {
+    try {
+      const response = await fetch(`${localhost}/stories/user-story-feed`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch story feed");
+
+      const data = await response.json();
+      setUserStoryFeed(data);
     } catch (error) {
       console.error("Error fetching story feed:", error);
     } finally {
@@ -176,7 +198,8 @@ const HomeScreen = ({ route, navigation }) => {
     useCallback(() => {
       fetchPrivateFeed();
       fetchPublicFeed();
-      fetchStoryFeed();
+      fetchWooStoryFeed();
+      fetchUserStoryFeed();
     }, [token])
   );
 
@@ -192,7 +215,6 @@ const HomeScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Button title="Logout" onPress={logoutUser} /> */}
       <Text
         style={{
           textAlign: "center",
@@ -207,55 +229,22 @@ const HomeScreen = ({ route, navigation }) => {
       <ScrollView>
         <View
           style={{
-            marginTop: 5,
+            margin: 10,
+            marginTop: 10,
           }}
         >
-          <ListViewStories gallery={storyFeed} />
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>user stories</Text>
         </View>
-        {/* <View style={styles.testContainer}>
-      <Button title="Refresh Users" onPress={fetchUsers} />
-      
-      {editingUser && (
-        <View style={styles.form}>
-          <Text style={styles.editTitle}>Editing User ID {editingUser}</Text>
-          <TextInput
-            placeholder="Name"
-            value={form.name}
-            onChangeText={(text) => setForm({ ...form, name: text })}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Email"
-            value={form.email}
-            onChangeText={(text) => setForm({ ...form, email: text })}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Password"
-            value={form.password}
-            secureTextEntry
-            onChangeText={(text) => setForm({ ...form, password: text })}
-            style={styles.input}
-          />
-          <Button title="Save" onPress={updateUser} />
+        <ListViewStories gallery={userStoryFeed} />
+        <View
+          style={{
+            margin: 10,
+            marginTop: 10,
+          }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>woo stories</Text>
         </View>
-      )}
-
-      <FlatList
-        data={users}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.userCard}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text>{item.email}</Text>
-            <View style={styles.buttons}>
-              <Button title="Edit" onPress={() => startEditing(item)} />
-              <Button title="Delete" color="red" onPress={() => deleteUser(item.id)} />
-            </View>
-          </View>
-        )}
-      />
-    </View> */}
+        <ListViewStories gallery={wooStoryFeed} />
         <View
           style={{
             flexDirection: "row",
@@ -271,7 +260,7 @@ const HomeScreen = ({ route, navigation }) => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
               private woos
             </Text>
             {isPrivateVisible ? (
@@ -322,13 +311,18 @@ const HomeScreen = ({ route, navigation }) => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
               public woos
             </Text>
           </View>
           {/* <Text style={styles.smallText}>view all</Text> */}
         </View>
-        <ListViewWoos view={"list"} woos={publicWoos} uid={user.id} token={token} />
+        <ListViewWoos
+          view={"list"}
+          woos={publicWoos}
+          uid={user.id}
+          token={token}
+        />
       </ScrollView>
     </SafeAreaView>
   );

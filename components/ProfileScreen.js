@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import ListViewWoos from "./ListViewWoos";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { Switch } from "react-native";
 import { truncNumber } from "./utility";
+import { AuthContext } from "../context/AuthContext";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
@@ -49,7 +50,8 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const { width } = Dimensions.get("window");
 
-  const { userUID, user, token } = route.params;
+  const { user, token } = useContext(AuthContext);
+  const { userUID } = route.params;
 
   const canPress = isProfileOwnedByUser || isFollowing || !isProfilePrivate;
 
@@ -324,6 +326,8 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+
+  console.log(`USER FOR PROFILE IS ${JSON.stringify(user)}`)
     setIsProfileOwnedByUser(!userUID);
 
     Animated.spring(indicatorAnim, {

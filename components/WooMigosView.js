@@ -18,7 +18,7 @@ const WooMigosView = ({ navigation, route }) => {
                 backgroundColor={'#fff'}
                 leftComponent={
                     <Icon
-                        name="chevron-left"
+                        name="chevron-down"
                         type='font-awesome-5'
                         color={woo_black}
                         size={25}

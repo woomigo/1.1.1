@@ -78,6 +78,7 @@ exports.cancelFollowRequest = async (req, res) => {
 
 exports.acceptFollowRequest = async (req, res) => {
   const requestId = req.params.id;
+
   try {
     // 1. Get sender and receiver from the request
     const [[request]] = await db.query(
@@ -85,7 +86,11 @@ exports.acceptFollowRequest = async (req, res) => {
       [requestId]
     );
 
-    if (!request) return res.status(404).json({ error: "Request not found" });
+    if (!request) {
+      return res.status(404).json({ error: "Request not found" });
+    }
+
+    const { sender_id, receiver_id } = request;
 
     // 2. Update request status
     await db.query(
@@ -93,11 +98,19 @@ exports.acceptFollowRequest = async (req, res) => {
       [requestId]
     );
 
-    // 3. Insert into followers table
-    await db.query(
-      `INSERT INTO followers (follower_id, followee_id) VALUES (?, ?)`,
-      [request.sender_id, request.receiver_id]
+    // 3. Check if the follow relationship already exists
+    const [[existingFollow]] = await db.query(
+      `SELECT * FROM followers WHERE follower_id = ? AND followee_id = ?`,
+      [sender_id, receiver_id]
     );
+
+    if (!existingFollow) {
+      // 4. Insert into followers table only if not already following
+      await db.query(
+        `INSERT INTO followers (follower_id, followee_id) VALUES (?, ?)`,
+        [sender_id, receiver_id]
+      );
+    }
 
     res.json({ message: "Follow request accepted" });
   } catch (err) {
@@ -105,6 +118,7 @@ exports.acceptFollowRequest = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 exports.declineFollowRequest = async (req, res) => {
   const requestId = req.params.id;

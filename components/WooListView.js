@@ -57,7 +57,7 @@ const WooListView = ({ navigation, route }) => {
           backgroundColor={woo_white}
           leftComponent={
             <Icon
-              name="chevron-left"
+              name="chevron-"
               type="font-awesome-5"
               color={woo_black}
               size={20}

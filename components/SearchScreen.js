@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -23,11 +23,12 @@ import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import SearchInput from "./SearchInput";
 import { filter } from "lodash";
 import ListViewUsers from "./ListViewUsers";
+import { AuthContext } from "../context/AuthContext";
 
 const localhost = "http://192.168.12.240:3000";
 
 const SearchScreen = ({ navigation, route }) => {
-  const { user, token } = route.params;
+    const { user, token } = useContext(AuthContext);
 
   const [searchText, setSearchText] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);

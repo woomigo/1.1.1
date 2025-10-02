@@ -43,7 +43,7 @@ exports.checkUsernameAvailability = (req, res) => {
   }
 
   db.query(
-    "SELECT id FROM users WHERE username = ?",
+    "SELECT uuid FROM users WHERE username = ?",
     [username],
     (err, results) => {
       if (err) {
@@ -93,7 +93,7 @@ exports.getUserByUsername = async (req, res) => {
 
   try {
     const [results] = await db.query(
-      "SELECT id AS user_id, username, email, first_name, last_name, profile_pic_url, dob, is_profile_complete, created_at, updated_at, is_private, latitude, longitude FROM users WHERE username LIKE ?",
+      "SELECT uuid AS user_id, username, email, first_name, last_name, profile_pic_url, dob, is_profile_complete, created_at, updated_at, is_private, latitude, longitude FROM users WHERE username LIKE ?",
       [searchTerm]
     );
 
@@ -108,55 +108,6 @@ exports.getUserByUsername = async (req, res) => {
   }
 };
 
-
-
-
-// Update user
-exports.updateUser = async (req, res) => {
-  console.log("req.params:", req.params);
-  console.log("req.params:", req.body);
-
-  const { id } = req.params;
-  let fields = { ...req.body };
-
-  // Handle password separately
-  if (fields.password) {
-    try {
-      fields.password = bcrypt.hashSync(fields.password, 10);
-    } catch (err) {
-      console.error("Password hashing failed:", err);
-      return res
-        .status(500)
-        .json({ error: "Internal error while hashing password" });
-    }
-  }
-
-  // If no fields to update, exit early
-  if (Object.keys(fields).length === 0) {
-    return res.status(400).json({ error: "No fields provided for update" });
-  }
-
-  // Build dynamic SQL query
-  const setClause = Object.keys(fields)
-    .map((field) => `${field} = ?`)
-    .join(", ");
-  const values = Object.values(fields);
-  values.push(id); // Add user ID for WHERE clause
-
-  const query = `UPDATE users SET ${setClause} WHERE id = ?`;
-
-  console.log("Updating user with fields:", fields);
-
-  db.query(query, values, (err, result) => {
-    if (err) {
-      console.error("Error updating user:", err);
-      return res.status(500).json({ error: err });
-    }
-
-    res.json({ message: "User updated successfully" });
-  });
-};
-
 exports.updateUserLocation = async (req, res) => {
   const { userId, latitude, longitude } = req.body;
 
@@ -166,7 +117,7 @@ exports.updateUserLocation = async (req, res) => {
 
   try {
     await db.execute(
-      `UPDATE users SET latitude = ?, longitude = ? WHERE id = ?`,
+      `UPDATE users SET latitude = ?, longitude = ? WHERE uuid = ?`,
       [latitude, longitude, userId]
     );
 
@@ -177,119 +128,136 @@ exports.updateUserLocation = async (req, res) => {
   }
 };
 
-// exports.completeProfile = (userId, updatedData, callback) => {
-//   console.log("UPDATED DATA: " + JSON.stringify(updatedData));
-//   const {
-//     is_profile_complete,
-//     first_name,
-//     last_name,
-//     dob,
-//     username,
-//     profile_pic_url,
-//   } = updatedData;
-//   db.query(
-//     "UPDATE users SET is_profile_complete = ?, first_name = ?, last_name = ?, dob=?, username = ?, profile_pic_url = ? WHERE id = ?",
-//     [
-//       is_profile_complete,
-//       first_name,
-//       last_name,
-//       dob,
-//       username,
-//       profile_pic_url,
-//       userId,
-//     ], // If no password, pass null
-//     (err, result) => {
-//       if (err) return callback(err);
-//       callback(null);
-//     }
-//   );
-// };
+exports.completeProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const {
+      is_profile_complete,
+      first_name,
+      last_name,
+      dob,
+      username,
+      profile_pic_url,
+    } = req.body;
 
-// exports.updateUser = async (req, res) => {
-//   const { id } = req.params;
-//   const updates = req.body;
+    console.log("Received profile update:", {
+      userId,
+      is_profile_complete,
+      first_name,
+      last_name,
+      dob,
+      username,
+      profile_pic_url,
+    });
 
-//   // Ensure the logged-in user is updating their own profile
-//   if (req.user.id !== parseInt(id)) {
-//     return res
-//       .status(403)
-//       .json({ error: "You can only update your own profile" });
-//   }
+    // Validate required fields
+    if (
+      is_profile_complete === undefined ||
+      !first_name ||
+      !last_name ||
+      !dob ||
+      !username
+    ) {
+      throw new Error("Missing required profile fields.");
+    }
 
-//   // Fields to ignore in the update
-//   const fieldsToIgnore = ["password", "updated_at"];
+    const query = `
+      UPDATE users SET
+        is_profile_complete = ?,
+        first_name = ?,
+        last_name = ?,
+        dob = ?,
+        username = ?,
+        profile_pic_url = ?
+      WHERE uuid = ?
+    `;
 
-//   // Filter out fields we don't want to update
-//   const filteredUpdates = Object.keys(updates)
-//     .filter((field) => !fieldsToIgnore.includes(field))
-//     .reduce((obj, key) => {
-//       obj[key] = updates[key];
-//       return obj;
-//     }, {});
+    const [result] = await db.query(query, [
+      is_profile_complete,
+      first_name,
+      last_name,
+      dob,
+      username,
+      profile_pic_url || null,
+      userId,
+    ]);
 
-//   // Dynamically create the SET clause for the SQL query
-//   const fields = Object.keys(filteredUpdates)
-//     .map((k) => `${k} = ?`)
-//     .join(", ");
-//   const values = Object.values(filteredUpdates);
+    res.status(200).json({ message: "Profile updated successfully", result });
+  } catch (err) {
+    console.error("Error in completeProfile:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
 
-//   // Execute the query
-//   await db.query(`UPDATE users SET ${fields} WHERE id = ?`, [...values, id]);
-//   res.json({ message: "User updated" });
-// };
 
-// exports.updateUser = (userId, updatedData, callback) => {
-//   const fields = [];
-//   const values = [];
+exports.updatePassword = async (userId, oldPassword, newPassword) => {
+  // 1. Fetch the current hashed password from DB
+  const [rows] = await db.query("SELECT password FROM users WHERE id = ?", [userId]);
+  if (rows.length === 0) {
+    throw new Error("User not found");
+  }
 
-//   if (updatedData.email) {
-//     fields.push("email = ?");
-//     values.push(updatedData.email);
-//   }
+  const currentHashedPassword = rows[0].password;
 
-//   if (updatedData.password) {
-//     const hashedPassword = bcrypt.hashSync(updatedData.password, 10);
-//     fields.push("password = ?");
-//     values.push(hashedPassword);
-//   }
+  // 2. Verify old password matches
+  const isMatch = await bcrypt.compare(oldPassword, currentHashedPassword);
+  if (!isMatch) {
+    throw new Error("Old password is incorrect");
+  }
 
-//   if (updatedData.isProfileComplete !== undefined) {
-//     fields.push("is_profile_complete = ?");
-//     values.push(updatedData.isProfileComplete);
-//   }
+  // 3. Hash new password
+  const newHashedPassword = await bcrypt.hash(newPassword, 10);
 
-//   if (updatedData.firstName) {
-//     fields.push("first_name = ?");
-//     values.push(updatedData.firstName);
-//   }
+  // 4. Update password in DB
+  await db.query("UPDATE users SET password = ? WHERE id = ?", [newHashedPassword, userId]);
 
-//   if (updatedData.lastName) {
-//     fields.push("last_name = ?");
-//     values.push(updatedData.lastName);
-//   }
+  return true; // success
+};
 
-//   if (updatedData.username) {
-//     fields.push("username = ?");
-//     values.push(updatedData.username);
-//   }
 
-//   if (updatedData.profilePicture) {
-//     fields.push("profile_pic_url = ?");
-//     values.push(updatedData.profilePicture);
-//   }
+exports.updateUser = async (userId, updatedFields) => {
+  // Filter out password if it's in the request
+  const filteredFields = { ...updatedFields };
+  delete filteredFields.password;
 
-//   if (fields.length === 0) {
-//     return callback(new Error("No valid fields provided for update"));
-//   }
+  if (Object.keys(filteredFields).length === 0) {
+    throw new Error("No valid fields provided to update");
+  }
 
-//   const sql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
-//   values.push(userId);
+  // Optional: whitelist allowed fields to avoid accidental updates
+  const allowedFields = ['username', 'first_name', 'last_name', 'dob', 'profile_pic_url', 'email', 'is_profile_complete'];
+  const fieldsToUpdate = {};
 
-//   db.query(sql, values, (err, result) => {
-//     if (err) return callback(err);
-//     callback(null);
-//   });
-// };
+  for (const key of Object.keys(filteredFields)) {
+    if (allowedFields.includes(key)) {
+      fieldsToUpdate[key] = filteredFields[key];
+    }
+  }
+
+  if (Object.keys(fieldsToUpdate).length === 0) {
+    throw new Error("No allowed fields provided to update");
+  }
+
+  // Build dynamic query parts
+  const columns = [];
+  const values = [];
+
+  for (const [key, value] of Object.entries(fieldsToUpdate)) {
+    columns.push(`${key} = ?`);
+    values.push(value);
+  }
+
+  const sql = `UPDATE users SET ${columns.join(", ")} WHERE id = ?`;
+  values.push(userId);
+
+  try {
+    const [result] = await db.query(sql, values);
+    return result;
+  } catch (err) {
+    throw err;
+  }
+};
+
 
 // Delete user
 exports.deleteUser = (userId, callback) => {
