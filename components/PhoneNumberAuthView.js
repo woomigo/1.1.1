@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Button, TextInput } from 'react-native';
-import { auth } from '../firebaseConfig';
+import { useState, useEffect } from "react";
+import { Button, TextInput } from "react-native";
+import { auth } from "../firebaseConfig";
 
 const PhoneNumberAuthView = () => {
   // If null, no SMS has been sent
   const [confirm, setConfirm] = useState(null);
 
   // verification code (OTP - One-Time-Passcode)
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
 
   // Handle login
   function onAuthStateChanged(user) {
@@ -34,7 +34,7 @@ const PhoneNumberAuthView = () => {
     try {
       await confirm.confirm(code);
     } catch (error) {
-      console.log('Invalid code.');
+      console.log("Invalid code.");
     }
   }
 
@@ -42,17 +42,17 @@ const PhoneNumberAuthView = () => {
     return (
       <Button
         title="Phone Number Sign In"
-        onPress={() => signInWithPhoneNumber('+1 650-555-3434')}
+        onPress={() => signInWithPhoneNumber("+1 650-555-3434")}
       />
     );
   }
 
   return (
     <>
-      <TextInput value={code} onChangeText={text => setCode(text)} />
+      <TextInput value={code} onChangeText={(text) => setCode(text)} />
       <Button title="Confirm Code" onPress={() => confirmCode()} />
     </>
   );
-}
+};
 
 export default PhoneNumberAuthView;

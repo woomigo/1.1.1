@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -27,8 +27,7 @@ const WooListScreen = ({ route, navigation }) => {
   const [items, setItems] = useState([]);
   const [itemName, setItemName] = useState("");
 
-  useEffect(() => {
-  });
+  useEffect(() => {});
 
   // Add a new item to the list
   const addItem = () => {

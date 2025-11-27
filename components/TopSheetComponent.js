@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
@@ -7,7 +7,6 @@ import Animated, {
 } from "react-native-reanimated";
 
 const TopSheet = ({ content, isVisible = false }) => {
-
   const topPosition = useSharedValue(-300); // Initial position off-screen
 
   useEffect(() => {
@@ -19,8 +18,6 @@ const TopSheet = ({ content, isVisible = false }) => {
       top: withTiming(topPosition.value, { duration: 300 }),
     };
   });
-
-
 
   return (
     <View style={styles.container}>

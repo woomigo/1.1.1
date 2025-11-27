@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
 import { woo_orange, woo_white } from "../assets/colors";
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -142,7 +142,7 @@ export default function ImageGalleryWithPreview({ route, navigation }) {
           </TouchableOpacity>
         ))}
       </View>
-    {/* </Animated.View> */}
+      {/* </Animated.View> */}
     </View>
   );
 }

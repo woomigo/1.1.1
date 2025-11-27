@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,15 @@ import {
   Button,
   TextInput,
 } from "react-native";
-import { doc, getDoc, updateDoc, arrayRemove, getDocs, collection, arrayUnion } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  arrayRemove,
+  getDocs,
+  collection,
+  arrayUnion,
+} from "firebase/firestore";
 import Avatar from "../components/Avatar";
 import { db, auth } from "../firebaseConfig";
 
@@ -103,7 +111,7 @@ const ManageParticipantsScreen = ({ route, navigation }) => {
       setSelectedToAdd([]);
       setSearchResults([]);
       Alert.alert("Success", "Participants added!");
-      navigation.goBack()
+      navigation.goBack();
     } catch (err) {
       console.error("Add failed:", err.message);
     }
@@ -220,65 +228,64 @@ const ManageParticipantsScreen = ({ route, navigation }) => {
 export default ManageParticipantsScreen;
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-      paddingTop: 40,
-      backgroundColor: '#fff',
-    },
-    title: {
-      fontSize: 22,
-      fontWeight: '600',
-      marginBottom: 16,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: '500',
-      marginTop: 24,
-      marginBottom: 8,
-    },
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 12,
-      backgroundColor: '#f9f9f9',
-      borderRadius: 8,
-      marginBottom: 8,
-    },
-    selectedRow: {
-      backgroundColor: '#e0f0ff',
-    },
-    name: {
-      marginLeft: 12,
-      fontSize: 16,
-    },
-    footer: {
-      paddingVertical: 12,
-      borderTopWidth: 1,
-      borderColor: '#ccc',
-      marginTop: 8,
-    },
-    selectedText: {
-      fontSize: 16,
-      marginBottom: 8,
-    },
-    searchInput: {
-      backgroundColor: '#f1f1f1',
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      fontSize: 16,
-      marginBottom: 12,
-    },
-    searchResultRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 12,
-      backgroundColor: '#fefefe',
-      borderRadius: 8,
-      marginBottom: 8,
-      borderWidth: 1,
-      borderColor: '#e6e6e6',
-    },
-  });
-  
+  container: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 40,
+    backgroundColor: "#fff",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "600",
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "500",
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  selectedRow: {
+    backgroundColor: "#e0f0ff",
+  },
+  name: {
+    marginLeft: 12,
+    fontSize: 16,
+  },
+  footer: {
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderColor: "#ccc",
+    marginTop: 8,
+  },
+  selectedText: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  searchInput: {
+    backgroundColor: "#f1f1f1",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  searchResultRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    backgroundColor: "#fefefe",
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#e6e6e6",
+  },
+});

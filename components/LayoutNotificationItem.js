@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -304,9 +304,7 @@ const LayoutNotificationItem = ({ notification }) => {
             <View style={styles.notification}>
               {renderMessage(notification.item.data().notification_type)}
             </View>
-            <Text style={styles.time}>
-              {notification.item.data().time_ago}
-            </Text>
+            <Text style={styles.time}>{notification.item.data().time_ago}</Text>
             {/* <Text style={styles.time}>
               {new Date(
                 notification.item.data().timestamp * 1000

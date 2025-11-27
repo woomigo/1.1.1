@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Avatar } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
@@ -6,13 +6,7 @@ import { woo_white } from "../assets/colors";
 import ProgressBar from "./ProgressBar";
 import SelectableInputCounter from "./SelectableInputCounter";
 
-const LayoutWooListItem = ({
-  item,
-  size,
-  itemsAmt,
-  itemsSlctd,
-  view,
-}) => {
+const LayoutWooListItem = ({ item, size, itemsAmt, itemsSlctd, view }) => {
   const [selectedItem, setSelectedItem] = useState(0);
   const itemsLeft = itemsAmt - itemsSlctd;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -63,7 +63,8 @@ const LayoutWooShowComment = ({ uid, wooID, wooComments }) => {
               </TouchableWithoutFeedback>
               <TouchableWithoutFeedback
                 onPress={() => {
-                  user.uid !== uid && navigation.navigate("Profile", { userUID: user.uid });
+                  user.uid !== uid &&
+                    navigation.navigate("Profile", { userUID: user.uid });
                 }}
               >
                 <Text style={styles.commentUsername}>{username}</Text>

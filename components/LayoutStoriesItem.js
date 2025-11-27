@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -10,7 +10,6 @@ import { useNavigation } from "@react-navigation/native";
 import { woo_orange } from "../assets/colors";
 
 const LayoutStoriesItem = ({ story }) => {
-
   useEffect(() => {
     console.log(
       `THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(story.stories)}`
@@ -25,16 +24,25 @@ const LayoutStoriesItem = ({ story }) => {
         onPress={() =>
           navigation.navigate("StoryViewer", {
             stories: story.stories,
-            isUserStory: story.woo_id == null ? true : false
+            isUserStory: story.woo_id == null ? true : false,
           })
         }
       >
         <Image
           style={!story.unseen ? styles.image : styles.imageUnread}
-          source={story.woo_id ? { uri: story.woo_media_url } : { uri: story.user_story_owner.avatar }}
+          source={
+            story.woo_id
+              ? { uri: story.woo_media_url }
+              : { uri: story.user_story_owner.avatar }
+          }
         />
       </TouchableWithoutFeedback>
-      <Text style={styles.text}>@{story.woo_id ? story.woo_owner.username : story.user_story_owner.username }</Text>
+      <Text style={styles.text}>
+        @
+        {story.woo_id
+          ? story.woo_owner.username
+          : story.user_story_owner.username}
+      </Text>
     </View>
   );
 };

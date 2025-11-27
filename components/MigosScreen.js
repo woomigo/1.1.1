@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
 import { Migos } from "./shared";

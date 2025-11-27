@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Header, Icon, Switch } from "@rneui/themed";
 import { woo_black, woo_orange, woo_white } from "../assets/colors";
@@ -36,7 +36,8 @@ const SettingsScreen = ({ route, navigation }) => {
     };
   }, [uid]);
 
-          {/* <View style={styles.testContainer}>
+  {
+    /* <View style={styles.testContainer}>
         <Button title="Refresh Users" onPress={fetchUsers} />
         
         {editingUser && (
@@ -79,7 +80,8 @@ const SettingsScreen = ({ route, navigation }) => {
             </View>
           )}
         />
-      </View> */}
+      </View> */
+  }
 
   return (
     <View style={styles.container}>
@@ -147,13 +149,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  bodyContainer:{
-    padding: 20
+  bodyContainer: {
+    padding: 20,
   },
-  privateProfileText:{
+  privateProfileText: {
     marginBottom: 3,
-    fontWeight: 'bold'
-  }
+    fontWeight: "bold",
+  },
 });
 
 export default SettingsScreen;

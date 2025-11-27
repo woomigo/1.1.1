@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -235,7 +235,7 @@ const RegisterScreen = ({ route, navigation }) => {
             style={{
               flex: 0.2,
               justifyContent: "flex-start",
-              padding: 10
+              padding: 10,
             }}
           >
             <View style={{ flexDirection: "row" }}>

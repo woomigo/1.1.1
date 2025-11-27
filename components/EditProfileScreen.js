@@ -1,5 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { Avatar, Header, Icon, Input } from "@rneui/themed";
 import { woo_black, woo_white } from "../assets/colors";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { View, Text, Animated, StyleSheet, Pressable } from "react-native";
 import Avatar from "./Avatar";
 import { Ionicons } from "@expo/vector-icons";

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -31,7 +31,7 @@ const WooListView = ({ navigation, route }) => {
   const [wooList, setWooList] = useState();
   useEffect(() => {
     // console.log(`WOOID WOOLIST ==== ${wooID}`);
-// 
+    //
     // const docWooRef = doc(db, "woos", wooID);
     // const getWooList = onSnapshot(
     //   docWooRef,
@@ -41,7 +41,6 @@ const WooListView = ({ navigation, route }) => {
     //   },
     //   (error) => {}
     // );
-
     // return () => {
     //   if (wooID) {
     //     getWooList();

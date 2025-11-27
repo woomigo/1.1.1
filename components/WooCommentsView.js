@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -26,7 +26,7 @@ const WooCommentsView = ({ navigation, route }) => {
   const [profilePicURL, setProfilePicURL] = useState();
 
   useEffect(() => {
-    console.log(`COMMENT SCREEN ${JSON.stringify(comments)}`)
+    console.log(`COMMENT SCREEN ${JSON.stringify(comments)}`);
   }, []);
 
   const addCommentToWoo = async () => {

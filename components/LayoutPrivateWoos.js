@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -18,12 +18,14 @@ const LayoutPrivateWoos = ({ woo, uid, isVisible, isRead }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableWithoutFeedback      onPress={() =>
-        navigation.navigate("Woo", {
-          uid: uid,
-          woo: woo,
-        })
-      }>
+      <TouchableWithoutFeedback
+        onPress={() =>
+          navigation.navigate("Woo", {
+            uid: uid,
+            woo: woo,
+          })
+        }
+      >
         <View>
           {isVisible ? (
             <View style={isRead ? styles.image : styles.imageUnread}></View>

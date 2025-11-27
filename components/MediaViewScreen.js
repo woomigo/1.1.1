@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -57,29 +57,28 @@ const MediaViewScreen = ({ navigation, route }) => {
     setIsCommentBottomSheetVisible(true);
   };
 
-    useEffect(() => {
+  useEffect(() => {
+    // const docRef = doc(db, "users", ownerUID);
+    // const getMediaOwnerProfileInfo = onSnapshot(
+    //   docRef,
+    //   (doc) => {
+    //     console.log("Document data:", doc.data());
+    //     setUser(doc.data());
+    //     setUsername(truncUsername(doc.data().username));
+    //     setFirstName(doc.data().first_name);
+    //     setLastName(doc.data().last_name);
+    //     setProfilePicURL(doc.data().profile_pic_url);
+    //     // setTImeAgo(getTimeAgo(wooMediaComments[0].timestamp.seconds));
+    //   },
+    //   (error) => {},
+    //   []
+    // );
 
-      // const docRef = doc(db, "users", ownerUID);
-      // const getMediaOwnerProfileInfo = onSnapshot(
-      //   docRef,
-      //   (doc) => {
-      //     console.log("Document data:", doc.data());
-      //     setUser(doc.data());
-      //     setUsername(truncUsername(doc.data().username));
-      //     setFirstName(doc.data().first_name);
-      //     setLastName(doc.data().last_name);
-      //     setProfilePicURL(doc.data().profile_pic_url);
-      //     // setTImeAgo(getTimeAgo(wooMediaComments[0].timestamp.seconds));
-      //   },
-      //   (error) => {},
-      //   []
-      // );
-
-      // return () => {
-      //     getMediaOwnerProfileInfo();
-      // };
-      console.log("MEDIA VIEW " + JSON.stringify(media.media_url))
-    }, []);
+    // return () => {
+    //     getMediaOwnerProfileInfo();
+    // };
+    console.log("MEDIA VIEW " + JSON.stringify(media.media_url));
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -392,4 +391,3 @@ const styles = StyleSheet.create({
 });
 
 export default MediaViewScreen;
-

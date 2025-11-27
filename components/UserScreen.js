@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Header, Icon, Avatar, Tab, TabView, ButtonGroup } from "@rneui/themed";
 import ListViewGallery from "./ListViewGallery";

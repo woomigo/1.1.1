@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
 import { Header, Icon, Tab, TabView } from "@rneui/themed";
 // import {

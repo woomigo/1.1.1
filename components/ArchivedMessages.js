@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -6,13 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-} from 'react-native';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import { Ionicons } from '@expo/vector-icons';
-import MessageItem from './MessageItem';
+} from "react-native";
+import { SwipeListView } from "react-native-swipe-list-view";
+import { Ionicons } from "@expo/vector-icons";
+import MessageItem from "./MessageItem";
 
 const ArchivedMessages = ({ messages, onUnarchive, onSelectMessage }) => {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const filteredArchived = messages.filter(
     (msg) =>
@@ -28,13 +28,13 @@ const ArchivedMessages = ({ messages, onUnarchive, onSelectMessage }) => {
   const renderHiddenItem = (data) => {
     const handleUnarchive = () => {
       Alert.alert(
-        'Unarchive Message',
+        "Unarchive Message",
         `Unarchive message from "${data.item.sender}"?`,
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: "Cancel", style: "cancel" },
           {
-            text: 'Unarchive',
-            style: 'default',
+            text: "Unarchive",
+            style: "default",
             onPress: () => onUnarchive({ ...data.item, archived: false }),
           },
         ]
@@ -43,7 +43,10 @@ const ArchivedMessages = ({ messages, onUnarchive, onSelectMessage }) => {
 
     return (
       <View style={styles.rowBack}>
-        <TouchableOpacity style={styles.unarchiveButton} onPress={handleUnarchive}>
+        <TouchableOpacity
+          style={styles.unarchiveButton}
+          onPress={handleUnarchive}
+        >
           <Ionicons name="arrow-undo-outline" size={24} color="#fff" />
           <Text style={styles.unarchiveText}>Unarchive</Text>
         </TouchableOpacity>
@@ -89,31 +92,31 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   searchInput: {
     height: 40,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 12,
     marginBottom: 12,
   },
   rowBack: {
-    alignItems: 'center',
-    backgroundColor: '#4cd964',
+    alignItems: "center",
+    backgroundColor: "#4cd964",
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     paddingHorizontal: 16,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
     borderBottomWidth: 1,
   },
   unarchiveButton: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   unarchiveText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
     marginTop: 4,
   },

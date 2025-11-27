@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { woo_black, woo_white } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
@@ -35,7 +35,7 @@ const LayoutGroupItem = ({ item }) => {
       <Text style={{ fontSize: 12, marginTop: 5, textAlign: "center" }}>
         {item.description}
       </Text>
-      <MigosAvatarGroup maxAvatars={3} migos={item.member_profile_pics}/>
+      <MigosAvatarGroup maxAvatars={3} migos={item.member_profile_pics} />
       <Text style={{ fontSize: 12, marginTop: 15 }}>
         users: {item.member_count}
       </Text>

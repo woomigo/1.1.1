@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -74,7 +74,6 @@ const LayoutWooInfo = ({
 
   useEffect(() => {
     console.log(`LWI &&&&&& ${wooType}`);
-
   }, [wooType]);
 
   const openCal = () => {
@@ -149,7 +148,7 @@ const LayoutWooInfo = ({
           </View>
         </View>
         <View style={styles.migosContainer}>
-          <MigosAvatarGroup migos={wooMigos}/>
+          <MigosAvatarGroup migos={wooMigos} />
         </View>
       </View>
     </Card>
@@ -207,7 +206,7 @@ const styles = StyleSheet.create({
   },
   locationContainer: {
     flexDirection: "row",
-    margin: 3
+    margin: 3,
   },
   wooTimeLocationText: {
     marginStart: 5,

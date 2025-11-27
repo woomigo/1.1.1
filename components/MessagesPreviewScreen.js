@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { Header, Icon } from "@rneui/themed";
 import {
@@ -39,10 +39,8 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
         ...doc.data(),
       }));
       setChats(data);
-      console.log("CHATS AT MPS MPS MPS " + JSON.stringify(data))
+      console.log("CHATS AT MPS MPS MPS " + JSON.stringify(data));
     });
-
-
 
     const unsubscribeUnread = listenToUnreadChats(user.id, setUnreadChats);
 
@@ -55,10 +53,7 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
   const listenToUnreadChats = (uid, onUpdate) => {
     try {
       const chatsRef = collection(db, "chats");
-      const q = query(
-        chatsRef,
-        where("participants", "array-contains", uid)
-      );
+      const q = query(chatsRef, where("participants", "array-contains", uid));
 
       const unsubscribe = onSnapshot(
         q,

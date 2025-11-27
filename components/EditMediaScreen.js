@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -112,11 +112,11 @@ const EditMediaScreen = ({ navigation, route }) => {
           <Dialog.Loading />
         </Dialog>
         <View style={styles.buttonContainer}>
-        <TopSheet isVisible={isVisible} />
+          <TopSheet isVisible={isVisible} />
           <Animated.View style={[styles.topSheet, animatedStyle]}>
-            <View style={styles.topButtonContainer}> 
-            <View style={styles.filterButtonContainer}>   
-              <TouchableOpacity
+            <View style={styles.topButtonContainer}>
+              <View style={styles.filterButtonContainer}>
+                <TouchableOpacity
                   style={styles.filterButton}
                   onPress={() => navigation.navigate("Camera")}
                 >
@@ -127,7 +127,7 @@ const EditMediaScreen = ({ navigation, route }) => {
                     size={30}
                   />
                 </TouchableOpacity>
-                </View>
+              </View>
               <View style={styles.filterButtonContainer}>
                 <TouchableOpacity
                   style={styles.filterButton}
@@ -203,7 +203,11 @@ const EditMediaScreen = ({ navigation, route }) => {
               wooType: "private",
             });
           }}
-          buttonStyle={{ margin: 10, backgroundColor: woo_gray, borderRadius: 25 }}
+          buttonStyle={{
+            margin: 10,
+            backgroundColor: woo_gray,
+            borderRadius: 25,
+          }}
         />
         <Button
           icon={
@@ -223,7 +227,11 @@ const EditMediaScreen = ({ navigation, route }) => {
               wooType: "public",
             });
           }}
-          buttonStyle={{ margin: 10, backgroundColor: woo_gray, borderRadius: 25 }}
+          buttonStyle={{
+            margin: 10,
+            backgroundColor: woo_gray,
+            borderRadius: 25,
+          }}
         />
         <Button
           icon={
@@ -237,7 +245,11 @@ const EditMediaScreen = ({ navigation, route }) => {
           }
           title="back to edit woo"
           onPress={toggleOverlay}
-          buttonStyle={{ margin: 10, backgroundColor: woo_red, borderRadius: 25 }}
+          buttonStyle={{
+            margin: 10,
+            backgroundColor: woo_red,
+            borderRadius: 25,
+          }}
         />
       </Overlay>
     </View>
@@ -255,9 +267,9 @@ const styles = StyleSheet.create({
   },
   topButtonContainer: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     flexDirection: "row",
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     marginHorizontal: 20,
   },
   bottomButtonContainer: {

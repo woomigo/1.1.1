@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -21,27 +21,28 @@ const MessagesPreview = ({
   onSelectMessage,
   onNewMessage,
   isUnread,
-  uid
+  uid,
 }) => {
   const [searchText, setSearchText] = useState("");
 
   const navigation = useNavigation();
 
-  useEffect(()=> {
-    console.log("MESSAGES " + JSON.stringify(messages))
-  })
+  useEffect(() => {
+    console.log("MESSAGES " + JSON.stringify(messages));
+  });
 
   const filteredMessages =
-    messages || searchText &&
-    messages.filter(
-      (msg) =>
-        !msg.archived &&
-        (msg.sender.toLowerCase().includes(searchText.toLowerCase()) ||
-          msg.text.toLowerCase().includes(searchText.toLowerCase()))
-    );
+    messages ||
+    (searchText &&
+      messages.filter(
+        (msg) =>
+          !msg.archived &&
+          (msg.sender.toLowerCase().includes(searchText.toLowerCase()) ||
+            msg.text.toLowerCase().includes(searchText.toLowerCase()))
+      ));
 
   const handlePress = (item) => {
-    navigation.navigate("MessageDetails", { chatId: item.id, chat: item});
+    navigation.navigate("MessageDetails", { chatId: item.id, chat: item });
   };
 
   const handleLongPress = (item) => {

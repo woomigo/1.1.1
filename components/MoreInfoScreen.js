@@ -1,4 +1,4 @@
-// import React, { useState, useEffect, useCallback, useContext } from 'react';
+// import { useState, useEffect, useCallback, useContext } from 'react';
 // import {
 //   View,
 //   Text,
@@ -170,7 +170,7 @@
 
 // export default MoreInfoScreen;
 
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   View,
   Text,

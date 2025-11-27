@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import {
   Text,
   StyleSheet,
@@ -14,7 +14,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../context/AuthContext";
 
 const MenuScreen = ({ navigation, route, user }) => {
-
   const renderMenuItems = (menuItem) => <LayoutMenuItem menuItem={menuItem} />;
 
   // const logout = () => {
@@ -27,13 +26,13 @@ const MenuScreen = ({ navigation, route, user }) => {
   //     });
   // };
 
-    // const logout = async () => {
-    //   // Remove the token from AsyncStorage
-    //   await AsyncStorage.removeItem("token");
-    //   // navigation.navigate('Login');
-    // };
+  // const logout = async () => {
+  //   // Remove the token from AsyncStorage
+  //   await AsyncStorage.removeItem("token");
+  //   // navigation.navigate('Login');
+  // };
 
-    const { logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
 
   return (
     <View style={styles.container}>

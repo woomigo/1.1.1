@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -105,7 +105,7 @@ const WooLocationScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {/* Google Places Autocomplete Input */}
-      <GooglePlacesAutocomplete
+      {/* <GooglePlacesAutocomplete
         ref={googlePlacesRef}
         placeholder="search woo location"
         enablePoweredByContainer={false}
@@ -154,7 +154,7 @@ const WooLocationScreen = ({ route, navigation }) => {
           textInput: styles.input,
         }}
         debounce={300}
-      />
+      /> */}
 
       {/* MapView with Marker (Only show when region is set) */}
       {region && (
@@ -178,16 +178,16 @@ const WooLocationScreen = ({ route, navigation }) => {
       {/* Navigation Buttons */}
       <View style={styles.navButtons}>
         <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("WooTime", {
-                wooMedia: wooMedia,
-                wooType: wooType,
-                wooMigos: wooMigos,
-                wooTags: wooTags,
-                wooDate: wooDate,
-                wooTime: wooTime,
-              })
-            }
+          onPress={() =>
+            navigation.navigate("WooTime", {
+              wooMedia: wooMedia,
+              wooType: wooType,
+              wooMigos: wooMigos,
+              wooTags: wooTags,
+              wooDate: wooDate,
+              wooTime: wooTime,
+            })
+          }
           style={styles.button}
         >
           <Icon name="arrow-left" size={24} color="white" />
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
 
 export default WooLocationScreen;
 
-// import React, { useEffect, useState, useRef } from 'react';
+// import { useEffect, useState, useRef } from 'react';
 // import { View, Text, StyleSheet, ActivityIndicator, KeyboardAvoidingView } from "react-native";
 // import { Header, Icon, LinearProgress, Input } from "@rneui/themed";
 // import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';

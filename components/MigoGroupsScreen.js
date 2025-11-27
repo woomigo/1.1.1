@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
 import { woo_black, woo_white } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";

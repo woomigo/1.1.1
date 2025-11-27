@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { woo_orange } from "../assets/colors";
 
@@ -25,7 +25,9 @@ const ProgressBar = ({ itemsAmt, itemsSlctd, animated, backgroundColor }) => {
   return (
     <View style={styles.container}>
       {/* Background Bar */}
-      <View style={[styles.backgroundBar, {backgroundColor: backgroundColor}]} />
+      <View
+        style={[styles.backgroundBar, { backgroundColor: backgroundColor }]}
+      />
 
       {/* Progress Bar */}
       {!animated && (

@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Pressable } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { Avatar, CheckBox } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
@@ -47,8 +53,11 @@ const LayoutUserItem = ({
         );
       case "x":
         return (
-          <Pressable style={{marginEnd: 30}} onPress={() => handleXOnClick(userItem.item)}>
-            <FontAwesome6Icon name="xmark" solid size={20} color={woo_black}  />
+          <Pressable
+            style={{ marginEnd: 30 }}
+            onPress={() => handleXOnClick(userItem.item)}
+          >
+            <FontAwesome6Icon name="xmark" solid size={20} color={woo_black} />
           </Pressable>
         );
       case "single":

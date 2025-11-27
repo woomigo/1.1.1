@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, View, Platform, Alert, SafeAreaView } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Text,
+  StyleSheet,
+  View,
+  Platform,
+  Alert,
+  SafeAreaView,
+} from "react-native";
 import { Header, Icon, Dialog } from "@rneui/themed";
 import { Notifications } from "./shared";
 import ListViewNotifications from "./ListViewNotifications";
@@ -138,16 +145,8 @@ const NotificationsScreen = ({ navigation, route }) => {
             justifyContent: "space-around",
           }}
         >
-          <FontAwesome6Icon
-            name="bell"
-            size={26}
-            color={woo_black}
-          />
-          <FontAwesome6Icon
-            name="ellipsis"
-            size={26}
-            color={woo_black}
-          />
+          <FontAwesome6Icon name="bell" size={26} color={woo_black} />
+          <FontAwesome6Icon name="ellipsis" size={26} color={woo_black} />
         </View>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
