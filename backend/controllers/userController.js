@@ -63,7 +63,7 @@ exports.getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [results] = await db.query(`SELECT * FROM users WHERE id = ?`, [id]);
+    const [results] = await db.query(`SELECT * FROM users WHERE uuid = ?`, [id]);
 
     if (results.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -75,6 +75,33 @@ exports.getUserById = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+exports.getUsersByIds = async (req, res) => {
+  const { userIds } = req.body;
+
+  if (!Array.isArray(userIds) || userIds.length === 0) {
+    return res.status(400).json({ error: "userIds must be a non-empty array." });
+  }
+
+  try {
+    // Create a dynamic placeholder list (?, ?, ?, ...)
+    const placeholders = userIds.map(() => '?').join(', ');
+
+    const query = `
+      SELECT uuid AS user_id, username, email, first_name, last_name, profile_pic_url, dob, is_profile_complete, created_at, updated_at, is_private, latitude, longitude
+      FROM users
+      WHERE uuid IN (${placeholders})
+    `;
+
+    const [results] = await db.query(query, userIds);
+
+    res.json(results);
+  } catch (err) {
+    console.error("Error fetching users by IDs:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 
 // Get user by username
 exports.getUserByUsername = async (req, res) => {

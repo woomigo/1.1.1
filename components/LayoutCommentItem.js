@@ -37,12 +37,12 @@ const LayoutCommentItem = ({ uid, comment, comments, token }) => {
 
   const navigation = useNavigation();
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const fetchReplies = async (commentId, token) => {
     if (!token) throw new Error("Auth token is missing");
     if (!commentId) throw new Error("Parent Comment ID is required");
-  
+
     const res = await fetch(`${localhost}/comments/replies/${commentId}`, {
       method: "GET",
       headers: {
@@ -50,23 +50,23 @@ const LayoutCommentItem = ({ uid, comment, comments, token }) => {
         Authorization: `Bearer ${token}`,
       },
     });
-  
+
     if (!res.ok) throw new Error("Failed to fetch Woo Comment Replies");
-  
+
     const data = await res.json();
     console.log("REPLIES OBJECT IS ======= ", JSON.stringify(data));
-  
+
     setReplies(data); // assuming you're using a useState setter
-    setIsReplies(data.length > 0)
-    setRepliesCount(data.length)
-  
+    setIsReplies(data.length > 0);
+    setRepliesCount(data.length);
+
     return data; // ✅ this avoids calling res.json() twice
   };
 
   useEffect(() => {
     console.log("LCI " + JSON.stringify(comment.item.id));
 
-    fetchReplies(comment.item.id, token)
+    fetchReplies(comment.item.id, token);
   }, []);
 
   return (

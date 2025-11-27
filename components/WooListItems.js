@@ -29,7 +29,7 @@ const WooListItems = (props) => {
 
   const [quantities, setQuantities] = useState({});
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   useEffect(() => {
     // fetchWooList();

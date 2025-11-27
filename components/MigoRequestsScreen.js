@@ -17,7 +17,7 @@ import ListViewUsers from "./ListViewUsers";
 import { woo_black, woo_orange, woo_red } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
-const localhost = "http://192.168.12.240:3000";
+const localhost = "http://10.0.0.250:3000";
 
 const MigoRequestScreen = ({ navigation, route }) => {
   const { user, token } = route.params;
@@ -112,13 +112,16 @@ const MigoRequestScreen = ({ navigation, route }) => {
     if (!token) throw new Error("Auth token is missing");
     if (!request_id) throw new Error("Request ID is required");
     try {
-      const res = await fetch(`${localhost}/follow-requests/${request_id}/decline`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
-        },
-      });
+      const res = await fetch(
+        `${localhost}/follow-requests/${request_id}/decline`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          },
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to ignore request");
 
@@ -137,13 +140,16 @@ const MigoRequestScreen = ({ navigation, route }) => {
     if (!token) throw new Error("Auth token is missing");
     if (!request_id) throw new Error("Request ID is required");
     try {
-      const res = await fetch(`${localhost}/follow-requests/${request_id}/accept`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
-        },
-      });
+      const res = await fetch(
+        `${localhost}/follow-requests/${request_id}/accept`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          },
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to accept request");
 

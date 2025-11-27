@@ -22,7 +22,7 @@ import SelectableUserListView from "./SelectableUserListView";
 const WooMigosScreen = ({ route, navigation }) => {
   const { wooMedia, wooType, user, token } = route.params;
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [followers, setFollowers] = useState([]);

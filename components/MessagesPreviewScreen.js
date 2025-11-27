@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { Header, Icon } from "@rneui/themed";
 import {
@@ -15,8 +15,10 @@ import ListViewPreviewMessages from "./ListViewPreviewMessages";
 import { woo_black } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import MessagesPreview from "./MessagesPreview";
+import { AuthContext } from "../context/AuthContext";
 
 const MessagesPreviewScreen = ({ navigation, route }) => {
+  const { user, token } = useContext(AuthContext);
   const { uid } = route.params;
 
   // const [messagers, setMessagers] = useState()
@@ -24,12 +26,11 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
   const [unreadChats, setUnreadChats] = useState();
 
   useEffect(() => {
-    const user = auth.currentUser;
     if (!user) return;
 
     const q = query(
       collection(db, "chats"),
-      where("participants", "array-contains", user.uid)
+      where("participants", "array-contains", user.id)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -38,9 +39,12 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
         ...doc.data(),
       }));
       setChats(data);
+      console.log("CHATS AT MPS MPS MPS " + JSON.stringify(data))
     });
 
-    const unsubscribeUnread = listenToUnreadChats(uid, setUnreadChats);
+
+
+    const unsubscribeUnread = listenToUnreadChats(user.id, setUnreadChats);
 
     return () => {
       unsubscribe();
@@ -51,7 +55,10 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
   const listenToUnreadChats = (uid, onUpdate) => {
     try {
       const chatsRef = collection(db, "chats");
-      const q = query(chatsRef, where("participants", "array-contains", uid));
+      const q = query(
+        chatsRef,
+        where("participants", "array-contains", uid)
+      );
 
       const unsubscribe = onSnapshot(
         q,
@@ -86,12 +93,10 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
       console.error("❌ Exception in listenToUnreadChats:", error);
       return () => {};
     }
-  };  
+  };
 
   const unreadCount =
     unreadChats && unreadChats.length > 0 && unreadChats.length;
-
-
 
   // const handleMarkAsRead = (updatedMessage) => {
   //   // setMessages((prevMessages) =>

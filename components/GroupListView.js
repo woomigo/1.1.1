@@ -11,34 +11,32 @@ import { Header, Icon, ListItem, LinearProgress, Input } from "@rneui/themed";
 import { woo_black, woo_white } from "../assets/colors";
 import ListViewGroupList from "./ListViewGroupList";
 
-
 const GroupListView = ({ navigation, route, userId, token }) => {
-//   const { userId, token } = route.params;
+  //   const { userId, token } = route.params;
 
   useEffect(() => {
     fetchGroups(userId, token);
   }, [userId]);
 
-  const localhost = "http://192.168.12.240:3000";
-  
-    const [groups, setGroups] = useState();
-  
-    const fetchGroups = async (userId, token) => {
-      const res = await fetch(`${localhost}/groups/user/${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
-        },
-      });
-  
-      const data = await res.json();
-      console.log("GROUPS ARE ======= " + JSON.stringify(data));
-      setGroups(data);
-      if (!res.ok) throw new Error("Failed to fetch groups");
-      return res.json();
-    };
-  
+  const localhost = "http://10.0.0.250:3000";
+
+  const [groups, setGroups] = useState();
+
+  const fetchGroups = async (userId, token) => {
+    const res = await fetch(`${localhost}/groups/user/${userId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+      },
+    });
+
+    const data = await res.json();
+    console.log("GROUPS ARE ======= " + JSON.stringify(data));
+    setGroups(data);
+    if (!res.ok) throw new Error("Failed to fetch groups");
+    return res.json();
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

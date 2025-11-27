@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -28,51 +28,23 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
+import { AuthContext } from "../context/AuthContext";
+
+const localhost = "http://10.0.0.250:3000";
 
 const MessageDetailsScreen = ({ route, navigation }) => {
   const { chatId, uid } = route.params;
+  const { token, user } = useContext(AuthContext);
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [chat, setChat] = useState();
-  const [followerProfiles, setFollowerProfiles] = useState([]);
+  const [participantProfiles, setParticipantProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // const [usersMap, setUsersMap] = useState({});
-
-  // const fetchUsers = async (senderIds) => {
-  //   const userDocs = await Promise.all(
-  //     senderIds.map((id) => getDoc(doc(db, "users", id)))
-  //   );
-
-  //   const map = {};
-  //   userDocs.forEach((docSnap) => {
-  //     if (docSnap.exists()) {
-  //       map[docSnap.id] = docSnap.data();
-  //     }
-  //   });
-
-  //   setUsersMap(map);
-  // };
-
-  // const listenToMessages = (chatId, onUpdate) => {
-  //   const messagesRef = collection(db, "chats", chatId, "messages");
-  //   const q = query(messagesRef, orderBy("created_at", "asc"));
-
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     const messages = snapshot.docs.map((doc) => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-  //     onUpdate(messages);
-  //   });
-
-  //   return unsubscribe; // Call this to stop listening
-  // };
 
   const markChatAsRead = async (chatId) => {
     try {
-      const currentUser = auth.currentUser;
+      const currentUser = user;
       if (!uid) throw new Error("User not authenticated");
 
       const chatRef = doc(db, "chats", chatId);
@@ -84,7 +56,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
       }
 
       const chatData = chatSnap.data();
-      const userLastRead = chatData.read_receipts?.[currentUser.uid];
+      const userLastRead = chatData.read_receipts?.[currentUser.id];
       const lastMessageTime = chatData.last_message?.created_at;
 
       // Only update if:
@@ -96,7 +68,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
           userLastRead.toMillis?.() < lastMessageTime.toMillis?.())
       ) {
         await updateDoc(chatRef, {
-          [`read_receipts.${currentUser.uid}`]: serverTimestamp(),
+          [`read_receipts.${currentUser.id}`]: serverTimestamp(),
         });
         console.log("Marked as read");
       } else {
@@ -107,50 +79,50 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     }
   };
 
-  const listenToUserProfiles = (userIds, onUpdate) => {
-    const unsubscribers = [];
-    const profiles = {};
+  // const listenToUserProfiles = (userIds, onUpdate) => {
+  //   const unsubscribers = [];
+  //   const profiles = {};
 
-    try {
-      userIds.forEach((uid) => {
-        const userRef = doc(db, "users", uid);
+  //   try {
+  //     userIds.forEach((uid) => {
+  //       const userRef = doc(db, "users", uid);
 
-        const unsubscribe = onSnapshot(
-          userRef,
-          (docSnap) => {
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-              profiles[uid] = {
-                id: uid,
-                name: data.first_name + " " + data.last_name || "",
-                profilePicUrl: data.profile_pic_url || "",
-              };
+  //       const unsubscribe = onSnapshot(
+  //         userRef,
+  //         (docSnap) => {
+  //           if (docSnap.exists()) {
+  //             const data = docSnap.data();
+  //             profiles[uid] = {
+  //               id: uid,
+  //               name: data.first_name + " " + data.last_name || "",
+  //               profilePicUrl: data.profile_pic_url || "",
+  //             };
 
-              const result = Object.values(profiles);
-              console.log(`👤 Updated profiles (${result.length}):`, result);
-              onUpdate(result);
-            } else {
-              console.warn(`Follower user document not found: ${uid}`);
-            }
-          },
-          (error) => {
-            console.error(`❌ Error listening to user profile ${uid}:`, error);
-          }
-        );
+  //             const result = Object.values(profiles);
+  //             console.log(`👤 Updated profiles (${result.length}):`, result);
+  //             onUpdate(result);
+  //           } else {
+  //             console.warn(`Follower user document not found: ${uid}`);
+  //           }
+  //         },
+  //         (error) => {
+  //           console.error(`❌ Error listening to user profile ${uid}:`, error);
+  //         }
+  //       );
 
-        unsubscribers.push(unsubscribe);
-      });
-    } catch (error) {
-      console.error("❌ Exception in listenToUserProfiles:", error);
-    }
+  //       unsubscribers.push(unsubscribe);
+  //     });
+  //   } catch (error) {
+  //     console.error("❌ Exception in listenToUserProfiles:", error);
+  //   }
 
-    return () => {
-      unsubscribers.forEach((unsub) => unsub());
-    };
-  };
+  //   return () => {
+  //     unsubscribers.forEach((unsub) => unsub());
+  //   };
+  // };
 
   useEffect(() => {
-    // console.log("CHAT " + followerProfiles);
+    console.log("UID ISSSSSSSSSSSSSSSSSSSSs " + uid);
 
     if (chatId && uid) {
       markChatAsRead(chatId, uid);
@@ -175,13 +147,35 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     const unsubscribeChat = onSnapshot(chatRef, (docSnap) => {
       if (docSnap.exists()) {
         const chatData = docSnap.data();
-        setChat(chatData); // Or whatever state you're using
-        console.log("Chat Set Successfully");
-        listenToUserProfiles(chatData.participants, (profiles) => {
-          setFollowerProfiles(profiles);
-          setLoading(false);
-          console.log("PROFILES " + JSON.stringify(profiles));
-        });
+        setChat(chatData);
+
+        console.log("Chat Set Successfully", token + chatData.participants);
+
+        // ✅ Fetch user info for participants from your backend
+        (async () => {
+          console.log("Data here", localhost + token + chatData.participants);
+          try {
+            const res = await fetch(`${localhost}/users/batch`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // if required
+              },
+              body: JSON.stringify({
+                userIds: chatData.participants, // assumed field
+              }),
+            });
+
+            if (!res.ok) throw new Error("Failed to fetch users");
+
+            const users = await res.json();
+            console.log("USERS " + JSON.stringify(users));
+            // Set user data in state
+            setParticipantProfiles(users);
+          } catch (error) {
+            console.error("Error fetching participant profiles:", error);
+          }
+        })();
       } else {
         console.warn("Chat not found");
       }
@@ -195,14 +189,14 @@ const MessageDetailsScreen = ({ route, navigation }) => {
 
   const handleSend = async (chatId, messageText) => {
     try {
-      const currentUser = auth.currentUser;
+      const currentUser = user;
 
       if (!currentUser) {
         console.error("No authenticated user found.");
         return;
       }
 
-      const currentUserId = currentUser.uid;
+      const currentUserId = currentUser.id;
 
       if (!messageText.trim()) {
         console.warn("Empty message not sent.");
@@ -272,33 +266,33 @@ const MessageDetailsScreen = ({ route, navigation }) => {
             </Pressable>
             {chat && (
               <View style={styles.avatarRow}>
-                {followerProfiles.slice(0, 5).map((user, index) => (
+                {participantProfiles.slice(0, 5).map((user, index) => (
                   <View
-                    key={user.id}
+                    key={user.user_id}
                     style={[
                       styles.avatarWrapper,
                       index !== 0 && styles.overlap,
                     ]}
                   >
                     <Avatar
-                      name={user.name}
-                      image={user.profilePicUrl}
+                      name={`${user.first_name} ${user.last_name}`}
+                      image={user.profile_pic_url}
                       size={36}
                     />
                   </View>
                 ))}
 
-                {followerProfiles.length > 5 && (
+                {participantProfiles.length > 5 && (
                   <View style={[styles.avatarWrapper, styles.overlap]}>
                     <View style={styles.extraAvatar}>
                       <Text style={styles.extraText}>
-                        +{followerProfiles.length - 5}
+                        +{participantProfiles.length - 5}
                       </Text>
                     </View>
                   </View>
                 )}
 
-                {followerProfiles.length > 0 && chat.owner_id === uid && (
+                {participantProfiles.length > 0 && chat.owner_id === uid && (
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate("ManageParticipants", { chatId })
@@ -348,10 +342,13 @@ const MessageDetailsScreen = ({ route, navigation }) => {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
-            const user = followerProfiles.find((u) => u.uuid === item.sender_id);
-            const profilePic = user.profilePicUrl;
-            const name = user.name;
-            console.log("USER IN DETAILS " + JSON.stringify(user));
+            const user = participantProfiles.find(
+              (u) => u.user_id === item.sender_id
+            );
+            console.log("MI USER " + JSON.stringify(user));
+            const profilePic = user.profile_pic_url;
+            const name = user.first_name + " " + user.last_name;
+            console.log("USER IN DETAILS " + JSON.stringify(item));
             return (
               <View
                 style={[

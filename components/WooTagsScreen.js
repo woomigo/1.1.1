@@ -27,7 +27,7 @@ if (
 
 const TAG_LIMIT = 5;
 const MAX_TAG_LENGTH = 25;
-const localhost = "http://192.168.12.240:3000";
+const localhost = "http://10.0.0.250:3000";
 
 const WooTagScreen = ({ navigation, route }) => {
   const { wooMedia, wooType, wooMigos, user, token } = route.params;
@@ -331,14 +331,17 @@ const WooTagScreen = ({ navigation, route }) => {
         >
           <Icon name="arrow-left" size={24} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() =>
+        <TouchableOpacity
+          onPress={() =>
             navigation.navigate("WooDate", {
               wooMedia: wooMedia,
               wooType: wooType,
               wooMigos: wooMigos,
-              wooTags: selectedTags
+              wooTags: selectedTags,
             })
-          } style={styles.button}>
+          }
+          style={styles.button}
+        >
           <Icon name="arrow-right" size={24} color="white" />
         </TouchableOpacity>
       </View>

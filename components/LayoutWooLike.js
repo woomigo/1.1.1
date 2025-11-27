@@ -42,15 +42,15 @@ const LayoutWooLike = ({
 }) => {
   const navigation = useNavigation();
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const [isLiked, setIsLiked] = useState(wooLikedByMe);
-  const [wooLikeCount, setWooLikeCount] = useState(wooLikes)
+  const [wooLikeCount, setWooLikeCount] = useState(wooLikes);
   // const [isWooMigo, setIsWooMigo] = useState(false);
   // const [receivedUID, setReceiverUID] = useState([]);
 
   useEffect(() => {
-console.log(` LWL ${wooID} ${wooLikes}`)
+    console.log(` LWL ${wooID} ${wooLikes}`);
   }, [wooID, wooLikes]);
 
   const fetchLikeWoo = async (woo_id) => {
@@ -68,7 +68,7 @@ console.log(` LWL ${wooID} ${wooLikes}`)
 
       const data = await response.json();
       setIsLiked(!isLiked);
-      setWooLikeCount(prev => prev + 1)
+      setWooLikeCount((prev) => prev + 1);
     } catch (error) {
       console.error("Error liking story:", error);
     }
@@ -89,7 +89,7 @@ console.log(` LWL ${wooID} ${wooLikes}`)
 
       const data = await response.json();
       setIsLiked(!isLiked);
-      setWooLikeCount(prev => prev - 1)
+      setWooLikeCount((prev) => prev - 1);
     } catch (error) {
       console.error("Error unliking story:", error);
     }
@@ -97,12 +97,12 @@ console.log(` LWL ${wooID} ${wooLikes}`)
 
   const addWooLike = async (wooId) => {
     console.log("ADD ", wooId);
-    await fetchLikeWoo(wooId)
+    await fetchLikeWoo(wooId);
   };
 
   const removeWooLike = async (wooId) => {
     console.log("REMOVE ", wooId);
-    await fetchUnLikeWoo(wooId)
+    await fetchUnLikeWoo(wooId);
   };
 
   // const saveNotification = async () => {

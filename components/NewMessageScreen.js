@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -29,28 +29,14 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
+import { debounce } from "lodash";
+import { AuthContext } from "../context/AuthContext";
 
-const dummyUsers = [
-  { id: "u1", name: "Samantha Green" },
-  { id: "u2", name: "Liam Anderson" },
-  { id: "u3", name: "Olivia Chen" },
-  { id: "u4", name: "Noah Rodriguez" },
-  { id: "u5", name: "Ava Patel" },
-  { id: "u6", name: "Ethan Lee" },
-  { id: "u7", name: "Isabella Martinez" },
-  { id: "u8", name: "Mason Kim" },
-  { id: "u9", name: "Sophia Nguyen" },
-  { id: "u10", name: "James Thompson" },
-  { id: "u11", name: "Harper Wright" },
-  { id: "u12", name: "Benjamin Scott" },
-  { id: "u13", name: "Chloe Davis" },
-  { id: "u14", name: "Jackson Hall" },
-  { id: "u15", name: "Amelia Young" },
-];
+const localhost = "http://10.0.0.250:3000";
 
 const NewMessageScreen = ({ route, navigation }) => {
   //   const navigation = useNavigation();
-
+  const { user, token } = useContext(AuthContext);
   const { uid } = route.params;
 
   const [search, setSearch] = useState("");
@@ -63,119 +49,138 @@ const NewMessageScreen = ({ route, navigation }) => {
 
   const isGroupChat = selectedUsers.length > 1;
 
-// const listenToFollowers = (onUpdate) => {
-//     try {
-//       const user = auth.currentUser;
-//       if (!user) {
-//         console.warn('No authenticated user found.');
-//         onUpdate([]);
-//         return () => {};
-//       }
-  
-//       const userRef = doc(db, 'users', user.uid);
-  
-//       const unsubscribe = onSnapshot(userRef, (docSnap) => {
-//         if (docSnap.exists()) {
-//           const data = docSnap.data();
-//           const followers = data.followers || [];
-  
-//           console.log('🔄 Fetched live followers:', followers);
-//           onUpdate(followers);
-//         } else {
-//           console.warn('User document does not exist.');
-//           onUpdate([]);
-//         }
-//       }, (error) => {
-//         console.error('❌ Error listening to followers:', error);
-//         onUpdate([]);
-//       });
-  
-//       return unsubscribe;
-//     } catch (error) {
-//       console.error('❌ Exception in listenToFollowers:', error);
-//       return () => {};
-//     }
-//   };
+  // const listenToFollowers = (onUpdate) => {
+  //     try {
+  //       const user = auth.currentUser;
+  //       if (!user) {
+  //         console.warn('No authenticated user found.');
+  //         onUpdate([]);
+  //         return () => {};
+  //       }
 
-//   const listenToUserProfiles = (userIds, onUpdate) => {
-//     const unsubscribers = [];
-//     const profiles = {};
-  
-//     try {
-//       userIds.forEach((uid) => {
-//         const userRef = doc(db, 'users', uid);
-  
-//         const unsubscribe = onSnapshot(userRef, (docSnap) => {
-//           if (docSnap.exists()) {
-//             const data = docSnap.data();
-//             profiles[uid] = {
-//               id: uid,
-//               name: data.first_name + " " + data.last_name || '',
-//               profilePicUrl: data.profile_pic_url || '',
-//             };
-  
-//             const result = Object.values(profiles);
-//             console.log(`👤 Updated profiles (${result.length}):`, result);
-//             onUpdate(result);
-//           } else {
-//             console.warn(`Follower user document not found: ${uid}`);
-//           }
-//         }, (error) => {
-//           console.error(`❌ Error listening to user profile ${uid}:`, error);
-//         });
-  
-//         unsubscribers.push(unsubscribe);
-//       });
-//     } catch (error) {
-//       console.error('❌ Exception in listenToUserProfiles:', error);
-//     }
-  
-//     return () => {
-//       unsubscribers.forEach((unsub) => unsub());
-//     };
-//   };
+  //       const userRef = doc(db, 'users', user.uid);
 
+  //       const unsubscribe = onSnapshot(userRef, (docSnap) => {
+  //         if (docSnap.exists()) {
+  //           const data = docSnap.data();
+  //           const followers = data.followers || [];
 
-  // useEffect(() => {
-  //   let unsubscribeProfiles = null;
-
-  //   const unsubscribeFollowers = listenToFollowers((followerUids) => {
-  //     if (unsubscribeProfiles) unsubscribeProfiles();
-
-  //     if (followerUids.length > 0) {
-  //       unsubscribeProfiles = listenToUserProfiles(followerUids, (profiles) => {
-  //         setFollowerProfiles(profiles);
-  //         setLoading(false);
+  //           console.log('🔄 Fetched live followers:', followers);
+  //           onUpdate(followers);
+  //         } else {
+  //           console.warn('User document does not exist.');
+  //           onUpdate([]);
+  //         }
+  //       }, (error) => {
+  //         console.error('❌ Error listening to followers:', error);
+  //         onUpdate([]);
   //       });
-  //     } else {
-  //       setFollowerProfiles([]);
-  //       setLoading(false);
+
+  //       return unsubscribe;
+  //     } catch (error) {
+  //       console.error('❌ Exception in listenToFollowers:', error);
+  //       return () => {};
   //     }
-  //   });
-
-  //   return () => {
-  //     unsubscribeFollowers();
-  //     if (unsubscribeProfiles) unsubscribeProfiles();
   //   };
-  // }, []);
 
-  const filteredUsers =
-    followerProfiles.filter(
-      (user) =>
-        user.name.toLowerCase().includes(search.toLowerCase()) &&
-        !selectedUsers.some((u) => u.uuid === user.id)
-    );
+  //   const listenToUserProfiles = (userIds, onUpdate) => {
+  //     const unsubscribers = [];
+  //     const profiles = {};
+
+  //     try {
+  //       userIds.forEach((uid) => {
+  //         const userRef = doc(db, 'users', uid);
+
+  //         const unsubscribe = onSnapshot(userRef, (docSnap) => {
+  //           if (docSnap.exists()) {
+  //             const data = docSnap.data();
+  //             profiles[uid] = {
+  //               id: uid,
+  //               name: data.first_name + " " + data.last_name || '',
+  //               profilePicUrl: data.profile_pic_url || '',
+  //             };
+
+  //             const result = Object.values(profiles);
+  //             console.log(`👤 Updated profiles (${result.length}):`, result);
+  //             onUpdate(result);
+  //           } else {
+  //             console.warn(`Follower user document not found: ${uid}`);
+  //           }
+  //         }, (error) => {
+  //           console.error(`❌ Error listening to user profile ${uid}:`, error);
+  //         });
+
+  //         unsubscribers.push(unsubscribe);
+  //       });
+  //     } catch (error) {
+  //       console.error('❌ Exception in listenToUserProfiles:', error);
+  //     }
+
+  //     return () => {
+  //       unsubscribers.forEach((unsub) => unsub());
+  //     };
+  //   };
+
+  const [filteredUsers, setFilteredUsers] = useState([]);
+
+  const fetchFilteredUsers = async (query) => {
+    if (!query) {
+      setFilteredUsers([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${localhost}/users/search?username=${query.trim()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) {
+        setFilteredUsers([]);
+        return;
+      }
+
+      const data = await res.json();
+      console.log(`SEARCH DATA JSON ${JSON.stringify(data)}`);
+      setFilteredUsers(data);
+    } catch (error) {
+      setFilteredUsers([]);
+    }
+  };
+
+  const debouncedFetchUsers = useRef(debounce(fetchFilteredUsers, 300)).current;
+
+  const handleSearch = (text) => {
+    setSearch(text);
+    debouncedFetchUsers(text.trim());
+  };
+
+  // Cancel debounce on unmount
+  useEffect(() => {
+    return () => {
+      debouncedFetchUsers.cancel();
+    };
+  }, []);
+
+  // const filteredUsers =
+  //   followerProfiles.filter(
+  //     (user) =>
+  //       user.name.toLowerCase().includes(search.toLowerCase()) &&
+  //       !selectedUsers.some((u) => u.uuid === user.id)
+  //   );
 
   const toggleUserSelect = (user) => {
     setSelectedUsers((prev) =>
-      prev.find((u) => u.uuid === user.id)
-        ? prev.filter((u) => u.uuid !== user.id)
+      prev.find((u) => u.user_id === user.user_id)
+        ? prev.filter((u) => u.user_id !== user.user_id)
         : [...prev, user]
     );
   };
 
   const handleRemoveUser = (id) => {
-    const updated = selectedUsers.filter((u) => u.uuid !== id);
+    const updated = selectedUsers.filter((u) => u.user_id !== id);
     setSelectedUsers(updated);
     if (updated.length === 0) setShowAllUsers(false);
   };
@@ -186,12 +191,15 @@ const NewMessageScreen = ({ route, navigation }) => {
     const payload = {
       type: isGroupChat ? "group" : "direct",
       name: isGroupChat ? groupName || "New Group" : null,
-      participants: [...selectedUsers.map((u) => u.uuid), uid],
-      owner_id: uid,
+      participants: [...selectedUsers.map((u) => u.user_id), user.id],
+      owner_id: user.id,
       created_at: serverTimestamp(),
       last_message: null,
       read_receipts: {},
     };
+    console.log("Creating chat as user:", auth.currentUser?.uid);
+
+    console.log("Creating chat with payload:", payload);
 
     try {
       const chatRef = await addDoc(collection(db, "chats"), payload);
@@ -206,37 +214,37 @@ const NewMessageScreen = ({ route, navigation }) => {
     }
   };
 
-//   const handleCreateChat = async ({ userIds, isGroup, currentUser }) => {
-//     if (!currentUser || !userIds || userIds.length === 0) return;
-  
-//     const participants = [...userIds, currentUser.uid];
-//     const readReceipts = {};
-  
-//     participants.forEach((uid) => {
-//       readReceipts[uid] = null; // Initially no one has read anything
-//     });
-  
-//     const chatPayload = {
-//       participants,
-//       is_group: isGroup,
-//       owner_id: currentUser.uid,
-//       created_at: serverTimestamp(),
-//       last_message: null,
-//       read_receipts: readReceipts,
-//     };
-  
-//     try {
-//       const chatRef = await addDoc(collection(db, 'chats'), chatPayload);
-//       console.log('✅ Chat created with ID:', chatRef.id);
-//       navigation.navigate("MessageDetails", {
-//         chatId: chatRef.id,
-//         chat: chatPayload,
-//       });
-//     } catch (error) {
-//       console.error('❌ Failed to create chat:', error);
-//       throw error;
-//     }
-//   };
+  //   const handleCreateChat = async ({ userIds, isGroup, currentUser }) => {
+  //     if (!currentUser || !userIds || userIds.length === 0) return;
+
+  //     const participants = [...userIds, currentUser.uid];
+  //     const readReceipts = {};
+
+  //     participants.forEach((uid) => {
+  //       readReceipts[uid] = null; // Initially no one has read anything
+  //     });
+
+  //     const chatPayload = {
+  //       participants,
+  //       is_group: isGroup,
+  //       owner_id: currentUser.uid,
+  //       created_at: serverTimestamp(),
+  //       last_message: null,
+  //       read_receipts: readReceipts,
+  //     };
+
+  //     try {
+  //       const chatRef = await addDoc(collection(db, 'chats'), chatPayload);
+  //       console.log('✅ Chat created with ID:', chatRef.id);
+  //       navigation.navigate("MessageDetails", {
+  //         chatId: chatRef.id,
+  //         chat: chatPayload,
+  //       });
+  //     } catch (error) {
+  //       console.error('❌ Failed to create chat:', error);
+  //       throw error;
+  //     }
+  //   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: woo_white }}>
@@ -271,10 +279,14 @@ const NewMessageScreen = ({ route, navigation }) => {
             <View style={styles.avatarRow}>
               {selectedUsers.slice(0, 5).map((user, index) => (
                 <View
-                  key={user.id}
+                  key={user.user_id}
                   style={[styles.avatarWrapper, index !== 0 && styles.overlap]}
                 >
-                  <Avatar name={user.name} image={user.profilePicUrl} size={36} />
+                  <Avatar
+                    name={`${user.first_name} ${user.last_name}`}
+                    image={user.profile_pic_url}
+                    size={36}
+                  />
                 </View>
               ))}
 
@@ -317,23 +329,34 @@ const NewMessageScreen = ({ route, navigation }) => {
           placeholder="Search users..."
           style={styles.input}
           value={search}
-          onChangeText={setSearch}
+          onChangeText={handleSearch}
         />
 
         <FlatList
           data={filteredUsers}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.user_id}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.userItem}
               onPress={() => toggleUserSelect(item)}
             >
-              <Avatar name={item.name} image={item.profilePicUrl} size={36} />
-              <Text style={styles.userName}>{item.name}</Text>
+              <Avatar name={item.name} image={item.profile_pic_url} size={36} />
+              <Text style={styles.name}>
+                {item.first_name} {item.last_name}
+              </Text>
+              {/* <Text style={styles.userName}>{'@'}{item.username}</Text> */}
               <Ionicons
-                name="add-circle-outline"
+                name={
+                  selectedUsers.find((u) => u.user_id === item.user_id)
+                    ? "remove-circle-outline"
+                    : "add-circle-outline"
+                }
                 size={20}
-                color="#007BFF"
+                color={
+                  selectedUsers.find((u) => u.user_id === item.user_id)
+                    ? "#FF4C4C"
+                    : "#007BFF"
+                }
                 style={{ marginLeft: "auto" }}
               />
             </TouchableOpacity>
@@ -373,12 +396,20 @@ const NewMessageScreen = ({ route, navigation }) => {
             <Text style={styles.modalTitle}>manage participants</Text>
             <FlatList
               data={selectedUsers}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.user_id}
               renderItem={({ item }) => (
                 <View style={styles.modalUserRow}>
-                  <Avatar name={item.name} image={item.profilePicUrl} size={36} />
-                  <Text style={{ marginLeft: 10, flex: 1 }}>{item.name}</Text>
-                  <TouchableOpacity onPress={() => handleRemoveUser(item.id)}>
+                  <Avatar
+                    name={`${item.first_name} ${item.last_name}`}
+                    image={item.profile_pic_url}
+                    size={36}
+                  />
+                  <Text style={{ marginLeft: 10, flex: 1 }}>
+                    {item.first_name} {item.last_name}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveUser(item.user_id)}
+                  >
                     <Ionicons name="remove-circle" size={22} color="#FF4C4C" />
                   </TouchableOpacity>
                 </View>
@@ -419,6 +450,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 8,
   },
+  name: { marginLeft: 10, fontSize: 16, fontWeight: "bold" },
   userName: { marginLeft: 10, fontSize: 16 },
   selectedUsers: {
     flexDirection: "row",

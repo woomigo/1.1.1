@@ -8,12 +8,11 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const updateUser = (updatedUser) => {
     setUser(updatedUser);
   };
-  
 
   const login = async (email, password) => {
     try {
@@ -96,7 +95,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, register, updateUser }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, login, logout, register, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

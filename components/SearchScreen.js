@@ -25,15 +25,14 @@ import { filter } from "lodash";
 import ListViewUsers from "./ListViewUsers";
 import { AuthContext } from "../context/AuthContext";
 
-const localhost = "http://192.168.12.240:3000";
+const localhost = "http://10.0.0.250:3000";
 
 const SearchScreen = ({ navigation, route }) => {
-    const { user, token } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
 
   const [searchText, setSearchText] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
 
- 
   const fetchFilteredUsers = async (query) => {
     if (!query) {
       setFilteredUsers([]);
@@ -78,7 +77,7 @@ const SearchScreen = ({ navigation, route }) => {
 
   const clearSearch = () => {
     setSearchText("");
-    setFilteredUsers([])
+    setFilteredUsers([]);
   };
 
   return (

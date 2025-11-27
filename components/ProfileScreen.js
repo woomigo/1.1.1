@@ -46,7 +46,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const indicatorAnim = useRef(new Animated.Value(0)).current;
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const { width } = Dimensions.get("window");
 
@@ -326,8 +326,7 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-
-  console.log(`USER FOR PROFILE IS ${JSON.stringify(user)}`)
+    console.log(`USER FOR PROFILE IS ${JSON.stringify(user)}`);
     setIsProfileOwnedByUser(!userUID);
 
     Animated.spring(indicatorAnim, {
@@ -342,7 +341,7 @@ const ProfileScreen = ({ navigation, route }) => {
     fetchGallery(userUID ? userUID : user.id, token);
     if (!isProfileOwnedByUser && !isFollowing)
       fetchIsFollowRequest(user.id, userUID, token);
-  }, [isProfileOwnedByUser, isFollowing, activeTab]);
+  }, [isProfileOwnedByUser, isFollowing, activeTab, user]);
 
   const renderTabBar = () => {
     const tabs = isProfileOwnedByUser
@@ -509,7 +508,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     style={{}}
                     size={30}
                     color={woo_white}
-                    onPress={() => messageUser()}
+                    // onPress={() => navigation.navigate("MessageDetails", {})}
                   />
                 )}
               </View>

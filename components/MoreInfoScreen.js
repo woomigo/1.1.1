@@ -199,7 +199,7 @@ import { AuthContext } from "../context/AuthContext";
 const MoreInfoScreen = ({ navigation, route }) => {
   const { user, token, updateUser } = useContext(AuthContext);
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");

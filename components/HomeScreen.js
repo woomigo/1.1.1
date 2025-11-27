@@ -20,7 +20,7 @@ import { AuthContext } from "../context/AuthContext";
 const HomeScreen = ({ route, navigation }) => {
   const { user, token } = useContext(AuthContext);
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const [publicWoos, setPublicWoos] = useState([]);
   const [privateWoos, setPrivateWoos] = useState([]);

@@ -41,7 +41,7 @@ import GalleryPreviewGroup from "./GalleryPreviewGroup";
 const WooScreen = ({ navigation, route }) => {
   const { user, woo, token } = route.params;
 
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const { month, day } = getMonthAndDay(woo.item.start_date);
   const wooStartTime = getFormattedTime(woo.item.start_time);

@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
   const { login } = useContext(AuthContext);
   const emailRef = useRef();
   const passwordRef = useRef();
-  const localhost = "http://192.168.12.240:3000";
+  const localhost = "http://10.0.0.250:3000";
 
   const clearEmailInput = () => {
     setEmailAddress("");
@@ -98,7 +98,7 @@ const LoginScreen = ({ navigation }) => {
   //     console.log(`DATA AT LOGIN SUBMIT IS ${JSON.stringify(data)}`);
   //     data.user.is_profile_complete ? navigation.navigate("Home"):
   //     navigation.navigate("MoreInfo", { user: data.user, token: data.token }); // Or 'Home' if user already completed more info
- 
+
   // };
 
   // const onSubmitHandler = () => {

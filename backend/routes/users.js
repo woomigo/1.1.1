@@ -19,6 +19,8 @@ router.get('/search', authenticateToken, userController.getUserByUsername);
 // Read one user
 router.get("/:id", authenticateToken, userController.getUserById);
 
+router.post('/batch', authenticateToken, userController.getUsersByIds);
+
 router.post('/update-location', authenticateToken, userController.updateUserLocation);
 
 router.put('/complete-profile', authenticateToken, userController.completeProfile);

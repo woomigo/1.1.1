@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { View, Text, Animated, StyleSheet, Pressable } from "react-native";
 import Avatar from "./Avatar";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,16 +11,21 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
+import { AuthContext } from "../context/AuthContext";
+
+const localhost = "http://10.0.0.250:3000";
 
 const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
-  const [user, setUser] = useState({});
+  const { token, user } = useContext(AuthContext);
+
+  const [chatUser, setUser] = useState({});
   const swipeableRef = useRef(null);
   const dotAnim = useRef(new Animated.Value(0)).current;
 
   const markChatAsRead = async (chatId) => {
     swipeableRef.current?.close(); // Auto close the swipeable
     try {
-      const currentUser = auth.currentUser;
+      const currentUser = user;
       if (!uid) throw new Error("User not authenticated");
 
       const chatRef = doc(db, "chats", chatId);
@@ -32,7 +37,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
       }
 
       const chatData = chatSnap.data();
-      const userLastRead = chatData.read_receipts?.[currentUser.uid];
+      const userLastRead = chatData.read_receipts?.[currentUser.id];
       const lastMessageTime = chatData.last_message?.created_at;
 
       // Only update if:
@@ -44,7 +49,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
           userLastRead.toMillis?.() < lastMessageTime.toMillis?.())
       ) {
         await updateDoc(chatRef, {
-          [`read_receipts.${currentUser.uid}`]: serverTimestamp(),
+          [`read_receipts.${currentUser.id}`]: serverTimestamp(),
         });
         console.log("Marked as read");
       } else {
@@ -55,31 +60,45 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
     }
   };
 
-  const listenToUser = (userId, onUpdate, onError) => {
-    const userRef = doc(db, "users", userId);
-    const unsubscribe = onSnapshot(
-      userRef,
-      (docSnap) => {
-        if (docSnap.exists()) {
-          onUpdate({ uid: docSnap.id, ...docSnap.data() });
-        } else {
-          console.warn("User not found");
-        }
-      },
-      (error) => {
-        console.error("Error listening to user:", error);
-        onError?.(error);
-      }
-    );
+  const findUserById = async (id) => {
+    try {
+      const res = await fetch(`${localhost}/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    return unsubscribe;
+      const data = await res.json();
+      console.log(`SEARCH DATA JSON ${JSON.stringify(data)}`);
+      setUser(data);
+    } catch (error) {
+      console.error("ERROR AT MESSAGE ITEM IS - ", error);
+    }
   };
+
+  // const listenToUser = (userId, onUpdate, onError) => {
+  //   const userRef = doc(db, "users", userId);
+  //   const unsubscribe = onSnapshot(
+  //     userRef,
+  //     (docSnap) => {
+  //       if (docSnap.exists()) {
+  //         onUpdate({ uid: docSnap.id, ...docSnap.data() });
+  //       } else {
+  //         console.warn("User not found");
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error("Error listening to user:", error);
+  //       onError?.(error);
+  //     }
+  //   );
+
+  //   return unsubscribe;
+  // };
 
   const excludeNumber = (arr, number) => {
     return arr.filter((n) => n !== number);
   };
 
-  const getParticipants = excludeNumber(item.participants, uid);
+  const getParticipants = excludeNumber(item.participants, user.id);
   const userUID = getParticipants[0];
   const isUnread = !item.read_receipts?.[uid];
 
@@ -96,16 +115,9 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
       }).start();
     }
 
-    const unsubscribe = listenToUser(
-      userUID,
-      (userData) => {
-        console.log("USER " + JSON.stringify(userData));
-        setUser(userData);
-      },
-      (err) => console.error("User listener failed", err)
-    );
+    findUserById(userUID);
 
-    return () => unsubscribe();
+    console.log("WTF IS HERE" + getParticipants);
   }, [isUnread, userUID]);
 
   const renderRightActions = () => (
@@ -126,12 +138,12 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
         onLongPress={() => onLongPress?.(item)}
         style={({ pressed }) => [styles.container, pressed && { opacity: 0.7 }]}
       >
-        {user && item.type === "group" ? (
+        {chatUser && item.type === "group" ? (
           <Avatar name={item.name} image={item.image} />
         ) : (
           <Avatar
-            name={user.first_name + " " + user.last_name}
-            image={user.profile_pic_url}
+            name={chatUser.first_name + " " + chatUser.last_name}
+            image={chatUser.profile_pic_url}
           />
         )}
         <View style={styles.content}>
@@ -139,7 +151,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
             <Text style={[styles.sender, isUnread && styles.unread]}>
               {item.type === "group"
                 ? item.name
-                : user && user.first_name + " " + user.last_name}
+                : chatUser && chatUser.first_name + " " + chatUser.last_name}
             </Text>
             <Text style={styles.timestamp}>{item.timestamp}</Text>
           </View>

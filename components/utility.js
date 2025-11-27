@@ -1,5 +1,6 @@
-// UTILITY FUNCTIONS FOR DATE, TIME AND USERNAME
+export const localhost = "10.0.0.250";
 
+// UTILITY FUNCTIONS FOR DATE, TIME AND USERNAME
 export const getMonthAndDay = (dateString) => {
   const months = [
     "jan",
