@@ -79,7 +79,7 @@ const ProfileScreen = ({ navigation, route }) => {
     setProfilePicURL(data.user.profile_pic_url);
     setIsPofilePrivate(data.user.is_private);
 
-    return res.json();
+    return data;
   };
 
   const fetchUserFollowers = async (userId, token) => {
@@ -410,7 +410,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (isProfileOwnedByUser) {
       return {
         title: "edit profile",
-        onPress: () => navigation.navigate("EditProfile"),
+        onPress: () => navigation.navigate("EditProfile", { user: user }),
       };
     }
 

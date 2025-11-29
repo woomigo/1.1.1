@@ -24,6 +24,7 @@ import { getMonthAndDay, getTimeAgo, hexToRgba } from "./utility";
 import Avatar from "./Avatar";
 import MigosAvatarGroup from "./MigosAvatarGroup";
 import WooListItems from "./WooListItems";
+import Button from "./Button";
 
 const WooPreviewEditScreen = ({ navigation, route }) => {
   const {
@@ -516,14 +517,15 @@ const WooPreviewEditScreen = ({ navigation, route }) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.createWooButton}
           // onPress={handleCreateWoo} // Function to create chat/group
         >
           <Text style={styles.createWooText}>create woo</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
+      <Button text={"create woo"}/>
     </SafeAreaView>
   );
 };

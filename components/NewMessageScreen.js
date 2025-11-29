@@ -31,6 +31,7 @@ import {
 import { db, auth } from "../firebaseConfig";
 import { debounce } from "lodash";
 import { AuthContext } from "../context/AuthContext";
+import Button from "./Button";
 
 const localhost = "http://10.0.0.250:3000";
 
@@ -372,17 +373,10 @@ const NewMessageScreen = ({ route, navigation }) => {
           style={styles.messageInput}
           multiline
         /> */}
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.createChatButton}
-            onPress={handleCreateChat} // Function to create chat/group
-          >
-            <Text style={styles.createChatText}>
-              {isGroupChat ? "Create Group" : "Start Chat"}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Button
+          text={isGroupChat ? "Create Group" : "Start Chat"}
+          onPress={handleCreateChat}
+        />
       </KeyboardAvoidingView>
 
       <Modal

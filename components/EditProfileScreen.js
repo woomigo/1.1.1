@@ -6,17 +6,19 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Avatar, Header, Icon, Input } from "@rneui/themed";
+import { Header, Icon, Input } from "@rneui/themed";
 import { woo_black, woo_white } from "../assets/colors";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import Avatar from "./Avatar";
+import Button from "./Button";
 
 const EditProfileScreen = ({ route, navigation }) => {
-  const { uid } = route.params;
+  const { user, uid } = route.params;
 
-  const userRef = doc(db, "users", uid);
+  // const userRef = doc(db, "users", uid);
 
-  const [user, setUser] = useState();
+  // const [user, setUser] = useState();
   const [username, setUsername] = useState("");
   const [profilePicURL, setProfilePicURL] = useState();
   const [errorMessage, setErrorMessage] = useState("");
@@ -45,27 +47,29 @@ const EditProfileScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    const getProfileInfo = onSnapshot(
-      userRef,
-      (doc) => {
-        console.log("Document data:", doc.data());
-        setUser(doc.data());
-        setProfilePicURL(doc.data().profile_pic_url);
-      },
-      (error) => {},
-      []
-    );
+    // const getProfileInfo = onSnapshot(
+    //   userRef,
+    //   (doc) => {
+    //     console.log("Document data:", doc.data());
+    //     setUser(doc.data());
+    //     setProfilePicURL(doc.data().profile_pic_url);
+    //   },
+    //   (error) => {},
+    //   []
+    // );
 
-    return () => {
-      getProfileInfo();
-    };
+    // return () => {
+    //   getProfileInfo();
+    // };
+    console.log("user is: ", user);
   }, [uid]);
 
   const onSubmitHandler = async () => {
-    await updateDoc(userRef, {
-      username: username,
-    });
-    clearUsernameInput();
+    console.log("UPDATE PROFILE")
+    // await updateDoc(userRef, {
+    //   username: username,
+    // });
+    // clearUsernameInput();
   };
 
   return (
@@ -103,13 +107,13 @@ const EditProfileScreen = ({ route, navigation }) => {
         <View style={styles.profilePicContainer}>
           <Text style={styles.profilePicText}>update profile picture:</Text>
           <Avatar
-            rounded
-            size="xlarge"
+            size={120}
+            name={user.first_name + " " + user.last_name}
             onPress={() => navigation.navigate("Profile")}
-            source={{ uri: profilePicURL }}
+            image={user.profile_pic_url}
           />
         </View>
-        <View style={styles.usernameContainer}>
+        <View style={styles.inputContainer}>
           <Input
             label="update username"
             labelStyle={{ color: "black", marginBottom: 10 }}
@@ -134,14 +138,61 @@ const EditProfileScreen = ({ route, navigation }) => {
               )
             }
           />
-          <TouchableOpacity
-            style={styles.loginBtnStyle}
-            onPress={onSubmitHandler}
-          >
-            <Text style={styles.loginBtnTextStyle}>update username</Text>
-          </TouchableOpacity>
+        </View>
+        <View style={styles.inputContainer}>
+          <Input
+            label="update first name"
+            labelStyle={{ color: "black", marginBottom: 10 }}
+            style={{}}
+            ref={usernameRef}
+            value={username}
+            onChangeText={(text) => handleUsernameOnChange(text)}
+            placeholder={`${user && user.first_name}`}
+            autoCapitalize="none"
+            errorStyle={{ color: "red" }}
+            // errorMessage={isUsernameError && errorMessage}
+            // onFocus={() => handleUsernameOnFocus()}
+            // onEndEditing={() => handleUsernameEndEditing()}
+            rightIcon={
+              !isUsernameIconHidden && (
+                <Icon
+                  Icon
+                  name="close"
+                  size={18}
+                  onPress={() => clearUsernameInput()}
+                />
+              )
+            }
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Input
+            label="update last name"
+            labelStyle={{ color: "black", marginBottom: 10 }}
+            style={{}}
+            ref={usernameRef}
+            value={username}
+            onChangeText={(text) => handleUsernameOnChange(text)}
+            placeholder={`${user && user.last_name}`}
+            autoCapitalize="none"
+            errorStyle={{ color: "red" }}
+            // errorMessage={isUsernameError && errorMessage}
+            // onFocus={() => handleUsernameOnFocus()}
+            // onEndEditing={() => handleUsernameEndEditing()}
+            rightIcon={
+              !isUsernameIconHidden && (
+                <Icon
+                  Icon
+                  name="close"
+                  size={18}
+                  onPress={() => clearUsernameInput()}
+                />
+              )
+            }
+          />
         </View>
       </ScrollView>
+<Button text={"update profile"} onPress={onSubmitHandler} />
     </View>
   );
 };
@@ -177,17 +228,27 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontWeight: "bold",
   },
-  usernameContainer: {
+  inputContainer: {
     marginTop: 20,
   },
-  loginBtnStyle: {
-    backgroundColor: "#f37320",
-    padding: 9,
-    borderRadius: 10,
+  buttonContainer: {
+    position: "absolute",
+    bottom: 5, // Distance from the bottom of the screen
+    left: 16,
+    right: 16, // Optional: keep it aligned to left and right edges
+    marginBottom: 5, // Adds space from bottom of the screen
   },
-  loginBtnTextStyle: {
-    color: "#fff",
-    textAlign: "center",
+  createChatButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  createChatText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
