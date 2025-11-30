@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,128 +7,252 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Avatar from "../components/Avatar"; // Your avatar component
+import Avatar from "../components/Avatar";
+import { debounce } from "lodash";
+import { woo_gray } from "../assets/colors";
 
-const SelectableUserListView = ({ users, returnSelectedUsers }) => {
+const SelectableUserListView = ({
+  users = [],
+  searchEndpoint = null,
+  token = null,
+  onChangeSelected,
+  mode = "local-first", // remote-only, local-only
+}) => {
   const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [showAllUsers, setShowAllUsers] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [remoteUsers, setRemoteUsers] = useState([]);
 
-  useEffect(() => {
-    returnSelectedUsers(selectedUsers);
-  }, [selectedUsers]);
+  // Normalize user
+  const normalizeUser = (u) => ({
+    uuid: u.user_id || u.uuid,
+    username: u.username,
+    profile_pic_url: u.profile_pic_url,
+    ...u,
+  });
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(search.toLowerCase()) &&
-      !selectedUsers.some((u) => u.uuid === user.id)
+  // Fetch remote users
+  const fetchRemoteUsers = useCallback(
+    async (query) => {
+      if (!query || !searchEndpoint) return;
+      try {
+        const res = await fetch(searchEndpoint + query.trim(), {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const normalized = data.map(normalizeUser);
+        setRemoteUsers((prev) => {
+          const combined = [...prev, ...normalized];
+          return combined.filter(
+            (u, i) => combined.findIndex((x) => x.uuid === u.uuid) === i
+          );
+        });
+      } catch (err) {
+        console.error("[fetchRemoteUsers]", err);
+      }
+    },
+    [searchEndpoint, token]
   );
 
-  const toggleUserSelect = (user) => {
-    setSelectedUsers((prev) =>
-      prev.find((u) => u.uuid === user.id)
-        ? prev.filter((u) => u.uuid !== user.id)
-        : [...prev, user]
+  const debouncedRemoteSearch = useMemo(
+    () => debounce(fetchRemoteUsers, 300),
+    [fetchRemoteUsers]
+  );
+
+  // Trigger search
+  useEffect(() => {
+    if (!search) return setRemoteUsers([]);
+    const hasLocal = users.some((u) =>
+      u.username.toLowerCase().includes(search.toLowerCase())
     );
+    const hasSelected = selectedUsers.some((u) =>
+      u.username.toLowerCase().includes(search.toLowerCase())
+    );
+    if (mode === "remote-only" || (!hasLocal && !hasSelected)) {
+      debouncedRemoteSearch(search.trim());
+    }
+  }, [search, users, selectedUsers]);
+
+  useEffect(() => () => debouncedRemoteSearch.cancel(), []);
+
+  useEffect(() => {
+    if (onChangeSelected) onChangeSelected(selectedUsers);
+  }, [selectedUsers]);
+
+  useEffect(() => {
+    if (search === "") {
+      Keyboard.dismiss();
+    }
+  }, [search]);
+
+  // Filtered lists
+  const filterUsers = (list) =>
+    list.filter(
+      (u) =>
+        !selectedUsers.some((s) => s.uuid === u.uuid) &&
+        u.username.toLowerCase().includes(search.toLowerCase())
+    );
+
+  const localFiltered = filterUsers(users);
+  const remoteFiltered = filterUsers(remoteUsers);
+  const selectedFiltered =
+    search.length > 0
+      ? selectedUsers.filter((u) =>
+          u.username.toLowerCase().includes(search.toLowerCase())
+        )
+      : [];
+
+  const combinedResults =
+    mode === "local-only"
+      ? [...localFiltered, ...selectedFiltered]
+      : mode === "remote-only"
+      ? [...remoteFiltered, ...selectedFiltered]
+      : [...localFiltered, ...selectedFiltered, ...remoteFiltered];
+
+  const toggleUser = (user) => {
+    if (!selectedUsers.some((u) => u.uuid === user.uuid))
+      setSelectedUsers((prev) => [...prev, user]);
+    setSearch("");
   };
 
-  const handleRemoveUser = (id) => {
-    const updated = selectedUsers.filter((u) => u.uuid !== id);
-    setSelectedUsers(updated);
-    if (updated.length === 0) setShowAllUsers(false);
+  const removeUser = (uuid) => {
+    setSelectedUsers((prev) => {
+      const updated = prev.filter((u) => u.uuid !== uuid);
+      if (updated.length === 0) setShowModal(false);
+      return updated;
+    });
+    setSearch("");
+  };
+
+  const renderItem = ({ item }) => {
+    const isSelected = selectedUsers.some((u) => u.uuid === item.uuid);
+    const isLocal = users.some((u) => u.uuid === item.uuid);
+    const isRemote = remoteUsers.some((u) => u.uuid === item.uuid);
+
+    return (
+      <TouchableOpacity
+        style={styles.userItem}
+        onPress={() => (isSelected ? removeUser(item.uuid) : toggleUser(item))}
+      >
+        <Avatar name={item.username} image={item.profile_pic_url} size={36} />
+        <View
+          style={{ marginLeft: 10, flexDirection: "row", alignItems: "center" }}
+        >
+          <Text style={styles.username}>{item.username}</Text>
+          {!isSelected && mode === "local-first" && (
+            <>
+              {isLocal && <Text style={styles.tagLocal}>follower</Text>}
+              {isRemote && <Text style={styles.tagRemote}>suggested</Text>}
+            </>
+          )}
+        </View>
+        <Ionicons
+          name={isSelected ? "remove-circle-outline" : "add-circle-outline"}
+          size={20}
+          color={isSelected ? "#FF4C4C" : "#007BFF"}
+          style={{ marginLeft: "auto" }}
+        />
+      </TouchableOpacity>
+    );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.subHeader}>
-        <View
-          style={{
-            //   backgroundColor: "blue",
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-          }}
-        >
-          {/* Selected users */}
-          <View style={styles.avatarRow}>
-            {selectedUsers.slice(0, 5).map((user, index) => (
-              <View
-                key={user.id}
-                style={[styles.avatarWrapper, index !== 0 && styles.overlap]}
-              >
-                <Avatar
-                  name={user.username}
-                  image={user.profile_pic_url}
-                  size={36}
-                />
-              </View>
-            ))}
-
-            {selectedUsers.length > 5 && (
-              <View style={[styles.avatarWrapper, styles.overlap]}>
-                <View style={styles.extraAvatar}>
-                  <Text style={styles.extraText}>
-                    +{selectedUsers.length - 5}
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            {selectedUsers.length > 0 && (
-              <TouchableOpacity
-                onPress={() => setShowAllUsers(true)}
-                style={styles.managePill}
-              >
-                <Ionicons name="people-outline" size={14} color="#007BFF" />
-                <Text style={styles.manageText}>Manage</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </View>
-
-      <TextInput
-        placeholder="Search users..."
-        style={styles.input}
-        value={search}
-        onChangeText={setSearch}
-      />
-
-      <FlatList
-        data={filteredUsers}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.userItem}
-            onPress={() => toggleUserSelect(item)}
+      {/* Selected avatars */}
+      <View style={styles.avatarRow}>
+        {selectedUsers.slice(0, 5).map((user, i) => (
+          <View
+            key={user.uuid}
+            style={[styles.avatarWrapper, i !== 0 && styles.overlap]}
           >
-            <Avatar name={item.name} image={item.profile_pic_url} size={36} />
-            <Text style={styles.userName}>{item.username}</Text>
-            <Ionicons
-              name="add-circle-outline"
-              size={20}
-              color="#007BFF"
-              style={{ marginLeft: "auto" }}
+            <Avatar
+              name={user.username}
+              image={user.profile_pic_url}
+              size={36}
             />
+          </View>
+        ))}
+        {selectedUsers.length > 5 && (
+          <View style={[styles.avatarWrapper, styles.overlap]}>
+            <View style={styles.extraAvatar}>
+              <Text style={styles.extraText}>+{selectedUsers.length - 5}</Text>
+            </View>
+          </View>
+        )}
+        {selectedUsers.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setShowModal(true)}
+            style={styles.managePill}
+          >
+            <Ionicons name="people-outline" size={14} color="#007BFF" />
+            <Text style={styles.manageText}>Manage</Text>
           </TouchableOpacity>
         )}
-        //   style={{ maxHeight: 150 }}
+      </View>
+
+      {/* Search input */}
+      <View style={styles.searchWrapper}>
+        <TextInput
+          placeholder="Search users..."
+          style={styles.input}
+          value={search}
+          onChangeText={(text) => setSearch(text.toLowerCase())}
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        {search.length > 0 && (
+          <TouchableOpacity
+            onPress={() => {
+              setSearch("");
+              setRemoteUsers([]);
+            }}
+            style={styles.clearIcon}
+          >
+            <Ionicons name="close-circle" size={20} color="#888" />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* User list */}
+      <FlatList
+        data={combinedResults}
+        keyExtractor={(item) => item.uuid}
+        renderItem={renderItem}
+        keyboardShouldPersistTaps="handled"
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              paddingVertical: 20,
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+            }}
+          >
+            <Ionicons
+              name="person-outline"
+              size={20}
+              color="#bbb"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={{ color: woo_gray, fontSize: 15 }}>
+              {search ? "No users found." : "Start typing to search users."}
+            </Text>
+          </View>
+        )}
       />
-      <Modal
-        visible={showAllUsers}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowAllUsers(false)}
-      >
+
+      {/* Modal */}
+      <Modal visible={showModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>manage woo migos</Text>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Manage users</Text>
             <FlatList
               data={selectedUsers}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.uuid}
               renderItem={({ item }) => (
                 <View style={styles.modalUserRow}>
                   <Avatar
@@ -136,20 +260,18 @@ const SelectableUserListView = ({ users, returnSelectedUsers }) => {
                     image={item.profile_pic_url}
                     size={36}
                   />
-                  <Text style={{ marginLeft: 10, flex: 1 }}>
-                    {item.username}
-                  </Text>
-                  <TouchableOpacity onPress={() => handleRemoveUser(item.id)}>
+                  <Text style={styles.modalUsername}>{item.username}</Text>
+                  <TouchableOpacity onPress={() => removeUser(item.uuid)}>
                     <Ionicons name="remove-circle" size={22} color="#FF4C4C" />
                   </TouchableOpacity>
                 </View>
               )}
             />
             <TouchableOpacity
-              onPress={() => setShowAllUsers(false)}
+              onPress={() => setShowModal(false)}
               style={styles.modalClose}
             >
-              <Text style={{ color: "#007BFF", fontWeight: "600" }}>Close</Text>
+              <Text style={styles.modalCloseText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -159,107 +281,86 @@ const SelectableUserListView = ({ users, returnSelectedUsers }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#fff" },
-  label: { fontSize: 14, marginStart: 10, marginBottom: 10, fontWeight: "600" },
-  input: {
-    backgroundColor: "#f1f1f1",
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  subHeader: {
-    padding: 5,
-    paddingVertical: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-    // backgroundColor: "blue",
-  },
-  userItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 8,
-  },
-  userName: { marginLeft: 10, fontSize: 16 },
-  selectedUsers: {
-    flexDirection: "row",
-    paddingVertical: 10,
-    marginBottom: 10,
-  },
-  selectedUser: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 10,
-    padding: 6,
-    backgroundColor: "#e6f2ff",
-    borderRadius: 20,
-  },
-  selectedUserName: {
-    marginLeft: 6,
-    marginRight: 4,
-  },
-  avatarRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    // backgroundColor: 'red'
-  },
-  avatarWrapper: {
-    borderWidth: 2,
-    borderColor: "#fff",
-    borderRadius: 36,
-  },
-  overlap: {
-    marginLeft: -20,
-  },
+  container: { padding: 16 },
+searchWrapper: {
+  position: "relative",
+  justifyContent: "center",
+  marginBottom: 10, // preserve spacing below
+},
+
+input: {
+  backgroundColor: "#f1f1f1",
+  padding: 10,
+  paddingRight: 36, // space for clear icon
+  borderRadius: 8,
+  height: 40, // explicit height
+},
+
+clearIcon: {
+  position: "absolute",
+  right: 8,
+  height: 20,
+  width: 20,
+  top: "50%",
+  marginTop: -10, // half of icon height
+}
+,
+  avatarRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
+  avatarWrapper: { borderWidth: 2, borderColor: "#fff", borderRadius: 36 },
+  overlap: { marginLeft: -20 },
   extraAvatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "#ddd",
     justifyContent: "center",
     alignItems: "center",
   },
-  extraText: {
-    fontWeight: "600",
-    color: "#333",
-    fontSize: 12,
-  },
-
+  extraText: { fontSize: 12, fontWeight: "600" },
   managePill: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#e6f0ff",
-    borderRadius: 14,
     paddingHorizontal: 10,
     paddingVertical: 4,
+    borderRadius: 14,
     marginLeft: 8,
   },
-  manageText: {
-    color: "#007BFF",
-    fontSize: 12,
-    marginLeft: 4,
-    fontWeight: "500",
+  manageText: { color: "#007BFF", marginLeft: 4, fontSize: 12 },
+  userItem: { flexDirection: "row", paddingVertical: 8, alignItems: "center" },
+  username: { fontSize: 16 },
+  tagLocal: {
+    backgroundColor: "#e0f7fa",
+    color: "#00796b",
+    fontSize: 10,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 6,
   },
-
-  // Modal styles
+  tagRemote: {
+    backgroundColor: "#ede7f6",
+    color: "#5e35b1",
+    fontSize: 10,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 6,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
   },
-  modalContainer: {
+  modalCard: {
     width: "80%",
     maxHeight: "70%",
-    backgroundColor: "#fff",
-    borderRadius: 12,
     padding: 16,
+    borderRadius: 12,
+    backgroundColor: "#fff",
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
+  modalTitle: { fontSize: 18, fontWeight: "600", marginBottom: 12 },
   modalUserRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -267,23 +368,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
-  modalClose: {
-    marginTop: 16,
-    alignSelf: "center",
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 14,
-    marginBottom: 5,
-  },
+  modalUsername: { flex: 1, marginLeft: 10 },
+  modalClose: { marginTop: 16, alignSelf: "center" },
+  modalCloseText: { color: "#007BFF", fontWeight: "600" },
 });
 
 export default SelectableUserListView;

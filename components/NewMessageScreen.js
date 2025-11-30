@@ -1,190 +1,30 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import {
   View,
   Text,
   TextInput,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Modal,
-  Pressable,
   SafeAreaView,
+  StyleSheet
 } from "react-native";
-// import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
-import Avatar from "../components/Avatar"; // Your avatar component
-import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import { woo_black, woo_white } from "../assets/colors";
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  getDocs,
-  getDoc,
-  query,
-  where,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
-import { db, auth } from "../firebaseConfig";
-import { debounce } from "lodash";
+import { woo_white } from "../assets/colors";
 import { AuthContext } from "../context/AuthContext";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import Button from "./Button";
+import SelectableUserListView from "./SelectableUserListView";
 
 const localhost = "http://10.0.0.250:3000";
 
 const NewMessageScreen = ({ route, navigation }) => {
-  //   const navigation = useNavigation();
   const { user, token } = useContext(AuthContext);
   const { uid } = route.params;
 
-  const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [message, setMessage] = useState("");
-  const [showAllUsers, setShowAllUsers] = useState(false);
   const [groupName, setGroupName] = useState("");
-  const [followerProfiles, setFollowerProfiles] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const isGroupChat = selectedUsers.length > 1;
-
-  // const listenToFollowers = (onUpdate) => {
-  //     try {
-  //       const user = auth.currentUser;
-  //       if (!user) {
-  //         console.warn('No authenticated user found.');
-  //         onUpdate([]);
-  //         return () => {};
-  //       }
-
-  //       const userRef = doc(db, 'users', user.uid);
-
-  //       const unsubscribe = onSnapshot(userRef, (docSnap) => {
-  //         if (docSnap.exists()) {
-  //           const data = docSnap.data();
-  //           const followers = data.followers || [];
-
-  //           console.log('🔄 Fetched live followers:', followers);
-  //           onUpdate(followers);
-  //         } else {
-  //           console.warn('User document does not exist.');
-  //           onUpdate([]);
-  //         }
-  //       }, (error) => {
-  //         console.error('❌ Error listening to followers:', error);
-  //         onUpdate([]);
-  //       });
-
-  //       return unsubscribe;
-  //     } catch (error) {
-  //       console.error('❌ Exception in listenToFollowers:', error);
-  //       return () => {};
-  //     }
-  //   };
-
-  //   const listenToUserProfiles = (userIds, onUpdate) => {
-  //     const unsubscribers = [];
-  //     const profiles = {};
-
-  //     try {
-  //       userIds.forEach((uid) => {
-  //         const userRef = doc(db, 'users', uid);
-
-  //         const unsubscribe = onSnapshot(userRef, (docSnap) => {
-  //           if (docSnap.exists()) {
-  //             const data = docSnap.data();
-  //             profiles[uid] = {
-  //               id: uid,
-  //               name: data.first_name + " " + data.last_name || '',
-  //               profilePicUrl: data.profile_pic_url || '',
-  //             };
-
-  //             const result = Object.values(profiles);
-  //             console.log(`👤 Updated profiles (${result.length}):`, result);
-  //             onUpdate(result);
-  //           } else {
-  //             console.warn(`Follower user document not found: ${uid}`);
-  //           }
-  //         }, (error) => {
-  //           console.error(`❌ Error listening to user profile ${uid}:`, error);
-  //         });
-
-  //         unsubscribers.push(unsubscribe);
-  //       });
-  //     } catch (error) {
-  //       console.error('❌ Exception in listenToUserProfiles:', error);
-  //     }
-
-  //     return () => {
-  //       unsubscribers.forEach((unsub) => unsub());
-  //     };
-  //   };
-
-  const [filteredUsers, setFilteredUsers] = useState([]);
-
-  const fetchFilteredUsers = async (query) => {
-    if (!query) {
-      setFilteredUsers([]);
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `${localhost}/users/search?username=${query.trim()}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!res.ok) {
-        setFilteredUsers([]);
-        return;
-      }
-
-      const data = await res.json();
-      console.log(`SEARCH DATA JSON ${JSON.stringify(data)}`);
-      setFilteredUsers(data);
-    } catch (error) {
-      setFilteredUsers([]);
-    }
-  };
-
-  const debouncedFetchUsers = useRef(debounce(fetchFilteredUsers, 300)).current;
-
-  const handleSearch = (text) => {
-    setSearch(text);
-    debouncedFetchUsers(text.trim());
-  };
-
-  // Cancel debounce on unmount
-  useEffect(() => {
-    return () => {
-      debouncedFetchUsers.cancel();
-    };
-  }, []);
-
-  // const filteredUsers =
-  //   followerProfiles.filter(
-  //     (user) =>
-  //       user.name.toLowerCase().includes(search.toLowerCase()) &&
-  //       !selectedUsers.some((u) => u.uuid === user.id)
-  //   );
-
-  const toggleUserSelect = (user) => {
-    setSelectedUsers((prev) =>
-      prev.find((u) => u.user_id === user.user_id)
-        ? prev.filter((u) => u.user_id !== user.user_id)
-        : [...prev, user]
-    );
-  };
-
-  const handleRemoveUser = (id) => {
-    const updated = selectedUsers.filter((u) => u.user_id !== id);
-    setSelectedUsers(updated);
-    if (updated.length === 0) setShowAllUsers(false);
-  };
 
   const handleCreateChat = async () => {
     if (selectedUsers.length === 0) return;
@@ -192,20 +32,15 @@ const NewMessageScreen = ({ route, navigation }) => {
     const payload = {
       type: isGroupChat ? "group" : "direct",
       name: isGroupChat ? groupName || "New Group" : null,
-      participants: [...selectedUsers.map((u) => u.user_id), user.id],
+      participants: [...selectedUsers.map((u) => u.uuid), user.id],
       owner_id: user.id,
       created_at: serverTimestamp(),
       last_message: null,
       read_receipts: {},
     };
-    console.log("Creating chat as user:", auth.currentUser?.uid);
-
-    console.log("Creating chat with payload:", payload);
 
     try {
       const chatRef = await addDoc(collection(db, "chats"), payload);
-      console.log("Chat created with ID:", chatRef.id);
-
       navigation.navigate("MessageDetails", {
         chatId: chatRef.id,
         chat: payload,
@@ -215,209 +50,51 @@ const NewMessageScreen = ({ route, navigation }) => {
     }
   };
 
-  //   const handleCreateChat = async ({ userIds, isGroup, currentUser }) => {
-  //     if (!currentUser || !userIds || userIds.length === 0) return;
-
-  //     const participants = [...userIds, currentUser.uid];
-  //     const readReceipts = {};
-
-  //     participants.forEach((uid) => {
-  //       readReceipts[uid] = null; // Initially no one has read anything
-  //     });
-
-  //     const chatPayload = {
-  //       participants,
-  //       is_group: isGroup,
-  //       owner_id: currentUser.uid,
-  //       created_at: serverTimestamp(),
-  //       last_message: null,
-  //       read_receipts: readReceipts,
-  //     };
-
-  //     try {
-  //       const chatRef = await addDoc(collection(db, 'chats'), chatPayload);
-  //       console.log('✅ Chat created with ID:', chatRef.id);
-  //       navigation.navigate("MessageDetails", {
-  //         chatId: chatRef.id,
-  //         chat: chatPayload,
-  //       });
-  //     } catch (error) {
-  //       console.error('❌ Failed to create chat:', error);
-  //       throw error;
-  //     }
-  //   };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: woo_white }}>
       <KeyboardAvoidingView
         behavior={Platform.select({ ios: "padding", android: undefined })}
-        style={styles.container}
+        style={{ flex: 1, padding: 16 }}
         keyboardVerticalOffset={80}
       >
-        <Text style={styles.screenTitle}>
+        <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 16 }}>
           {isGroupChat ? "New Group Chat" : "New Message"}
         </Text>
 
-        <View style={styles.header}>
-          <View
-            style={{
-              //   backgroundColor: "blue",
-              flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Pressable onPress={() => navigation.goBack()}>
-              <FontAwesome6Icon
-                name="chevron-left"
-                size={24}
-                color={woo_black}
-                style={{ marginEnd: 10 }}
-              />
-            </Pressable>
-            {/* Selected users */}
-            <View style={styles.avatarRow}>
-              {selectedUsers.slice(0, 5).map((user, index) => (
-                <View
-                  key={user.user_id}
-                  style={[styles.avatarWrapper, index !== 0 && styles.overlap]}
-                >
-                  <Avatar
-                    name={`${user.first_name} ${user.last_name}`}
-                    image={user.profile_pic_url}
-                    size={36}
-                  />
-                </View>
-              ))}
-
-              {selectedUsers.length > 5 && (
-                <View style={[styles.avatarWrapper, styles.overlap]}>
-                  <View style={styles.extraAvatar}>
-                    <Text style={styles.extraText}>
-                      +{selectedUsers.length - 5}
-                    </Text>
-                  </View>
-                </View>
-              )}
-
-              {selectedUsers.length > 0 && (
-                <TouchableOpacity
-                  onPress={() => setShowAllUsers(true)}
-                  style={styles.managePill}
-                >
-                  <Ionicons name="people-outline" size={14} color="#007BFF" />
-                  <Text style={styles.manageText}>Manage</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        </View>
-
         {isGroupChat && (
-          <View style={styles.groupNameContainer}>
-            <Text style={styles.label}>Group Name</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text style={{ fontSize: 14, fontWeight: "500", marginBottom: 4 }}>
+              Group Name
+            </Text>
             <TextInput
               placeholder="Enter a group name"
               value={groupName}
               onChangeText={setGroupName}
-              style={styles.input}
+              style={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                borderRadius: 8,
+                padding: 10,
+                fontSize: 14,
+                marginBottom: 5,
+              }}
             />
           </View>
         )}
 
-        <TextInput
-          placeholder="Search users..."
-          style={styles.input}
-          value={search}
-          onChangeText={handleSearch}
+        <SelectableUserListView
+          users={[]} // pass local users if you have them, e.g. followerProfiles
+          searchEndpoint={`${localhost}/users/search?username=`}
+          token={token}
+          mode="remote-only"
+          onChangeSelected={(users) => setSelectedUsers(users)}
         />
 
-        <FlatList
-          data={filteredUsers}
-          keyExtractor={(item) => item.user_id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.userItem}
-              onPress={() => toggleUserSelect(item)}
-            >
-              <Avatar name={item.name} image={item.profile_pic_url} size={36} />
-              <Text style={styles.name}>
-                {item.first_name} {item.last_name}
-              </Text>
-              {/* <Text style={styles.userName}>{'@'}{item.username}</Text> */}
-              <Ionicons
-                name={
-                  selectedUsers.find((u) => u.user_id === item.user_id)
-                    ? "remove-circle-outline"
-                    : "add-circle-outline"
-                }
-                size={20}
-                color={
-                  selectedUsers.find((u) => u.user_id === item.user_id)
-                    ? "#FF4C4C"
-                    : "#007BFF"
-                }
-                style={{ marginLeft: "auto" }}
-              />
-            </TouchableOpacity>
-          )}
-          //   style={{ maxHeight: 150 }}
-        />
-
-        {/* Initial message input
-        <TextInput
-          placeholder="Write your first message..."
-          value={message}
-          onChangeText={setMessage}
-          style={styles.messageInput}
-          multiline
-        /> */}
         <Button
           text={isGroupChat ? "Create Group" : "Start Chat"}
           onPress={handleCreateChat}
         />
       </KeyboardAvoidingView>
-
-      <Modal
-        visible={showAllUsers}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowAllUsers(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>manage participants</Text>
-            <FlatList
-              data={selectedUsers}
-              keyExtractor={(item) => item.user_id}
-              renderItem={({ item }) => (
-                <View style={styles.modalUserRow}>
-                  <Avatar
-                    name={`${item.first_name} ${item.last_name}`}
-                    image={item.profile_pic_url}
-                    size={36}
-                  />
-                  <Text style={{ marginLeft: 10, flex: 1 }}>
-                    {item.first_name} {item.last_name}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleRemoveUser(item.user_id)}
-                  >
-                    <Ionicons name="remove-circle" size={22} color="#FF4C4C" />
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-            <TouchableOpacity
-              onPress={() => setShowAllUsers(false)}
-              style={styles.modalClose}
-            >
-              <Text style={{ color: "#007BFF", fontWeight: "600" }}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 };

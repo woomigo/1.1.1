@@ -111,10 +111,15 @@ const WooMigosScreen = ({ route, navigation }) => {
           leftContainerStyle={styles.leftComponent}
           centerContainerStyle={styles.centerComponent}
         />
+
         <SelectableUserListView
           users={followers}
-          returnSelectedUsers={handleSelectedUsers}
+          token={token}
+          searchEndpoint={`${localhost}/users/search?username=`}
+          onChangeSelected={setSelectedUsers}
+          mode="local-first"
         />
+
       </KeyboardAvoidingView>
       {/* Navigation Buttons */}
       <View style={styles.navButtons}>
