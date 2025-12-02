@@ -12,8 +12,7 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
-
-const localhost = "http://10.0.0.250:3000";
+import { localhost } from "./utility";
 
 const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
   const { token, user } = useContext(AuthContext);

@@ -14,6 +14,7 @@ import axios from "axios";
 import { Header, Icon } from "@rneui/themed";
 import { woo_black, woo_white } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { localhost } from "./utility";
 
 const WooListItems = (props) => {
   const { navigation } = props;
@@ -28,8 +29,6 @@ const WooListItems = (props) => {
     props.showPreviewOnly ?? routeParams.showPreviewOnly ?? false;
 
   const [quantities, setQuantities] = useState({});
-
-  const localhost = "http://10.0.0.250:3000";
 
   useEffect(() => {
     // fetchWooList();

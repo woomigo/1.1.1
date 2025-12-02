@@ -29,8 +29,7 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
-
-const localhost = "http://10.0.0.250:3000";
+import { localhost } from "./utility";
 
 const MessageDetailsScreen = ({ route, navigation }) => {
   const { chatId, uid } = route.params;

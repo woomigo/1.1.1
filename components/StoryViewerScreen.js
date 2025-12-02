@@ -11,13 +11,11 @@ import {
   PanResponder,
 } from "react-native";
 // import Video from "expo-video";
-import { getTimeAgo } from "./utility";
+import { getTimeAgo, localhost } from "./utility";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const IMAGE_DURATION = 5000;
-
-const localhost = "http://10.0.0.250:3000";
 
 export default function StoryViewerScreen({ route, navigation }) {
   const { token, stories, isUserStory, initialIndex = 0 } = route.params;

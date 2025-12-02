@@ -20,7 +20,7 @@ import MenuScreen from "./MenuScreen";
 import ListViewWoos from "./ListViewWoos";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { Switch } from "react-native";
-import { truncNumber } from "./utility";
+import { localhost, truncNumber } from "./utility";
 import { AuthContext } from "../context/AuthContext";
 
 const ProfileScreen = ({ navigation, route }) => {
@@ -45,8 +45,6 @@ const ProfileScreen = ({ navigation, route }) => {
   const [activeTab, setActiveTab] = useState(0);
   const indicatorAnim = useRef(new Animated.Value(0)).current;
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-
-  const localhost = "http://10.0.0.250:3000";
 
   const { width } = Dimensions.get("window");
 

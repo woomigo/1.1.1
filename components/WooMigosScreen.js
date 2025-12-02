@@ -18,11 +18,10 @@ import Avatar from "../components/Avatar"; // Your avatar component
 import { woo_black, woo_white } from "../assets/colors";
 import { Header, Icon } from "@rneui/themed";
 import SelectableUserListView from "./SelectableUserListView";
+import { localhost } from "./utility";
 
 const WooMigosScreen = ({ route, navigation }) => {
   const { wooMedia, wooType, user, token } = route.params;
-
-  const localhost = "http://10.0.0.250:3000";
 
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -119,7 +118,6 @@ const WooMigosScreen = ({ route, navigation }) => {
           onChangeSelected={setSelectedUsers}
           mode="local-first"
         />
-
       </KeyboardAvoidingView>
       {/* Navigation Buttons */}
       <View style={styles.navButtons}>

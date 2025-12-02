@@ -6,7 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import { woo_white } from "../assets/colors";
 import { AuthContext } from "../context/AuthContext";
@@ -14,8 +14,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import Button from "./Button";
 import SelectableUserListView from "./SelectableUserListView";
-
-const localhost = "http://10.0.0.250:3000";
+import { localhost } from "./utility";
 
 const NewMessageScreen = ({ route, navigation }) => {
   const { user, token } = useContext(AuthContext);

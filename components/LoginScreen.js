@@ -15,6 +15,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../context/AuthContext";
+import { localhost } from "./utility";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmailAddress] = useState("");
@@ -28,7 +29,6 @@ const LoginScreen = ({ navigation }) => {
   const { login } = useContext(AuthContext);
   const emailRef = useRef();
   const passwordRef = useRef();
-  const localhost = "http://10.0.0.250:3000";
 
   const clearEmailInput = () => {
     setEmailAddress("");

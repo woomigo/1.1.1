@@ -10,6 +10,7 @@ import { Header, Icon, ListItem, LinearProgress, Input } from "@rneui/themed";
 
 import { woo_black, woo_white } from "../assets/colors";
 import ListViewGroupList from "./ListViewGroupList";
+import { localhost } from "./utility";
 
 const GroupListView = ({ navigation, route, userId, token }) => {
   //   const { userId, token } = route.params;
@@ -17,8 +18,6 @@ const GroupListView = ({ navigation, route, userId, token }) => {
   useEffect(() => {
     fetchGroups(userId, token);
   }, [userId]);
-
-  const localhost = "http://10.0.0.250:3000";
 
   const [groups, setGroups] = useState();
 

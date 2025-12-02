@@ -24,7 +24,7 @@ import { db } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { woo_black } from "../assets/colors";
-import { getTimeAgo } from "./utility";
+import { getTimeAgo, localhost } from "./utility";
 import { Comments } from "./shared";
 import ListViewComments from "./ListViewComments";
 import ListViewReplies from "./ListViewReplies";
@@ -36,8 +36,6 @@ const LayoutCommentItem = ({ uid, comment, comments, token }) => {
   const [isRepliesExpanded, setIsRepliesExpaned] = useState(false);
 
   const navigation = useNavigation();
-
-  const localhost = "http://10.0.0.250:3000";
 
   const fetchReplies = async (commentId, token) => {
     if (!token) throw new Error("Auth token is missing");

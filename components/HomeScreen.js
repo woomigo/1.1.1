@@ -16,11 +16,10 @@ import ListViewPrivateWoos from "./ListViewPrivateWoos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
+import { localhost } from "./utility";
 
 const HomeScreen = ({ route, navigation }) => {
   const { user, token } = useContext(AuthContext);
-
-  const localhost = "http://10.0.0.250:3000";
 
   const [publicWoos, setPublicWoos] = useState([]);
   const [privateWoos, setPrivateWoos] = useState([]);

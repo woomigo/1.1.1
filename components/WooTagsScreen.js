@@ -17,6 +17,7 @@ import {
 import { Header, Icon } from "@rneui/themed";
 import { debounce } from "lodash";
 import { woo_black, woo_gray } from "../assets/colors";
+import { localhost } from "./utility";
 
 if (
   Platform.OS === "android" &&
@@ -27,7 +28,7 @@ if (
 
 const TAG_LIMIT = 5;
 const MAX_TAG_LENGTH = 25;
-const localhost = "http://10.0.0.250:3000";
+
 
 const WooTagScreen = ({ navigation, route }) => {
   const { wooMedia, wooType, wooMigos, user, token } = route.params;

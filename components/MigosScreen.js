@@ -17,6 +17,7 @@ import { Migos } from "./shared";
 import ListViewUsers from "./ListViewUsers";
 import { woo_black, woo_gray, woo_orange, woo_red } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { localhost } from "./utility";
 
 const MigosScreen = ({ navigation, route }) => {
   const {
@@ -26,8 +27,6 @@ const MigosScreen = ({ navigation, route }) => {
     userUID,
     isProfileOwnedByUser,
   } = route.params;
-
-  const localhost = "http://10.0.0.250:3000";
 
   // const userRef = doc(db, "users", uid);
 

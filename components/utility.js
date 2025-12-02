@@ -1,4 +1,5 @@
-export const localhost = "10.0.0.250";
+// export const localhost = "10.0.0.250";
+export const localhost = "192.168.80.116";
 
 // UTILITY FUNCTIONS FOR DATE, TIME AND USERNAME
 export const getMonthAndDay = (dateString) => {

@@ -195,11 +195,10 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import uuid from "react-native-uuid";
 import { storage } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
+import { localhost } from "./utility";
 
 const MoreInfoScreen = ({ navigation, route }) => {
   const { user, token, updateUser } = useContext(AuthContext);
-
-  const localhost = "http://10.0.0.250:3000";
 
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");

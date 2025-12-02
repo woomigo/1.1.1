@@ -16,8 +16,7 @@ import { Header, Icon, Tab, TabView } from "@rneui/themed";
 import ListViewUsers from "./ListViewUsers";
 import { woo_black, woo_orange, woo_red } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-
-const localhost = "http://10.0.0.250:3000";
+import { localhost } from "./utility";
 
 const MigoRequestScreen = ({ navigation, route }) => {
   const { user, token } = route.params;

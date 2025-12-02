@@ -25,7 +25,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import { truncNumber } from "./utility";
+import { localhost, truncNumber } from "./utility";
 // import LayoutMigosItem from './LayoutMigosItem';
 
 const LayoutWooLike = ({
@@ -41,8 +41,6 @@ const LayoutWooLike = ({
   wooID,
 }) => {
   const navigation = useNavigation();
-
-  const localhost = "http://10.0.0.250:3000";
 
   const [isLiked, setIsLiked] = useState(wooLikedByMe);
   const [wooLikeCount, setWooLikeCount] = useState(wooLikes);

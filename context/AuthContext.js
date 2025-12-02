@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { localhost } from "../components/utility";
 
 export const AuthContext = createContext();
 
@@ -7,8 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Full user object
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const localhost = "http://10.0.0.250:3000";
 
   const updateUser = (updatedUser) => {
     setUser(updatedUser);
