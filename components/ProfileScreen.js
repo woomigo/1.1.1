@@ -22,6 +22,7 @@ import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { Switch } from "react-native";
 import { localhost, truncNumber } from "./utility";
 import { AuthContext } from "../context/AuthContext";
+import Empty from "./Empty";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
@@ -731,19 +732,34 @@ const ProfileScreen = ({ navigation, route }) => {
               {renderTabBar()}
 
               {activeTab === 0 && (
-                <ListViewWoos view={"list"} woos={woos} uid={user.id} />
+                subWoos.length === 0 ? (
+                  <Empty message="your created woos go here... what are you waiting for???" />
+                ) : (
+                 <ListViewWoos view={"list"} woos={woos} uid={user.id} />
+                )
+                
+                
               )}
               {activeTab === 1 && (
-                <ListViewGallery
+                  gallery.length === 0 ? (
+                          <Empty message="add an image for your gallery" />
+                        ) : (
+                          <ListViewGallery
                   gallery={gallery}
                   inverted
                   view={"grid"}
                   nav={"MediaView"}
                 />
+                        )
+                
               )}
-              {isProfileOwnedByUser && activeTab === 2 && (
-                <ListViewWoos view={"list"} woos={subWoos} uid={user.id} />
-              )}
+              {isProfileOwnedByUser &&
+                activeTab === 2 &&
+                (subWoos.length === 0 ? (
+                  <Empty message="woos you sbscribe to go here. get active!" />
+                ) : (
+                  <ListViewWoos view={"list"} woos={subWoos} uid={user.id} />
+                ))}
             </ScrollView>
           )}
         </ScrollView>
