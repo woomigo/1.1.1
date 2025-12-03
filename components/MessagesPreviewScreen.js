@@ -16,6 +16,7 @@ import { woo_black } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import MessagesPreview from "./MessagesPreview";
 import { AuthContext } from "../context/AuthContext";
+import Empty from "./Empty";
 
 const MessagesPreviewScreen = ({ navigation, route }) => {
   const { user, token } = useContext(AuthContext);
@@ -160,14 +161,17 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
           }}
         />
       </View>
-
-      <MessagesPreview
-        messages={chats}
-        onSelectMessage={(msg) => console.log("Open:", msg)}
-        onNewMessage={() => console.log("Start new convo")}
-        onArchive={handleArchive}
-        uid={uid}
-      />
+      {chats.length === 0 ? (
+        <Empty message="no messages available" />
+      ) : (
+        <MessagesPreview
+          messages={chats}
+          onSelectMessage={(msg) => console.log("Open:", msg)}
+          onNewMessage={() => console.log("Start new convo")}
+          onArchive={handleArchive}
+          uid={uid}
+        />
+      )}
 
       {/* <ListViewPreviewMessages uid={uid} messagers={messagers} /> */}
     </SafeAreaView>

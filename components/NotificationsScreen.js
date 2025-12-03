@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import Empty from "./Empty";
 
 // notification types
 // woo
@@ -160,8 +161,11 @@ const NotificationsScreen = ({ navigation, route }) => {
           }}
         />
       </View>
-
-      <ListViewNotifications notifications={notifications} />
+      {notifications.length === 0 ? (
+        <Empty message="no notifications available" />
+      ) : (
+        <ListViewNotifications notifications={notifications} />
+      )}
     </SafeAreaView>
   );
 };
