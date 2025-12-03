@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
 import { localhost } from "./utility";
+import Empty from "./Empty";
 
 const HomeScreen = ({ route, navigation }) => {
   const { user, token } = useContext(AuthContext);
@@ -234,7 +235,12 @@ const HomeScreen = ({ route, navigation }) => {
         >
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>user stories</Text>
         </View>
-        <ListViewStories gallery={userStoryFeed} />
+        {userStoryFeed.length === 0 ? (
+          <Empty message="no user stories yet" />
+        ) : (
+          <ListViewStories gallery={userStoryFeed} />
+        )}
+
         <View
           style={{
             margin: 10,
@@ -243,7 +249,12 @@ const HomeScreen = ({ route, navigation }) => {
         >
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>woo stories</Text>
         </View>
-        <ListViewStories gallery={wooStoryFeed} />
+        {wooStoryFeed.length === 0 ? (
+          <Empty message="no woo stories yet" />
+        ) : (
+          <ListViewStories gallery={wooStoryFeed} />
+        )}
+
         <View
           style={{
             flexDirection: "row",
@@ -290,11 +301,16 @@ const HomeScreen = ({ route, navigation }) => {
             {/* <Text style={styles.smallText}>view all</Text> */}
           </View>
         </View>
-        <ListViewPrivateWoos
-          gallery={privateWoos}
-          isVisible={isPrivateVisible}
-          uid={user.id}
-        />
+        {privateWoos.length === 0 ? (
+          <Empty message="no private woos yet" />
+        ) : (
+          <ListViewPrivateWoos
+            gallery={privateWoos}
+            isVisible={isPrivateVisible}
+            uid={user.id}
+          />
+        )}
+
         <View
           style={{
             flexDirection: "row",
@@ -316,12 +332,16 @@ const HomeScreen = ({ route, navigation }) => {
           </View>
           {/* <Text style={styles.smallText}>view all</Text> */}
         </View>
-        <ListViewWoos
-          view={"list"}
-          woos={publicWoos}
-          uid={user.id}
-          token={token}
-        />
+        {publicWoos.length === 0 ? (
+          <Empty message="no public woos available" />
+        ) : (
+          <ListViewWoos
+            view={"list"}
+            woos={publicWoos}
+            uid={user.id}
+            token={token}
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
