@@ -14,7 +14,7 @@ const LayoutWooItem = ({
   token,
 }) => {
   useEffect(() => {
-    console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo)}`);
+    // console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo)}`);
   });
 
   return (

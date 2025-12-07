@@ -139,7 +139,7 @@ const WooScreen = ({ navigation, route }) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        Authorization: `Bearer ${token}`,
       },
     });
 

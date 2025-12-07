@@ -37,7 +37,7 @@ const LayoutNotificationItem = ({ notification }) => {
 
   useEffect(() => {
     // setNotificationID(notification.item.id)
-    console.log("LNI ---- " + notification.item.id);
+    // console.log("LNI ---- " + notification.item.id);
 
     const docRef = doc(db, "users", notification.item.data().owner_uid);
     const getProfileInfo = onSnapshot(

@@ -11,9 +11,9 @@ import { woo_orange } from "../assets/colors";
 
 const LayoutStoriesItem = ({ story }) => {
   useEffect(() => {
-    console.log(
-      `THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(story.stories)}`
-    );
+    // console.log(
+    //   `THIS IS THE STORY FEED ------->>$$$$$ ${JSON.stringify(story.stories)}`
+    // );
   });
 
   const navigation = useNavigation();

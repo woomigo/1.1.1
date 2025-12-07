@@ -48,7 +48,7 @@ const LayoutWooLike = ({
   // const [receivedUID, setReceiverUID] = useState([]);
 
   useEffect(() => {
-    console.log(` LWL ${wooID} ${wooLikes}`);
+    // console.log(` LWL ${wooID} ${wooLikes}`);
   }, [wooID, wooLikes]);
 
   const fetchLikeWoo = async (woo_id) => {

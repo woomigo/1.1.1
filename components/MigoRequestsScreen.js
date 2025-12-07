@@ -33,16 +33,17 @@ const MigoRequestScreen = ({ navigation, route }) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!res.ok) throw new Error("Failed to fetch followings");
 
       const data = await res.json();
-      console.log(
-        "Sent Follow Requests OBJECT IS ======= " + JSON.stringify(data.outgoing_requests)
-      );
+      // console.log(
+      //   "Sent Follow Requests OBJECT IS ======= " +
+      //     JSON.stringify(data.outgoing_requests)
+      // );
       setSentRequests(data.outgoing_requests);
       return data;
     } catch (err) {
@@ -57,16 +58,16 @@ const MigoRequestScreen = ({ navigation, route }) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!res.ok) throw new Error("Failed to fetch followings");
 
       const data = await res.json();
-      console.log(
-        "Received Follow Requests OBJECT IS ======= " + JSON.stringify(data)
-      );
+      // console.log(
+      //   "Received Follow Requests OBJECT IS ======= " + JSON.stringify(data)
+      // );
       setReceivedRequests(data.incoming_requests);
       return data;
     } catch (err) {
@@ -75,7 +76,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log("MRS ", token);
+    // console.log("MRS ", token);
     fetchReceivedFollowRequests(token);
     fetchSentFollowRequests(token);
   }, [token, newFRAction]);
@@ -89,7 +90,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ sender_id, receiver_id }),
       });
@@ -117,7 +118,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -145,7 +146,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -238,13 +239,15 @@ const MigoRequestScreen = ({ navigation, route }) => {
           <View style={styles.tabHeader}>
             <ListViewUsers
               users={receivedRequests}
-              onPressUser={
-                (selectedUser) =>{
-                console.log("SU 999999999999999999999999999999999999999999 ", selectedUser)
+              onPressUser={(selectedUser) => {
+                console.log(
+                  "SU 999999999999999999999999999999999999999999 ",
+                  selectedUser
+                );
                 navigation.push("Profile", {
                   userUID: selectedUser.user_id,
-                })}
-              }
+                });
+              }}
             />
           </View>
         </TabView.Item>

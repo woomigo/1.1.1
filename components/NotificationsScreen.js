@@ -51,7 +51,7 @@ const NotificationsScreen = ({ navigation, route }) => {
       (querySnapshot) => {
         const notificationsData = [];
         querySnapshot.forEach((doc) => {
-          console.log("Notifications: " + JSON.stringify(doc.data()));
+          // console.log("Notifications: " + JSON.stringify(doc.data()));
           notificationsData.push(doc);
         });
         setNotifications(notificationsData);

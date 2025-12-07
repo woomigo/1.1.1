@@ -40,7 +40,7 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
         ...doc.data(),
       }));
       setChats(data);
-      console.log("CHATS AT MPS MPS MPS " + JSON.stringify(data));
+      // console.log("CHATS AT MPS MPS MPS " + JSON.stringify(data));
     });
 
     const unsubscribeUnread = listenToUnreadChats(user.id, setUnreadChats);

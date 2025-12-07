@@ -26,12 +26,12 @@ const GroupListView = ({ navigation, route, userId, token }) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        Authorization: `Bearer ${token}`,
       },
     });
 
     const data = await res.json();
-    console.log("GROUPS ARE ======= " + JSON.stringify(data));
+    // console.log("GROUPS ARE ======= " + JSON.stringify(data));
     setGroups(data);
     if (!res.ok) throw new Error("Failed to fetch groups");
     return res.json();

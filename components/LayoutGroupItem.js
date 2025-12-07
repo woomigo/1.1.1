@@ -9,7 +9,7 @@ import MigosAvatarGroup from "./MigosAvatarGroup";
 
 const LayoutGroupItem = ({ item }) => {
   useEffect(() => {
-    console.log("GROUP ITEM " + JSON.stringify(item));
+    // console.log("GROUP ITEM " + JSON.stringify(item));
   }, []);
 
   const screenWidth = Dimensions.get("window").width;

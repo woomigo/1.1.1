@@ -73,7 +73,7 @@ const LayoutWooInfo = ({
   };
 
   useEffect(() => {
-    console.log(`LWI &&&&&& ${wooType}`);
+    // console.log(`LWI &&&&&& ${wooType}`);
   }, [wooType]);
 
   const openCal = () => {

@@ -62,14 +62,13 @@ const ProfileScreen = ({ navigation, route }) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        Authorization: `Bearer ${token}`,
       },
     });
 
     if (!res.ok) throw new Error("Failed to fetch follow counts");
 
     const data = await res.json();
-    console.log("FOLLOW COUNT IS ======= " + JSON.stringify(data));
     setFollowing(data.followee_count);
     setFollowers(data.follower_count);
     setUsername(data.user.username);
@@ -89,15 +88,13 @@ const ProfileScreen = ({ navigation, route }) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        Authorization: `Bearer ${token}`,
       },
     });
 
     if (!res.ok) throw new Error("Failed to fetch followings");
 
     const data = await res.json();
-    // console.log("FOLLOWERS OBJECT IS ======= " + JSON.stringify(data));
-
     setIsFollowing(data.followers.some((f) => f.user_id === user.id));
     setIsFollower(data.followees.some((f) => f.user_id === user.id));
 
@@ -107,16 +104,13 @@ const ProfileScreen = ({ navigation, route }) => {
   const fetchWoos = async (userId, token) => {
     if (!token) throw new Error("Auth token is missing");
     if (!userId) throw new Error("User ID is required");
-
-    // console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`);
-
     const res = await fetch(
       `${localhost}/woos/${userUID ? `user/${userId}` : "mine"}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -124,8 +118,6 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    // console.log("PROFILE WOOS OBJECT IS ======= " + JSON.stringify(data));
-
     setWoos(data);
 
     return res.json();
@@ -139,33 +131,27 @@ const ProfileScreen = ({ navigation, route }) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        Authorization: `Bearer ${token}`,
       },
     });
 
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    // console.log("Gallery OBJECT IS ======= " + JSON.stringify(data));
-
     setGallery(data);
-
     return res.json();
   };
 
   const fetchSubs = async (userId, token) => {
     if (!token) throw new Error("Auth token is missing");
     if (!userId) throw new Error("User ID is required");
-
-    // console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`);
-
     const res = await fetch(
       `${localhost}/subscriptions/${userUID ? `user/${userId}` : ""}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -173,10 +159,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    // console.log("SUBS OBJECT IS ======= " + JSON.stringify(data));
-
     setSubWoos(data);
-
     return res.json();
   };
 
@@ -190,7 +173,7 @@ const ProfileScreen = ({ navigation, route }) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -198,10 +181,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch followings");
 
     const data = await res.json();
-    // console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
-
     setIsFollowingRequest(data);
-
     return res.json();
   };
 
@@ -214,7 +194,7 @@ const ProfileScreen = ({ navigation, route }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ sender_id, receiver_id }),
       });
@@ -222,9 +202,7 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch followings");
 
       const data = await res.json();
-      // console.log(
-      //   "SEND FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
-      // );
+
       setIsFollowingRequest({
         exists: true,
         request: {
@@ -234,8 +212,7 @@ const ProfileScreen = ({ navigation, route }) => {
       showTemporaryFollowMessage("request sent!");
       return data;
     } catch (err) {
-      // console.error(err);
-      // showTemporaryFollowMessage("Error following");
+
     }
   };
 
@@ -248,7 +225,7 @@ const ProfileScreen = ({ navigation, route }) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ sender_id, receiver_id }),
       });
@@ -256,17 +233,13 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch followings");
 
       const data = await res.json();
-      // console.log(
-      //   "CANCEL FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
-      // );
+
       setIsFollowingRequest({
         exists: false,
       });
       showTemporaryFollowMessage("request cancelled!");
       return data;
     } catch (err) {
-    //   console.error(err);
-    //   showTemporaryFollowMessage("Error canceling");
     }
   };
 
@@ -279,7 +252,7 @@ const ProfileScreen = ({ navigation, route }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ follower_id, followee_id }),
       });
@@ -287,13 +260,11 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch follow user");
 
       const data = await res.json();
-      // console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
+
       setIsFollowing(true);
       showTemporaryFollowMessage("following!");
       return data;
     } catch (err) {
-    //   console.error(err);
-    //   showTemporaryFollowMessage("Error following user");
     }
   };
 
@@ -306,7 +277,7 @@ const ProfileScreen = ({ navigation, route }) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ follower_id, followee_id }),
       });
@@ -314,18 +285,13 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch un follow user");
 
       const data = await res.json();
-      // console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
       setIsFollowing(false);
       showTemporaryFollowMessage("unfollowed!");
       return data;
-    } catch (err) {
-    //   console.error(err);
-    //   showTemporaryFollowMessage("Error unfollowing user");
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
-    console.log(`USER FOR PROFILE IS ======================= ${JSON.stringify(user)}`);
     setIsProfileOwnedByUser(!userUID);
 
     Animated.spring(indicatorAnim, {
@@ -731,28 +697,23 @@ const ProfileScreen = ({ navigation, route }) => {
             >
               {renderTabBar()}
 
-              {activeTab === 0 && (
-                subWoos.length === 0 ? (
+              {activeTab === 0 &&
+                (subWoos.length === 0 ? (
                   <Empty message="your created woos go here... what are you waiting for???" />
                 ) : (
-                 <ListViewWoos view={"list"} woos={woos} uid={user.id} />
-                )
-                
-                
-              )}
-              {activeTab === 1 && (
-                  gallery.length === 0 ? (
-                          <Empty message="add an image for your gallery" />
-                        ) : (
-                          <ListViewGallery
-                  gallery={gallery}
-                  inverted
-                  view={"grid"}
-                  nav={"MediaView"}
-                />
-                        )
-                
-              )}
+                  <ListViewWoos view={"list"} woos={woos} uid={user.id} />
+                ))}
+              {activeTab === 1 &&
+                (gallery.length === 0 ? (
+                  <Empty message="add an image for your gallery" />
+                ) : (
+                  <ListViewGallery
+                    gallery={gallery}
+                    inverted
+                    view={"grid"}
+                    nav={"MediaView"}
+                  />
+                ))}
               {isProfileOwnedByUser &&
                 activeTab === 2 &&
                 (subWoos.length === 0 ? (

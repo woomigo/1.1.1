@@ -11,9 +11,9 @@ const LayoutWooListItem = ({ item, size, itemsAmt, itemsSlctd, view }) => {
   const itemsLeft = itemsAmt - itemsSlctd;
 
   useEffect(() => {
-    console.log("VIEW " + view);
-    console.log("LWLIT " + JSON.stringify(item));
-    console.log("User selected: ", selectedItem);
+    // console.log("VIEW " + view);
+    // console.log("LWLIT " + JSON.stringify(item));
+    // console.log("User selected: ", selectedItem);
   });
   const navigation = useNavigation();
 

@@ -12,7 +12,7 @@ const ListViewGroupList = ({ groups, view, size, wooID }) => {
   const [itemsSlctd, setItemsSlctd] = useState(2);
 
   useEffect(() => {
-    console.log(`groups ==== ${JSON.stringify(groups)}`);
+    // console.log(`groups ==== ${JSON.stringify(groups)}`);
   });
 
   <SearchInput
