@@ -49,8 +49,10 @@ const WooMigosView = ({ navigation, route }) => {
       <ListViewUsers
         uid={uid}
         users={migos}
-        hideSearchBar
-        searchBoxPlaceholder="search woo migos"
+        showSearch
+        onPressUser={(selectedUser) =>
+          navigation.navigate("Profile", { userUID: selectedUser.user_id })
+        }
       />
     </View>
   );

@@ -69,7 +69,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch follow counts");
 
     const data = await res.json();
-    // console.log("FOLLOW COUNT IS ======= " + JSON.stringify(data));
+    console.log("FOLLOW COUNT IS ======= " + JSON.stringify(data));
     setFollowing(data.followee_count);
     setFollowers(data.follower_count);
     setUsername(data.user.username);
@@ -325,7 +325,7 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // console.log(`USER FOR PROFILE IS ${JSON.stringify(user)}`);
+    console.log(`USER FOR PROFILE IS ======================= ${JSON.stringify(user)}`);
     setIsProfileOwnedByUser(!userUID);
 
     Animated.spring(indicatorAnim, {

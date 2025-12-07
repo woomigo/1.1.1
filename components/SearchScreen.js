@@ -251,7 +251,6 @@ const SearchScreen = ({ navigation }) => {
 
       <ListViewUsers
         users={filteredUsers}
-        hideSearchBar
         onPressUser={(selectedUser) =>
           navigation.navigate("Profile", { userUID: selectedUser.user_id })
         }

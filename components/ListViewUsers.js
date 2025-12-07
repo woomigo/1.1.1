@@ -6,15 +6,16 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Keyboard,
 } from "react-native";
 import UserCard from "./UserCard";
 import { Ionicons } from "@expo/vector-icons";
 import { debounce } from "lodash";
 import { woo_gray } from "../assets/colors";
 import FollowButton from "./FollowButton";
+import { Icon, Input } from "@rneui/themed";
 
 const ListViewUsers = ({
-  navigation,
   users = [],
   token,
   showSearch = false,
@@ -51,6 +52,7 @@ const ListViewUsers = ({
   );
 
   useEffect(() => {
+    console.log("LVU: $$$$$$$$$$$$$$$$$ ", users)
     if (!search) {
       setRemoteUsers([]);
       return;
@@ -67,38 +69,73 @@ const ListViewUsers = ({
 
   const combined = [...localFiltered, ...remoteFiltered];
 
+  const clearSearch = () => {
+    setSearch("");
+    setRemoteUsers([]);
+    Keyboard.dismiss();
+  };
+
   const renderItem = ({ item }) => (
     <UserCard
       user={item}
       onPress={() => {
-        console.log("User pressed: ----------------------------------------> ", item); // this is correct
+        console.log(
+          "User pressed: ----------------------------------------> ",
+          item
+        ); // this is correct
         onPressUser?.(item); // <-- call the callback passed from parent
       }}
       isRow={true}
-      side={<FollowButton profileId={item.user_id} />}
+      side={<FollowButton textIcon={true} profileId={item.user_id} />}
     />
   );
 
   return (
     <View style={{ padding: 16 }}>
       {showSearch && (
-        <View style={styles.searchWrapper}>
-          <TextInput
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Search users…"
-            autoCapitalize="none"
-            style={styles.input}
-          />
-          {search !== "" && (
-            <TouchableOpacity
-              style={styles.clearIcon}
-              onPress={() => setSearch("")}
-            >
-              <Ionicons name="close-circle" size={20} color="#888" />
-            </TouchableOpacity>
-          )}
+        <View style={styles.wrapper}>
+          <View style={styles.inputWrapper}>
+            <Input
+              fontSize={14}
+              value={search}
+              onChangeText={setSearch}
+              onSubmitEditing={Keyboard.dismiss}
+              // ref={listRef}
+              placeholder={"search by @username"}
+              leftIcon={
+                <Icon
+                  style={{ paddingEnd: 5 }}
+                  type="font-awesome-5"
+                  name={"search"}
+                  size={18}
+                />
+              }
+              autoCapitalize="none"
+            />
+            {search.length > 0 && (
+              <TouchableOpacity onPress={clearSearch} style={styles.clearIcon}>
+                <Ionicons name="close-circle" size={20} color="#aaa" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
+        // <View style={styles.searchWrapper}>
+        //   <TextInput
+        //     value={search}
+        //     onChangeText={setSearch}
+        //     placeholder="Search users…"
+        //     autoCapitalize="none"
+        //     style={styles.input}
+        //   />
+        //   {search !== "" && (
+        //     <TouchableOpacity
+        //       style={styles.clearIcon}
+        //       onPress={() => setSearch("")}
+        //     >
+        //       <Ionicons name="close-circle" size={20} color="#888" />
+        //     </TouchableOpacity>
+        //   )}
+        // </View>
       )}
       <FlatList
         data={combined}
@@ -111,23 +148,27 @@ const ListViewUsers = ({
 };
 
 const styles = StyleSheet.create({
-  searchWrapper: {
+  wrapper: {
+    marginTop: 10,
+    paddingHorizontal: 16,
+    width: "100%",
+  },
+  inputWrapper: {
     position: "relative",
-    marginBottom: 12,
+    justifyContent: "center",
   },
   input: {
-    backgroundColor: "#f1f1f1",
-    paddingHorizontal: 10,
-    paddingVertical: 8,
     height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
     borderRadius: 8,
-    paddingRight: 36,
+    paddingHorizontal: 12,
+    paddingRight: 35,
   },
   clearIcon: {
     position: "absolute",
-    right: 8,
-    top: "50%",
-    marginTop: -10,
+    right: 10,
+    top: 10,
   },
   empty: {
     textAlign: "center",

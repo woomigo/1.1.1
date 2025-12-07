@@ -238,12 +238,11 @@ const MigoRequestScreen = ({ navigation, route }) => {
           <View style={styles.tabHeader}>
             <ListViewUsers
               users={receivedRequests}
-              kind="double"
-              hideSearchBar
-              doubleBtn1Text="accept"
-              doubleBtn2Text="ignore"
-              handleDoubleBtnOneOnClick={(fr) => handleAccept(fr)}
-              handleDoubleBtnTwoOnClick={(fr) => handleIgnore(fr)}
+              onPressUser={(selectedUser) =>
+                navigation.navigate("Profile", {
+                  userUID: selectedUser.user_id,
+                })
+              }
             />
           </View>
         </TabView.Item>
@@ -251,11 +250,11 @@ const MigoRequestScreen = ({ navigation, route }) => {
           <View style={styles.tabHeader}>
             <ListViewUsers
               users={sentRequests}
-              kind="single"
-              hideSearchBar
-              singleBtnText="delete"
-              singleBtnColor={woo_red}
-              handleSingleBtnOnClick={(fr) => handleDelete(fr)}
+              onPressUser={(selectedUser) =>
+                navigation.navigate("Profile", {
+                  userUID: selectedUser.user_id,
+                })
+              }
             />
           </View>
         </TabView.Item>

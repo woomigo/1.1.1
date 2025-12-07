@@ -70,7 +70,7 @@ const MigosScreen = ({ navigation, route }) => {
 
     console.log("MIGOS " + JSON.stringify(user));
     console.log(`USERUID ======s ${userUID}`);
-    console.log(`isProfileOwnedByUser ======s ${isProfileOwnedByUser}`);
+    // console.log(`isProfileOwnedByUser ======s ${isProfileOwnedByUser}`);
     fetchUserFollow(userUID ? userUID : user.id, token);
   }, [user, token]);
 
@@ -311,13 +311,11 @@ const MigosScreen = ({ navigation, route }) => {
           <View style={styles.tabHeader}>
             <ListViewUsers
               users={followers}
-              uid={user.id}
-              hideSearchBar
-              searchBoxPlaceholder="search followers by @username"
-              kind={!userUID && "single"}
-              singleBtnColor={woo_gray}
-              singleBtnText="remove"
-              handleSingleBtnOnClick={(user) => handleRemoveFollower(user)}
+              onPressUser={(selectedUser) =>
+                navigation.push("Profile", {
+                  userUID: selectedUser.user_id,
+                })
+              }
             />
           </View>
         </TabView.Item>
@@ -325,13 +323,11 @@ const MigosScreen = ({ navigation, route }) => {
           <View style={styles.tabHeader}>
             <ListViewUsers
               users={following}
-              uid={user.id}
-              hideSearchBar
-              searchBoxPlaceholder="search following by @username"
-              kind={!userUID && "single"}
-              singleBtnColor={woo_gray}
-              singleBtnText="unfollow"
-              handleSingleBtnOnClick={(user) => handleUnfollowFollowing(user)}
+              onPressUser={(selectedUser) =>
+                navigation.push("Profile", {
+                  userUID: selectedUser.user_id,
+                })
+              }
             />
           </View>
         </TabView.Item>
