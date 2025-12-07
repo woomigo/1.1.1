@@ -8,7 +8,6 @@ exports.sendFollowRequest = async (req, res) => {
   }
 
   try {
-    // 1. Get the receiver's privacy setting
     const [[receiver]] = await db.query(
       `SELECT is_private FROM users WHERE id = ?`,
       [receiver_id]
@@ -18,7 +17,6 @@ exports.sendFollowRequest = async (req, res) => {
       return res.status(404).json({ error: "Receiver user not found." });
     }
 
-    // 2. Don't allow requests to public profiles
     if (!receiver.is_private) {
       return res
         .status(400)
@@ -28,7 +26,6 @@ exports.sendFollowRequest = async (req, res) => {
         });
     }
 
-    // 3. Check if request already exists
     const [[existing]] = await db.query(
       `SELECT * FROM follow_requests WHERE sender_id = ? AND receiver_id = ?`,
       [sender_id, receiver_id]
@@ -38,7 +35,6 @@ exports.sendFollowRequest = async (req, res) => {
       return res.status(400).json({ error: "Follow request already sent." });
     }
 
-    // 4. Save follow request
     await db.query(
       `INSERT INTO follow_requests (sender_id, receiver_id) VALUES (?, ?)`,
       [sender_id, receiver_id]
@@ -80,7 +76,6 @@ exports.acceptFollowRequest = async (req, res) => {
   const requestId = req.params.id;
 
   try {
-    // 1. Get sender and receiver from the request
     const [[request]] = await db.query(
       `SELECT sender_id, receiver_id FROM follow_requests WHERE id = ?`,
       [requestId]
@@ -92,20 +87,17 @@ exports.acceptFollowRequest = async (req, res) => {
 
     const { sender_id, receiver_id } = request;
 
-    // 2. Update request status
     await db.query(
       `UPDATE follow_requests SET status = 'accepted' WHERE id = ?`,
       [requestId]
     );
 
-    // 3. Check if the follow relationship already exists
     const [[existingFollow]] = await db.query(
       `SELECT * FROM followers WHERE follower_id = ? AND followee_id = ?`,
       [sender_id, receiver_id]
     );
 
     if (!existingFollow) {
-      // 4. Insert into followers table only if not already following
       await db.query(
         `INSERT INTO followers (follower_id, followee_id) VALUES (?, ?)`,
         [sender_id, receiver_id]
@@ -143,7 +135,7 @@ exports.getIncomingFollowRequests = async (req, res) => {
          fr.id AS request_id,
          fr.status,
          fr.created_at,
-         u.uuid AS sender_id,
+         u.uuid AS user_id,   -- changed from sender_id
          u.username,
          u.first_name,
          u.last_name,
@@ -162,6 +154,7 @@ exports.getIncomingFollowRequests = async (req, res) => {
   }
 };
 
+
 exports.getOutgoingFollowRequests = async (req, res) => {
   const senderId = req.user.id;
 
@@ -171,7 +164,7 @@ exports.getOutgoingFollowRequests = async (req, res) => {
          fr.id AS request_id,
          fr.status,
          fr.created_at,
-         u.uuid AS receiver_id,
+         u.uuid AS user_id,  -- changed from receiver_id
          u.username,
          u.first_name,
          u.last_name,
@@ -189,6 +182,7 @@ exports.getOutgoingFollowRequests = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 exports.checkIfFollowRequestExists = async (req, res) => {
   const { sender_id, receiver_id } = req.query;

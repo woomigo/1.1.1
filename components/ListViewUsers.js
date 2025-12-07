@@ -52,7 +52,6 @@ const ListViewUsers = ({
   );
 
   useEffect(() => {
-    console.log("LVU: $$$$$$$$$$$$$$$$$ ", users)
     if (!search) {
       setRemoteUsers([]);
       return;
@@ -79,11 +78,7 @@ const ListViewUsers = ({
     <UserCard
       user={item}
       onPress={() => {
-        console.log(
-          "User pressed: ----------------------------------------> ",
-          item
-        ); // this is correct
-        onPressUser?.(item); // <-- call the callback passed from parent
+        onPressUser?.(item);
       }}
       isRow={true}
       side={<FollowButton textIcon={true} profileId={item.user_id} />}

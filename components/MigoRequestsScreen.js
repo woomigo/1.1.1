@@ -41,7 +41,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
 
       const data = await res.json();
       console.log(
-        "Sent Follow Requests OBJECT IS ======= " + JSON.stringify(data)
+        "Sent Follow Requests OBJECT IS ======= " + JSON.stringify(data.outgoing_requests)
       );
       setSentRequests(data.outgoing_requests);
       return data;
@@ -238,10 +238,12 @@ const MigoRequestScreen = ({ navigation, route }) => {
           <View style={styles.tabHeader}>
             <ListViewUsers
               users={receivedRequests}
-              onPressUser={(selectedUser) =>
-                navigation.navigate("Profile", {
+              onPressUser={
+                (selectedUser) =>{
+                console.log("SU 999999999999999999999999999999999999999999 ", selectedUser)
+                navigation.push("Profile", {
                   userUID: selectedUser.user_id,
-                })
+                })}
               }
             />
           </View>
@@ -251,7 +253,7 @@ const MigoRequestScreen = ({ navigation, route }) => {
             <ListViewUsers
               users={sentRequests}
               onPressUser={(selectedUser) =>
-                navigation.navigate("Profile", {
+                navigation.push("Profile", {
                   userUID: selectedUser.user_id,
                 })
               }

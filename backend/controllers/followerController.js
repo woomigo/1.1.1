@@ -1,6 +1,5 @@
 const db = require('../db');
 
-// Get followers of a user
 exports.getFollowers = async (req, res) => {
   const [rows] = await db.query(
     'SELECT follower_id FROM followers WHERE followee_id = ?', [req.params.id]
@@ -8,7 +7,6 @@ exports.getFollowers = async (req, res) => {
   res.json(rows);
 };
 
-// Get following of a user
 exports.getFollowings = async (req, res) => {
   const [rows] = await db.query(
     'SELECT followee_id FROM followers WHERE follower_id = ?', [req.params.id]
@@ -16,7 +14,6 @@ exports.getFollowings = async (req, res) => {
   res.json(rows);
 };
 
-// Follow someone
 exports.followUser = async (req, res) => {
   const { follower_id, followee_id } = req.body;
   if (follower_id === followee_id) {
@@ -33,7 +30,7 @@ exports.followUser = async (req, res) => {
   }
 };
 
-// Unfollow
+
 exports.unfollowUser = async (req, res) => {
   const { follower_id, followee_id } = req.body;
   await db.query(
@@ -42,8 +39,6 @@ exports.unfollowUser = async (req, res) => {
   res.json({ message: 'Unfollowed successfully' });
 };
 
-
-// Get mutual followers
 exports.getMutualFollows = async (req, res) => {
     try {
       const [rows] = await db.query(`
@@ -65,7 +60,7 @@ exports.getUserFollowCounts = async (req, res) => {
     return res.status(400).json({ error: "User ID is required in the URL." });
   }
   try {
-    // 1. Get user's basic info
+
     const [userResult] = await db.query(
       `SELECT uuid, username, first_name, last_name, profile_pic_url, is_private FROM users WHERE uuid = ?`,
       [userId]
@@ -75,7 +70,6 @@ exports.getUserFollowCounts = async (req, res) => {
     }
     const user = userResult[0];
 
-    // 2. Get follower and followee counts
     const [[counts]] = await db.query(
       `SELECT 
          (SELECT COUNT(*) FROM followers WHERE followee_id = ?) AS follower_count,
@@ -100,7 +94,6 @@ exports.getUserWithFollowersAndFollowingInfo = async (req, res) => {
     return res.status(400).json({ error: "User ID is required in the URL." });
   }
   try {
-    // 1. Get user's basic info
     const [userResult] = await db.query(
       `SELECT uuid, username, first_name, last_name, profile_pic_url FROM users WHERE uuid = ?`,
       [userId]
@@ -110,7 +103,6 @@ exports.getUserWithFollowersAndFollowingInfo = async (req, res) => {
     }
     const user = userResult[0];
 
-    // 2. Get followers (users who follow this user)
     const [followers] = await db.query(
       `SELECT u.uuid AS user_id, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f
@@ -119,7 +111,6 @@ exports.getUserWithFollowersAndFollowingInfo = async (req, res) => {
       [userId]
     );
 
-    // 3. Get followees (users this user is following)
     const [followees] = await db.query(
       `SELECT u.uuid AS user_id, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f
@@ -145,7 +136,6 @@ exports.getFollowersInfo = async (req, res) => {
     return res.status(400).json({ error: "User ID is required in the URL." });
   }
   try {
-    // 1. Get user's basic info
     const [userResult] = await db.query(
       `SELECT uuid, username, first_name, last_name, profile_pic_url FROM users WHERE uuid = ?`,
       [userId]
@@ -155,7 +145,6 @@ exports.getFollowersInfo = async (req, res) => {
     }
     const user = userResult[0];
 
-    // 2. Get followers (users who follow this user)
     const [followers] = await db.query(
       `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f
@@ -164,19 +153,9 @@ exports.getFollowersInfo = async (req, res) => {
       [userId]
     );
 
-    // // 3. Get followees (users this user is following)
-    // const [followees] = await db.query(
-    //   `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
-    //    FROM followers f
-    //    JOIN users u ON f.followee_id = u.uuid
-    //    WHERE f.follower_id = ?`,
-    //   [userId]
-    // );
-
     res.json({
       user,
       followers,
-      // followees
     });
   } catch (err) {
     console.error("Error fetching user + follow info:", err);
@@ -190,7 +169,6 @@ exports.getFollowingsInfo = async (req, res) => {
     return res.status(400).json({ error: "User ID is required in the URL." });
   }
   try {
-    // 1. Get user's basic info
     const [userResult] = await db.query(
       `SELECT uuid, username, first_name, last_name, profile_pic_url FROM users WHERE uuid = ?`,
       [userId]
@@ -200,16 +178,6 @@ exports.getFollowingsInfo = async (req, res) => {
     }
     const user = userResult[0];
 
-    // // 2. Get followers (users who follow this user)
-    // const [followers] = await db.query(
-    //   `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
-    //    FROM followers f
-    //    JOIN users u ON f.follower_id = u.uuid
-    //    WHERE f.followee_id = ?`,
-    //   [userId]
-    // );
-
-    // 3. Get followees (users this user is following)
     const [followees] = await db.query(
       `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM followers f

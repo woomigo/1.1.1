@@ -1,21 +1,8 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
-import { Header, Icon, Tab, TabView } from "@rneui/themed";
-import { Migos } from "./shared";
-// import {
-//   collection,
-//   query,
-//   where,
-//   getDocs,
-//   updateDoc,
-//   arrayUnion,
-//   doc,
-//   arrayRemove,
-//   onSnapshot,
-// } from "firebase/firestore";
-// import { db } from "../firebaseConfig";
+import { Tab, TabView } from "@rneui/themed";
 import ListViewUsers from "./ListViewUsers";
-import { woo_black, woo_gray, woo_orange, woo_red } from "../assets/colors";
+import { woo_black } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { localhost } from "./utility";
 
@@ -25,16 +12,11 @@ const MigosScreen = ({ navigation, route }) => {
     user,
     token,
     userUID,
-    isProfileOwnedByUser,
   } = route.params;
-
-  // const userRef = doc(db, "users", uid);
 
   const [index, setIndex] = useState(0);
   const [following, setFollowing] = useState();
   const [followers, setFollowers] = useState();
-  const [migos, setMigos] = useState();
-  // const [user, setUser] = useState();
   const [username, setUsername] = useState();
 
   const fetchUserFollow = async (userId, token) => {
@@ -42,12 +24,11 @@ const MigosScreen = ({ navigation, route }) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⬅️ your auth token here
+        Authorization: `Bearer ${token}`,
       },
     });
 
     const data = await res.json();
-    console.log("FOLLOWERS ARE ======= " + JSON.stringify(data));
     setFollowing(data.followees);
     setFollowers(data.followers);
     setUsername(data.user.username);
@@ -60,153 +41,14 @@ const MigosScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     setIndex(indexParam);
-
-    // setIsProfileOwnedByUser(!userUID);
-
-    // Animated.spring(indicatorAnim, {
-    //   toValue: activeTab * (width / 3),
-    //   useNativeDriver: true,
-    // }).start();
-
-    console.log("MIGOS " + JSON.stringify(user));
-    console.log(`USERUID ======s ${userUID}`);
-    // console.log(`isProfileOwnedByUser ======s ${isProfileOwnedByUser}`);
     fetchUserFollow(userUID ? userUID : user.id, token);
   }, [user, token]);
 
-  // useEffect(() => {
-
-  //   // const docRef = doc(db, "users", userUID ? userUID : uid);
-  //   // const getMigos = onSnapshot(docRef, (doc) => {
-  //   //   // console.log("Document data:", doc.data());
-  //   //   setUser(doc.data());
-  //   //   setFollowing(doc.data().following);
-  //   //   setFollowers(doc.data().followers);
-  //   //   setMigos(doc.data().migos);
-  //   //   setUsername(doc.data().username);
-  //   // });
-
-  //   return () => {
-  //     // getMigos();
-  //   };
-  // }, []);
-
-  // const addUIDToUserFollowing = async (userUID) => {
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     following: arrayUnion(uid),
-  //   });
-  // };
-
-  // const addUIDToOwnerFollowers = async (userUID) => {
-  //   await updateDoc(userRef, {
-  //     followers: arrayUnion(userUID),
-  //   });
-  //   // setView("success")
-  // };
-
-  // const removeUIDFromUserFollowers = async (userUID) => {
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     followers: arrayRemove(uid),
-  //   });
-  // };
-
-  // const removeUIDFromUserFollowing = async (userUID) => {
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     following: arrayRemove(uid),
-  //   });
-  // };
-
-  // const removeUIDFromOwnerFollowers = async (userUID) => {
-  //   await updateDoc(userRef, {
-  //     followers: arrayRemove(userUID),
-  //   });
-  // };
-
-  // const removeUIDFromOwnerFollowing = async (userUID) => {
-  //   await updateDoc(userRef, {
-  //     following: arrayRemove(userUID),
-  //   });
-  // };
-
-  // const removeUIDFromOwnerMigos = async (userUID) => {
-  //   await updateDoc(userRef, {
-  //     migos: arrayRemove(userUID),
-  //   });
-  // };
-
-  // const removeUIDFromUserMigos = async (userUID) => {
-  //   await updateDoc(doc(db, "users", userUID), {
-  //     migos: arrayRemove(uid),
-  //   });
-  // setView("migoRequestSuccess")
-  // };
-
-  // const handleUnfollowMigo = (user) => {
-  //   addUIDToOwnerFollowers(user.uid);
-  //   addUIDToUserFollowing(user.uid);
-  //   // removeUIDFromUserFollowers(user.uid)
-  //   removeUIDFromUserMigos(user.uid);
-  //   removeUIDFromOwnerMigos(user.uid);
-  //   console.log("unfollow MIGO" + " " + user.uid);
-  // };
-
-  // const handleRemoveFollower = (user) => {
-  //   removeUIDFromOwnerFollowers(user.uid);
-  //   removeUIDFromUserFollowing(user.uid);
-  //   console.log("remove Follower" + " " + user.uid);
-  // };
-
-  // const handleUnfollowFollowing = (user) => {
-  //   removeUIDFromOwnerFollowing(user.uid);
-  //   removeUIDFromUserFollowers(user.uid);
-  //   console.log("unfollow Following" + " " + user.uid);
-  // };
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Header
-        style={styles.header}
-        backgroundColor={"#fff"}
-        leftComponent={
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon
-              name="chevron-left"
-              type="font-awesome-5"
-              color={woo_black}
-              size={25}
-              onPress={() => navigation.navigate("Profile")}
-            />
-            <Text
-              style={{
-                fontSize: 25,
-                color: woo_black,
-                textAlign: "center",
-                fontWeight: "bold",
-                marginStart: 20
-              }}
-            >
-              migos
-            </Text>
-          </View>
-        }
-        centerComponent={<View></View>}
-        rightComponent={
-          <Icon
-            name="user-plus"
-            type="font-awesome-5"
-            color={woo_black}
-            size={25}
-            onPress={() => navigation.navigate("MigoRequests")}
-          />
-        }
-        rightContainerStyle={styles.rightComponent}
-        leftContainerStyle={styles.leftComponent}
-        centerContainerStyle={styles.centerComponent}
-      /> */}
       <View style={styles.header}>
         <View
           style={{
-            // backgroundColor: "blue",
             flex: 1,
             flexDirection: "row",
             justifyContent: "flex-start",
@@ -218,7 +60,6 @@ const MigosScreen = ({ navigation, route }) => {
         </View>
         <View
           style={{
-            // backgroundColor: "blue",
             flex: 4,
             flexDirection: "row",
             justifyContent: "flex-start",
@@ -238,7 +79,6 @@ const MigosScreen = ({ navigation, route }) => {
         <View
           style={{
             flex: 2,
-            // backgroundColor: "red",
             flexDirection: "row",
             justifyContent: "space-around",
           }}
@@ -247,7 +87,7 @@ const MigosScreen = ({ navigation, route }) => {
             <View
               style={{
                 flex: 1,
-                // backgroundColor: "red",
+  
                 flexDirection: "row",
                 justifyContent: "space-around",
               }}
@@ -365,8 +205,6 @@ const styles = StyleSheet.create({
   tabContainer: {},
   tabHeader: {
     marginTop: 10,
-    // padding: 5,
-    // alignItems: 'center'
   },
   tabText: {
     fontSize: 18,
