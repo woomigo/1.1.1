@@ -69,7 +69,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch follow counts");
 
     const data = await res.json();
-    console.log("FOLLOW COUNT IS ======= " + JSON.stringify(data));
+    // console.log("FOLLOW COUNT IS ======= " + JSON.stringify(data));
     setFollowing(data.followee_count);
     setFollowers(data.follower_count);
     setUsername(data.user.username);
@@ -96,7 +96,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch followings");
 
     const data = await res.json();
-    console.log("FOLLOWERS OBJECT IS ======= " + JSON.stringify(data));
+    // console.log("FOLLOWERS OBJECT IS ======= " + JSON.stringify(data));
 
     setIsFollowing(data.followers.some((f) => f.user_id === user.id));
     setIsFollower(data.followees.some((f) => f.user_id === user.id));
@@ -108,7 +108,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!token) throw new Error("Auth token is missing");
     if (!userId) throw new Error("User ID is required");
 
-    console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`);
+    // console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`);
 
     const res = await fetch(
       `${localhost}/woos/${userUID ? `user/${userId}` : "mine"}`,
@@ -124,7 +124,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    console.log("PROFILE WOOS OBJECT IS ======= " + JSON.stringify(data));
+    // console.log("PROFILE WOOS OBJECT IS ======= " + JSON.stringify(data));
 
     setWoos(data);
 
@@ -146,7 +146,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    console.log("Gallery OBJECT IS ======= " + JSON.stringify(data));
+    // console.log("Gallery OBJECT IS ======= " + JSON.stringify(data));
 
     setGallery(data);
 
@@ -157,7 +157,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!token) throw new Error("Auth token is missing");
     if (!userId) throw new Error("User ID is required");
 
-    console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`);
+    // console.log(`FETCH WOOS userID -------$$$$$$$$ ${userId}`);
 
     const res = await fetch(
       `${localhost}/subscriptions/${userUID ? `user/${userId}` : ""}`,
@@ -173,7 +173,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch woos");
 
     const data = await res.json();
-    console.log("SUBS OBJECT IS ======= " + JSON.stringify(data));
+    // console.log("SUBS OBJECT IS ======= " + JSON.stringify(data));
 
     setSubWoos(data);
 
@@ -198,7 +198,7 @@ const ProfileScreen = ({ navigation, route }) => {
     if (!res.ok) throw new Error("Failed to fetch followings");
 
     const data = await res.json();
-    console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
+    // console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
 
     setIsFollowingRequest(data);
 
@@ -222,9 +222,9 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch followings");
 
       const data = await res.json();
-      console.log(
-        "SEND FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
-      );
+      // console.log(
+      //   "SEND FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
+      // );
       setIsFollowingRequest({
         exists: true,
         request: {
@@ -234,8 +234,8 @@ const ProfileScreen = ({ navigation, route }) => {
       showTemporaryFollowMessage("request sent!");
       return data;
     } catch (err) {
-      console.error(err);
-      showTemporaryFollowMessage("Error following");
+      // console.error(err);
+      // showTemporaryFollowMessage("Error following");
     }
   };
 
@@ -256,17 +256,17 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch followings");
 
       const data = await res.json();
-      console.log(
-        "CANCEL FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
-      );
+      // console.log(
+      //   "CANCEL FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data)
+      // );
       setIsFollowingRequest({
         exists: false,
       });
       showTemporaryFollowMessage("request cancelled!");
       return data;
     } catch (err) {
-      console.error(err);
-      showTemporaryFollowMessage("Error canceling");
+    //   console.error(err);
+    //   showTemporaryFollowMessage("Error canceling");
     }
   };
 
@@ -287,13 +287,13 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch follow user");
 
       const data = await res.json();
-      console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
+      // console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
       setIsFollowing(true);
       showTemporaryFollowMessage("following!");
       return data;
     } catch (err) {
-      console.error(err);
-      showTemporaryFollowMessage("Error following user");
+    //   console.error(err);
+    //   showTemporaryFollowMessage("Error following user");
     }
   };
 
@@ -314,18 +314,18 @@ const ProfileScreen = ({ navigation, route }) => {
       if (!res.ok) throw new Error("Failed to fetch un follow user");
 
       const data = await res.json();
-      console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
+      // console.log("FOLLOWER Request OBJECT IS ======= " + JSON.stringify(data));
       setIsFollowing(false);
       showTemporaryFollowMessage("unfollowed!");
       return data;
     } catch (err) {
-      console.error(err);
-      showTemporaryFollowMessage("Error unfollowing user");
+    //   console.error(err);
+    //   showTemporaryFollowMessage("Error unfollowing user");
     }
   };
 
   useEffect(() => {
-    console.log(`USER FOR PROFILE IS ${JSON.stringify(user)}`);
+    // console.log(`USER FOR PROFILE IS ${JSON.stringify(user)}`);
     setIsProfileOwnedByUser(!userUID);
 
     Animated.spring(indicatorAnim, {
@@ -386,22 +386,22 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   const handleCancelFollowRequest = async (userId) => {
-    console.log(`Follow request canceled clicked for ${userId}`);
+    // console.log(`Follow request canceled clicked for ${userId}`);
     await fetchCancelFollowRequest(user.id, userId, token);
   };
 
   const handleSendFollowRequest = async (userId) => {
-    console.log(`Follow request sent clicked for ${userId}`);
+    // console.log(`Follow request sent clicked for ${userId}`);
     await fetchSendFollowRequest(user.id, userId, token);
   };
 
   const handleUnfollow = async (userId) => {
-    console.log(`UNFOLLOW Clicked for userId - ${userId}`);
+    // console.log(`UNFOLLOW Clicked for userId - ${userId}`);
     await fetchUnfollowUser(user.id, userUID, token);
   };
 
   const handleFollow = async (userUID) => {
-    console.log(`FOLLOW Clicked for userId - ${userUID}`);
+    // console.log(`FOLLOW Clicked for userId - ${userUID}`);
     await fetchFollowUser(user.id, userUID, token);
   };
 

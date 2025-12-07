@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import SuggestedUserCard from "./SuggestedUserCard";
+import UserCard from "./UserCard";
 import { Ionicons } from "@expo/vector-icons";
 import { debounce } from "lodash";
 import { woo_gray } from "../assets/colors";
 import FollowButton from "./FollowButton";
 
 const ListViewUsers = ({
+  navigation,
   users = [],
   token,
   showSearch = false,
@@ -67,9 +68,12 @@ const ListViewUsers = ({
   const combined = [...localFiltered, ...remoteFiltered];
 
   const renderItem = ({ item }) => (
-    <SuggestedUserCard
+    <UserCard
       user={item}
-      onPress={onPressUser}
+      onPress={() => {
+        console.log("User pressed: ----------------------------------------> ", item); // this is correct
+        onPressUser?.(item); // <-- call the callback passed from parent
+      }}
       isRow={true}
       side={<FollowButton profileId={item.user_id} />}
     />

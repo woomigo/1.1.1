@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { woo_black } from "../assets/colors";
 
 {
-  /* <SuggestedUserCard
+  /* <UserCard
   user={u}
   isRow
   topLeft={<Icon name="star" />}
@@ -12,7 +12,7 @@ import { woo_black } from "../assets/colors";
 /> */
 }
 
-const SuggestedUserCard = ({
+const UserCard = ({
   user,
   onPress,
   isRow = false,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginHorizontal: 5,
-    marginVertical: 5
+    marginVertical: 5,
   },
 
   topLeft: {
@@ -128,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SuggestedUserCard;
+export default UserCard;

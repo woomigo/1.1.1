@@ -16,10 +16,10 @@ import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import ListViewUsers from "./ListViewUsers";
 import { AuthContext } from "../context/AuthContext";
 import { localhost } from "./utility";
-import SuggestedUserCard from "./SuggestedUserCard";
+import UserCard from "./UserCard";
 import FollowButton from "./FollowButton";
 
-const SearchScreen = ({ navigation, route }) => {
+const SearchScreen = ({ navigation }) => {
   const { token } = useContext(AuthContext);
 
   const [searchText, setSearchText] = useState("");
@@ -94,7 +94,7 @@ const SearchScreen = ({ navigation, route }) => {
       }
 
       const data = await res.json();
-      console.log(`SEARCH DATA JSON ${JSON.stringify(data)}`);
+      // console.log(`SEARCH DATA JSON ${JSON.stringify(data)}`);
       setFilteredUsers(data);
     } catch (error) {
       setFilteredUsers([]);
@@ -217,14 +217,12 @@ const SearchScreen = ({ navigation, route }) => {
                 return (
                   <>
                     <View style={{ flex: 1, marginHorizontal: 6 }}>
-                      <SuggestedUserCard
+                      <UserCard
                         isRow={false}
                         footer={<FollowButton profileId={item.user_id} />}
                         user={item}
-                        onPress={(user) =>
-                          navigation.navigate("Profile", {
-                            userId: user.user_id,
-                          })
+                        onPress={(selectedUser) =>
+                          navigation.navigate("Profile", { userUID: selectedUser.user_id })
                         }
                       />
                     </View>
@@ -236,12 +234,12 @@ const SearchScreen = ({ navigation, route }) => {
               }
               return (
                 <View style={{ flex: 1, marginHorizontal: 6 }}>
-                  <SuggestedUserCard
+                  <UserCard
                     isRow={false}
                     footer={<FollowButton profileId={item.user_id} />}
                     user={item}
-                    onPress={(user) =>
-                      navigation.navigate("Profile", { userId: user.id })
+                    onPress={(selectedUser) =>
+                      navigation.navigate("Profile", { userUID: selectedUser.user_id })
                     }
                   />
                 </View>
@@ -251,7 +249,13 @@ const SearchScreen = ({ navigation, route }) => {
         </View>
       )}
 
-      <ListViewUsers users={filteredUsers} hideSearchBar />
+      <ListViewUsers
+        users={filteredUsers}
+        hideSearchBar
+        onPressUser={(selectedUser) =>
+          navigation.navigate("Profile", { userUID: selectedUser.user_id })
+        }
+      />
     </SafeAreaView>
   );
 };
