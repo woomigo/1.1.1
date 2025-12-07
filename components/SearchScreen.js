@@ -3,66 +3,58 @@ import {
   View,
   Text,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
   TouchableOpacity,
   Keyboard,
-  TouchableWithoutFeedback,
   SafeAreaView,
-  Dimensions,
   FlatList,
-  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Header, Icon, Input, Avatar, Skeleton } from "@rneui/themed";
+import { Icon, Input } from "@rneui/themed";
 import { woo_black } from "../assets/colors";
 import debounce from "lodash.debounce";
-import { SelfIdentity } from "./shared";
-import { render } from "react-native-web";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import SearchInput from "./SearchInput";
-import { filter } from "lodash";
 import ListViewUsers from "./ListViewUsers";
 import { AuthContext } from "../context/AuthContext";
 import { localhost } from "./utility";
 import SuggestedUserCard from "./SuggestedUserCard";
+import FollowButton from "./FollowButton";
 
 const SearchScreen = ({ navigation, route }) => {
-  const { user, token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
   const [searchText, setSearchText] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [suggestedUsers, setSuggestedUsers] = useState([
     {
-      id: 1,
+      user_id: "1fb40ece-9bd3-11f0-907e-a841f4a444ea",
       username: "johndoe",
       name: "John Doe",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      profile_pic_url: "https://randomuser.me/api/portraits/men/32.jpg",
     },
     {
-      id: 2,
+      user_id: "1fb412ad-9bd3-11f0-907e-a841f4a444ea",
       username: "janesmith",
       name: "Jane Smith",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+      profile_pic_url: "https://randomuser.me/api/portraits/women/44.jpg",
     },
     {
-      id: 3,
+      user_id: "1fb41ba8-9bd3-11f0-907e-a841f4a444ea",
       username: "alexking",
       name: "Alex King",
-      avatar: "https://randomuser.me/api/portraits/men/76.jpg",
+      profile_pic_url: "https://randomuser.me/api/portraits/men/76.jpg",
     },
-    {
-      id: 4,
-      username: "lilyrose",
-      name: "Lily Rose",
-      avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-    },
-    {
-      id: 5,
-      username: "michael88",
-      name: "Michael Johnson",
-      avatar: "https://randomuser.me/api/portraits/men/54.jpg",
-    },
+    // {
+    //   user_id: 4,
+    //   username: "lilyrose",
+    //   name: "Lily Rose",
+    //   profile_pic_url: "https://randomuser.me/api/portraits/women/65.jpg",
+    // },
+    // {
+    //   user_id: 5,
+    //   username: "michael88",
+    //   name: "Michael Johnson",
+    //   profile_pic_url: "https://randomuser.me/api/portraits/men/54.jpg",
+    // },
   ]);
 
   //   useEffect(() => {
@@ -109,7 +101,6 @@ const SearchScreen = ({ navigation, route }) => {
     }
   };
 
-  // Now create debounced function — pass function reference, NOT call
   const debouncedFetchUsers = useRef(debounce(fetchFilteredUsers, 300)).current;
 
   const handleSearch = (text) => {
@@ -117,7 +108,6 @@ const SearchScreen = ({ navigation, route }) => {
     debouncedFetchUsers(text.trim());
   };
 
-  // Cancel debounce on unmount
   useEffect(() => {
     return () => {
       debouncedFetchUsers.cancel();
@@ -127,15 +117,14 @@ const SearchScreen = ({ navigation, route }) => {
   const clearSearch = () => {
     setSearchText("");
     setFilteredUsers([]);
+    Keyboard.dismiss();
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
       <View style={styles.header}>
         <View
           style={{
-            // backgroundColor: "blue",
             flex: 3,
             alignItems: "flex-start",
           }}
@@ -154,7 +143,6 @@ const SearchScreen = ({ navigation, route }) => {
         <View
           style={{
             flex: 1,
-            // backgroundColor: "red",
             flexDirection: "row",
             justifyContent: "space-around",
           }}
@@ -185,6 +173,7 @@ const SearchScreen = ({ navigation, route }) => {
             fontSize={14}
             value={searchText}
             onChangeText={handleSearch}
+            onSubmitEditing={Keyboard.dismiss}
             // ref={listRef}
             placeholder={"search by @username"}
             leftIcon={
@@ -195,8 +184,6 @@ const SearchScreen = ({ navigation, route }) => {
                 size={18}
               />
             }
-            //   errorStyle={{ color: 'red' }}
-            //   errorMessage={showEmptyMessage && searchText.length > 0 && filtered.length === 0 && emptyMessage}
             autoCapitalize="none"
           />
           {searchText.length > 0 && (
@@ -205,17 +192,13 @@ const SearchScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           )}
         </View>
-
-        {/* {showEmptyMessage && searchText.length > 0 && filtered.length === 0 && (
-          <Text style={styles.emptyMessage}>{emptyMessage}</Text>
-        )} */}
       </View>
       {searchText.length === 0 && suggestedUsers.length > 0 && (
         <View style={{ marginTop: 10 }}>
           <Text style={styles.suggestedHeader}>Suggested Users</Text>
           <FlatList
             data={suggestedUsers}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.user_id.toString()}
             numColumns={2}
             contentContainerStyle={{
               paddingHorizontal: 15,
@@ -233,27 +216,29 @@ const SearchScreen = ({ navigation, route }) => {
               if (isLastOdd) {
                 return (
                   <>
-                    {/* Actual card */}
                     <View style={{ flex: 1, marginHorizontal: 6 }}>
                       <SuggestedUserCard
+                        isRow={false}
+                        footer={<FollowButton profileId={item.user_id} />}
                         user={item}
                         onPress={(user) =>
-                          navigation.navigate("Profile", { userId: user.id })
+                          navigation.navigate("Profile", {
+                            userId: user.user_id,
+                          })
                         }
                       />
                     </View>
-
-                    {/* Invisible filler to keep grid aligned */}
                     <View
                       style={{ flex: 1, marginHorizontal: 6, opacity: 0 }}
                     />
                   </>
                 );
               }
-
               return (
                 <View style={{ flex: 1, marginHorizontal: 6 }}>
                   <SuggestedUserCard
+                    isRow={false}
+                    footer={<FollowButton profileId={item.user_id} />}
                     user={item}
                     onPress={(user) =>
                       navigation.navigate("Profile", { userId: user.id })

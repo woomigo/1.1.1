@@ -19,6 +19,7 @@ const likeRoutes = require('./routes/likes')
 const commentsRoutes = require('./routes/comments');
 const listRoutes = require('./routes/lists');
 const tagRoutes = require('./routes/tags')
+const relationShipRoutes = require('./routes/relationships')
 
 app.use(cors());
 app.use(express.json());
@@ -38,6 +39,7 @@ app.use('/subscriptions', subScriptionRoutes)
 app.use('/woo-likes', likeRoutes)
 app.use('/comments', commentsRoutes);
 app.use('/tags', tagRoutes);
+app.use('/relationships', relationShipRoutes)
 
 const PORT = 3000;
 app.listen(PORT, () => {
