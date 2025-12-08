@@ -23,6 +23,7 @@ import { Switch } from "react-native";
 import { localhost, truncNumber } from "./utility";
 import { AuthContext } from "../context/AuthContext";
 import Empty from "./Empty";
+import FollowButton from "./FollowButton";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
@@ -39,9 +40,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const [followers, setFollowers] = useState([]);
   const [isFollowing, setIsFollowing] = useState();
   const [isFollower, setIsFollower] = useState();
-  const [isFollowingRequest, setIsFollowingRequest] = useState();
   const [isProfilePrivate, setIsPofilePrivate] = useState();
-  const [followMessage, setFollowMessage] = useState(null);
   const [isEnabled, setIsEnabled] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const indicatorAnim = useRef(new Animated.Value(0)).current;
@@ -163,134 +162,6 @@ const ProfileScreen = ({ navigation, route }) => {
     return res.json();
   };
 
-  const fetchIsFollowRequest = async (uid, userId, token) => {
-    if (!token) throw new Error("Auth token is missing");
-    if (!userId) throw new Error("User ID is required");
-
-    const res = await fetch(
-      `${localhost}/follow-requests/check?sender_id=${uid}&receiver_id=${userId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!res.ok) throw new Error("Failed to fetch followings");
-
-    const data = await res.json();
-    setIsFollowingRequest(data);
-    return res.json();
-  };
-
-  const fetchSendFollowRequest = async (sender_id, receiver_id, token) => {
-    if (!token) throw new Error("Auth token is missing");
-    if (!sender_id) throw new Error("Sender ID is required");
-    if (!receiver_id) throw new Error("Receiver ID is required");
-    try {
-      const res = await fetch(`${localhost}/follow-requests/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ sender_id, receiver_id }),
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch followings");
-
-      const data = await res.json();
-
-      setIsFollowingRequest({
-        exists: true,
-        request: {
-          status: "pending",
-        },
-      });
-      showTemporaryFollowMessage("request sent!");
-      return data;
-    } catch (err) {
-
-    }
-  };
-
-  const fetchCancelFollowRequest = async (sender_id, receiver_id, token) => {
-    if (!token) throw new Error("Auth token is missing");
-    if (!sender_id) throw new Error("Sender ID is required");
-    if (!receiver_id) throw new Error("Receiver ID is required");
-    try {
-      const res = await fetch(`${localhost}/follow-requests/`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ sender_id, receiver_id }),
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch followings");
-
-      const data = await res.json();
-
-      setIsFollowingRequest({
-        exists: false,
-      });
-      showTemporaryFollowMessage("request cancelled!");
-      return data;
-    } catch (err) {
-    }
-  };
-
-  const fetchFollowUser = async (follower_id, followee_id, token) => {
-    if (!token) throw new Error("Auth token is missing");
-    if (!follower_id) throw new Error("Follower ID is required");
-    if (!followee_id) throw new Error("Followee ID is required");
-    try {
-      const res = await fetch(`${localhost}/followers/follow`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ follower_id, followee_id }),
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch follow user");
-
-      const data = await res.json();
-
-      setIsFollowing(true);
-      showTemporaryFollowMessage("following!");
-      return data;
-    } catch (err) {
-    }
-  };
-
-  const fetchUnfollowUser = async (follower_id, followee_id, token) => {
-    if (!token) throw new Error("Auth token is missing");
-    if (!follower_id) throw new Error("Follower ID is required");
-    if (!followee_id) throw new Error("Followee ID is required");
-    try {
-      const res = await fetch(`${localhost}/followers/unfollow`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ follower_id, followee_id }),
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch un follow user");
-
-      const data = await res.json();
-      setIsFollowing(false);
-      showTemporaryFollowMessage("unfollowed!");
-      return data;
-    } catch (err) {}
-  };
-
   useEffect(() => {
     setIsProfileOwnedByUser(!userUID);
 
@@ -304,14 +175,12 @@ const ProfileScreen = ({ navigation, route }) => {
     fetchWoos(userUID ? userUID : user.id, token);
     fetchSubs(userUID ? userUID : user.id, token);
     fetchGallery(userUID ? userUID : user.id, token);
-    if (!isProfileOwnedByUser && !isFollowing)
-      fetchIsFollowRequest(user.id, userUID, token);
   }, [isProfileOwnedByUser, isFollowing, activeTab, user]);
 
   const renderTabBar = () => {
     const tabs = isProfileOwnedByUser
       ? ["woos", "gallery", "subscribed"]
-      : ["woos", "gallery"]; // omit "subscribed" tab if not user's profile
+      : ["woos", "gallery"];
 
     return (
       <View style={styles.tabBarContainer}>
@@ -345,88 +214,6 @@ const ProfileScreen = ({ navigation, route }) => {
       </View>
     );
   };
-
-  const showTemporaryFollowMessage = (message) => {
-    setFollowMessage(message);
-    setTimeout(() => setFollowMessage(null), 3000); // Clear after 3 seconds
-  };
-
-  const handleCancelFollowRequest = async (userId) => {
-    // console.log(`Follow request canceled clicked for ${userId}`);
-    await fetchCancelFollowRequest(user.id, userId, token);
-  };
-
-  const handleSendFollowRequest = async (userId) => {
-    // console.log(`Follow request sent clicked for ${userId}`);
-    await fetchSendFollowRequest(user.id, userId, token);
-  };
-
-  const handleUnfollow = async (userId) => {
-    // console.log(`UNFOLLOW Clicked for userId - ${userId}`);
-    await fetchUnfollowUser(user.id, userUID, token);
-  };
-
-  const handleFollow = async (userUID) => {
-    // console.log(`FOLLOW Clicked for userId - ${userUID}`);
-    await fetchFollowUser(user.id, userUID, token);
-  };
-
-  const getFollowButtonState = () => {
-    if (isProfileOwnedByUser) {
-      return {
-        title: "edit profile",
-        onPress: () => navigation.navigate("EditProfile", { user: user }),
-      };
-    }
-
-    if (isFollowing) {
-      return {
-        title: "unfollow",
-        onPress: () => handleUnfollow(userUID),
-      };
-    }
-
-    if (
-      isFollowingRequest?.exists &&
-      isFollowingRequest.request.status === "pending"
-    ) {
-      return {
-        title: "request pending",
-        onPress: () => handleCancelFollowRequest(userUID), // maybe disable or show toast
-      };
-    }
-
-    // Follow back for private profile
-    if (!isFollowing && isFollower && isProfilePrivate) {
-      return {
-        title: "follow back",
-        onPress: () => handleSendFollowRequest(userUID),
-      };
-    }
-
-    // Follow back for public profile
-    if (!isFollowing && isFollower && !isProfilePrivate) {
-      return {
-        title: "follow back",
-        onPress: () => handleFollow(userUID),
-      };
-    }
-
-    // Regular follow for private profile
-    if (!isFollowing && isProfilePrivate) {
-      return {
-        title: "request",
-        onPress: () => handleSendFollowRequest(userUID),
-      };
-    }
-
-    return {
-      title: "follow",
-      onPress: () => handleFollow(userUID),
-    };
-  };
-
-  const followButton = getFollowButtonState();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -613,16 +400,7 @@ const ProfileScreen = ({ navigation, route }) => {
                   </Text>
                 </Pressable>
               </View>
-              <Button
-                title={followMessage || followButton.title}
-                buttonStyle={{
-                  backgroundColor: woo_black,
-                  borderRadius: 30,
-                  paddingHorizontal: 15,
-                }}
-                titleStyle={{ fontSize: 12 }}
-                onPress={followButton.onPress}
-              />
+              <FollowButton profileId={userUID ? userUID : user.id} />
               <View
                 style={{
                   justifyContent: "center",
