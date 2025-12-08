@@ -1,194 +1,419 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  View,
-} from "react-native";
-import axios from "axios";
-import { woo_orange } from "../assets/colors";
+import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { AuthContext } from "../context/AuthContext";
 import { localhost } from "./utility";
-import { FontAwesome } from "@expo/vector-icons";
+import { woo_black, woo_white } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
-const FollowButton = ({
-  profileId,
-  children,
-  iconOnly = false,
-  textIcon = false,
-}) => {
-  const [status, setStatus] = useState(null);
+const FollowButton = ({ profileId, iconOnly = false, textIcon = false }) => {
+  const { user, token } = useContext(AuthContext);
+
+  const [isProfileOwnedByUser, setIsProfileOwnedByUser] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollower, setIsFollower] = useState(false);
+  const [sentFollowRequest, setSentFollowRequest] = useState(null); // request sent by current user
+  const [receivedFollowRequest, setReceivedFollowRequest] = useState(false); // request sent to current user
+  const [isProfilePrivate, setIsProfilePrivate] = useState(false);
+  const [followMessage, setFollowMessage] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { token } = useContext(AuthContext);
+  const showTemporaryFollowMessage = (message) => {
+    setFollowMessage(message);
+    setTimeout(() => setFollowMessage(null), 3000);
+  };
 
-  const fetchRelationshipStatus = async () => {
+  const fetchFollowState = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${localhost}/relationships/status`, {
-        params: { profileId },
-        headers: { Authorization: `Bearer ${token}` },
+      setIsProfileOwnedByUser(!profileId || profileId === user.id);
+
+      // Fetch network state
+      const res = await fetch(`${localhost}/followers/${profileId}/network`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
-      setStatus(res.data);
+      const data = await res.json();
+      setIsFollowing(data.followers.some((f) => f.user_id === user.id));
+      setIsFollower(data.followees.some((f) => f.user_id === user.id));
+
+      // Fetch privacy
+      const countsRes = await fetch(
+        `${localhost}/followers/${profileId}/follow-counts`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const countsData = await countsRes.json();
+      setIsProfilePrivate(countsData.user.is_private);
+
+      // Check sent follow request (from me to profile)
+      if (!isProfileOwnedByUser && !isFollowing) {
+        const sentRes = await fetch(
+          `${localhost}/follow-requests/check?sender_id=${user.id}&receiver_id=${profileId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const sentData = await sentRes.json();
+        setSentFollowRequest(sentData.exists ? sentData.request : null);
+      }
+
+      // Check received follow request (from profile to me)
+      if (!isProfileOwnedByUser && !isFollowing) {
+        const receivedRes = await fetch(
+          `${localhost}/follow-requests/check?sender_id=${profileId}&receiver_id=${user.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const receivedData = await receivedRes.json();
+        console.log("RD ", receivedData.request);
+        if (receivedData.exists && receivedData.request.status === "pending") {
+          setReceivedFollowRequest(receivedData.request);
+        }
+      }
     } catch (err) {
-      console.error("Error fetching relationship status:", err);
+      console.error("Error fetching follow state:", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchRelationshipStatus();
+    fetchFollowState();
   }, [profileId]);
 
-  if (loading)
-    return (
-      <ActivityIndicator
-        size="small"
-        color={woo_orange}
-        style={{ margin: 10 }}
-      />
-    );
-
-  if (!status) return null;
-
-  const handleAction = async () => {
+  // ---------------------------------------------------
+  // Action handlers
+  // ---------------------------------------------------
+  const handleFollow = async () => {
     try {
-      if (
-        status.relationship_status === "following" ||
-        status.relationship_status === "mutual"
-      ) {
-        await axios.delete("/api/follow/unfollow", {
-          data: { follower_id: status.viewer_id, followee_id: profileId },
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } else if (
-        status.relationship_status === "not_following" ||
-        status.relationship_status === "follow_back"
-      ) {
-        await axios.post(
-          "/api/follow/follow",
-          { follower_id: status.viewer_id, followee_id: profileId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      } else if (status.relationship_status === "not_following_private") {
-        await axios.post(
-          "/api/follow-requests/send",
-          { sender_id: status.viewer_id, receiver_id: profileId },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
-      fetchRelationshipStatus(); // refresh after action
+      const res = await fetch(`${localhost}/followers/follow`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ follower_id: user.id, followee_id: profileId }),
+      });
+      if (!res.ok) throw new Error("Failed to follow user");
+      setIsFollowing(true);
+      showTemporaryFollowMessage("Following!");
     } catch (err) {
-      console.error("Error handling follow action:", err);
+      console.error(err);
+    } finally {
+      fetchFollowState();
     }
   };
 
-  // Encapsulated logic for text and icon
-  let buttonText = "Follow";
-  let iconComponent = null;
-  const color = textIcon ? "#fff" : iconOnly ? "#000" : woo_orange;
+  const handleUnfollow = async () => {
+    try {
+      const res = await fetch(`${localhost}/followers/unfollow`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ follower_id: user.id, followee_id: profileId }),
+      });
+      if (!res.ok) throw new Error("Failed to unfollow user");
+      setIsFollowing(false);
+      showTemporaryFollowMessage("Unfollowed!");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      fetchFollowState();
+    }
+  };
 
-  switch (status.button) {
-    case "none":
-      buttonText = "me";
-      iconComponent = (
-        <FontAwesome6Icon name="face-smile-beam" size={20} color={color} />
-      );
-      break;
-    case "follow":
-      buttonText = "follow";
-      iconComponent = (
-        <FontAwesome6Icon name="circle-plus" size={20} color={color} />
-      );
-      break;
-    case "unfollow":
-      buttonText = "unfollow";
-      iconComponent = (
-        <FontAwesome6Icon name="circle-minus" size={20} color={color} />
-      );
-      break;
-    case "requested":
-         buttonText = "requested";
-      iconComponent = (
-        <FontAwesome6Icon name="user-minus" size={20} color={color} />
-      );
-    case "accept_or_decline":
-      buttonText = "Accept / Decline";
-      iconComponent = (
-        <FontAwesome name="question-circle" size={20} color={color} />
-      );
-      break;
-    case "request_follow":
-         buttonText = " request follow";
-      iconComponent = (
-        <FontAwesome6Icon name="user-plus" size={20} color={color} />
-      );
-      break;
-    default:
-      buttonText = "follow";
-      iconComponent = (
-        <FontAwesome6Icon name="circle-plus" size={20} color={color} />
-      );
-  }
+  const handleSendFollowRequest = async () => {
+     if (!token) throw new Error("Auth token is missing");
+    if (!user.id) throw new Error("Sender ID is required");
+    if (!profileId) throw new Error("Receiver ID is required");
+    try {
+      const res = await fetch(`${localhost}/follow-requests/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ sender_id: user.id, receiver_id: profileId }),
+      });
+      if (!res.ok) throw new Error("Failed to send follow request");
+      showTemporaryFollowMessage("Request sent!");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      fetchFollowState();
+    }
+  };
 
-  const disabled = loading;
+  const handleCancelFollowRequest = async () => {
+    try {
+      const res = await fetch(`${localhost}/follow-requests/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ sender_id: user.id, receiver_id: profileId }),
+      });
+      if (!res.ok) throw new Error("Failed to cancel follow request");
+      showTemporaryFollowMessage("Request cancelled!");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      fetchFollowState();
+    }
+  };
 
-  // Render children function if provided
-  if (typeof children === "function") {
-    return children({
-      onPress: handleAction,
-      text: buttonText,
-      disabled,
-      icon: iconComponent,
-    });
-  }
+  const handleAcceptRequest = async () => {
+    if (!receivedFollowRequest?.id) {
+      console.error("No request ID to accept");
+      return;
+    }
 
+    try {
+      const res = await fetch(
+        `${localhost}/follow-requests/${receivedFollowRequest.id}/accept`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to accept request");
+
+      const data = await res.json();
+      console.log("Accepted FOLLOWER Request:", data);
+
+      showTemporaryFollowMessage("Request accepted!");
+      setReceivedFollowRequest(null); // clear local state
+      fetchFollowState(); // refresh button states
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeclineRequest = async () => {
+    try {
+      if (!receivedFollowRequest || !receivedFollowRequest.id) {
+        throw new Error("No request ID to decline");
+      }
+
+      const res = await fetch(
+        `${localhost}/follow-requests/${receivedFollowRequest.id}/decline`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to decline request");
+
+      const data = await res.json();
+      console.log("Declined FOLLOWER Request:", data);
+      showTemporaryFollowMessage("Request declined!");
+      setReceivedFollowRequest(false); // update local state
+    } catch (err) {
+      console.error(err);
+    } finally {
+      fetchFollowState(); // refresh button states
+    }
+  };
+
+  // ---------------------------------------------------
+  // Determine button states
+  // ---------------------------------------------------
+  const getButtonStates = () => {
+    if (isProfileOwnedByUser)
+      return [{ title: "Edit Profile", onPress: () => {} }];
+    if (isFollowing)
+      return [
+        {
+          title: "unfollow",
+          onPress: handleUnfollow,
+          icon: (
+            <FontAwesome6Icon name="circle-minus" size={20} color={woo_white} />
+          ),
+        },
+      ];
+
+    // Sent follow request pending
+    if (sentFollowRequest && sentFollowRequest.status === "pending") {
+      return [
+        {
+          title: "pending",
+          onPress: handleCancelFollowRequest,
+          icon: (
+            <FontAwesome6Icon name="user-minus" size={20} color={woo_white} />
+          ),
+        },
+      ];
+    }
+
+    // Received follow request from this profile
+    if (receivedFollowRequest) {
+      return [
+        {
+          title: "accept",
+          onPress: handleAcceptRequest,
+          icon: (
+            <FontAwesome6Icon name="user-check" size={20} color={woo_white} />
+          ),
+        },
+        {
+          title: "decline",
+          onPress: handleDeclineRequest,
+          icon: (
+            <FontAwesome6Icon name="user-xmark" size={20} color={woo_white} />
+          ),
+        },
+      ];
+    }
+
+    if (!isFollowing && isFollower && !isProfilePrivate) {
+      return [
+        {
+          title: "follow back",
+          onPress: handleFollow,
+          icon: (
+            <FontAwesome6Icon name="circle-plus" size={20} color={woo_white} />
+          ),
+        },
+      ];
+    }
+
+    if (!isFollowing && isProfilePrivate) {
+      return [
+        {
+          title: "request",
+          onPress: handleSendFollowRequest,
+          icon: (
+            <FontAwesome6Icon name="user-plus" size={20} color={woo_white} />
+          ),
+        },
+      ];
+    }
+
+    return [
+      {
+        title: "follow",
+        onPress: handleFollow,
+        icon: (
+          <FontAwesome6Icon name="circle-plus" size={20} color={woo_white} />
+        ),
+      },
+    ];
+  };
+
+  const buttonStates = getButtonStates();
   // Render icon only
   if (iconOnly) {
     return (
-      <TouchableOpacity onPress={handleAction} disabled={disabled}>
-        {iconComponent}
-      </TouchableOpacity>
+      // <--- add return here
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        {buttonStates.map((btn, idx) => (
+          <TouchableOpacity
+            key={idx}
+            style={[
+              styles.button,
+              idx < buttonStates.length - 1 && { marginRight: 8 },
+              loading && { opacity: 0.5 },
+            ]}
+            onPress={btn.onPress}
+            disabled={loading}
+          >
+            <View style={styles.textIconWrapper}>{btn.icon}</View>
+          </TouchableOpacity>
+        ))}
+      </View>
     );
   }
 
-  // Render icon + text if requested
+  // Render icon + text
   if (textIcon) {
     return (
-      <TouchableOpacity style={styles.followButton} onPress={handleAction}>
-        <View style={styles.textIconWrapper}>
-          {iconComponent}
-          <Text style={[styles.followText, { marginLeft: 6 }]}>
-            {buttonText}
-          </Text>
-        </View>
-      </TouchableOpacity>
+      // <--- add return here
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        {buttonStates.map((btn, idx) => (
+          <TouchableOpacity
+            key={idx}
+            style={[
+              styles.button,
+              idx < buttonStates.length - 1 && { marginRight: 8 },
+              loading && { opacity: 0.5 },
+            ]}
+            onPress={btn.onPress}
+            disabled={loading}
+          >
+            <View style={styles.textIconWrapper}>
+              {btn.icon}
+              <Text style={[styles.text, { marginLeft: 6 }]}>
+                {followMessage || btn.title}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
     );
   }
 
-  // Default: button with text only
+  // Default render (text only)
   return (
-    <TouchableOpacity style={styles.followButton} onPress={handleAction}>
-      <Text style={styles.followText}>{buttonText}</Text>
-    </TouchableOpacity>
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
+      {buttonStates.map((btn, idx) => (
+        <TouchableOpacity
+          key={idx}
+          style={[
+            styles.button,
+            idx < buttonStates.length - 1 && { marginRight: 8 },
+            loading && { opacity: 0.5 },
+          ]}
+          onPress={btn.onPress}
+          disabled={loading}
+        >
+          <Text style={styles.text}>{followMessage || btn.title}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  followButton: {
-    backgroundColor: woo_orange,
+  button: {
+    backgroundColor: woo_black,
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
   },
-  followText: {
+  text: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 12,
   },
   textIconWrapper: {
     flexDirection: "row",

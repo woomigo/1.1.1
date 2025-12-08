@@ -8,6 +8,7 @@ exports.sendFollowRequest = async (req, res) => {
   }
 
   try {
+    // Check if receiver exists
     const [[receiver]] = await db.query(
       `SELECT is_private FROM users WHERE id = ?`,
       [receiver_id]
@@ -17,24 +18,42 @@ exports.sendFollowRequest = async (req, res) => {
       return res.status(404).json({ error: "Receiver user not found." });
     }
 
+    // Public profile → follow directly
     if (!receiver.is_private) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "This user has a public profile. You can follow them directly.",
-        });
+      return res.status(400).json({
+        error: "This user has a public profile. You can follow them directly.",
+      });
     }
 
-    const [[existing]] = await db.query(
-      `SELECT * FROM follow_requests WHERE sender_id = ? AND receiver_id = ?`,
+    // Check if there is an existing **pending** follow request
+    const [[existingPending]] = await db.query(
+      `SELECT * FROM follow_requests 
+       WHERE sender_id = ? AND receiver_id = ? AND status = 'pending'`,
       [sender_id, receiver_id]
     );
 
-    if (existing) {
+    if (existingPending) {
       return res.status(400).json({ error: "Follow request already sent." });
     }
 
+    // Check if there was a previously declined request
+    const [[declinedRequest]] = await db.query(
+      `SELECT * FROM follow_requests 
+       WHERE sender_id = ? AND receiver_id = ? AND status = 'declined'`,
+      [sender_id, receiver_id]
+    );
+
+    if (declinedRequest) {
+      // Reuse the same row by updating its status
+      await db.query(
+        `UPDATE follow_requests SET status = 'pending', created_at = NOW() 
+         WHERE id = ?`,
+        [declinedRequest.id]
+      );
+      return res.status(200).json({ message: "Follow request re-sent." });
+    }
+
+    // If no existing request → insert a new one
     await db.query(
       `INSERT INTO follow_requests (sender_id, receiver_id) VALUES (?, ?)`,
       [sender_id, receiver_id]
@@ -61,7 +80,9 @@ exports.cancelFollowRequest = async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "No follow request found to cancel." });
+      return res
+        .status(404)
+        .json({ error: "No follow request found to cancel." });
     }
 
     res.status(200).json({ message: "Follow request canceled successfully." });
@@ -70,7 +91,6 @@ exports.cancelFollowRequest = async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 };
-
 
 exports.acceptFollowRequest = async (req, res) => {
   const requestId = req.params.id;
@@ -110,7 +130,6 @@ exports.acceptFollowRequest = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 exports.declineFollowRequest = async (req, res) => {
   const requestId = req.params.id;
@@ -154,7 +173,6 @@ exports.getIncomingFollowRequests = async (req, res) => {
   }
 };
 
-
 exports.getOutgoingFollowRequests = async (req, res) => {
   const senderId = req.user.id;
 
@@ -182,7 +200,6 @@ exports.getOutgoingFollowRequests = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 exports.checkIfFollowRequestExists = async (req, res) => {
   const { sender_id, receiver_id } = req.query;

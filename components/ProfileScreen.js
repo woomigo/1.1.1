@@ -415,7 +415,7 @@ const ProfileScreen = ({ navigation, route }) => {
     // Regular follow for private profile
     if (!isFollowing && isProfilePrivate) {
       return {
-        title: "follow",
+        title: "request",
         onPress: () => handleSendFollowRequest(userUID),
       };
     }
