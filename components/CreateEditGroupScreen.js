@@ -28,6 +28,24 @@ const CreateEditGroupScreen = ({ route, navigation }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
+  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState([]);
+
+  const fetchUserFollow = async (userId, token) => {
+    const res = await fetch(`${localhost}/followers/${userId}/network`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+    setFollowing(data.followees);
+    setFollowers(data.followers);
+    if (!res.ok) throw new Error("Failed to fetch follow counts");
+    return res.json();
+  };
 
   // Normalize members so child understands them
   const normalizedMembers = useMemo(() => {
@@ -43,6 +61,10 @@ const CreateEditGroupScreen = ({ route, navigation }) => {
       setSelectedUsers(normalizedMembers);
     }
   }, [isEditGroup, normalizedMembers]);
+
+  useEffect(() => {
+    fetchUserFollow(user.id, token);
+  }, [user]);
 
   const handleCreateChat = async () => {
     if (selectedUsers.length === 0) return;
@@ -83,7 +105,11 @@ const CreateEditGroupScreen = ({ route, navigation }) => {
           </Text>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Avatar size={80} image={isEditGroup && group.profile_pic_url} name={isEditGroup ? group.name : groupName} />
+          <Avatar
+            size={80}
+            image={isEditGroup && group.profile_pic_url}
+            name={isEditGroup ? group.name : groupName}
+          />
         </View>
 
         {/* {isEditGroup && ( */}
@@ -126,11 +152,11 @@ const CreateEditGroupScreen = ({ route, navigation }) => {
         {/* )} */}
 
         <SelectableUserListView
-          users={[]} // pass local users if you have them, e.g. followerProfiles
+          users={followers}
           selectedUsers={selectedUsers}
           searchEndpoint={`${localhost}/users/search?username=`}
           token={token}
-          mode="remote-only"
+          mode="local-only"
           onChangeSelected={(users) => setSelectedUsers(users)}
         />
 

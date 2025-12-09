@@ -82,7 +82,7 @@ const FollowButton = ({ profileId, iconOnly = false, textIcon = false }) => {
           }
         );
         const receivedData = await receivedRes.json();
-        console.log("RD ", receivedData.request);
+        // console.log("RD ", receivedData.request);
         if (receivedData.exists && receivedData.request.status === "pending") {
           setReceivedFollowRequest(receivedData.request);
         }

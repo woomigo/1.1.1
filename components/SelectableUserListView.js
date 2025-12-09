@@ -16,7 +16,7 @@ import { woo_gray } from "../assets/colors";
 
 const SelectableUserListView = ({
   users = [],
-   selectedUsers: initialSelectedUsers = [],
+  selectedUsers: initialSelectedUsers = [],
   searchEndpoint = null,
   token = null,
   onChangeSelected,
@@ -27,24 +27,19 @@ const SelectableUserListView = ({
   const [showModal, setShowModal] = useState(false);
   const [remoteUsers, setRemoteUsers] = useState([]);
 
-const initializedRef = useRef(false);
+  const initializedRef = useRef(false);
 
-useEffect(() => {
-  // Only initialize if:
-  // 1. we have NOT initialized before
-  // 2. parent provided a NON-EMPTY list
-  // 3. the child list is still EMPTY (no user interactions yet)
-  if (
-    !initializedRef.current &&
-    Array.isArray(initialSelectedUsers) &&
-    initialSelectedUsers.length > 0 &&
-    selectedUsers.length === 0
-  ) {
-    setSelectedUsers(initialSelectedUsers);
-    initializedRef.current = true;
-  }
-}, [initialSelectedUsers]);
-
+  useEffect(() => {
+    if (
+      !initializedRef.current &&
+      Array.isArray(initialSelectedUsers) &&
+      initialSelectedUsers.length > 0 &&
+      selectedUsers.length === 0
+    ) {
+      setSelectedUsers(initialSelectedUsers);
+      initializedRef.current = true;
+    }
+  }, [initialSelectedUsers]);
 
   // Normalize user
   const normalizeUser = (u) => ({
@@ -53,6 +48,14 @@ useEffect(() => {
     profile_pic_url: u.profile_pic_url,
     ...u,
   });
+
+  // normalize local users ONCE
+  const normalizedLocalUsers = useMemo(() => {
+    return users.map((u) => ({
+      ...u,
+      uuid: u.user_id || u.uuid,
+    }));
+  }, [users]);
 
   // Fetch remote users
   const fetchRemoteUsers = useCallback(
@@ -78,6 +81,11 @@ useEffect(() => {
     [searchEndpoint, token]
   );
 
+  const normalizedRemoteUsers = useMemo(
+  () => remoteUsers.map(normalizeUser),
+  [remoteUsers]
+);
+
   const debouncedRemoteSearch = useMemo(
     () => debounce(fetchRemoteUsers, 300),
     [fetchRemoteUsers]
@@ -86,7 +94,7 @@ useEffect(() => {
   // Trigger search
   useEffect(() => {
     if (!search) return setRemoteUsers([]);
-    const hasLocal = users.some((u) =>
+    const hasLocal = normalizedLocalUsers.some((u) =>
       u.username.toLowerCase().includes(search.toLowerCase())
     );
     const hasSelected = selectedUsers.some((u) =>
@@ -95,7 +103,7 @@ useEffect(() => {
     if (mode === "remote-only" || (!hasLocal && !hasSelected)) {
       debouncedRemoteSearch(search.trim());
     }
-  }, [search, users, selectedUsers]);
+  }, [search, normalizedLocalUsers, selectedUsers]);
 
   useEffect(() => () => debouncedRemoteSearch.cancel(), []);
 
@@ -117,8 +125,8 @@ useEffect(() => {
         u.username.toLowerCase().includes(search.toLowerCase())
     );
 
-  const localFiltered = filterUsers(users);
-  const remoteFiltered = filterUsers(remoteUsers);
+  const localFiltered = filterUsers(normalizedLocalUsers);
+  const remoteFiltered = filterUsers(normalizedRemoteUsers);
   const selectedFiltered =
     search.length > 0
       ? selectedUsers.filter((u) =>
@@ -150,8 +158,8 @@ useEffect(() => {
 
   const renderItem = ({ item }) => {
     const isSelected = selectedUsers.some((u) => u.uuid === item.uuid);
-    const isLocal = users.some((u) => u.uuid === item.uuid);
-    const isRemote = remoteUsers.some((u) => u.uuid === item.uuid);
+    const isLocal = normalizedLocalUsers.some((u) => u.uuid === item.uuid);
+    const isRemote = normalizedRemoteUsers.some((u) => u.uuid === item.uuid);
 
     return (
       <TouchableOpacity
@@ -302,29 +310,28 @@ useEffect(() => {
 
 const styles = StyleSheet.create({
   container: { padding: 16 },
-searchWrapper: {
-  position: "relative",
-  justifyContent: "center",
-  marginBottom: 10, // preserve spacing below
-},
+  searchWrapper: {
+    position: "relative",
+    justifyContent: "center",
+    marginBottom: 10, // preserve spacing below
+  },
 
-input: {
-  backgroundColor: "#f1f1f1",
-  padding: 10,
-  paddingRight: 36, // space for clear icon
-  borderRadius: 8,
-  height: 40, // explicit height
-},
+  input: {
+    backgroundColor: "#f1f1f1",
+    padding: 10,
+    paddingRight: 36, // space for clear icon
+    borderRadius: 8,
+    height: 40, // explicit height
+  },
 
-clearIcon: {
-  position: "absolute",
-  right: 8,
-  height: 20,
-  width: 20,
-  top: "50%",
-  marginTop: -10, // half of icon height
-}
-,
+  clearIcon: {
+    position: "absolute",
+    right: 8,
+    height: 20,
+    width: 20,
+    top: "50%",
+    marginTop: -10, // half of icon height
+  },
   avatarRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
   avatarWrapper: { borderWidth: 2, borderColor: "#fff", borderRadius: 36 },
   overlap: { marginLeft: -20 },
