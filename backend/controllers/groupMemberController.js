@@ -70,7 +70,7 @@ exports.getGroupMembers = async (req, res) => {
 
   try {
     const [members] = await db.query(
-      `SELECT u.uuid, u.username, u.first_name, u.last_name, u.profile_pic_url
+      `SELECT u.uuid AS user_id, u.username, u.first_name, u.last_name, u.profile_pic_url
        FROM group_members gm
        JOIN users u ON gm.user_id = u.uuid
        WHERE gm.group_id = ?`,

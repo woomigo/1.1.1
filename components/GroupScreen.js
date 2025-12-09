@@ -3,15 +3,35 @@ import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { woo_black, woo_white } from "../assets/colors";
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
-import MigosAvatarGroup from "./MigosAvatarGroup";
-import { getTimeAgo } from "./utility";
+import { getTimeAgo, localhost } from "./utility";
+import ListViewUsers from "./ListViewUsers";
 
-const GroupScreen = ({ navigation, route }) => {
-  const [isEditState, setIsEditState] = useState(false);
+const GroupScreen = ({ navigation, route, token }) => {
+  const [members, setMembers] = useState();
   const { group } = route.params;
   useEffect(() => {
-    console.log("GS: ", isEditState);
+    console.log("GS: ", group);
   });
+
+  useEffect(() => {
+    fetchGroupMembers(group.id, token);
+  }, [group]);
+
+  const fetchGroupMembers = async (groupId, token) => {
+    const res = await fetch(`${localhost}/group-members/${groupId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+        console.log("GROUPS ARE ======= " + JSON.stringify(data));
+    setMembers(data);
+    if (!res.ok) throw new Error("Failed to fetch groups");
+    return res.json();
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -83,9 +103,7 @@ const GroupScreen = ({ navigation, route }) => {
               justifyContent: "space-around",
             }}
           >
-            <Pressable
-              onPress={() => navigation.navigate("CreateEditGroup")}
-            >
+            <Pressable onPress={() => navigation.navigate("CreateEditGroup")}>
               <FontAwesome6Icon name="users-gear" size={26} color={woo_black} />
             </Pressable>
           </View>
@@ -102,20 +120,13 @@ const GroupScreen = ({ navigation, route }) => {
             {group.description}
           </Text>
         </View>
-        {/* <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-            marginTop: 5,
-          }}
-        >
-          <Text style={{ fontSize: 12 }}>users: {group.member_count}</Text>
-          <Text style={{ fontSize: 12 }}>
-            created: {getTimeAgo(group.created_at)}
-          </Text>
-        </View> */}
       </View>
+      <ListViewUsers
+        users={members}
+        onPressUser={(selectedUser) =>
+          navigation.push("Profile", { userUID: selectedUser.user_id })
+        }
+      />
     </SafeAreaView>
   );
 };
