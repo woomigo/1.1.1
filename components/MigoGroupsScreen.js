@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, Pressable } from "react-native";
 import { woo_black, woo_white } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { Avatar } from "@rneui/themed";
-import GroupListView from "./GroupListView";
+import GroupsListView from "./GroupsListView";
 
 const MigoGroupsScreen = ({ navigation, route }) => {
   const { user, token } = route.params;
@@ -42,9 +42,31 @@ const MigoGroupsScreen = ({ navigation, route }) => {
             groups
           </Text>
         </View>
+        <View
+          style={{
+            flex: 2,
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+
+              flexDirection: "row",
+              justifyContent: "space-around",
+            }}
+          >
+            <Pressable
+              onPress={() => navigation.navigate("CreateEditGroup")}
+            >
+              <FontAwesome6Icon name="plus" size={26} color={woo_black} />
+            </Pressable>
+          </View>
+        </View>
       </View>
 
-      <GroupListView userId={user.id} token />
+      <GroupsListView userId={user.id} token />
     </SafeAreaView>
   );
 };

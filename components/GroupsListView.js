@@ -12,7 +12,7 @@ import { woo_black, woo_white } from "../assets/colors";
 import ListViewGroupList from "./ListViewGroupList";
 import { localhost } from "./utility";
 
-const GroupListView = ({ navigation, route, userId, token }) => {
+const GroupsListView = ({ navigation, route, userId, token }) => {
   //   const { userId, token } = route.params;
 
   useEffect(() => {
@@ -69,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupListView;
+export default GroupsListView;

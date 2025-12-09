@@ -53,6 +53,8 @@ import MediaGalleryWithPreview from "./components/MediaGalleryWithPreview";
 import WooListItems from "./components/WooListItems";
 import WooTagsScreen from "./components/WooTagsScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import GroupScreen from "./components/GroupScreen";
+import CreateEditGropupScreen from "./components/CreateEditGroupScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -188,6 +190,18 @@ const ProfileStack = ({ user, token }) => {
       <Stack.Screen
         name="MigoGroups"
         component={MigoGroupsScreen}
+        options={{ headerShown: false }}
+        initialParams={{ user: user, token: token }}
+      />
+      <Stack.Screen
+        name="Group"
+        component={GroupScreen}
+        options={{ headerShown: false }}
+        initialParams={{ user: user, token: token }}
+      />
+      <Stack.Screen
+        name="CreateEditGroup"
+        component={CreateEditGropupScreen}
         options={{ headerShown: false }}
         initialParams={{ user: user, token: token }}
       />

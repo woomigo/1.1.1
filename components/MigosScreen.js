@@ -94,7 +94,7 @@ const MigosScreen = ({ navigation, route }) => {
             >
               <Pressable onPress={() => navigation.navigate("MigoGroups")}>
                 <FontAwesome6Icon
-                  name="user-group"
+                  name="users"
                   size={26}
                   color={woo_black}
                 />

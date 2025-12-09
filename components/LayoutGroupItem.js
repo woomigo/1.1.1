@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
-import { woo_black, woo_white } from "../assets/colors";
-import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import {
+  Text,
+  StyleSheet,
+  Dimensions,
+  Pressable,
+} from "react-native";
+import {  woo_white } from "../assets/colors";
 import Avatar from "./Avatar";
-import GroupListView from "./GroupListView";
+import { useNavigation } from "@react-navigation/native";
 import { getTimeAgo } from "./utility";
 import MigosAvatarGroup from "./MigosAvatarGroup";
 
 const LayoutGroupItem = ({ item }) => {
+  const navigation = useNavigation();
+
   useEffect(() => {
-    // console.log("GROUP ITEM " + JSON.stringify(item));
+    console.log("GROUP ITEM " + JSON.stringify(item));
   }, []);
 
   const screenWidth = Dimensions.get("window").width;
@@ -18,7 +24,8 @@ const LayoutGroupItem = ({ item }) => {
   const cardWidth = (screenWidth - totalHorizontalMargin) / numColumns;
 
   return (
-    <View
+    <Pressable
+      onPress={() => navigation.navigate("Group", {group: item})}
       style={[
         styles.card,
         {
@@ -42,7 +49,7 @@ const LayoutGroupItem = ({ item }) => {
       <Text style={{ fontSize: 12, marginTop: 5 }}>
         created: {getTimeAgo(item.created_at)}
       </Text>
-    </View>
+    </Pressable>
   );
 };
 
