@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import { getTimeAgo, localhost } from "./utility";
 import ListViewUsers from "./ListViewUsers";
+import { EmailAuthCredential } from "firebase/auth/web-extension";
 
 const GroupScreen = ({ navigation, route, token }) => {
   const [members, setMembers] = useState();
@@ -103,7 +104,7 @@ const GroupScreen = ({ navigation, route, token }) => {
               justifyContent: "space-around",
             }}
           >
-            <Pressable onPress={() => navigation.navigate("CreateEditGroup")}>
+            <Pressable onPress={() => navigation.navigate("CreateEditGroup", {group: group, members: members})}>
               <FontAwesome6Icon name="users-gear" size={26} color={woo_black} />
             </Pressable>
           </View>

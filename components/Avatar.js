@@ -10,6 +10,7 @@ const Avatar = ({
   image,
   size = 36,
   fontSize = 12,
+  style,
 }) => {
   const initials =
     name &&
@@ -26,6 +27,7 @@ const Avatar = ({
       style={[
         styles.image,
         { width: size, height: size, borderRadius: size / 2 },
+        style,
       ]}
     />
   ) : (
@@ -33,6 +35,7 @@ const Avatar = ({
       style={[
         styles.container,
         { width: size, height: size, borderRadius: size / 2 },
+        style,
       ]}
     >
       {name ? (

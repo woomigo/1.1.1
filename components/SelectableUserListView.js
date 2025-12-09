@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { woo_gray } from "../assets/colors";
 
 const SelectableUserListView = ({
   users = [],
+   selectedUsers: initialSelectedUsers = [],
   searchEndpoint = null,
   token = null,
   onChangeSelected,
@@ -25,6 +26,25 @@ const SelectableUserListView = ({
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [remoteUsers, setRemoteUsers] = useState([]);
+
+const initializedRef = useRef(false);
+
+useEffect(() => {
+  // Only initialize if:
+  // 1. we have NOT initialized before
+  // 2. parent provided a NON-EMPTY list
+  // 3. the child list is still EMPTY (no user interactions yet)
+  if (
+    !initializedRef.current &&
+    Array.isArray(initialSelectedUsers) &&
+    initialSelectedUsers.length > 0 &&
+    selectedUsers.length === 0
+  ) {
+    setSelectedUsers(initialSelectedUsers);
+    initializedRef.current = true;
+  }
+}, [initialSelectedUsers]);
+
 
   // Normalize user
   const normalizeUser = (u) => ({
