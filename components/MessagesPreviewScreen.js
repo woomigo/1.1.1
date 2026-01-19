@@ -51,6 +51,10 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("UID FROM MESSAGES PREVIEW " + user.id)
+  })
+
   const listenToUnreadChats = (uid, onUpdate) => {
     try {
       const chatsRef = collection(db, "chats");
@@ -169,7 +173,7 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
           onSelectMessage={(msg) => console.log("Open:", msg)}
           onNewMessage={() => console.log("Start new convo")}
           onArchive={handleArchive}
-          uid={uid}
+          uid={user.id}
         />
       )}
 

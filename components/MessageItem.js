@@ -102,6 +102,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
   const isUnread = !item.read_receipts?.[uid];
 
   useEffect(() => {
+    console.log("MI UID ", uid)
     console.log("ITEM " + JSON.stringify(item.read_receipts));
     console.log("USERUID " + JSON.stringify(userUID));
     console.log("ISUNREAD " + isUnread);

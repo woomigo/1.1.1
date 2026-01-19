@@ -116,7 +116,7 @@ const WooMigosScreen = ({ route, navigation }) => {
           token={token}
           searchEndpoint={`${localhost}/users/search?username=`}
           onChangeSelected={setSelectedUsers}
-          mode="local-first"
+          mode="local-only"
         />
       </KeyboardAvoidingView>
       {/* Navigation Buttons */}

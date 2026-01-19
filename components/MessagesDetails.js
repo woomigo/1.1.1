@@ -359,7 +359,14 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                   <Avatar image={profilePic} name={name} />
                 )}
                 <View style={{ maxWidth: "75%" }}>
-                  <Text style={styles.messageText}>{item.text}</Text>
+                  <Text
+                    style={[
+                      styles.messageText,
+                      !item.sender_id === uid && styles.receivedText,
+                    ]}
+                  >
+                    {item.text}
+                  </Text>
                 </View>
               </View>
             );
@@ -411,6 +418,10 @@ const styles = StyleSheet.create({
     backgroundColor: woo_gray,
   },
   messageText: { color: woo_white },
+  receivedText: {
+    color: woo_black,
+  },
+
   timestamp: {
     fontSize: 10,
     marginTop: 4,

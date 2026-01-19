@@ -29,6 +29,7 @@ const MessagesPreview = ({
 
   useEffect(() => {
     console.log("MESSAGES " + JSON.stringify(messages));
+    console.log("MP UID " + uid) 
   });
 
   const filteredMessages =
@@ -42,7 +43,7 @@ const MessagesPreview = ({
       ));
 
   const handlePress = (item) => {
-    navigation.navigate("MessageDetails", { chatId: item.id, chat: item });
+    navigation.navigate("MessageDetails", { chatId: item.id, chat: item, uid });
   };
 
   const handleLongPress = (item) => {

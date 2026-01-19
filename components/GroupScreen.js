@@ -107,6 +107,7 @@ const GroupScreen = ({ navigation, route, token }) => {
             <Pressable onPress={() => navigation.navigate("CreateEditGroup", {group: group, members: members})}>
               <FontAwesome6Icon name="users-gear" size={26} color={woo_black} />
             </Pressable>
+            
           </View>
         </View>
       </View>
