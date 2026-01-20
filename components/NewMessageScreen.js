@@ -32,8 +32,6 @@ const NewMessageScreen = ({ route, navigation }) => {
 
   const isGroupChat = selectedUsers.length > 1;
 
-
-
   const findExistingDirectChat = async (userId, otherUserId) => {
     const q = query(
       collection(db, "chats"),
@@ -79,6 +77,11 @@ const NewMessageScreen = ({ route, navigation }) => {
         }
       }
 
+      const unreadCounts = participantIds.reduce((acc, uid) => {
+        acc[uid] = 0;
+        return acc;
+      }, {});
+
       const payload = {
         type: isGroupChat ? "group" : "direct",
         name: isGroupChat ? groupName || "New Group" : null,
@@ -87,6 +90,7 @@ const NewMessageScreen = ({ route, navigation }) => {
         created_at: serverTimestamp(),
         last_message: null,
         read_receipts: {},
+        unread_counts: unreadCounts,
       };
 
       const chatRef = await addDoc(collection(db, "chats"), payload);

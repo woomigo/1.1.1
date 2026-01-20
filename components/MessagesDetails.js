@@ -26,6 +26,7 @@ import {
   updateDoc,
   serverTimestamp,
   addDoc,
+  increment
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
@@ -58,9 +59,6 @@ const MessageDetailsScreen = ({ route, navigation }) => {
       const userLastRead = chatData.read_receipts?.[currentUser.id];
       const lastMessageTime = chatData.last_message?.created_at;
 
-      // Only update if:
-      // 1. There is a last_message
-      // 2. User hasn't read it or their last read is older
       if (
         lastMessageTime &&
         (!userLastRead ||
@@ -68,6 +66,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
       ) {
         await updateDoc(chatRef, {
           [`read_receipts.${currentUser.id}`]: serverTimestamp(),
+          [`unread_counts.${currentUser.id}`]: 0,
         });
         console.log("Marked as read");
       } else {
@@ -78,55 +77,12 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     }
   };
 
-  // const listenToUserProfiles = (userIds, onUpdate) => {
-  //   const unsubscribers = [];
-  //   const profiles = {};
-
-  //   try {
-  //     userIds.forEach((uid) => {
-  //       const userRef = doc(db, "users", uid);
-
-  //       const unsubscribe = onSnapshot(
-  //         userRef,
-  //         (docSnap) => {
-  //           if (docSnap.exists()) {
-  //             const data = docSnap.data();
-  //             profiles[uid] = {
-  //               id: uid,
-  //               name: data.first_name + " " + data.last_name || "",
-  //               profilePicUrl: data.profile_pic_url || "",
-  //             };
-
-  //             const result = Object.values(profiles);
-  //             console.log(`👤 Updated profiles (${result.length}):`, result);
-  //             onUpdate(result);
-  //           } else {
-  //             console.warn(`Follower user document not found: ${uid}`);
-  //           }
-  //         },
-  //         (error) => {
-  //           console.error(`❌ Error listening to user profile ${uid}:`, error);
-  //         }
-  //       );
-
-  //       unsubscribers.push(unsubscribe);
-  //     });
-  //   } catch (error) {
-  //     console.error("❌ Exception in listenToUserProfiles:", error);
-  //   }
-
-  //   return () => {
-  //     unsubscribers.forEach((unsub) => unsub());
-  //   };
-  // };
-
   useEffect(() => {
-  if (newChat) {
-    console.log("Setting initial chat from newChat");
-    setChat(newChat);
-  }
-}, [newChat]);
-
+    if (newChat) {
+      console.log("Setting initial chat from newChat");
+      setChat(newChat);
+    }
+  }, [newChat]);
 
   useEffect(() => {
     console.log("UID ISSSSSSSSSSSSSSSSSSSSs " + uid);
@@ -161,7 +117,6 @@ const MessageDetailsScreen = ({ route, navigation }) => {
 
         console.log("Chat Set Successfully", token + chatData.participants);
 
-        // ✅ Fetch user info for participants from your backend
         (async () => {
           console.log("Data here", localhost + token + chatData.participants);
           try {
@@ -169,10 +124,10 @@ const MessageDetailsScreen = ({ route, navigation }) => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`, // if required
+                Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({
-                userIds: chatData.participants, // assumed field
+                userIds: chatData.participants,
               }),
             });
 
@@ -197,50 +152,50 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     };
   }, [chatId]);
 
-  const handleSend = async (chatId, messageText) => {
-    try {
-      const currentUser = user;
+const handleSend = async (chatId, messageText) => {
+  try {
+    const currentUser = user;
+    if (!currentUser) return;
 
-      if (!currentUser) {
-        console.error("No authenticated user found.");
-        return;
-      }
+    const currentUserId = currentUser.id;
 
-      const currentUserId = currentUser.id;
+    if (!messageText.trim()) return;
 
-      if (!messageText.trim()) {
-        console.warn("Empty message not sent.");
-        return;
-      }
+    const messagesRef = collection(db, "chats", chatId, "messages");
 
-      // Reference to messages subcollection
-      const messagesRef = collection(db, "chats", chatId, "messages");
+    const messagePayload = {
+      text: messageText,
+      sender_id: currentUserId,
+      created_at: serverTimestamp(),
+    };
 
-      const newMessage = {
-        text: messageText,
-        sender_id: currentUserId,
+    await addDoc(messagesRef, messagePayload);
+
+    const unreadIncrements = chat.participants
+      .filter((uid) => uid !== currentUserId)
+      .reduce((acc, uid) => {
+        acc[`unread_counts.${uid}`] = increment(1);
+        return acc;
+      }, {});
+
+    const chatRef = doc(db, "chats", chatId);
+
+    await updateDoc(chatRef, {
+      last_message: {
+        ...messagePayload,
         created_at: serverTimestamp(),
-      };
+      },
+      [`read_receipts.${currentUserId}`]: serverTimestamp(),
+      [`unread_counts.${currentUserId}`]: 0, // safety
+      ...unreadIncrements, // 👈 KEY LINE
+    });
 
-      // Add the message to the messages subcollection
-      await addDoc(messagesRef, newMessage);
+    console.log("Message sent + unread counts updated");
+  } catch (error) {
+    console.error("Error sending message:", error.message);
+  }
+};
 
-      // Update the parent chat document
-      const chatRef = doc(db, "chats", chatId);
-
-      await updateDoc(chatRef, {
-        last_message: {
-          ...newMessage,
-          created_at: serverTimestamp(), // store again since `addDoc` doesn't return it immediately
-        },
-        [`read_receipts.${currentUserId}`]: serverTimestamp(),
-      });
-
-      console.log("Message sent with subcollection!");
-    } catch (error) {
-      console.error("Error sending message:", error.message);
-    }
-  };
 
   const onSendMessage = async () => {
     if (newMessage.trim()) {

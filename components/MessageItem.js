@@ -73,26 +73,6 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
     }
   };
 
-  // const listenToUser = (userId, onUpdate, onError) => {
-  //   const userRef = doc(db, "users", userId);
-  //   const unsubscribe = onSnapshot(
-  //     userRef,
-  //     (docSnap) => {
-  //       if (docSnap.exists()) {
-  //         onUpdate({ uid: docSnap.id, ...docSnap.data() });
-  //       } else {
-  //         console.warn("User not found");
-  //       }
-  //     },
-  //     (error) => {
-  //       console.error("Error listening to user:", error);
-  //       onError?.(error);
-  //     }
-  //   );
-
-  //   return unsubscribe;
-  // };
-
   const excludeNumber = (arr, number) => {
     return arr.filter((n) => n !== number);
   };
@@ -101,6 +81,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
   const userUID = getParticipants[0];
   const lastMessageTime = item.last_message?.created_at;
   const lastReadTime = item.read_receipts?.[uid];
+  const unreadCount = item.unread_counts?.[user.id] || 0;
 
   const isUnread =
     lastMessageTime &&
@@ -168,6 +149,13 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
             >
               {item.last_message && item.last_message.text}
             </Text>
+            {unreadCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Text>
+              </View>
+            )}
             {isUnread && (
               <Animated.View
                 style={[
@@ -234,6 +222,20 @@ const styles = StyleSheet.create({
   unread: {
     fontWeight: "bold",
     color: "#000",
+  },
+  badge: {
+    backgroundColor: "#007AFF",
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 8,
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
   },
   unreadDot: {
     width: 8,
