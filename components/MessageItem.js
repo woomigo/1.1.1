@@ -99,10 +99,15 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
 
   const getParticipants = excludeNumber(item.participants, user.id);
   const userUID = getParticipants[0];
-  const isUnread = !item.read_receipts?.[uid];
+  const lastMessageTime = item.last_message?.created_at;
+  const lastReadTime = item.read_receipts?.[uid];
+
+  const isUnread =
+    lastMessageTime &&
+    (!lastReadTime || lastReadTime.toMillis?.() < lastMessageTime.toMillis?.());
 
   useEffect(() => {
-    console.log("MI UID ", uid)
+    console.log("MI UID ", uid);
     console.log("ITEM " + JSON.stringify(item.read_receipts));
     console.log("USERUID " + JSON.stringify(userUID));
     console.log("ISUNREAD " + isUnread);
