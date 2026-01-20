@@ -10,8 +10,7 @@ import {
   onSnapshot,
   orderBy,
 } from "firebase/firestore";
-import { db, auth } from "../firebaseConfig";
-import ListViewPreviewMessages from "./ListViewPreviewMessages";
+import { db } from "../firebaseConfig";
 import { woo_black } from "../assets/colors";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import MessagesPreview from "./MessagesPreview";
@@ -20,9 +19,6 @@ import Empty from "./Empty";
 
 const MessagesPreviewScreen = ({ navigation, route }) => {
   const { user, token } = useContext(AuthContext);
-  const { uid } = route.params;
-
-  // const [messagers, setMessagers] = useState()
   const [chats, setChats] = useState([]);
   const [unreadChats, setUnreadChats] = useState();
 
@@ -31,7 +27,8 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
 
     const q = query(
       collection(db, "chats"),
-      where("participants", "array-contains", user.id)
+      where("participants", "array-contains", user.id),
+      orderBy("last_message.created_at", "desc")
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -40,7 +37,6 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
         ...doc.data(),
       }));
       setChats(data);
-      // console.log("CHATS AT MPS MPS MPS " + JSON.stringify(data));
     });
 
     const unsubscribeUnread = listenToUnreadChats(user.id, setUnreadChats);
@@ -52,8 +48,8 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    console.log("UID FROM MESSAGES PREVIEW " + user.id)
-  })
+    console.log("UID FROM MESSAGES PREVIEW " + user.id);
+  });
 
   const listenToUnreadChats = (uid, onUpdate) => {
     try {
@@ -83,29 +79,20 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
           onUpdate(unreadChats);
         },
         (error) => {
-          console.error("❌ Error fetching unread chats:", error);
+          console.error("Error fetching unread chats:", error);
           onUpdate([]);
         }
       );
 
       return unsubscribe;
     } catch (error) {
-      console.error("❌ Exception in listenToUnreadChats:", error);
+      console.error("Exception in listenToUnreadChats:", error);
       return () => {};
     }
   };
 
   const unreadCount =
     unreadChats && unreadChats.length > 0 && unreadChats.length;
-
-  // const handleMarkAsRead = (updatedMessage) => {
-  //   // setMessages((prevMessages) =>
-  //   //   prevMessages.map((msg) =>
-  //   //     msg.id === updatedMessage.id ? updatedMessage : msg
-  //   //   )
-  //   // );
-  //   console.log(JSON.stringify(updatedMessage) + " marked as read");
-  // };
 
   const handleArchive = (id) => {
     // setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== id));
