@@ -10,6 +10,8 @@ import {
   Platform,
   Pressable,
   SafeAreaView,
+  Modal,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
@@ -30,7 +32,7 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
-import { localhost } from "./utility";
+import { getTimeAgoOrDate, localhost } from "./utility";
 
 const MessageDetailsScreen = ({ route, navigation }) => {
   const { chatId, newChat, uid } = route.params;
@@ -40,6 +42,8 @@ const MessageDetailsScreen = ({ route, navigation }) => {
   const [newMessage, setNewMessage] = useState("");
   const [chat, setChat] = useState();
   const [participantProfiles, setParticipantProfiles] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const markChatAsRead = async (chatId) => {
@@ -203,44 +207,111 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     }
   };
 
-  const renderMessageItem = ({ item, index }) => {
-    const user = participantProfiles.find((u) => u.user_id === item.sender_id);
-    const profilePic = user?.profile_pic_url;
-    const name = user?.first_name + " " + user?.last_name;
+  const removeUser = async (userId) => {
+    try {
+      // Update Firestore
+      const chatRef = doc(db, "chats", chatId);
+      await updateDoc(chatRef, {
+        participants: chat.participants.filter((id) => id !== userId),
+      });
 
-    // Determine if avatar should be shown
-    const showAvatar =
-      index === 0 || messages[index - 1].sender_id !== item.sender_id;
+      // Update local state
+      setSelectedUsers((prev) => prev.filter((u) => u.user_id !== userId));
+      setParticipantProfiles((prev) =>
+        prev.filter((u) => u.user_id !== userId)
+      );
 
-    const isSentByCurrentUser = item.sender_id === uid;
+      console.log("User removed:", userId);
+    } catch (error) {
+      console.error("Failed to remove user:", error);
+    }
+  };
 
-    return (
-      <View style={{ flexDirection: "row", marginBottom: showAvatar ? 10 : 2 }}>
-        {/* Avatar for received messages only */}
-        {!isSentByCurrentUser && showAvatar && (
-          <View style={{ marginRight: 8 }}>
-            <Avatar image={profilePic} name={name} size={36} />
-          </View>
-        )}
+  const removeUserByAdmin = async (userIdToRemove) => {
+    if (!chat || chat.type !== "group") return;
+    if (chat.owner_id !== uid) return; // only owner/admin can remove
 
-        <View
-          style={[
-            styles.messageBubble,
-            isSentByCurrentUser ? styles.sent : styles.received,
-            { marginLeft: !isSentByCurrentUser && showAvatar ? 0 : 44 }, // indent if avatar hidden
-          ]}
-        >
-          <Text
-            style={[
-              styles.messageText,
-              !isSentByCurrentUser && styles.receivedText,
-            ]}
-          >
-            {item.text}
-          </Text>
-        </View>
-      </View>
+    try {
+      const chatRef = doc(db, "chats", chatId);
+
+      // Update Firestore: remove participant and log removal
+      await updateDoc(chatRef, {
+        participants: chat.participants.filter((id) => id !== userIdToRemove),
+        [`removed.${userIdToRemove}`]: {
+          removed_by: uid,
+          removed_at: serverTimestamp(),
+        },
+      });
+
+      // Update local state
+      setParticipantProfiles((prev) =>
+        prev.filter((u) => u.user_id !== userIdToRemove)
+      );
+      setSelectedUsers((prev) =>
+        prev.filter((u) => u.user_id !== userIdToRemove)
+      );
+
+      console.log(`User ${userIdToRemove} removed by admin`);
+    } catch (err) {
+      console.error("Failed to remove user:", err);
+    }
+  };
+
+  const leaveChat = () => {
+    const isGroup = chat?.type === "group";
+
+    Alert.alert(
+      isGroup ? "Leave Group?" : "Delete Chat?",
+      isGroup
+        ? "You will no longer receive messages from this group."
+        : "This chat will be removed from your inbox.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: isGroup ? "Leave" : "Delete",
+          style: "destructive",
+          onPress: () => {
+            if (isGroup) {
+              leaveGroupChat();
+            } else {
+              leaveDirectChat();
+            }
+          },
+        },
+      ]
     );
+  };
+
+  const leaveGroupChat = async () => {
+    try {
+      const chatRef = doc(db, "chats", chatId);
+
+      const remainingParticipants = chat.participants.filter(
+        (id) => id !== uid
+      );
+
+      const updates = {
+        participants: remainingParticipants,
+        [`removed.${uid}`]: {
+          removed_by: uid,
+          removed_at: serverTimestamp(),
+        },
+      };
+
+      // If owner leaves, reassign owner
+      if (chat.owner_id === uid && remainingParticipants.length > 0) {
+        updates.owner_id = remainingParticipants[0];
+      }
+
+      await updateDoc(chatRef, updates);
+
+      navigation.goBack();
+    } catch (err) {
+      console.error("Failed to leave group chat:", err);
+    }
   };
 
   return (
@@ -268,6 +339,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                 style={{ marginEnd: 10 }}
               />
             </Pressable>
+
             {chat && (
               <View style={styles.avatarRow}>
                 {participantProfiles.slice(0, 5).map((user, index) => (
@@ -298,9 +370,10 @@ const MessageDetailsScreen = ({ route, navigation }) => {
 
                 {participantProfiles.length > 0 && chat.owner_id === uid && (
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("ManageParticipants", { chatId })
-                    }
+                    onPress={() => {
+                      setSelectedUsers(participantProfiles); // load current participants
+                      setShowModal(true);
+                    }}
                     style={styles.managePill}
                   >
                     <Ionicons name="people-outline" size={14} color="#007BFF" />
@@ -348,24 +421,77 @@ const MessageDetailsScreen = ({ route, navigation }) => {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.messageList}
           renderItem={({ item, index }) => {
-            const sender = participantProfiles.find(
-              (u) => u.user_id === item.sender_id
-            );
-            const profilePic = sender?.profile_pic_url;
-            const name = sender?.first_name + " " + sender?.last_name;
-            const isSentByCurrentUser = item.sender_id === uid;
-
-            // Check previous message
             const prevMessage = index > 0 ? messages[index - 1] : null;
             const nextMessage =
               index < messages.length - 1 ? messages[index + 1] : null;
-            const showAvatar =
-              !isSentByCurrentUser &&
-              (!prevMessage || prevMessage.sender_id !== item.sender_id);
+
+            // Firestore timestamp → Date
+            const createdAt =
+              item.created_at?.toDate?.() ??
+              (item.created_at?.seconds
+                ? new Date(item.created_at.seconds * 1000)
+                : null);
+
+            const prevCreatedAt =
+              prevMessage?.created_at?.toDate?.() ??
+              (prevMessage?.created_at?.seconds
+                ? new Date(prevMessage.created_at.seconds * 1000)
+                : null);
+
+            const isSameDay = (a, b) => {
+              if (!a || !b) return false;
+              return (
+                a.getFullYear() === b.getFullYear() &&
+                a.getMonth() === b.getMonth() &&
+                a.getDate() === b.getDate()
+              );
+            };
+
+            const getDayLabel = (date) => {
+              const today = new Date();
+              const yesterday = new Date();
+              yesterday.setDate(today.getDate() - 1);
+
+              if (isSameDay(date, today)) return "Today";
+              if (isSameDay(date, yesterday)) return "Yesterday";
+
+              return date.toLocaleDateString(undefined, {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year:
+                  date.getFullYear() !== today.getFullYear()
+                    ? "numeric"
+                    : undefined,
+              });
+            };
+
+            const getTimestampOpacity = ({ isGrouped, createdAt }) => {
+              const ageHours = (Date.now() - createdAt.getTime()) / 36e5;
+
+              if (ageHours > 24) return 0.35;
+              if (isGrouped) return 0.55;
+              return 0.8;
+            };
+
+            const isSentByCurrentUser = item.sender_id === uid;
             const isNextSameSender = nextMessage?.sender_id === item.sender_id;
             const isPrevSameSender = prevMessage?.sender_id === item.sender_id;
 
-            // Bubble styling
+            // Day separator
+            const showDaySeparator =
+              createdAt &&
+              (!prevCreatedAt || !isSameDay(createdAt, prevCreatedAt));
+
+            // Timestamp
+            const showTimestamp = !isNextSameSender;
+            const timestampOpacity =
+              createdAt &&
+              getTimestampOpacity({
+                isGrouped: isPrevSameSender,
+                createdAt,
+              });
+
             const bubbleStyle = [
               styles.messageBubble,
               isSentByCurrentUser ? styles.sent : styles.received,
@@ -379,35 +505,65 @@ const MessageDetailsScreen = ({ route, navigation }) => {
             ];
 
             return (
-              <View
-                style={{
-                  flexDirection: isSentByCurrentUser ? "row-reverse" : "row",
-                  alignItems: "flex-start",
-                }}
-              >
-                {/* Avatar: show if first in block */}
-                {!isSentByCurrentUser && showAvatar ? (
-                  <View style={{ width: 44, marginRight: 8, marginTop: 10 }}>
-                    <Avatar image={profilePic} name={name} size={36} />
+              <>
+                {/* Day Separator */}
+                {showDaySeparator && (
+                  <View
+                    style={{
+                      alignItems: "center",
+                      marginVertical: 12,
+                    }}
+                  >
+                    <View
+                      style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 4,
+                        borderRadius: 12,
+                        backgroundColor: "#eee",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: "#666",
+                          fontWeight: "500",
+                        }}
+                      >
+                        {getDayLabel(createdAt)}
+                      </Text>
+                    </View>
                   </View>
-                ) : (
-                  // Reserve space for alignment
-                  !isSentByCurrentUser && (
-                    <View style={{ width: 44, marginRight: 8 }} />
-                  )
                 )}
 
-                <View style={[bubbleStyle, { maxWidth: "75%" }]}>
-                  <Text
-                    style={[
-                      styles.messageText,
-                      !isSentByCurrentUser && styles.receivedText,
-                    ]}
-                  >
-                    {item.text}
-                  </Text>
+                {/* Message Row */}
+                <View
+                  style={{
+                    flexDirection: isSentByCurrentUser ? "row-reverse" : "row",
+                  }}
+                >
+                  {/* Bubble */}
+                  <View style={[bubbleStyle, { maxWidth: "75%" }]}>
+                    <Text style={styles.messageText}>{item.text}</Text>
+
+                    {/* Timestamp */}
+                  </View>
                 </View>
-              </View>
+                {showTimestamp && createdAt && (
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#999",
+                      marginTop: 2,
+                      opacity: timestampOpacity,
+                      alignSelf: isSentByCurrentUser
+                        ? "flex-end"
+                        : "flex-start",
+                    }}
+                  >
+                    {getTimeAgoOrDate(createdAt)}
+                  </Text>
+                )}
+              </>
             );
           }}
         />
@@ -423,6 +579,49 @@ const MessageDetailsScreen = ({ route, navigation }) => {
             <Ionicons name="send" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
+
+        {/* Modal */}
+        <Modal visible={showModal} transparent animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalCard}>
+              <Text style={styles.modalTitle}>Manage users</Text>
+              <FlatList
+                data={selectedUsers}
+                keyExtractor={(item) => item.uuid}
+                renderItem={({ item }) => (
+                  <View style={styles.modalUserRow}>
+                    <Avatar
+                      name={item.username}
+                      image={item.profile_pic_url}
+                      size={36}
+                    />
+                    <Text style={styles.modalUsername}>{item.username}</Text>
+                    <TouchableOpacity onPress={() => removeUser(item.uuid)}>
+                      <Ionicons
+                        name="remove-circle"
+                        size={22}
+                        color="#FF4C4C"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+              <TouchableOpacity
+                onPress={() => setShowModal(false)}
+                style={styles.modalClose}
+              >
+                <Text style={styles.modalCloseText}>close</Text>
+              </TouchableOpacity>
+              {chat && chat.type === "group" && (
+                <TouchableOpacity onPress={leaveChat} style={styles.modalClose}>
+                  <Text style={[styles.modalCloseText, { color: "#FF4C4C" }]}>
+                    leave chat
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </Modal>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -469,12 +668,22 @@ const styles = StyleSheet.create({
     color: woo_black,
   },
 
-  timestamp: {
-    fontSize: 10,
+  timeText: {
+    fontSize: 11,
     marginTop: 4,
-    color: "#eee",
-    alignSelf: "flex-end",
+    opacity: 0.6,
   },
+
+  timeSent: {
+    textAlign: "right",
+    color: "#fff",
+  },
+
+  timeReceived: {
+    textAlign: "left",
+    color: "#555",
+  },
+
   inputContainer: {
     flexDirection: "row",
     padding: 10,
@@ -545,6 +754,30 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontWeight: "500",
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalCard: {
+    width: "80%",
+    maxHeight: "70%",
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: "#fff",
+  },
+  modalTitle: { fontSize: 18, fontWeight: "600", marginBottom: 12 },
+  modalUserRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+  modalUsername: { flex: 1, marginLeft: 10 },
+  modalClose: { marginTop: 25, alignSelf: "center" },
+  modalCloseText: { color: "#007BFF", fontWeight: "600" },
 });
 
 export default MessageDetailsScreen;

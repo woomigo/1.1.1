@@ -96,6 +96,72 @@ export const getTimeAgo = (input) => {
   return `${diffInYears} year${diffInYears !== 1 ? "s" : ""} ago`;
 };
 
+  const showTimestamp = !isNextSameSender;
+
+ {/* Timestamp */}
+        {showTimestamp && (
+          <Text
+            style={{
+              fontSize: 11,
+              color: "#999",
+              marginTop: 2,
+              alignSelf: isSentByCurrentUser ? "flex-end" : "flex-start",
+              marginLeft: !isSentByCurrentUser ? 8 : 0,
+              marginRight: isSentByCurrentUser ? 8 : 0,
+            }}
+          >
+            {getTimeAgoOrDate(createdAt)}
+          </Text>
+        )}
+
+
+
+export const getTimeAgoOrDate = (input) => {
+  let past;
+
+  // Handle different input types
+  if (typeof input === "string") {
+    past = new Date(input);
+  } else if (typeof input === "number") {
+    past = new Date(input < 10000000000 ? input * 1000 : input);
+  } else if (input instanceof Date) {
+    past = input;
+  } else {
+    return "Invalid date";
+  }
+
+  if (isNaN(past.getTime())) {
+    return "Invalid date";
+  }
+
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - past) / 1000);
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} sec${diffInSeconds !== 1 ? "s" : ""} ago`;
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} min${diffInMinutes !== 1 ? "s" : ""} ago`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
+  }
+
+  // After 24 hours → show date + time
+  return past.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: past.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+
 export const truncUsername = (username, maxLength = 20) => {
   if (typeof username !== "string") return "";
   return username.length > maxLength
