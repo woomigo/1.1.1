@@ -32,7 +32,7 @@ import { AuthContext } from "../context/AuthContext";
 import { localhost } from "./utility";
 
 const MessageDetailsScreen = ({ route, navigation }) => {
-  const { chatId, uid } = route.params;
+  const { chatId, newChat, uid } = route.params;
   const { token, user } = useContext(AuthContext);
 
   const [messages, setMessages] = useState([]);
@@ -121,15 +121,26 @@ const MessageDetailsScreen = ({ route, navigation }) => {
   // };
 
   useEffect(() => {
-    console.log("UID ISSSSSSSSSSSSSSSSSSSSs " + uid);
+  if (newChat) {
+    console.log("Setting initial chat from newChat");
+    setChat(newChat);
+  }
+}, [newChat]);
 
+
+  useEffect(() => {
+    console.log("UID ISSSSSSSSSSSSSSSSSSSSs " + uid);
+    // console.log("CHAT IN MD ----------------------- ", chat.type);
+  });
+
+  useEffect(() => {
     if (chatId && uid) {
       markChatAsRead(chatId, uid);
     }
 
     const q = query(
       collection(db, "chats", chatId, "messages"),
-      orderBy("created_at", "desc")
+      orderBy("created_at")
     );
 
     const chatRef = doc(db, "chats", chatId);
@@ -255,7 +266,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
               justifyContent: "flex-start",
             }}
           >
-            <Pressable onPress={() => navigation.goBack()}>
+            <Pressable onPress={() => navigation.navigate("MessagesPreview")}>
               <FontAwesome6Icon
                 name="chevron-left"
                 size={24}
@@ -355,7 +366,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                   item.sender_id === uid ? styles.sent : styles.received,
                 ]}
               >
-                {chat.type === "group" && item.sender_id !== uid && (
+                {chat && chat.type === "group" && item.sender_id !== uid && (
                   <Avatar image={profilePic} name={name} />
                 )}
                 <View style={{ maxWidth: "75%" }}>
@@ -371,7 +382,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
               </View>
             );
           }}
-          inverted
+          // inverted
           contentContainerStyle={styles.messageList}
         />
 

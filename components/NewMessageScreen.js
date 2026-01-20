@@ -10,7 +10,14 @@ import {
 } from "react-native";
 import { woo_white } from "../assets/colors";
 import { AuthContext } from "../context/AuthContext";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import Button from "./Button";
 import SelectableUserListView from "./SelectableUserListView";
@@ -25,24 +32,69 @@ const NewMessageScreen = ({ route, navigation }) => {
 
   const isGroupChat = selectedUsers.length > 1;
 
+
+
+  const findExistingDirectChat = async (userId, otherUserId) => {
+    const q = query(
+      collection(db, "chats"),
+      where("type", "==", "direct"),
+      where("participants", "array-contains", userId)
+    );
+
+    const snapshot = await getDocs(q);
+
+    for (const docSnap of snapshot.docs) {
+      const data = docSnap.data();
+      if (
+        data.participants.length === 2 &&
+        data.participants.includes(otherUserId)
+      ) {
+        return { id: docSnap.id, ...data };
+      }
+    }
+
+    return null;
+  };
+
   const handleCreateChat = async () => {
     if (selectedUsers.length === 0) return;
 
-    const payload = {
-      type: isGroupChat ? "group" : "direct",
-      name: isGroupChat ? groupName || "New Group" : null,
-      participants: [...selectedUsers.map((u) => u.uuid), user.id],
-      owner_id: user.id,
-      created_at: serverTimestamp(),
-      last_message: null,
-      read_receipts: {},
-    };
+    const participantIds = [...selectedUsers.map((u) => u.uuid), user.id];
 
     try {
+      if (!isGroupChat && selectedUsers.length === 1) {
+        const existingChat = await findExistingDirectChat(
+          user.id,
+          selectedUsers[0].uuid
+        );
+
+        if (existingChat) {
+          console.log("Existing chat found, navigating...");
+          navigation.navigate("MessageDetails", {
+            chatId: existingChat.id,
+            newChat: existingChat,
+            uid,
+          });
+          return;
+        }
+      }
+
+      const payload = {
+        type: isGroupChat ? "group" : "direct",
+        name: isGroupChat ? groupName || "New Group" : null,
+        participants: participantIds,
+        owner_id: user.id,
+        created_at: serverTimestamp(),
+        last_message: null,
+        read_receipts: {},
+      };
+
       const chatRef = await addDoc(collection(db, "chats"), payload);
+
       navigation.navigate("MessageDetails", {
         chatId: chatRef.id,
-        chat: payload,
+        newChat: payload,
+        uid: user.id,
       });
     } catch (error) {
       console.error("Error creating chat:", error);
