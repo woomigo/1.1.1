@@ -26,7 +26,7 @@ import {
   updateDoc,
   serverTimestamp,
   addDoc,
-  increment
+  increment,
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
@@ -152,56 +152,95 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     };
   }, [chatId]);
 
-const handleSend = async (chatId, messageText) => {
-  try {
-    const currentUser = user;
-    if (!currentUser) return;
+  const handleSend = async (chatId, messageText) => {
+    try {
+      const currentUser = user;
+      if (!currentUser) return;
 
-    const currentUserId = currentUser.id;
+      const currentUserId = currentUser.id;
 
-    if (!messageText.trim()) return;
+      if (!messageText.trim()) return;
 
-    const messagesRef = collection(db, "chats", chatId, "messages");
+      const messagesRef = collection(db, "chats", chatId, "messages");
 
-    const messagePayload = {
-      text: messageText,
-      sender_id: currentUserId,
-      created_at: serverTimestamp(),
-    };
-
-    await addDoc(messagesRef, messagePayload);
-
-    const unreadIncrements = chat.participants
-      .filter((uid) => uid !== currentUserId)
-      .reduce((acc, uid) => {
-        acc[`unread_counts.${uid}`] = increment(1);
-        return acc;
-      }, {});
-
-    const chatRef = doc(db, "chats", chatId);
-
-    await updateDoc(chatRef, {
-      last_message: {
-        ...messagePayload,
+      const messagePayload = {
+        text: messageText,
+        sender_id: currentUserId,
         created_at: serverTimestamp(),
-      },
-      [`read_receipts.${currentUserId}`]: serverTimestamp(),
-      [`unread_counts.${currentUserId}`]: 0, // safety
-      ...unreadIncrements, // 👈 KEY LINE
-    });
+      };
 
-    console.log("Message sent + unread counts updated");
-  } catch (error) {
-    console.error("Error sending message:", error.message);
-  }
-};
+      await addDoc(messagesRef, messagePayload);
 
+      const unreadIncrements = chat.participants
+        .filter((uid) => uid !== currentUserId)
+        .reduce((acc, uid) => {
+          acc[`unread_counts.${uid}`] = increment(1);
+          return acc;
+        }, {});
+
+      const chatRef = doc(db, "chats", chatId);
+
+      await updateDoc(chatRef, {
+        last_message: {
+          ...messagePayload,
+          created_at: serverTimestamp(),
+        },
+        [`read_receipts.${currentUserId}`]: serverTimestamp(),
+        [`unread_counts.${currentUserId}`]: 0, // safety
+        ...unreadIncrements, // 👈 KEY LINE
+      });
+
+      console.log("Message sent + unread counts updated");
+    } catch (error) {
+      console.error("Error sending message:", error.message);
+    }
+  };
 
   const onSendMessage = async () => {
     if (newMessage.trim()) {
       await handleSend(chatId, newMessage);
       setNewMessage(""); // Clear the message input after sending
     }
+  };
+
+  const renderMessageItem = ({ item, index }) => {
+    const user = participantProfiles.find((u) => u.user_id === item.sender_id);
+    const profilePic = user?.profile_pic_url;
+    const name = user?.first_name + " " + user?.last_name;
+
+    // Determine if avatar should be shown
+    const showAvatar =
+      index === 0 || messages[index - 1].sender_id !== item.sender_id;
+
+    const isSentByCurrentUser = item.sender_id === uid;
+
+    return (
+      <View style={{ flexDirection: "row", marginBottom: showAvatar ? 10 : 2 }}>
+        {/* Avatar for received messages only */}
+        {!isSentByCurrentUser && showAvatar && (
+          <View style={{ marginRight: 8 }}>
+            <Avatar image={profilePic} name={name} size={36} />
+          </View>
+        )}
+
+        <View
+          style={[
+            styles.messageBubble,
+            isSentByCurrentUser ? styles.sent : styles.received,
+            { marginLeft: !isSentByCurrentUser && showAvatar ? 0 : 44 }, // indent if avatar hidden
+          ]}
+        >
+          <Text
+            style={[
+              styles.messageText,
+              !isSentByCurrentUser && styles.receivedText,
+            ]}
+          >
+            {item.text}
+          </Text>
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -303,32 +342,66 @@ const handleSend = async (chatId, messageText) => {
         >
           {chat && chat.type == "group" && chat.name}
         </Text>
+
         <FlatList
           data={messages}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => {
-            const user = participantProfiles.find(
+          contentContainerStyle={styles.messageList}
+          renderItem={({ item, index }) => {
+            const sender = participantProfiles.find(
               (u) => u.user_id === item.sender_id
             );
-            console.log("MI USER " + JSON.stringify(user));
-            const profilePic = user.profile_pic_url;
-            const name = user.first_name + " " + user.last_name;
-            console.log("USER IN DETAILS " + JSON.stringify(item));
+            const profilePic = sender?.profile_pic_url;
+            const name = sender?.first_name + " " + sender?.last_name;
+            const isSentByCurrentUser = item.sender_id === uid;
+
+            // Check previous message
+            const prevMessage = index > 0 ? messages[index - 1] : null;
+            const nextMessage =
+              index < messages.length - 1 ? messages[index + 1] : null;
+            const showAvatar =
+              !isSentByCurrentUser &&
+              (!prevMessage || prevMessage.sender_id !== item.sender_id);
+            const isNextSameSender = nextMessage?.sender_id === item.sender_id;
+            const isPrevSameSender = prevMessage?.sender_id === item.sender_id;
+
+            // Bubble styling
+            const bubbleStyle = [
+              styles.messageBubble,
+              isSentByCurrentUser ? styles.sent : styles.received,
+              {
+                borderTopLeftRadius: isPrevSameSender ? 5 : 10,
+                borderTopRightRadius: isPrevSameSender ? 5 : 10,
+                borderBottomLeftRadius: isNextSameSender ? 5 : 10,
+                borderBottomRightRadius: isNextSameSender ? 5 : 10,
+                marginTop: isPrevSameSender ? 2 : 10,
+              },
+            ];
+
             return (
               <View
-                style={[
-                  styles.messageBubble,
-                  item.sender_id === uid ? styles.sent : styles.received,
-                ]}
+                style={{
+                  flexDirection: isSentByCurrentUser ? "row-reverse" : "row",
+                  alignItems: "flex-start",
+                }}
               >
-                {chat && chat.type === "group" && item.sender_id !== uid && (
-                  <Avatar image={profilePic} name={name} />
+                {/* Avatar: show if first in block */}
+                {!isSentByCurrentUser && showAvatar ? (
+                  <View style={{ width: 44, marginRight: 8, marginTop: 10 }}>
+                    <Avatar image={profilePic} name={name} size={36} />
+                  </View>
+                ) : (
+                  // Reserve space for alignment
+                  !isSentByCurrentUser && (
+                    <View style={{ width: 44, marginRight: 8 }} />
+                  )
                 )}
-                <View style={{ maxWidth: "75%" }}>
+
+                <View style={[bubbleStyle, { maxWidth: "75%" }]}>
                   <Text
                     style={[
                       styles.messageText,
-                      !item.sender_id === uid && styles.receivedText,
+                      !isSentByCurrentUser && styles.receivedText,
                     ]}
                   >
                     {item.text}
@@ -337,8 +410,6 @@ const handleSend = async (chatId, messageText) => {
               </View>
             );
           }}
-          // inverted
-          contentContainerStyle={styles.messageList}
         />
 
         <View style={styles.inputContainer}>
@@ -371,18 +442,28 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
     padding: 10,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 0,
     flexDirection: "row",
     alignItems: "center",
   },
   sent: {
     alignSelf: "flex-end",
     backgroundColor: "#007BFF",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
+
   received: {
     alignSelf: "flex-start",
     backgroundColor: woo_gray,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
+
   messageText: { color: woo_white },
   receivedText: {
     color: woo_black,

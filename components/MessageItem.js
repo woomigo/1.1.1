@@ -13,6 +13,7 @@ import {
 import { db, auth } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
 import { localhost } from "./utility";
+import { woo_light_gray, woo_white } from "../assets/colors";
 
 const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
   const { token, user } = useContext(AuthContext);
@@ -122,7 +123,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
       <Pressable
         onPress={() => onPress?.(item)}
         onLongPress={() => onLongPress?.(item)}
-        style={({ pressed }) => [styles.container, pressed && { opacity: 0.7 }]}
+        style={({ pressed }) => [styles.container, pressed && { opacity: 0.7 }, !isUnread ? {backgroundColor: woo_white} : {backgroundColor: woo_light_gray} ]}
       >
         {chatUser && item.type === "group" ? (
           <Avatar name={item.name} image={item.image} />
@@ -156,7 +157,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
                 </Text>
               </View>
             )}
-            {isUnread && (
+            {/* {isUnread && (
               <Animated.View
                 style={[
                   styles.unreadDot,
@@ -166,7 +167,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
                   },
                 ]}
               />
-            )}
+            )} */}
           </View>
         </View>
       </Pressable>
@@ -182,6 +183,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
     borderBottomWidth: 1,
     backgroundColor: "#fff",
+    borderRadius: 10,
+    marginTop: 2,
   },
   content: {
     flex: 1,
