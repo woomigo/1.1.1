@@ -50,6 +50,7 @@ const MessageItem = ({ item, onPress, onLongPress, onMarkAsRead, uid }) => {
       ) {
         await updateDoc(chatRef, {
           [`read_receipts.${currentUser.id}`]: serverTimestamp(),
+          [`unread_counts.${currentUser.id}`]: 0,
         });
         console.log("Marked as read");
       } else {

@@ -45,7 +45,7 @@ import MigoGroupsScreen from "./components/MigoGroupsScreen";
 
 import MessageDetailsScreen from "./components/MessagesDetails";
 import NewMessageScreen from "./components/NewMessageScreen";
-import ManageParticipantsScreen from "./components/ManageParticipantsScreen";
+import ParticipantsScreen from "./components/ParticipantsScreen";
 import MoreInfoScreen from "./components/MoreInfoScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StoryViewerScreen from "./components/StoryViewerScreen";
@@ -515,8 +515,8 @@ const MessagesStack = ({ user, token }) => {
         initialParams={{ user: user, token: token }}
       />
       <Stack.Screen
-        name="ManageParticipants"
-        component={ManageParticipantsScreen}
+        name="ParticipantsScreen"
+        component={ParticipantsScreen}
         options={{ headerShown: false }}
         initialParams={{ user: user, token: token }}
       />

@@ -105,6 +105,8 @@ const NewMessageScreen = ({ route, navigation }) => {
     }
   };
 
+  
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: woo_white }}>
       <KeyboardAvoidingView

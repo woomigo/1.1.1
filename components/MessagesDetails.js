@@ -12,11 +12,11 @@ import {
   SafeAreaView,
   Modal,
   Alert,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { woo_black, woo_gray, woo_orange, woo_white } from "../assets/colors";
-import { Swipeable } from "react-native-gesture-handler";
 import Avatar from "./Avatar";
 import {
   collection,
@@ -29,11 +29,44 @@ import {
   serverTimestamp,
   addDoc,
   increment,
+  deleteDoc,
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
 import { getTimeAgoOrDate, localhost } from "./utility";
 
+// ----------- Cross-platform Menu Component -----------
+const ChatMenu = ({ visible, onClose, options }) => (
+  <Modal transparent visible={visible} animationType="fade">
+    <TouchableWithoutFeedback onPress={onClose}>
+      <View style={styles.menuOverlay}>
+        <View style={styles.menuCard}>
+          {options.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => {
+                item.onPress();
+                onClose();
+              }}
+              style={styles.menuItem}
+            >
+              <Text
+                style={[
+                  styles.menuText,
+                  item.destructive && { color: "#FF4C4C" },
+                ]}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+  </Modal>
+);
+
+// ----------- Main Screen -----------
 const MessageDetailsScreen = ({ route, navigation }) => {
   const { chatId, newChat, uid } = route.params;
   const { token, user } = useContext(AuthContext);
@@ -44,109 +77,67 @@ const MessageDetailsScreen = ({ route, navigation }) => {
   const [participantProfiles, setParticipantProfiles] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  const markChatAsRead = async (chatId) => {
-    try {
-      const currentUser = user;
-      if (!uid) throw new Error("User not authenticated");
+  // ----- Mark chat read -----
+  const markChatAsRead = async () => {
+    if (!chatId || !uid) return;
+    const chatRef = doc(db, "chats", chatId);
+    const chatSnap = await getDoc(chatRef);
+    if (!chatSnap.exists()) return;
 
-      const chatRef = doc(db, "chats", chatId);
-      const chatSnap = await getDoc(chatRef);
+    const chatData = chatSnap.data();
+    const lastMessageTime = chatData.last_message?.created_at;
+    const userLastRead = chatData.read_receipts?.[uid];
 
-      if (!chatSnap.exists()) {
-        console.warn("Chat not found");
-        return;
-      }
-
-      const chatData = chatSnap.data();
-      const userLastRead = chatData.read_receipts?.[currentUser.id];
-      const lastMessageTime = chatData.last_message?.created_at;
-
-      if (
-        lastMessageTime &&
-        (!userLastRead ||
-          userLastRead.toMillis?.() < lastMessageTime.toMillis?.())
-      ) {
-        await updateDoc(chatRef, {
-          [`read_receipts.${currentUser.id}`]: serverTimestamp(),
-          [`unread_counts.${currentUser.id}`]: 0,
-        });
-        console.log("Marked as read");
-      } else {
-        console.log("Already marked as read");
-      }
-    } catch (err) {
-      console.error("Failed to mark as read:", err.message);
+    if (
+      !userLastRead ||
+      lastMessageTime?.toMillis() > userLastRead?.toMillis()
+    ) {
+      await updateDoc(chatRef, {
+        [`read_receipts.${uid}`]: serverTimestamp(),
+        [`unread_counts.${uid}`]: 0,
+      });
     }
   };
 
   useEffect(() => {
-    if (newChat) {
-      console.log("Setting initial chat from newChat");
-      setChat(newChat);
-    }
+    if (newChat) setChat(newChat);
   }, [newChat]);
 
   useEffect(() => {
-    console.log("UID ISSSSSSSSSSSSSSSSSSSSs " + uid);
-    // console.log("CHAT IN MD ----------------------- ", chat.type);
-  });
-
-  useEffect(() => {
-    if (chatId && uid) {
-      markChatAsRead(chatId, uid);
-    }
+    if (chatId && uid) markChatAsRead();
 
     const q = query(
       collection(db, "chats", chatId, "messages"),
       orderBy("created_at")
     );
-
     const chatRef = doc(db, "chats", chatId);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
+      const msgs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setMessages(msgs);
     });
 
-    const unsubscribeChat = onSnapshot(chatRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const chatData = docSnap.data();
-        setChat(chatData);
+    const unsubscribeChat = onSnapshot(chatRef, async (docSnap) => {
+      if (!docSnap.exists()) return;
+      const chatData = docSnap.data();
+      setChat(chatData);
 
-        console.log("Chat Set Successfully", token + chatData.participants);
-
-        (async () => {
-          console.log("Data here", localhost + token + chatData.participants);
-          try {
-            const res = await fetch(`${localhost}/users/batch`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                userIds: chatData.participants,
-              }),
-            });
-
-            if (!res.ok) throw new Error("Failed to fetch users");
-
-            const users = await res.json();
-            console.log("USERS " + JSON.stringify(users));
-            // Set user data in state
-            setParticipantProfiles(users);
-          } catch (error) {
-            console.error("Error fetching participant profiles:", error);
-          }
-        })();
-      } else {
-        console.warn("Chat not found");
+      try {
+        const res = await fetch(`${localhost}/users/batch`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ userIds: chatData.participants }),
+        });
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const users = await res.json();
+        setParticipantProfiles(users);
+      } catch (err) {
+        console.error(err);
       }
     });
 
@@ -156,181 +147,155 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     };
   }, [chatId]);
 
-  const handleSend = async (chatId, messageText) => {
-    try {
-      const currentUser = user;
-      if (!currentUser) return;
+  // ----- Send Message -----
+  const handleSend = async (chatId, text) => {
+    if (!text.trim()) return;
+    const messagesRef = collection(db, "chats", chatId, "messages");
+    const messagePayload = {
+      text,
+      sender_id: uid,
+      created_at: serverTimestamp(),
+    };
+    await addDoc(messagesRef, messagePayload);
 
-      const currentUserId = currentUser.id;
+    const unreadIncrements = chat.participants
+      .filter((id) => id !== uid)
+      .reduce((acc, id) => {
+        acc[`unread_counts.${id}`] = increment(1);
+        return acc;
+      }, {});
 
-      if (!messageText.trim()) return;
-
-      const messagesRef = collection(db, "chats", chatId, "messages");
-
-      const messagePayload = {
-        text: messageText,
-        sender_id: currentUserId,
-        created_at: serverTimestamp(),
-      };
-
-      await addDoc(messagesRef, messagePayload);
-
-      const unreadIncrements = chat.participants
-        .filter((uid) => uid !== currentUserId)
-        .reduce((acc, uid) => {
-          acc[`unread_counts.${uid}`] = increment(1);
-          return acc;
-        }, {});
-
-      const chatRef = doc(db, "chats", chatId);
-
-      await updateDoc(chatRef, {
-        last_message: {
-          ...messagePayload,
-          created_at: serverTimestamp(),
-        },
-        [`read_receipts.${currentUserId}`]: serverTimestamp(),
-        [`unread_counts.${currentUserId}`]: 0, // safety
-        ...unreadIncrements, // 👈 KEY LINE
-      });
-
-      console.log("Message sent + unread counts updated");
-    } catch (error) {
-      console.error("Error sending message:", error.message);
-    }
+    const chatRef = doc(db, "chats", chatId);
+    await updateDoc(chatRef, {
+      last_message: { ...messagePayload, created_at: serverTimestamp() },
+      [`read_receipts.${uid}`]: serverTimestamp(),
+      [`unread_counts.${uid}`]: 0,
+      ...unreadIncrements,
+    });
+    setNewMessage("");
   };
 
-  const onSendMessage = async () => {
-    if (newMessage.trim()) {
-      await handleSend(chatId, newMessage);
-      setNewMessage(""); // Clear the message input after sending
-    }
-  };
+  const onSendMessage = () => handleSend(chatId, newMessage);
 
-  const removeUser = async (userId) => {
-    try {
-      // Update Firestore
-      const chatRef = doc(db, "chats", chatId);
-      await updateDoc(chatRef, {
-        participants: chat.participants.filter((id) => id !== userId),
-      });
-
-      // Update local state
-      setSelectedUsers((prev) => prev.filter((u) => u.user_id !== userId));
-      setParticipantProfiles((prev) =>
-        prev.filter((u) => u.user_id !== userId)
-      );
-
-      console.log("User removed:", userId);
-    } catch (error) {
-      console.error("Failed to remove user:", error);
-    }
-  };
-
-  const removeUserByAdmin = async (userIdToRemove) => {
-    if (!chat || chat.type !== "group") return;
-    if (chat.owner_id !== uid) return; // only owner/admin can remove
-
-    try {
-      const chatRef = doc(db, "chats", chatId);
-
-      // Update Firestore: remove participant and log removal
-      await updateDoc(chatRef, {
-        participants: chat.participants.filter((id) => id !== userIdToRemove),
-        [`removed.${userIdToRemove}`]: {
-          removed_by: uid,
-          removed_at: serverTimestamp(),
-        },
-      });
-
-      // Update local state
-      setParticipantProfiles((prev) =>
-        prev.filter((u) => u.user_id !== userIdToRemove)
-      );
-      setSelectedUsers((prev) =>
-        prev.filter((u) => u.user_id !== userIdToRemove)
-      );
-
-      console.log(`User ${userIdToRemove} removed by admin`);
-    } catch (err) {
-      console.error("Failed to remove user:", err);
-    }
-  };
-
+  // ----- Leave / Delete Chat -----
   const leaveChat = () => {
     const isGroup = chat?.type === "group";
-
     Alert.alert(
-      isGroup ? "Leave Group?" : "Delete Chat?",
+      isGroup ? "leave group?" : "delete chat?",
       isGroup
-        ? "You will no longer receive messages from this group."
-        : "This chat will be removed from your inbox.",
+        ? "you will no longer receive messages from this group."
+        : "this chat will be removed from your inbox.",
       [
+        { text: "cancel", style: "cancel" },
         {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: isGroup ? "Leave" : "Delete",
+          text: isGroup ? "leave" : "delete",
           style: "destructive",
-          onPress: () => {
-            if (isGroup) {
-              leaveGroupChat();
-            } else {
-              leaveDirectChat();
-            }
-          },
+          onPress: isGroup ? leaveGroupChat : leaveDirectChat,
         },
       ]
     );
   };
 
   const leaveGroupChat = async () => {
+    const chatRef = doc(db, "chats", chatId);
+    const remaining = chat.participants.filter((id) => id !== uid);
+    const updates = {
+      participants: remaining,
+      [`removed.${uid}`]: { removed_by: uid, removed_at: serverTimestamp() },
+    };
+    if (chat.owner_id === uid && remaining.length > 0)
+      updates.owner_id = remaining[0];
+    await updateDoc(chatRef, updates);
+    navigation.goBack();
+  };
+
+  const leaveDirectChat = async () => {
     try {
       const chatRef = doc(db, "chats", chatId);
 
-      const remainingParticipants = chat.participants.filter(
-        (id) => id !== uid
-      );
-
-      const updates = {
-        participants: remainingParticipants,
+      // Remove yourself from participants
+      await updateDoc(chatRef, {
+        participants: chat.participants.filter((id) => id !== uid),
         [`removed.${uid}`]: {
           removed_by: uid,
           removed_at: serverTimestamp(),
         },
-      };
+      });
 
-      // If owner leaves, reassign owner
-      if (chat.owner_id === uid && remainingParticipants.length > 0) {
-        updates.owner_id = remainingParticipants[0];
+      // Fetch updated chat
+      const chatSnap = await getDoc(chatRef);
+
+      // If no participants remain, delete chat
+      if (!chatSnap.exists() || chatSnap.data().participants.length === 0) {
+        await deleteDoc(chatRef);
       }
 
-      await updateDoc(chatRef, updates);
-
+      // Navigate back only after Firestore updates
       navigation.goBack();
     } catch (err) {
-      console.error("Failed to leave group chat:", err);
+      console.error("Failed to leave direct chat:", err);
+      // Only show alert if it's a real unexpected error
+      if (!err.message.includes("deleteDoc")) {
+        Alert.alert("Error", "Failed to leave chat. Please try again.");
+      } else {
+        // Ignore deleteDoc import errors now that we've fixed imports
+      }
     }
   };
 
+  // ----- Menu Options -----
+  const menuOptions = [
+    {
+      id: "view",
+      label: chat?.type === "group" ? "view participants" : "view profile",
+      onPress:
+        chat?.type === "group"
+          ? () => {
+              navigation.navigate("ParticipantsScreen", {
+                uid: uid,
+                participants: participantProfiles,
+              });
+            }
+          : () => {
+              navigation.navigate("Profile", {
+                userUID: chat.participants.find((u) => u.user_id !== uid),
+              });
+            },
+    },
+    {
+      id: "manage",
+      label: "manage users",
+      onPress: () => {
+        setSelectedUsers(participantProfiles), setShowModal(true);
+      },
+      hide: chat?.owner_id !== uid || chat?.type !== "group",
+    },
+    { id: "mute", label: "mute chat", onPress: () => {} },
+    {
+      id: "leave",
+      label: chat?.type === "group" ? "leave chat" : "delete chat",
+      destructive: true,
+      onPress: leaveChat,
+    },
+    {
+      id: "block",
+      label: "block user",
+      destructive: true,
+      onPress: () => {},
+      hide: chat?.type === "group",
+    },
+  ].filter((o) => !o.hide);
+
+  // ----- Render -----
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: woo_white }}>
       <KeyboardAvoidingView
-        behavior={Platform.select({ ios: "padding", android: undefined })}
-        style={styles.container}
+        behavior={Platform.select({ ios: "padding" })}
+        style={{ flex: 1 }}
         keyboardVerticalOffset={80}
       >
         <View style={styles.header}>
-          <View
-            style={{
-              // backgroundColor: "blue",
-              flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
-          >
+          <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
             <Pressable onPress={() => navigation.navigate("MessagesPreview")}>
               <FontAwesome6Icon
                 name="chevron-left"
@@ -357,7 +322,6 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                     />
                   </View>
                 ))}
-
                 {participantProfiles.length > 5 && (
                   <View style={[styles.avatarWrapper, styles.overlap]}>
                     <View style={styles.extraAvatar}>
@@ -367,55 +331,24 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                     </View>
                   </View>
                 )}
-
-                {participantProfiles.length > 0 && chat.owner_id === uid && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedUsers(participantProfiles); // load current participants
-                      setShowModal(true);
-                    }}
-                    style={styles.managePill}
-                  >
-                    <Ionicons name="people-outline" size={14} color="#007BFF" />
-                    <Text style={styles.manageText}>Manage</Text>
-                  </TouchableOpacity>
-                )}
               </View>
             )}
           </View>
-          {/* <View
-            style={{
-              flex: 1,
-              // backgroundColor: "red",
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              alignItems: "center",
-            }}
+
+          {/* HEADER MENU BUTTON */}
+          <Pressable
+            onPress={() => setMenuVisible(true)}
+            style={{ padding: 8 }}
           >
-            <Pressable onPress={() => navigation.navigate("MigoGroups")}>
-              <FontAwesome6Icon name="phone" size={26} color={woo_black} />
-            </Pressable>
-
-            <Pressable
-              style={{ marginHorizontal: 10, marginStart: 15 }}
-              onPress={() => navigation.navigate("MigoRequests")}
-            >
-              <FontAwesome6Icon name="video" size={26} color={woo_black} />
-            </Pressable>
-          </View> */}
+            <FontAwesome6Icon
+              name="ellipsis-vertical"
+              size={24}
+              color={woo_black}
+            />
+          </Pressable>
         </View>
-        <Text
-          style={{
-            fontSize: 18,
-            color: woo_black,
-            // marginStart: 20,
-            textAlign: "center",
-            fontWeight: "bold",
-          }}
-        >
-          {chat && chat.type == "group" && chat.name}
-        </Text>
 
+        {/* Messages */}
         <FlatList
           data={messages}
           keyExtractor={(item) => item.id}
@@ -424,73 +357,40 @@ const MessageDetailsScreen = ({ route, navigation }) => {
             const prevMessage = index > 0 ? messages[index - 1] : null;
             const nextMessage =
               index < messages.length - 1 ? messages[index + 1] : null;
-
-            // Firestore timestamp → Date
             const createdAt =
               item.created_at?.toDate?.() ??
               (item.created_at?.seconds
                 ? new Date(item.created_at.seconds * 1000)
                 : null);
-
             const prevCreatedAt =
               prevMessage?.created_at?.toDate?.() ??
               (prevMessage?.created_at?.seconds
                 ? new Date(prevMessage.created_at.seconds * 1000)
                 : null);
 
-            const isSameDay = (a, b) => {
-              if (!a || !b) return false;
-              return (
-                a.getFullYear() === b.getFullYear() &&
-                a.getMonth() === b.getMonth() &&
-                a.getDate() === b.getDate()
-              );
-            };
-
+            const isSameDay = (a, b) =>
+              a &&
+              b &&
+              a.getFullYear() === b.getFullYear() &&
+              a.getMonth() === b.getMonth() &&
+              a.getDate() === b.getDate();
             const getDayLabel = (date) => {
               const today = new Date();
               const yesterday = new Date();
               yesterday.setDate(today.getDate() - 1);
-
               if (isSameDay(date, today)) return "Today";
               if (isSameDay(date, yesterday)) return "Yesterday";
-
-              return date.toLocaleDateString(undefined, {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-                year:
-                  date.getFullYear() !== today.getFullYear()
-                    ? "numeric"
-                    : undefined,
-              });
-            };
-
-            const getTimestampOpacity = ({ isGrouped, createdAt }) => {
-              const ageHours = (Date.now() - createdAt.getTime()) / 36e5;
-
-              if (ageHours > 24) return 0.35;
-              if (isGrouped) return 0.55;
-              return 0.8;
+              return date.toLocaleDateString();
             };
 
             const isSentByCurrentUser = item.sender_id === uid;
             const isNextSameSender = nextMessage?.sender_id === item.sender_id;
             const isPrevSameSender = prevMessage?.sender_id === item.sender_id;
 
-            // Day separator
             const showDaySeparator =
               createdAt &&
               (!prevCreatedAt || !isSameDay(createdAt, prevCreatedAt));
-
-            // Timestamp
             const showTimestamp = !isNextSameSender;
-            const timestampOpacity =
-              createdAt &&
-              getTimestampOpacity({
-                isGrouped: isPrevSameSender,
-                createdAt,
-              });
 
             const bubbleStyle = [
               styles.messageBubble,
@@ -506,14 +406,8 @@ const MessageDetailsScreen = ({ route, navigation }) => {
 
             return (
               <>
-                {/* Day Separator */}
                 {showDaySeparator && (
-                  <View
-                    style={{
-                      alignItems: "center",
-                      marginVertical: 12,
-                    }}
-                  >
+                  <View style={{ alignItems: "center", marginVertical: 12 }}>
                     <View
                       style={{
                         paddingHorizontal: 12,
@@ -534,18 +428,13 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                     </View>
                   </View>
                 )}
-
-                {/* Message Row */}
                 <View
                   style={{
                     flexDirection: isSentByCurrentUser ? "row-reverse" : "row",
                   }}
                 >
-                  {/* Bubble */}
                   <View style={[bubbleStyle, { maxWidth: "75%" }]}>
                     <Text style={styles.messageText}>{item.text}</Text>
-
-                    {/* Timestamp */}
                   </View>
                 </View>
                 {showTimestamp && createdAt && (
@@ -554,7 +443,6 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                       fontSize: 11,
                       color: "#999",
                       marginTop: 2,
-                      opacity: timestampOpacity,
                       alignSelf: isSentByCurrentUser
                         ? "flex-end"
                         : "flex-start",
@@ -568,6 +456,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
           }}
         />
 
+        {/* Input */}
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="Type a message"
@@ -580,11 +469,11 @@ const MessageDetailsScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Modal */}
+        {/* Manage Users Modal */}
         <Modal visible={showModal} transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalCard}>
-              <Text style={styles.modalTitle}>Manage users</Text>
+              <Text style={styles.modalTitle}>manage users</Text>
               <FlatList
                 data={selectedUsers}
                 keyExtractor={(item) => item.uuid}
@@ -596,7 +485,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                       size={36}
                     />
                     <Text style={styles.modalUsername}>{item.username}</Text>
-                    <TouchableOpacity onPress={() => removeUser(item.uuid)}>
+                    <TouchableOpacity onPress={() => {}}>
                       <Ionicons
                         name="remove-circle"
                         size={22}
@@ -612,29 +501,31 @@ const MessageDetailsScreen = ({ route, navigation }) => {
               >
                 <Text style={styles.modalCloseText}>close</Text>
               </TouchableOpacity>
-              {chat && chat.type === "group" && (
-                <TouchableOpacity onPress={leaveChat} style={styles.modalClose}>
-                  <Text style={[styles.modalCloseText, { color: "#FF4C4C" }]}>
-                    leave chat
-                  </Text>
-                </TouchableOpacity>
-              )}
             </View>
           </View>
         </Modal>
+
+        {/* Menu */}
+        <ChatMenu
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+          options={menuOptions}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
+// ----------- Styles -----------
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: woo_white },
   header: {
     height: 50,
-    // alignItems: "flex-end",
     flexDirection: "row",
     paddingHorizontal: 20,
-    // marginBottom: 5,
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: woo_white,
   },
   messageList: { padding: 10 },
   messageBubble: {
@@ -754,6 +645,27 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontWeight: "500",
   },
+  menuOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
+  },
+  menuCard: {
+    marginTop: 50,
+    marginRight: 10,
+    backgroundColor: woo_white,
+    borderRadius: 8,
+    paddingVertical: 5,
+    minWidth: 180,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  menuItem: { paddingVertical: 12, paddingHorizontal: 16 },
+  menuText: { fontSize: 18, color: woo_black },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",

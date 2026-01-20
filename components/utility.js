@@ -96,26 +96,6 @@ export const getTimeAgo = (input) => {
   return `${diffInYears} year${diffInYears !== 1 ? "s" : ""} ago`;
 };
 
-  const showTimestamp = !isNextSameSender;
-
- {/* Timestamp */}
-        {showTimestamp && (
-          <Text
-            style={{
-              fontSize: 11,
-              color: "#999",
-              marginTop: 2,
-              alignSelf: isSentByCurrentUser ? "flex-end" : "flex-start",
-              marginLeft: !isSentByCurrentUser ? 8 : 0,
-              marginRight: isSentByCurrentUser ? 8 : 0,
-            }}
-          >
-            {getTimeAgoOrDate(createdAt)}
-          </Text>
-        )}
-
-
-
 export const getTimeAgoOrDate = (input) => {
   let past;
 
