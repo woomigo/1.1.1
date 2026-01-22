@@ -110,7 +110,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
 
     const q = query(
       collection(db, "chats", chatId, "messages"),
-      orderBy("created_at")
+      orderBy("created_at"),
     );
     const chatRef = doc(db, "chats", chatId);
 
@@ -192,7 +192,23 @@ const MessageDetailsScreen = ({ route, navigation }) => {
           style: "destructive",
           onPress: isGroup ? leaveGroupChat : leaveDirectChat,
         },
-      ]
+      ],
+    );
+  };
+
+  const removeUserFromGroupChat = (uuid) => {
+    const isGroup = chat?.type === "group";
+    Alert.alert(
+      "remove user?",
+      "the user will be permanently removed from this group chat.",
+      [
+        { text: "cancel", style: "cancel" },
+        {
+          text: "remove",
+          style: "destructive",
+          onPress: () => removeUserByAdmin(uuid),
+        },
+      ],
     );
   };
 
@@ -243,6 +259,36 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     }
   };
 
+  const removeUserByAdmin = async (userIdToRemove) => {
+    if (!chat || chat.type !== "group") return;
+    if (chat.owner_id !== uid) return; // only owner/admin can remove
+
+    try {
+      const chatRef = doc(db, "chats", chatId);
+
+      // Update Firestore: remove participant and log removal
+      await updateDoc(chatRef, {
+        participants: chat.participants.filter((id) => id !== userIdToRemove),
+        [`removed.${userIdToRemove}`]: {
+          removed_by: uid,
+          removed_at: serverTimestamp(),
+        },
+      });
+
+      // Update local state
+      setParticipantProfiles((prev) =>
+        prev.filter((u) => u.user_id !== userIdToRemove),
+      );
+      setSelectedUsers((prev) =>
+        prev.filter((u) => u.user_id !== userIdToRemove),
+      );
+
+      console.log(`User ${userIdToRemove} removed by admin`);
+    } catch (err) {
+      console.error("Failed to remove user:", err);
+    }
+  };
+
   // ----- Menu Options -----
   const menuOptions = [
     {
@@ -254,6 +300,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
               navigation.navigate("ParticipantsScreen", {
                 uid: uid,
                 participants: participantProfiles,
+                chatOwner: chat?.owner_id,
               });
             }
           : () => {
@@ -266,7 +313,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
       id: "manage",
       label: "manage users",
       onPress: () => {
-        setSelectedUsers(participantProfiles), setShowModal(true);
+        (setSelectedUsers(participantProfiles), setShowModal(true));
       },
       hide: chat?.owner_id !== uid || chat?.type !== "group",
     },
@@ -485,7 +532,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
                       size={36}
                     />
                     <Text style={styles.modalUsername}>{item.username}</Text>
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableOpacity onPress={() => removeUserFromGroupChat(item.user_id)}>
                       <Ionicons
                         name="remove-circle"
                         size={22}

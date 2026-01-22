@@ -25,7 +25,7 @@ import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import { woo_black, woo_white } from "../assets/colors";
 
 const ParticipantsScreen = ({ route, navigation }) => {
-  const { participants, uid } = route.params;
+  const { participants, uid, chatOwner } = route.params;
 
   return (
     <View style={styles.container}>
