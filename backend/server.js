@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 
 const authRoutes = require('./routes/auth');
+const blockRoutes = require('./routes/blocked')
 const usersRoutes = require('./routes/users')
 const followersRoutes = require('./routes/followers')
 const wooRoutes = require('./routes/woos')
@@ -23,7 +24,8 @@ const relationShipRoutes = require('./routes/relationships')
 
 app.use(cors());
 app.use(express.json());
-app.use('/auth', authRoutes); 
+app.use('/auth', authRoutes);
+app.use('/block', blockRoutes); 
 app.use('/users', usersRoutes);
 app.use('/followers', followersRoutes);
 app.use('/woos', wooRoutes);

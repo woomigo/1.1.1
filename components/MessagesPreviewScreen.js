@@ -16,6 +16,7 @@ import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import MessagesPreview from "./MessagesPreview";
 import { AuthContext } from "../context/AuthContext";
 import Empty from "./Empty";
+import EllipsisMenu from "./EllipsisMenu";
 
 const MessagesPreviewScreen = ({ navigation, route }) => {
   const { user, token } = useContext(AuthContext);
@@ -28,7 +29,7 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
     const q = query(
       collection(db, "chats"),
       where("participants", "array-contains", user.id),
-      orderBy("last_message.created_at", "desc")
+      orderBy("last_message.created_at", "desc"),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -81,7 +82,7 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
         (error) => {
           console.error("Error fetching unread chats:", error);
           onUpdate([]);
-        }
+        },
       );
 
       return unsubscribe;
@@ -138,7 +139,7 @@ const MessagesPreviewScreen = ({ navigation, route }) => {
             color={woo_black}
             onPress={() => navigation.navigate("NewMessage")}
           />
-          <FontAwesome6Icon name="ellipsis" size={26} color={woo_black} />
+          <EllipsisMenu size={26} />
         </View>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center" }}>

@@ -24,6 +24,7 @@ import { localhost, truncNumber } from "./utility";
 import { AuthContext } from "../context/AuthContext";
 import Empty from "./Empty";
 import FollowButton from "./FollowButton";
+import EllipsisMenu from "./EllipsisMenu";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [index, setIndex] = useState(0);
@@ -111,7 +112,7 @@ const ProfileScreen = ({ navigation, route }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!res.ok) throw new Error("Failed to fetch woos");
@@ -152,7 +153,7 @@ const ProfileScreen = ({ navigation, route }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!res.ok) throw new Error("Failed to fetch woos");
@@ -319,12 +320,24 @@ const ProfileScreen = ({ navigation, route }) => {
               </View>
               {!isProfileOwnedByUser && (
                 <View style={{ marginEnd: 10 }}>
-                  <FontAwesome6Icon
-                    name="ellipsis"
-                    style={{}}
-                    size={20}
-                    color={woo_black}
-                    onPress={() => userMenu()}
+                  <EllipsisMenu
+                    options={[
+                      {
+                        label: "share",
+                        icon: "share",
+                        onPress: () => console.log("share pressed"),
+                      },
+                      {
+                        label: "block",
+                        icon: "user-xmark",
+                        onPress: () => console.log("block pressed"),
+                      },
+                      {
+                        label: "report",
+                        icon: "flag",
+                        onPress: () => console.log("report pressed"),
+                      },
+                    ]}
                   />
                 </View>
               )}

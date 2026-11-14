@@ -31,7 +31,7 @@ const login = async (email, password) => {
     await AsyncStorage.setItem("token", data.token);
     setToken(data.token);
 
-    // ⭐ Fetch the full user object after login
+    // Fetch the full user object after login
     const meRes = await fetch(`${localhost}/auth/me`, {
       headers: { Authorization: `Bearer ${data.token}` },
     });

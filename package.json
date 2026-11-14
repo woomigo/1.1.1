@@ -23,7 +23,7 @@
     "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
-    "expo": "53.0.9",
+    "expo": "54.0.0",
     "expo-camera": "~16.1.6",
     "expo-constants": "~17.1.6",
     "expo-device": "~7.1.4",

@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import { woo_black, woo_gray, woo_orange, woo_white } from "../assets/colors";
+import { woo_black, woo_gray, woo_white } from "../assets/colors";
 import Avatar from "./Avatar";
 import {
   collection,
@@ -31,7 +31,7 @@ import {
   increment,
   deleteDoc,
 } from "firebase/firestore";
-import { db, auth } from "../firebaseConfig";
+import { db } from "../firebaseConfig";
 import { AuthContext } from "../context/AuthContext";
 import { getTimeAgoOrDate, localhost } from "./utility";
 
@@ -196,6 +196,7 @@ const MessageDetailsScreen = ({ route, navigation }) => {
     );
   };
 
+  // ----- Remove User From Chat -----
   const removeUserFromGroupChat = (uuid) => {
     const isGroup = chat?.type === "group";
     Alert.alert(
