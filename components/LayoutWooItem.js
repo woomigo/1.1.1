@@ -142,14 +142,16 @@ const LayoutWooItem = ({ woo, uid, token }) => {
             </View>
           )}
         </View>
-        <MigosAvatarGroup
-          alignRow="flex-end"
-          migos={
-            item.type === "public"
-              ? item.sub_profile_pics
-              : item.migo_profile_pics
-          }
-        />
+        <View style={styles.migosWrapper}>
+          <MigosAvatarGroup
+            alignRow="flex-end"
+            migos={
+              item.type === "public"
+                ? item.sub_profile_pics
+                : item.migo_profile_pics
+            }
+          />
+        </View>
       </View>
     </View>
   );
@@ -255,6 +257,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: woo_black,
     flexShrink: 1,
+  },
+  migosWrapper: {
+    marginEnd: 8,
   },
 });
 
