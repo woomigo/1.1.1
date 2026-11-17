@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import ActionBar from "./ActionBar";
 import MigosAvatarGroup from "./MigosAvatarGroup";
 import { useNavigation } from "@react-navigation/native";
@@ -109,29 +110,46 @@ const LayoutWooItem = ({ woo, uid, token }) => {
         onShare={() => console.log("Share Woo")}
       />
 
-      <View style={styles.detailsRow}>
-        <View style={styles.detail}>
-          <Text style={styles.detailIcon}>{month} {day}</Text>
-          <Text style={styles.detailText}>
-            {item.start_time &&
-              `${wooStartTime}${item.end_time != null ? " - " + wooEndTime : ""}`}
-          </Text>
+      <View style={styles.detailsContainer}>
+        <View style={styles.detailsLeft}>
+          <View style={styles.detailRow}>
+            <FontAwesome6Icon
+              name="calendar"
+              size={13}
+              color={woo_orange}
+              style={styles.detailIcon}
+            />
+            <Text style={styles.detailText}>
+              {month} {day}
+              {item.start_time
+                ? ` · ${wooStartTime}${
+                    item.end_time != null ? " - " + wooEndTime : ""
+                  }`
+                : ""}
+            </Text>
+          </View>
+          {item.location && (
+            <View style={styles.detailRow}>
+              <FontAwesome6Icon
+                name="location-dot"
+                size={13}
+                color={woo_orange}
+                style={styles.detailIcon}
+              />
+              <Text style={styles.detailText} numberOfLines={1}>
+                {item.location.address}
+              </Text>
+            </View>
+          )}
         </View>
-        {item.location && (
-          <Text style={styles.detailText} numberOfLines={1}>
-            {item.location.address}
-          </Text>
-        )}
-        <View style={styles.migosContainer}>
-          <MigosAvatarGroup
-            alignRow="flex-end"
-            migos={
-              item.type === "public"
-                ? item.sub_profile_pics
-                : item.migo_profile_pics
-            }
-          />
-        </View>
+        <MigosAvatarGroup
+          alignRow="flex-end"
+          migos={
+            item.type === "public"
+              ? item.sub_profile_pics
+              : item.migo_profile_pics
+          }
+        />
       </View>
     </View>
   );
@@ -212,31 +230,31 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
   },
-  detailsRow: {
+  detailsContainer: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
-    paddingBottom: 10,
-    gap: 8,
+    paddingBottom: 12,
+    paddingTop: 2,
+    gap: 12,
   },
-  detail: {
+  detailsLeft: {
+    flex: 1,
+    gap: 6,
+  },
+  detailRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 6,
   },
   detailIcon: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: woo_orange,
+    width: 14,
+    textAlign: "center",
   },
   detailText: {
     fontSize: 12,
     color: woo_black,
     flexShrink: 1,
-  },
-  migosContainer: {
-    flex: 1,
-    alignItems: "flex-end",
   },
 });
 
