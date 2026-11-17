@@ -1,73 +1,242 @@
-import { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import LayoutWooImage from "./LayoutWooImage";
-import LayoutWooInfo from "./LayoutWooInfo";
-import LayoutWooLike from "./LayoutWooLike";
-import { woo_white } from "../assets/colors";
-// import LayoutWooVideo from './LayoutWooVideo';
+import { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import ActionBar from "./ActionBar";
+import MigosAvatarGroup from "./MigosAvatarGroup";
+import { useNavigation } from "@react-navigation/native";
+import {
+  woo_black,
+  woo_white,
+  woo_orange,
+  woo_light_gray,
+} from "../assets/colors";
+import { getFormattedTime, getMonthAndDay, hexToRgba, localhost } from "./utility";
 
-const LayoutWooItem = ({
-  woo,
-  uid,
-  currentVisibleIndex,
-  currentIndex,
-  token,
-}) => {
-  useEffect(() => {
-    // console.log(`LISTVIEWWOOITEM ==== ${JSON.stringify(woo)}`);
-  });
+const LayoutWooItem = ({ woo, uid, token }) => {
+  const navigation = useNavigation();
+  const item = woo.item;
+
+  const [isLiked, setIsLiked] = useState(Boolean(item.liked_by_me));
+  const [wooLikeCount, setWooLikeCount] = useState(item.like_count);
+
+  const { month, day } = getMonthAndDay(item.start_date);
+  const wooStartTime = getFormattedTime(item.start_time);
+  const wooEndTime = getFormattedTime(item.end_time);
+
+  const toggleIsLiked = async () => {
+    const nextLiked = !isLiked;
+    setIsLiked(nextLiked);
+    setWooLikeCount((prev) => prev + (nextLiked ? 1 : -1));
+
+    try {
+      const response = await fetch(`${localhost}/woo-likes/${nextLiked ? "like" : "unlike"}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ woo_id: item.woo_id }),
+      });
+
+      if (!response.ok) throw new Error("Failed to toggle like");
+    } catch (error) {
+      console.error("Error liking woo:", error);
+      setIsLiked(!nextLiked);
+      setWooLikeCount((prev) => prev + (nextLiked ? -1 : 1));
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {woo.item.media_url != null ? (
-        <LayoutWooImage uid={uid} woo={woo} token={token} />
-      ) : (
-        <LayoutWooVideo
-          video={woo.item.video}
-          currentVisibleIndex={currentVisibleIndex}
-          currentIndex={currentIndex}
-        />
-      )}
-      <LayoutWooLike
-        ownerUID={woo.item.user_id}
-        wooLikes={woo.item.like_count}
-        wooLikedByMe={woo.item.liked_by_me}
-        token={token}
-        uid={uid}
-        wooID={woo.item.woo_id}
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate("Woo", { uid: uid, woo: woo })}
+      >
+        <View style={styles.imageContainer}>
+          <Image style={styles.image} source={{ uri: item.media_url }} />
+          <LinearGradient
+            colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]}
+            style={styles.gradient}
+            pointerEvents="none"
+          />
+          <View style={styles.hostContainer}>
+            <Image
+              style={styles.hostAvatar}
+              source={{ uri: item.profile_pic_url }}
+            />
+            <View style={{ marginStart: 8, flex: 1 }}>
+              <Text style={styles.hostName}>
+                {item.first_name} {item.last_name}
+              </Text>
+              <Text style={styles.hostUsername}>@{item.username}</Text>
+            </View>
+          </View>
+          {item.tags && item.tags.length > 0 && (
+            <ScrollView
+              horizontal
+              style={styles.tagsContainer}
+              showsHorizontalScrollIndicator={false}
+            >
+              {item.tags.map((tag, idx) => (
+                <View
+                  key={idx}
+                  style={[styles.tagPill, tag.pending ? styles.pendingTag : null]}
+                >
+                  <Text style={styles.tagText}>
+                    {tag.name} {tag.pending ? "(Pending)" : ""}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          )}
+        </View>
+      </TouchableWithoutFeedback>
+
+      <ActionBar
+        liked={isLiked}
+        likeCount={wooLikeCount}
+        subscribed={false}
+        hostName={`${item.first_name} ${item.last_name}`}
+        wooType={item.type}
+        onToggleLike={toggleIsLiked}
+        onToggleSubscribe={() => {}}
+        onShare={() => console.log("Share Woo")}
       />
-      <LayoutWooInfo
-        uid={uid}
-        wooType={woo.item.type}
-        ownerUID={woo.item.user_id}
-        ownerUsername={woo.item.username}
-        ownerProfilePicture={woo.item.profile_pic_url}
-        ownerFirstName={woo.item.first_name}
-        ownerLastName={woo.item.last_name}
-        wooLikes={woo.item.like_count}
-        wooLikedByMe={woo.item.liked_by_me}
-        sharedProfilePic={woo.item.shared_by_profile_pic}
-        wooMigos={
-          woo.item.type === "public"
-            ? woo.item.sub_profile_pics
-            : woo.item.migo_profile_pics
-        }
-        wooDate={woo.item.start_date}
-        startTime={woo.item.start_time}
-        endTime={woo.item.end_time}
-        wooLocation={woo.item.location}
-      />
+
+      <View style={styles.detailsRow}>
+        <View style={styles.detail}>
+          <Text style={styles.detailIcon}>{month} {day}</Text>
+          <Text style={styles.detailText}>
+            {item.start_time &&
+              `${wooStartTime}${item.end_time != null ? " - " + wooEndTime : ""}`}
+          </Text>
+        </View>
+        {item.location && (
+          <Text style={styles.detailText} numberOfLines={1}>
+            {item.location.address}
+          </Text>
+        )}
+        <View style={styles.migosContainer}>
+          <MigosAvatarGroup
+            alignRow="flex-end"
+            migos={
+              item.type === "public"
+                ? item.sub_profile_pics
+                : item.migo_profile_pics
+            }
+          />
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 14,
     backgroundColor: woo_white,
-    padding: 5,
+    borderRadius: 12,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  imageContainer: {
+    position: "relative",
+    height: 320,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  gradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+  },
+  hostContainer: {
+    position: "absolute",
+    bottom: 12,
+    left: 12,
+    right: 12,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  hostAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: woo_white,
+    backgroundColor: woo_light_gray,
+  },
+  hostName: {
+    fontSize: 16,
+    color: woo_white,
+    fontWeight: "bold",
+  },
+  hostUsername: {
+    fontSize: 12,
+    color: woo_white,
+  },
+  tagsContainer: {
+    position: "absolute",
+    bottom: 60,
+    left: 12,
+    right: 12,
+    height: 30,
+  },
+  tagPill: {
+    backgroundColor: hexToRgba(woo_black, 0.7),
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginRight: 8,
+    justifyContent: "center",
+  },
+  pendingTag: {
+    backgroundColor: "#FF9500",
+  },
+  tagText: {
+    color: woo_white,
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  detailsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
     paddingBottom: 10,
-    marginBottom: 5,
+    gap: 8,
+  },
+  detail: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  detailIcon: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: woo_orange,
+  },
+  detailText: {
+    fontSize: 12,
+    color: woo_black,
+    flexShrink: 1,
+  },
+  migosContainer: {
+    flex: 1,
+    alignItems: "flex-end",
   },
 });
 
