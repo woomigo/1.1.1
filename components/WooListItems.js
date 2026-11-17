@@ -304,11 +304,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   previewScroll: {},
-  previewItem: {
-    marginHorizontal: 5,
-    alignItems: "center",
-    width: 80,
-  },
+previewItem: {
+  marginRight: 10,
+  alignItems: "center",
+  width: 80,
+},
   previewImage: {
     width: 60,
     height: 60,

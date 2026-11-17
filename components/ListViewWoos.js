@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, FlatList } from "react-native";
 import LayoutWooItem from "./LayoutWooItem";
-import { woo_orange } from "../assets/colors";
+import { woo_gray, woo_light_gray, woo_orange } from "../assets/colors";
 
 const ListViewWoos = ({ woos, view, uid, scrollEnabled = false, token }) => {
   useEffect(() => {
@@ -35,7 +35,7 @@ const ListViewWoos = ({ woos, view, uid, scrollEnabled = false, token }) => {
             scrollEnabled={scrollEnabled}
             showsVerticalScrollIndicator={false}
             key={(woo) => woo.id}
-            backgroundColor={woo_orange}
+            backgroundColor={woo_light_gray}
             keyExtractor={(woo) => woo.id}
             style={{ height: "100%", width: "100%" }}
             data={woos}
@@ -48,7 +48,7 @@ const ListViewWoos = ({ woos, view, uid, scrollEnabled = false, token }) => {
           <FlatList
             showsVerticalScrollIndicator={false}
             key={(woo) => woo.id}
-            backgroundColor={woo_orange}
+            backgroundColor={woo_light_gray}
             keyExtractor={(woo) => woo.id}
             data={woos}
             onViewableItemsChanged={onViewRef.current}

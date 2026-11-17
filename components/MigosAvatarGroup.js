@@ -1,3 +1,4 @@
+
 import React from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
 import { woo_orange, woo_white } from "../assets/colors";
@@ -6,11 +7,11 @@ const MigosAvatarGroup = ({
   migos,
   maxAvatars = 4,
   avatarSize = 35,
-  alignRow = "flex-end",
+  alignRow = "flex-start",
 }) => {
   if (!migos || migos.length === 0) return null;
 
-  const displayCount = maxAvatars;
+  const displayCount = Math.min(maxAvatars, migos.length);
   const extraCount = migos.length - displayCount;
 
   return (
@@ -31,6 +32,7 @@ const MigosAvatarGroup = ({
             source={{ uri }}
           />
         ))}
+
         {extraCount > 0 && (
           <View
             style={[
@@ -55,12 +57,12 @@ const MigosAvatarGroup = ({
 };
 
 const styles = StyleSheet.create({
-  migosContainer: {
-    flex: 1,
-    // marginTop: 5,
-    flexDirection: "row",
-    alignItems: "center",
-  },
+migosContainer: {
+  flex: 1,
+  flexDirection: "row",
+  alignItems: "center",
+  paddingStart: 5,
+},
   wooMigosImagesContainer: {
     flexDirection: "row",
   },

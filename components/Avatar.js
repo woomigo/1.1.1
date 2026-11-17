@@ -1,3 +1,4 @@
+
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
@@ -11,6 +12,9 @@ const Avatar = ({
   size = 36,
   fontSize = 12,
   style,
+  border = false,
+  borderWeight = 1,
+  borderColor = woo_black,
 }) => {
   const initials =
     name &&
@@ -20,6 +24,10 @@ const Avatar = ({
       .join("")
       .toUpperCase();
 
+  const borderStyle = border
+    ? { borderWidth: borderWeight, borderColor }
+    : {};
+
   return image ? (
     <Image
       onPress={onPress}
@@ -27,6 +35,7 @@ const Avatar = ({
       style={[
         styles.image,
         { width: size, height: size, borderRadius: size / 2 },
+        borderStyle,
         style,
       ]}
     />
@@ -35,6 +44,7 @@ const Avatar = ({
       style={[
         styles.container,
         { width: size, height: size, borderRadius: size / 2 },
+        borderStyle,
         style,
       ]}
     >

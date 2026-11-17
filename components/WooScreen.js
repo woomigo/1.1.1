@@ -5,46 +5,29 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
-  Platform,
   ScrollView,
-  Dimensions,
   Pressable,
   TouchableWithoutFeedback,
   TouchableOpacity,
   KeyboardAvoidingView,
 } from "react-native";
-import { Avatar, Tab, TabView, Card, Button } from "@rneui/themed";
-import ListViewGallery from "./ListViewGallery";
-import {
-  woo_black,
-  woo_gray,
-  woo_medium_gray,
-  woo_orange,
-  woo_white,
-} from "../assets/colors";
-import { Drawer } from "react-native-drawer-layout";
-import MenuScreen from "./MenuScreen";
-import ListViewWoos from "./ListViewWoos";
+import { LinearGradient } from "expo-linear-gradient";
+import { woo_black, woo_gray, woo_orange, woo_white } from "../assets/colors";
+import CommentsPreview from "./CommentsPreview";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
-import MapView, { Marker } from "react-native-maps";
-import {
-  getFormattedTime,
-  getMonthAndDay,
-  getTimeAgo,
-  hexToRgba,
-  localhost,
-  truncUsername,
-} from "./utility";
+import { getTimeAgo, hexToRgba, localhost } from "./utility";
 import MigosAvatarGroup from "./MigosAvatarGroup";
 import WooListItems from "./WooListItems";
 import GalleryPreviewGroup from "./GalleryPreviewGroup";
+import Avatar from "./Avatar";
+import EventDetails from "./EventDetails";
+import Section from "./Section";
+import ActionBar from "./ActionBar";
+import GalleryPreview from "./GalleryPreview";
+import WooListPreview from "./WooListPreview";
 
 const WooScreen = ({ navigation, route }) => {
   const { user, woo, token } = route.params;
-
-  const { month, day } = getMonthAndDay(woo.item.start_date);
-  const wooStartTime = getFormattedTime(woo.item.start_time);
-  const wooEndTime = getFormattedTime(woo.item.end_time);
 
   const scrollViewRef = useRef(null);
 
@@ -52,7 +35,7 @@ const WooScreen = ({ navigation, route }) => {
   const [gallery, setGallery] = useState([]);
   const [comments, setComments] = useState([]);
   const [list, setList] = useState([]);
-  const [isLiked, setIsLiked] = useState(woo.item.liked_by_me);
+  const [isLiked, setIsLiked] = useState(Boolean(woo.item.liked_by_me));
   const [wooLikeCount, setWooLikeCount] = useState(woo.item.like_count);
 
   const fetchLikeWoo = async (woo_id) => {
@@ -120,7 +103,7 @@ const WooScreen = ({ navigation, route }) => {
         }/${wooId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       const data = await res.json();
       setMigosSubs(data);
@@ -248,9 +231,49 @@ const WooScreen = ({ navigation, route }) => {
           </View>
           <View style={styles.imageContainer}>
             <Image style={styles.image} source={{ uri: woo.item.media_url }} />
-
+            <LinearGradient
+              colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]}
+              style={styles.gradient}
+              pointerEvents="none"
+            />
+            <View style={styles.nameContainer}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Avatar
+                  border
+                  borderWeight={2}
+                  borderColor={woo_white}
+                  rounded
+                  size={52}
+                  onPress={() =>
+                    navigation.navigate("Profile", {
+                      userUID: woo.item.user_id,
+                    })
+                  }
+                  image={woo.item.profile_pic_url}
+                />
+                <View style={{ marginStart: 5 }}>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      color: woo_white,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {woo.item.first_name} {woo.item.last_name}
+                  </Text>
+                  <Text style={{ fontSize: 14, color: woo_white }}>
+                    @{woo.item.username}
+                  </Text>
+                </View>
+              </View>
+            </View>
             {/* Tags overlay */}
-            {woo.item.tags && woo.item.tags.length > 0 && (
+            {/* {woo.item.tags && woo.item.tags.length > 0 && (
               <ScrollView
                 horizontal
                 style={styles.tagsContainer}
@@ -270,45 +293,83 @@ const WooScreen = ({ navigation, route }) => {
                   </View>
                 ))}
               </ScrollView>
-            )}
+            )} */}
           </View>
-          {/* FIRST 
-        ROW */}
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              marginHorizontal: 10,
-              marginVertical: 5,
-            }}
-          >
-            <View
-              style={[styles.card, { flex: 2.5, justifyContent: "center" }]}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Avatar
-                  rounded
-                  size="medium"
-                  onPress={() =>
-                    navigation.navigate("Profile", {
-                      userUID: woo.item.user_id,
-                    })
-                  }
-                  source={{ uri: woo.item.profile_pic_url }}
-                />
-                <View style={{ marginStart: 5 }}>
-                  <Text>{woo.item.first_name}</Text>
-                  <Text>{woo.item.last_name}</Text>
-                  <Text style={{ fontSize: 12 }}>@{woo.item.username}</Text>
-                </View>
-              </View>
+
+          <ActionBar
+            liked={isLiked}
+            likeCount={wooLikeCount}
+            subscribed={false}
+            hostName={`${woo.item.first_name} ${woo.item.last_name}`}
+            wooType={woo.item.type}
+            onToggleLike={toggleIsLiked}
+            onToggleSubscribe={subscribeToWoo}
+            onShare={() => console.log("Share Woo")}
+          />
+
+          <Section title="Event Details">
+            <View style={styles.card}>
+              <EventDetails woo={woo} />
             </View>
-            <View
+          </Section>
+
+          <Section
+            title={woo.item.type === "public" ? "Subscribed" : "Invited"}
+          >
+            {/* Your existing Migos content */}
+            <MigosAvatarGroup
+              alignRow="flex-start"
+              migos={
+                woo.item.type === "public"
+                  ? woo.item.sub_profile_pics
+                  : woo.item.migo_profile_pics
+              }
+            />
+          </Section>
+
+          <Section title="Comments">
+            <View style={styles.card}>
+              <CommentsPreview
+                comments={comments}
+                navigation={navigation}
+                onPress={() =>
+                  navigation.navigate("WooCommentsView", { comments })
+                }
+              />
+            </View>
+          </Section>
+
+          <Section title="Gallery">
+            <View style={styles.card}>
+              <GalleryPreview
+                gallery={gallery}
+                navigation={navigation}
+                onPress={() =>
+                  navigation.navigate("MediaGallery", {
+                    media: gallery,
+                  })
+                }
+              />
+            </View>
+          </Section>
+
+          <Section title="What's to Bring">
+            <View style={styles.card}>
+              <WooListPreview
+                user={user}
+                items={list.items || []}
+                token={token}
+                navigation={navigation}
+                onPress={() =>
+                  navigation.navigate("WooList", {
+                    items: list.items || [],
+                  })
+                }
+              />
+            </View>
+          </Section>
+
+          {/* <View
               style={[
                 styles.card,
                 { flex: 1, marginStart: 5, justifyContent: "center" },
@@ -385,12 +446,11 @@ const WooScreen = ({ navigation, route }) => {
                   <Text style={styles.dateText}>{day}</Text>
                 </View>
               </View>
-            </View>
-          </View>
+            </View> */}
 
           {/* SECOND 
         ROW */}
-          <View
+          {/* <View
             style={{
               flex: 1,
               flexDirection: "row",
@@ -413,19 +473,19 @@ const WooScreen = ({ navigation, route }) => {
                   marginTop: 8,
                   justifyContent: "center",
                 }}
-              >
-                <View style={{ marginStart: 5 }}>
+              > */}
+          {/* <View style={{ marginStart: 5 }}>
                   <Text>
                     {woo.item.start_time &&
                       `${wooStartTime} ${
                         woo.item.end_time == null ? "" : "- " + wooEndTime
                       }`}
                   </Text>
-                </View>
-              </View>
-            </View>
+                </View> */}
+          {/* </View>
+            </View> */}
 
-            <Pressable
+          {/* <Pressable
               style={[styles.card, { flex: 1, marginStart: 5 }]}
               onPress={() =>
                 navigation.navigate("WooMigosView", {
@@ -469,10 +529,10 @@ const WooScreen = ({ navigation, route }) => {
                 </View>
               )}
             </Pressable>
-          </View>
+          </View> */}
           {/* Third 
                 Row */}
-          <View
+          {/* <View
             style={{
               flex: 1,
               flexDirection: "row",
@@ -510,11 +570,11 @@ const WooScreen = ({ navigation, route }) => {
                 />
               </MapView>
             </View>
-          </View>
+          </View> */}
           {/* Fourth
                 Row */}
 
-          <View
+          {/* <View
             style={{
               flex: 1,
               flexDirection: "row",
@@ -608,11 +668,11 @@ const WooScreen = ({ navigation, route }) => {
                 </View>
               )}
             </Pressable>
-          </View>
+          </View> */}
 
           {/* Fifth
                 Row */}
-          <View
+          {/* <View
             style={{
               flex: 1,
               flexDirection: "row",
@@ -649,11 +709,11 @@ const WooScreen = ({ navigation, route }) => {
                 </View>
               )}
             </Pressable>
-          </View>
+          </View> */}
 
           {/* Sixth
                 Row */}
-          <View
+          {/* <View
             style={{
               flex: 1,
               flexDirection: "row",
@@ -688,7 +748,7 @@ const WooScreen = ({ navigation, route }) => {
                 </View>
               )}
             </Pressable>
-          </View>
+          </View> */}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -733,12 +793,18 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  tagsContainer: {
+  nameContainer: {
     position: "absolute",
-    bottom: 10,
+    bottom: 40,
     left: 10,
     right: 10,
     height: 40,
+  },
+  tagsContainer: {
+    position: "absolute",
+    bottom: 10,
+    right: 0,
+    height: 30,
   },
   tagPill: {
     backgroundColor: hexToRgba(woo_gray, 0.7), // blue with 70% opacity
@@ -757,7 +823,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   card: {
-    backgroundColor: woo_medium_gray,
     padding: 10,
     borderRadius: 10,
     shadowColor: "#000",
